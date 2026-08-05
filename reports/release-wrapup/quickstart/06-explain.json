@@ -1,0 +1,82 @@
+{
+  "id": "claim_fn_01d2d9c798b636bf",
+  "claim": "Function _node_id in tmf/edges.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+  "fresh": true,
+  "stale_reasons": [],
+  "trust": {
+    "level": "observed",
+    "label": "源码观察",
+    "description": "从源码观察得到，但验证方式较粗"
+  },
+  "evidence": "observed",
+  "confidence": 0.4,
+  "raw_confidence": null,
+  "confidence_cap_applied": false,
+  "verification": null,
+  "kind": "structure",
+  "scope": "function",
+  "model": "tmf-v1-heuristic",
+  "last_verified": "2026-06-08T23:43:52+00:00",
+  "endorsed_by": null,
+  "qualname": "_node_id",
+  "anchors": [
+    {
+      "path": "tmf/edges.py",
+      "line_start": 33,
+      "line_end": 34
+    }
+  ],
+  "belief_provenance": [],
+  "freshness_bindings": [
+    {
+      "path": "tmf/edges.py",
+      "file_blob": "e04fe91a416d4788690a0e3ad1f639d3bcf75a2f",
+      "fn_hash": "fc42a53ef3bf7d8dd4fed2809b5936907242dc9a4d80846e01e0034f7933d5c1",
+      "commit": "22c39a805e816b31786b795e9b98777fda8a9863",
+      "qualname": "_node_id"
+    }
+  ],
+  "action_hint": "can_use_with_source_anchor_for_precision",
+  "feedback_events": [],
+  "hunches": [],
+  "graph": {
+    "callees": [
+      {
+        "target_id": "claim_fn_dbe62b324f33a95c",
+        "target_qualname": "stable_function_claim_id",
+        "evidence": "observed",
+        "resolution": "from_import_direct_top_level"
+      }
+    ],
+    "callers": [
+      {
+        "source_id": "claim_fn_a6f87b68f6220a7d",
+        "evidence": "observed",
+        "resolution": "module_name_or_self_method"
+      },
+      {
+        "source_id": "claim_fn_a6f87b68f6220a7d",
+        "evidence": "observed",
+        "resolution": "module_name_or_self_method"
+      },
+      {
+        "source_id": "claim_fn_a6f87b68f6220a7d",
+        "evidence": "observed",
+        "resolution": "module_name_or_self_method"
+      },
+      {
+        "source_id": "claim_fn_a6f87b68f6220a7d",
+        "evidence": "observed",
+        "resolution": "module_name_or_self_method"
+      },
+      {
+        "source_id": "claim_fn_a6f87b68f6220a7d",
+        "evidence": "observed",
+        "resolution": "module_name_or_self_method"
+      }
+    ],
+    "unresolved_calls": []
+  },
+  "graph_coverage": "partial",
+  "warnings": []
+}

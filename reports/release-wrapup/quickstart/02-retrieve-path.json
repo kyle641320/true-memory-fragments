@@ -1,0 +1,1583 @@
+{
+  "query": "tmf/cli.py",
+  "view": "thin",
+  "claims": [
+    {
+      "id": "claim_edge_0a80d4e0f008ab48",
+      "claim": "claim_fn_d186d01a43ede647 calls render_reviewer_text.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "1a66387f5ee8",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/explain.py",
+          "file_blob_prefix": "b1f5e8826f12",
+          "fn_hash_prefix": "73bcac9c9c18",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_10d7d40cc1005793",
+      "claim": "claim_fn_0b71edb4468e7801 calls apply_feedback.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "62181f93c009",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/feedback.py",
+          "file_blob_prefix": "9732341e91bc",
+          "fn_hash_prefix": "3e76deaaecf7",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_266fb4a1bc825bcb",
+      "claim": "claim_fn_25da627ed0062f1b calls build_parser.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "eb0deb80c98f",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "bf07bc4c3e59",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_2841f273f4bfa343",
+      "claim": "claim_fn_37ee84ba6a166d90 calls retrieve_path.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "b6862a4119c9",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/retrieve.py",
+          "file_blob_prefix": "d7a60c1f14a8",
+          "fn_hash_prefix": "ba74ec84dd07",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_2ab9b4730053b4b9",
+      "claim": "claim_fn_8202c8b11dce0ab8 calls run_heldout_validation.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "2b18a47348d6",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/validation.py",
+          "file_blob_prefix": "a56ea641c0a0",
+          "fn_hash_prefix": "1ca848f60eaa",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_32bd9b122ad8109a",
+      "claim": "claim_fn_37ee84ba6a166d90 calls full_view.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "b6862a4119c9",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/explain.py",
+          "file_blob_prefix": "b1f5e8826f12",
+          "fn_hash_prefix": "6bdc1d2fd246",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_387dc61bb8e88702",
+      "claim": "claim_fn_b5a0efaf4a4df764 calls explain_claim.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "84af69654cd9",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/explain.py",
+          "file_blob_prefix": "b1f5e8826f12",
+          "fn_hash_prefix": "dbd66347e88b",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_5bbb54cc6b1ee04e",
+      "claim": "claim_fn_78abf71ff36d3a63 calls warm_repo.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "272e2ed01e65",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/warm.py",
+          "file_blob_prefix": "9e2d71310ac0",
+          "fn_hash_prefix": "34371e94896d",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_723b2761c43f833e",
+      "claim": "claim_fn_8202c8b11dce0ab8 calls _make_validation_fixture.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "2b18a47348d6",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "469831ff7ee1",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_aaf23a5296c9599d",
+      "claim": "claim_fn_b5a0efaf4a4df764 calls thin_view.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "84af69654cd9",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/explain.py",
+          "file_blob_prefix": "b1f5e8826f12",
+          "fn_hash_prefix": "39813587da3a",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_c74e1b933419b5b9",
+      "claim": "claim_fn_37ee84ba6a166d90 calls retrieve_text.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "b6862a4119c9",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/retrieve.py",
+          "file_blob_prefix": "d7a60c1f14a8",
+          "fn_hash_prefix": "264fda6149b9",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_d15c731831739160",
+      "claim": "claim_fn_4566aca854a17c82 calls reverse_callers.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "0295bdd703f2",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/retrieve.py",
+          "file_blob_prefix": "d7a60c1f14a8",
+          "fn_hash_prefix": "3bb178f3baee",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_dd0df72727e38f79",
+      "claim": "claim_fn_d186d01a43ede647 calls explain_claim.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "1a66387f5ee8",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/explain.py",
+          "file_blob_prefix": "b1f5e8826f12",
+          "fn_hash_prefix": "dbd66347e88b",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_e51e7cdd26fc900e",
+      "claim": "claim_fn_37ee84ba6a166d90 calls _claim_thin_view.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "b6862a4119c9",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "84af69654cd9",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_fd2675875ae0654e",
+      "claim": "claim_fn_8202c8b11dce0ab8 calls run_self_validation.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "2b18a47348d6",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/validation.py",
+          "file_blob_prefix": "a56ea641c0a0",
+          "fn_hash_prefix": "88f42dc57377",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_file_092f024beb0aeaea",
+      "claim": "File tmf/cli.py exposes observable identifiers: __future__, annotations, argparse, json, pathlib, Path, feedback, apply_feedback.",
+      "kind": "structure",
+      "scope": "file",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.35,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 1,
+          "line_end": 40
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": null,
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_0b71edb4468e7801",
+      "claim": "Function cmd_feedback in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "cmd_feedback",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 67,
+          "line_end": 76
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "62181f93c009",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_6da880b8a2965b43",
+          "target_qualname": "apply_feedback",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "Store",
+          "reason": "from_import_symbol_not_direct_top_level_def"
+        },
+        {
+          "expr": "store.get_claim",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "store.put_claim",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 7,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_25da627ed0062f1b",
+      "claim": "Function main in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "main",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 196,
+          "line_end": 201
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "eb0deb80c98f",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_e80832afd1fdac03",
+          "target_qualname": "build_parser",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "parser.parse_args",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "parser.error",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "args.func",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 3,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_37ee84ba6a166d90",
+      "claim": "Function cmd_retrieve in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "cmd_retrieve",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 21,
+          "line_end": 49
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "b6862a4119c9",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_af466ec455741edb",
+          "target_qualname": "full_view",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        },
+        {
+          "target_id": "claim_fn_a60268928018dbde",
+          "target_qualname": "retrieve_path",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        },
+        {
+          "target_id": "claim_fn_a1b4a160cbd522ff",
+          "target_qualname": "retrieve_text",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        },
+        {
+          "target_id": "claim_fn_b5a0efaf4a4df764",
+          "target_qualname": "_claim_thin_view",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "GitRepo",
+          "reason": "from_import_symbol_not_direct_top_level_def"
+        },
+        {
+          "expr": "Store",
+          "reason": "from_import_symbol_not_direct_top_level_def"
+        },
+        {
+          "expr": "store.get_claim",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "list",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "result.source_fallback.keys",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 11,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_4566aca854a17c82",
+      "claim": "Function cmd_callers in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "cmd_callers",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 79,
+          "line_end": 81
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "0295bdd703f2",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_43583668c7e902c4",
+          "target_qualname": "reverse_callers",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 2,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_78abf71ff36d3a63",
+      "claim": "Function cmd_warm in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "cmd_warm",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 84,
+          "line_end": 86
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "272e2ed01e65",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_c4ecb47cfe11a31e",
+          "target_qualname": "warm_repo",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 2,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_8202c8b11dce0ab8",
+      "claim": "Function cmd_validate in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "cmd_validate",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 107,
+          "line_end": 145
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "2b18a47348d6",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_ef427b40c7630fe0",
+          "target_qualname": "_make_validation_fixture",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        },
+        {
+          "target_id": "claim_fn_ef427b40c7630fe0",
+          "target_qualname": "_make_validation_fixture",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        },
+        {
+          "target_id": "claim_fn_b5ea4d1f096cf8b0",
+          "target_qualname": "run_heldout_validation",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        },
+        {
+          "target_id": "claim_fn_9fc879b40450fb7f",
+          "target_qualname": "run_self_validation",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "Path(...).resolve",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "Path",
+          "reason": "import_module_not_unique_or_missing"
+        },
+        {
+          "expr": "Path(...).resolve",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "Path",
+          "reason": "import_module_not_unique_or_missing"
+        },
+        {
+          "expr": "out_dir.mkdir",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "tempfile.TemporaryDirectory",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "Path",
+          "reason": "import_module_not_unique_or_missing"
+        },
+        {
+          "expr": "str",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get(...).get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "payload.get",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "any",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "summary.items",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "k.endswith",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 37,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_b5a0efaf4a4df764",
+      "claim": "Function _claim_thin_view in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "_claim_thin_view",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 17,
+          "line_end": 18
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "84af69654cd9",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_abd8e1b8fae7d123",
+          "target_qualname": "thin_view",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        },
+        {
+          "target_id": "claim_fn_caf0aec5053f2957",
+          "target_qualname": "explain_claim",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        }
+      ],
+      "callers": [
+        {
+          "source_id": "claim_fn_37ee84ba6a166d90",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        }
+      ],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_d186d01a43ede647",
+      "claim": "Function cmd_explain in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "cmd_explain",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 52,
+          "line_end": 64
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "1a66387f5ee8",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [
+        {
+          "target_id": "claim_fn_caf0aec5053f2957",
+          "target_qualname": "explain_claim",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        },
+        {
+          "target_id": "claim_fn_7de9e6afa3dacec4",
+          "target_qualname": "render_reviewer_text",
+          "evidence": "observed",
+          "resolution": "from_import_direct_top_level"
+        }
+      ],
+      "callers": [],
+      "unresolved_calls": [
+        {
+          "expr": "GitRepo",
+          "reason": "from_import_symbol_not_direct_top_level_def"
+        },
+        {
+          "expr": "Store",
+          "reason": "from_import_symbol_not_direct_top_level_def"
+        },
+        {
+          "expr": "store.get_claim",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        },
+        {
+          "expr": "json.dumps",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "print",
+          "reason": "name_not_module_local_function"
+        }
+      ],
+      "unresolved_call_count": 8,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_e80832afd1fdac03",
+      "claim": "Function build_parser in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "build_parser",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 147,
+          "line_end": 193
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "bf07bc4c3e59",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [
+        {
+          "source_id": "claim_fn_25da627ed0062f1b",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        }
+      ],
+      "unresolved_calls": [
+        {
+          "expr": "argparse.ArgumentParser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "parser.add_subparsers",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "sub.add_parser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "retrieve.set_defaults",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "sub.add_parser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "explain.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "explain.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "explain.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "explain.set_defaults",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "sub.add_parser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "feedback.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "feedback.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "feedback.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "feedback.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "feedback.set_defaults",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "sub.add_parser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "callers.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "callers.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "callers.set_defaults",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "sub.add_parser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "warm.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "warm.set_defaults",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "sub.add_parser",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "validate.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "validate.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "validate.add_mutually_exclusive_group",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "group.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "group.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "validate.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "validate.add_argument",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "validate.set_defaults",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 38,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_fn_ef427b40c7630fe0",
+      "claim": "Function _make_validation_fixture in tmf/cli.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+      "kind": "structure",
+      "scope": "function",
+      "qualname": "_make_validation_fixture",
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.4,
+      "confidence_cap_applied": false,
+      "anchors": [
+        {
+          "path": "tmf/cli.py",
+          "line_start": 90,
+          "line_end": 104
+        }
+      ],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "469831ff7ee1",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [
+        {
+          "source_id": "claim_fn_8202c8b11dce0ab8",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        },
+        {
+          "source_id": "claim_fn_8202c8b11dce0ab8",
+          "evidence": "observed",
+          "resolution": "module_name_or_self_method"
+        }
+      ],
+      "unresolved_calls": [
+        {
+          "expr": "repo.mkdir",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "subprocess.run",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "subprocess.run",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "subprocess.run",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "files.items",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "full.parent.mkdir",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "full.write_text",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "subprocess.run",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "files.keys",
+          "reason": "attribute_call_not_resolved"
+        },
+        {
+          "expr": "subprocess.run",
+          "reason": "attribute_call_not_resolved"
+        }
+      ],
+      "unresolved_call_count": 10,
+      "graph_coverage": "partial"
+    }
+  ],
+  "source_fallback_paths": [
+    "tmf/cli.py"
+  ],
+  "next_steps": {
+    "explain": "tmf explain <claim-id> --repo <repo>",
+    "full": "tmf retrieve --full <claim-id> --repo <repo>"
+  }
+}

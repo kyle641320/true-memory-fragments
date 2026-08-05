@@ -1,0 +1,6767 @@
+{
+  "claim_support": {
+    "attributed_without_provenance_support": 0,
+    "observed_without_current_source_support": 0,
+    "violations": []
+  },
+  "degrade_to_source": {
+    "checks": [],
+    "failures": []
+  },
+  "embed_router_off": {
+    "checks": [
+      {
+        "first": [
+          "claim_class_7209bbe926396fff",
+          "claim_class_89c964c84bcf573b",
+          "claim_edge_0059168a2150906f",
+          "claim_edge_00efd47da9284dca",
+          "claim_edge_012a27180e41e988",
+          "claim_edge_0180cb47b24d4857",
+          "claim_edge_01a52600efa0a362",
+          "claim_edge_021f35e545826320",
+          "claim_edge_03128c862cc6cba2",
+          "claim_edge_0361ef13a1960438"
+        ],
+        "name": "self_repo_embed_router_off_deterministic",
+        "pass": true,
+        "second": [
+          "claim_class_7209bbe926396fff",
+          "claim_class_89c964c84bcf573b",
+          "claim_edge_0059168a2150906f",
+          "claim_edge_00efd47da9284dca",
+          "claim_edge_012a27180e41e988",
+          "claim_edge_0180cb47b24d4857",
+          "claim_edge_01a52600efa0a362",
+          "claim_edge_021f35e545826320",
+          "claim_edge_03128c862cc6cba2",
+          "claim_edge_0361ef13a1960438"
+        ]
+      }
+    ],
+    "failures": []
+  },
+  "freshness_sampling": {
+    "events": [
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_0b76904075aae11d",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_0b76904075aae11d",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_640dee691938844c",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_0b76904075aae11d",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_136af0f633265a4a",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_136af0f633265a4a",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_ef15e822e8914f08",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_136af0f633265a4a",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_8d8ba22e73ee4a9a",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_136af0f633265a4a",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_fn_6199c1b28c9cfad2",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_136af0f633265a4a",
+        "scope": "function"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_1a53c7379969dd36",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_1a53c7379969dd36",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_b5bef964b5d52b56",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_1a53c7379969dd36",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_1ad69d7f3380afaf",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_1ad69d7f3380afaf",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_fa7b85469ac2ecf6",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_1ad69d7f3380afaf",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_1f8a271c0e9e4be5",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_1f8a271c0e9e4be5",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_22d554f9477bb059",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_1f8a271c0e9e4be5",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_fn_b3a9c7b1c2ba0b48",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_1f8a271c0e9e4be5",
+        "scope": "function"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_27e53cf73f291993",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_27e53cf73f291993",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_6e582e792a0fb79a",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_27e53cf73f291993",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_fn_2bd7d997940b80dd",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_27e53cf73f291993",
+        "scope": "function"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_2894594e35bdf270",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_2894594e35bdf270",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_913fd102eaa9fa97",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_2894594e35bdf270",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_98885384eff7c69f",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_2894594e35bdf270",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_f1dbe79adfb6e39e",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_2894594e35bdf270",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_fn_3735d7d62e8d1b84",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_2894594e35bdf270",
+        "scope": "function"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_2b4e42f04239d3b1",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_2b4e42f04239d3b1",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_640dee691938844c",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_2b4e42f04239d3b1",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_2b5b09a15806c569",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_2b5b09a15806c569",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_0fe055502e2c0878",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_2b5b09a15806c569",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_7ef7162f73128441",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_2b5b09a15806c569",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_835470aaeea6ce80",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_2b5b09a15806c569",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_fn_a3d8a46fb868996e",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_2b5b09a15806c569",
+        "scope": "function"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_class_313a0b5f5bc1175f",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_313a0b5f5bc1175f",
+        "scope": "class"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_c5ede3a161372bad",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_313a0b5f5bc1175f",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_edge_ee66c1e9efba3943",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_313a0b5f5bc1175f",
+        "scope": "cross-repo"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_file_841587b0845923e1",
+        "expected_stale": true,
+        "sample_claim_id": "claim_class_313a0b5f5bc1175f",
+        "scope": "file"
+      },
+      {
+        "actual_stale": true,
+        "claim_id": "claim_fn_57c58dea5ca5cf24",
+        "expected_stale": false,
+        "sample_claim_id": "claim_class_313a0b5f5bc1175f",
+        "scope": "function"
+      }
+    ],
+    "fn": 0,
+    "fp": 13,
+    "precision": 0.6060606060606061,
+    "recall": 1.0,
+    "samples": 10,
+    "tp": 20
+  },
+  "invariants": {
+    "total_violations": 0,
+    "violations": []
+  },
+  "summary": {
+    "claims": 807,
+    "repo": "/root/.openclaw/workspace/tmf",
+    "status": "fail",
+    "work_repo": "/tmp/tmps3nlujyh/self_repo"
+  },
+  "thin_full": {
+    "checks": 807,
+    "failures": []
+  },
+  "verification_boundaries": {
+    "checks": [
+      {
+        "claim_id": "claim_class_0b76904075aae11d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_136af0f633265a4a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_1a53c7379969dd36",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_1ad69d7f3380afaf",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_1f8a271c0e9e4be5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_27e53cf73f291993",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_2894594e35bdf270",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_2b4e42f04239d3b1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_2b5b09a15806c569",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_313a0b5f5bc1175f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_3158b73c76e7fb22",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_31e9f9181358ee0b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_37f4945c7e493e3b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_38749f46f4a0be65",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_399a16b2f167aab5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_43fbab61857f554f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_4af96240a8a1424d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_560375a0ff60277c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_5d940f50189d29dc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_5ec2dd9f721258e2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_6de05ec65ac33f6e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_6fb1a4d06dd5fd80",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_7209bbe926396fff",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_791c99799d41eb92",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_7f5724d4e7ca3e80",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_89c964c84bcf573b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_8c54eb8899af6b8b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_8f15e0452174a10a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_944139c6b3b69b35",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_95034681e8718913",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_9febf7d5e2a56f47",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_a3872795163bced8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_a3a6cd15b0309de6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_a7aa865f3901f615",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_abacaa242280f2ad",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_abc7a4cd283d0cc3",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_b2203297e850f58c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_b2c2cbebdc591170",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_b6e082c449af1653",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_c219e3212353c028",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_d596566d33a43b9b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_d9e3600f72bf1e65",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_ddcd9929df314e7e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_defdc38fc58182e2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_fab6be1b5da8905f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_class_ffeb6f2c07e963b8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_config_740f4c252410e524",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_config_8e50e3ced8801a80",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_00634504fe9cb75f",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_12eeeb2b278c5edf",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_193a86ba389c19d7",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_27b1c5d037fd5ed8",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_2d5dcb2b0368e110",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_3dc29c54ba56052e",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_44023d39cc87859a",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_5c5ee5aa435f8b49",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_60a78fcff11d46db",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_68bc46a3a5093ecc",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_6dbaecd132813dd1",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_786eb5cd9b99a679",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_793b93caf50c7057",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_8616790aa7118462",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_a8c0bded0ef24c16",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_aad28af7a1b509bf",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_b253e16a12e1b92c",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_b4f53ef902b67848",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_b71b261d4a55a06d",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_bd776f4eb501f3c6",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_bfe00d601bf3ef4b",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_e06c983ab0ab6b05",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_e697005782ed6592",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_e7ed4b2b47b93054",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_decl_f99a777c68931af6",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0059168a2150906f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_00efd47da9284dca",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_012a27180e41e988",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0180cb47b24d4857",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_01a52600efa0a362",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_021f35e545826320",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_03128c862cc6cba2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0361ef13a1960438",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0479ea9db4ae40f9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_049397263bd9c0ba",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_04da7331aef55408",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_04e037a788aef318",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_050159aa93ec6dd6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_06422a9db7c93249",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_072615afeb8eb408",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_081025273afd24b6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_09114e488032b116",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0954eda33d5fadb3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0a6bdb077214c0fc",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0a80d4e0f008ab48",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0ad6f0f2af762b66",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0b58b0c7a5940a17",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0c8d2afde3aafddb",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0cb92743ab08393e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0d19fca2fa01b0d4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0e51eaf10efba5b6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_0fe055502e2c0878",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_10858f4bd1c1cf11",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_109d3d0a406e1c5d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_10c7134c13d4e950",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_10d7d40cc1005793",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1161f5999828874e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_118dbeaf009df4ff",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_11a3ff6c8857ff27",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_123db25dbd42580e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1282161d2954e6c0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_12867e7238bf45b2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_12fcd47312ed0cef",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1319a4c358184576",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_139f40d65c0c8cbe",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_13a640c6c5f9cc4d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_13e246dc436c661d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_13f588de821daf05",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_14348322b803375a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1455c97f08b7a5da",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_16443e51365fb7d9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1679215907d1e0cc",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_169bed1bea2452c3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_17c28d09589cd590",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1806b86f57f530e6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_187c1141a8541331",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_18ff946e0c847a51",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_19dbbe5a35ad20a9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_19f96a2ef2d711f6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1bd53447c125f048",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1d820713823a2f91",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1e4a029706b3d1df",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1e9e59e22bfdfb5d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1eaec93f2a8fb7b9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1f0a1082d4a6c170",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1f56e5a994644fe6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_1f9dc0ce25951bb7",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2023a654ddb004a3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_214ba002f96e29f0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_216348b817663759",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_218979a859740a72",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_21ae9396a352349c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_230d9411b40217fe",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2357d6834b7cb6cd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2406c86c54ca2d66",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_243f8bc1e1e44cae",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_249c476a8f9db6dd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_26281a8b177efe42",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_266fb4a1bc825bcb",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_270276721ceb0a84",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_275e11fd931e7b78",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_278a3fb0c0043bcd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2841f273f4bfa343",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_28e08ac9757eacf3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2a886679971a0d04",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2b758eaa5da81509",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2bf676d8045ab9b3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2c2b979cc14c35de",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2c3452ee512704d3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2cb5ba56765ee07e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2dfe26b97690b527",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_2e4024ec3ad82259",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_31257f43265d8ba5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_32bd9b122ad8109a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3640749ac96898e5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3648785ed38dfbe6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_36fa58693f7a91a8",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_387dc61bb8e88702",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_38e40e0b4c419f02",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_397e551552a9bd6e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_399b140126366721",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3a1874fb97fa6016",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3b9110fa46c68d1d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3f0857443adb6042",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3f15d01a5630955b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_3fda69356bdca17b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_400ca5a0e5fe6f16",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_401b1741fd154c2a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_40f8dba2eed1a463",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4160e155947e790b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_419628268ba09111",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_42ce6b08576e8a02",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_43cd4f13ba68e0a0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_452b2fb8654afd60",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_45b24e3113903b0c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_45be205cb17795aa",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_45e6c86f83c2bc3e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_460c1be83d2ad46a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_46cd3c6f6ce0dd15",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_483fa124ff5e0bec",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4a76c37b36478cde",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4ac2ae971b2ea5a6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4b401ede2dea1e20",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4cb37a79dfc28f10",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4cd685c218206778",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4df5be3541b6def3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4dfe4329caef680e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4e11831961c1011d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4e1931e396db0ad5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4f3fd25508c0e458",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_4f9b9f1a1246a840",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_50dedecea24b2d7c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_51611006c308871f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_517c83fd854e46db",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_51e19304fa61108d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_525c059a3a7ef399",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_52714b9290d5d8be",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_52d41567e55e69d6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_54c7f72d4cc8d79c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_54c86b720d46ef2b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_550207a9c04c0724",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5563d67baabe23c2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_58faf8b4f7736f13",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_598bb2db97b9331c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5a45376dbf8b7321",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5ae8d78f64b2025e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5bbb54cc6b1ee04e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5bdd6f2183d0274e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5c15f59e94072e70",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5c48aa97de8c1925",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5c72863059230cff",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5cb0b799a3e3940a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5cbbb9fb7aefebe8",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5d08843ed7b0fe1b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5d73df2e3db0d663",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_5f9f05d7815afcde",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_61e4e6ac0369cb9b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_623f15d380b66362",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6283d1f022b89b7d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_628e1cd3b78d59be",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_62b86c7a41060b60",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_62e6c48314504acd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_62f4c04f0151fd8d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_63a3def5deeaa218",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_63db4b4fef859319",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_64859e740bdf51d1",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6534e41ac93a2565",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_655e2b29e92c76b9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_65829afd0023fa4c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_65db21872ea593cb",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_661cb0d060f51575",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_671120a884bb8e94",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_673595aefc7bb4ab",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_699691713581fd85",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_69ed93ccac0e045d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6a2e1f5133e01d82",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6a657f4a24e8a9e2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6a7eef34af64e160",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6acc257002698078",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6bc325282037a7c0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6bd28e8353e3cd43",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6c6122923c238eac",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6c9c44b4b78aba27",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6d977fa0c1becdb1",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6e1a972ae2b94490",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6f43238fd45a9ef1",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_6fc2cbd1856ee211",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_70048a04aa4e301e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_70811e2f9104c445",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_70f7d10b3e37e3f9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_71fddd07561b1a49",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_72dc559fad5ecefd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7457b3543cd3f81d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_74721a4bfb96c93b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_74cd22891b5bc4e4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_74d42901aab71354",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_773b470c079170cd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_777d46680fa0ac65",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7783c9102795b42c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7964d2caa6a7408f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7a33a066fee3e4c5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7a341e9c9a345f4a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7a70c6e7a7a4fc2c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7b009b53a4fc76aa",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7b3186e87a747a06",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7b871c7e002277a9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7c751740f7d795e1",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7cfe1b33a032cdcf",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7dfdf3116e1078b5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7ef7162f73128441",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_7fe0842ad29f47a4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8088913a08286002",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_809ee5ead9beccb0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_81003c898ff9f8dd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_81599eedd08e81aa",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_825a039291990030",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_82e1c86577bdbf77",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_830139ec1a2f0c74",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_83107d7d599cf150",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_83552f0bd86d8e3b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_84a2ed62d2d05e97",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8659957a0e65fc4b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_868d098fade3f157",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_873ea783bd23ff82",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_87719f1e542f3bd0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_877bcb8199082e32",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_89ebc0b14994846d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8a37eedbc54b32bc",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8af279f5b312a2da",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8b332599ad8b20b2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8bd3358f06ffa570",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8cdf59cf3791a7b0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8dc0740c046b2689",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8e2bf2a223eaad76",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8e3d1f8a89125a1f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8e5ca433c7ca5ec7",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8f4982b22338b1c2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_8fc04c410068af39",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_9009e31285fe89af",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_90ee8fce6ee9607f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_91008a0d21206ab1",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_9112590cf0fe888a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_913fd102eaa9fa97",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_942e3176edb91e4a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_949c2825c7c7e188",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_963afe3862a20bdb",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_963d69d8b097c909",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_96feface690b2fe3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_98885384eff7c69f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_98bb45a7869e721b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_99119e919aac61c2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_99875b550c571cf2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_9a1dde03e8961c21",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_9dd1da74b8a4ea27",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_9df075c22e601c76",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a023e63b1479c45e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a09ac855257fddee",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a0b57b68552906fd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a0eeb6a05c33b83d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a27fbf1ca85ed824",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a2c4e71bad26a727",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a3b1099ebed466f2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a43d91c787a6e088",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a45be6aa5459fc2d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a499d032d81d6b13",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a4f2ed4179e4e48d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a5ca851c83803c6b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a62769fce1f79949",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a6346b12109217ad",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a641dad417db0686",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a72d26303b843a88",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a7312ca52bd61214",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a785b29a4186ffe1",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a8083ec9bdc2ea10",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_a9aaae3cf6743e35",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_aa4f97a092e4296b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_aa7e54078b6a04aa",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_aaa6e8699393f710",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_aaf23a5296c9599d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_abbab59ac6bd6f78",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ac4a725a88626b89",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ac9921968a8e555f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_acb446243056a73c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ade61f794151a673",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ae39ffcbca6e7a0e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ae41a6c804041d6f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ae75c1e88c9ab1e6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ae959769bb031238",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_aef5fe92941adf74",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_aff2149c4de456b6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b07d59e10e914258",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b0e6f435e4972937",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b261a68622949703",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b2ae28b188c4c858",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b378eaba3c42ebc5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b3f7fa69b94f5dbc",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b3fdd512210aa787",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b4a9c9e91231c5a4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b5a87d7dcf4947c7",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b6ea98aced98bea0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b7831f6ba0b0becc",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b7da3ab6bd13c8f5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_b906b81c48d8d20d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ba1dde10926a8de7",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ba1f114136d0a3d7",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ba5b38b61c7fa836",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ba88d4b75d81c821",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bb11c39841e9f39b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bb50f0fee67d789f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bd665b169b6609f8",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bd6d8899da640147",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bd81ad42e194b503",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bd859dc887e4aa24",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bdf760357b79ac1f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_be817bb35796703c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bf4e0bdad7744659",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bf7f8194074982cb",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_bfe7e76ab11dd583",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c09cc473a3e334f2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c0c1e270386adfd0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c164ac173d465bb6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c1bb1f4fc9185b1e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c2d680ee55c4498c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c37232a64e7a17e8",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c3a3111eb440972d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c44dc365579cc7a4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c51ca74a43c0c43e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c5cadb82a4f3fcf2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c5ede3a161372bad",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c6624cc9a06eb0c6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c74e1b933419b5b9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c808167d78b65bac",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c8c7c27a102db354",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c8ef51e6955d3ffb",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c94bd6af702f31e0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c992fea3ad07f4b6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c9bbd2c44b869cd5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_c9de29ffaf31fcbe",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ca83f389ef50288e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ca853894366d3f9a",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cafb2ae9ff5b5f52",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cb620569c983020c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cbc7816ed99c5502",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cc33f0eef8c9bb72",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cc5269a3d352b5c9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cee698ad83464af5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_cfcb632838e9dc95",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d15c731831739160",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d1aab84e477a4dad",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d22c18631a1ba6d7",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d26c7229a365d071",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d277c722af20c6f3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d32d609b8a455ae5",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d3522253d092f8d3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d40fbf3059a7ee43",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d41883189733c6ae",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d424f83e17b7a98d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d521ef33b3805e08",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d557d95e51123c27",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d623f33b30aa1aa6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d6316e3f80ea62fa",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d695fd45809d8929",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d699df38e416258c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d70a0fcd3cb097b4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_d84c8e707a8fad0e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_da3abb46b27f4e7d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_da3ead8dbe15450d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_db2e841c0da0dade",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_dcd565201d8a7488",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_dd0df72727e38f79",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_de0eb71b3b1f837f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_df2e163251732907",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_df9db63ac4baaec0",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e06a1f423532634c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e113f03126800c14",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e141d750dc726a45",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e22a18e2d4c77117",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e2d97986b1ed3e29",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e41522bafc73bb67",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e43955e64dd1fb98",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e4590c8dd262186f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e4807a070271c87f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e48d53cd78ac0f06",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e4afbacba590c76f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e51e7cdd26fc900e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e5a3c288ddb5960f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e5e1d2ba7406431b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e63a6c90518c1645",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_e69cf8c940f0561f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ea3979e4e90b2fc3",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ea5dd1e4859665ab",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ea72c9d15c564415",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ead0c7bca953f4be",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_eb6ec3f77288ed97",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ebb39edde3ca2975",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ed6ed81a09a9923d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ed85f2603441a3b6",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ed96aa86121136aa",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ee1e6c4268f99d4e",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ee66c1e9efba3943",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ee7940a19b35cf8d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_ef15e822e8914f08",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f0074979221c1698",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f0b2f6bdf3549303",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f2020ba6fbf69bf2",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f33f8cc1854533ec",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f3751430f1e34b2f",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f3bb0bf7f4047a91",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f43425739ccde05d",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f4782ff5b9838da8",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f64876b12bea8c70",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f684ee03b0a78398",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f8d94cc7d08df546",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f91cfebf89abcf66",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f97ef1eac28f3fe9",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f9c46c46cc9f110c",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_f9e6c975f756c230",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_fab31b74240c109b",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_fc1aa9947baa2869",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_fd47019062af43a4",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_fdbe4172ffed46cd",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_fed5406e67568918",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_edge_feea1518d8c06a00",
+        "confidence": 0.55,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_0297d6c4d082e14e",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_092f024beb0aeaea",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_19a61cdb2fe4e36a",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_22d554f9477bb059",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_3390f64108c3767e",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_356d2953aa9c9b13",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_369ecf811bc2183a",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_4312cad3c8658785",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_4d0c3d7b303a025f",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_50c86b7ed8ac2cf9",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_5bdaecac8f383c30",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_5cf49da50c34815f",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_640dee691938844c",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_6e582e792a0fb79a",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_72201306c7d5c338",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_7436738fc765edbc",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_78c26c1d81775ace",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_7b933fbdaa2e8e69",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_7cc930ac214aa04c",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_7df7d6de3ab5ea5c",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_835470aaeea6ce80",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_8384dce5d9eb6c12",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_841587b0845923e1",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_8d8ba22e73ee4a9a",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_920c9134f7d16f22",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_951ce46e6b2596d6",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_9e2c96c2ff5e5e9e",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_a561fca44d3ddae0",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_a7ce30f4bafc1e28",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_aa909ca8a985f972",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_abe369fd39c0b329",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_b5bef964b5d52b56",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_c3932280089e9cd9",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_e571b086513e9442",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_e8e40c9e05cf38cf",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_e9368a55b275453c",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_ed67492e544b69da",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_eed631d8e087699b",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_f1dbe79adfb6e39e",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_file_fa7b85469ac2ecf6",
+        "confidence": 0.35,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_01d2d9c798b636bf",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_01eeb7d6dfa1e18e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_032716beb6fbd36a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_04e475f446984849",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_04ec36ed0ae8dfd7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_052d8d9eba1b741b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_06c548bfa30a6c19",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_077b9287df506e0e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_099026a8fe4d2cd9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0a394ac6917f6632",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0a7e99cecb21fb5f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0ab3f7e731c897f1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0b5f43b9fcabde61",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0b71e7e5efc7dd8a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0b71edb4468e7801",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0d13808b5d037645",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_0d5e5aa331292315",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1009bdd140a85f37",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_10dcff285adcdbc8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_146c82c8932937f7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_15087ef7fff497a0",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1510cf86998e6ac1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_157840cbfd56d8f1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_15d3687d77cd2ffc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1778b02e0f4c58ad",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_18901da2135fc4c7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_19b1fe82181f2605",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1a1f3e380a034ccc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1a5d3010d23eb2ec",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1a952ac2a8c35f9f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1ad3a51e9f04814e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1ccb5ac9a03eaf6d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1d68ba45083112bd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1e979cbe716cfd74",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1f06cc7be9487aa9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_1fcdd1dd2fbaf0bd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2051ea204d760428",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_219d87d62bd29248",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_22c41be7ad3db9e9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_231a6a4757549e9a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_24a2da9cf504fcfe",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_25da627ed0062f1b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_26022a3ea6a34f3a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2724458fb207bb7a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_285bf359ce44c94c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_28f76dbdd53f24ea",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2a2780cd46e0cbd5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2ba8886f4262e820",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2bd7d997940b80dd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2e6351f641a57880",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_2f07fc85342306b5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_31909964159668b7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_31c85169d498b6a7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_328986b7cb75fbf8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_33a59e54f98f767a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_34a4b8ffa96c19f0",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_36b71a215da462bd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_3735d7d62e8d1b84",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_37ee84ba6a166d90",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_39c49991b322c851",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_39c4a5d2caef74a8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_3a8b105b63f1a48b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_3c5c86aa6244d00e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_3d18a3e394e7eba0",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_3dab4842b8af7463",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_3e794ade030e6011",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_40b14d0c9fc20904",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_415f09b7b73f68f8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_42473215810820f2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_43583668c7e902c4",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_449a9e553e3b41e4",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_44b260e77a60397f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_45490f7061d15062",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_4566aca854a17c82",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_461d6bd3d33f72a1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_462a1daaec6b5eb9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_46ba3124fd6d3e69",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_47bbdd31f852313e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_490e3e3a9e0742e7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_4b53a6519ec19294",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_4c63c1f43760d1e8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_4f590315f93dcfe1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_4f813985850e9bb1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_509753ff90b26243",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_51336ffcdb619a67",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_52d8ca6884df97f3",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_52e51e449b72e9dd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_52feb39350d4fd6b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_53b96be3012b92c2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_540f540cb6d3fd39",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_54269719a5b28554",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5536390092dc5561",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_55648b95a66741f8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5622e06d2b966cb9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_56ee4c6ee8e63611",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_57c58dea5ca5cf24",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_58041d16bf6fcbb7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5a4aac20a070fbb6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5b073622977a71fa",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5b4d2de666b8e057",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5b5be2f841ca8804",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5bc82152af156069",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5bd84dc34b306830",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5e00c7906df54585",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_5fc855edc052ffa6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_616946b0f14f4361",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_6199c1b28c9cfad2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_63cafe0aed109327",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_642f0da3e0a2afc3",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_648927aa564a8884",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_66de49919964f382",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_67a52e757706d390",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_68e3ad040ce3806b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_690c1fb667b6b0b5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_6d60717424987f13",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_6da880b8a2965b43",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_726f1efe801c6a3e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_72afb6eba8e988f8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_732c6d8b3decf89b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_73acaaebce03426b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_73fa1321096f9364",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_74de010ec3f89069",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_74eb629c075d4316",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_75405ac24adbc560",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_758d1f8039193169",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_763bcf7180dd1fa3",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_772ecd2f1d5e36a5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_78651bbc3bb03c83",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_78abf71ff36d3a63",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7b42c1dec368300f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7b49c5e63ccdd83d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7c055ae70c80f5fd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7c202c78a5ba4bce",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7d48a660f5110fdd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7de9e6afa3dacec4",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7f1b36206875de5c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_7fcdb0b769d92693",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8075af7a83a6a2e2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_82253ea8b8d0731f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8241682050bfd68d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_82b30f58ca771e22",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8746a8f1fbd28e3b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8789ac8b69bbe7ac",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8817d506f4eb7aed",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_88ca16907d3ccc86",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_891b854a30e99316",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8966e261488c395e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8aaaad3d8d800c6d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8ed0e060a53fa9f0",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8ed64eb5179631fe",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_8fb007811f0adf1f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_906050748995fc1d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_907a6cda92cd4fae",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_92a916c147065182",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_92c40629834236e3",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_936bebdb0980ddbc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_93a8f75fceeae682",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9606a45b6b3134bd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_960e94e32a8749d6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_982234734683bae2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_98dbdae800c917da",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_98eed8c85d839dcb",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_99f263d758c92d10",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9b772af42b445b95",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9d2b383c05bb08f1",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9d6939679b9d19b0",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9da066d665068ab5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9e40cfdadaf2a96c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9ea528e75e6d0a4a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9ebce3f3d9e90c00",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9ef2b451771ce097",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9fac00d0a3cb1be6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_9fc879b40450fb7f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a05c3eccbd5187e2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a0a3c82eed4bc22d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a136c7d6dfefa961",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a14a3f1523d4976d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a1b4a160cbd522ff",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a1c4243933855cc9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a3d8a46fb868996e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a43c7a06e379c726",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a49e49e74aa65eab",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a4a0808d6e1720c8",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a60268928018dbde",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a611cbc8b45e1ce4",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a65e67bee1350c21",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a691e85cabe2aa81",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a6f87b68f6220a7d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a6fdde9a61ec42f2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_a6fe5d718cc9ee6f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_abaa2b7b8c2babb6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_abd8e1b8fae7d123",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_abdda64061e0ae7f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_adee4651afe07dae",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_aedebbdccc40cb4b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_af466ec455741edb",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b05d405b31101118",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b1e5567568a99ee9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b280de64d6b8f19f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b2ca9ad160f00233",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b340ab1125eab6fa",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b365046356197848",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b3a9c7b1c2ba0b48",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b52e5510aaf69f51",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b53fbf7617cd314e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b5a0efaf4a4df764",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b5ea4d1f096cf8b0",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b6ada71afaba7420",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_b7daea6994a54867",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_bb6b954c6f822946",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_bc4c2d6de4e08340",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_bc5a0489154df9e5",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_bf426caff5d3b76f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_bfa7497e2e76596d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_c1e4402af4279984",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_c2a627858490ab8e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_c39f59069470b933",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_c4ecb47cfe11a31e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ca046d27b5b7168a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_caf0aec5053f2957",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_cb14a67448fe602c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_cd9ac8cda5304b5c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_cf767883b58ab412",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d0d06485f0ba626e",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d186d01a43ede647",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d1a8222debefb9b2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d1be433c6c65b7be",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d1f7aacd86a20589",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d7ae0a2cfef7c3af",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d7c60055535f2225",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d7f507e3c64809a2",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d824e3d60da2e5cf",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d85605be325c1698",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_d8752ba151aa7996",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_db40ccc8f65e2996",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_dbe62b324f33a95c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_dbec109357d6ac79",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_dc0282ccdf1e24eb",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_dcba99d7327fdd59",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ddc643bec939239a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_df94341ce5f7b8dc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e0f058c633378a6a",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e1b8274ea61f931b",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e26ec152201f07e4",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e5170daa5dc2c3bc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e5263513bdf8db4f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e5410cb866d9b22c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e5f645e0017da3d9",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e62c9d59ba32f174",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e80832afd1fdac03",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e9d65a57aad836fc",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_e9d953dc50fb05e6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_eac3030ec655863c",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ebbe7579e37af887",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ec18f88ec3f3d943",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ec221678c9592bdb",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ede1eeba06cb5565",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ee0e9d7c84669a39",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_eed42b99c8575794",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ef644542804c6689",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f049e68dabeee207",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f265bac81aa16abe",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f3c2fc53253d8d87",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f3c668ba38be3a16",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f4e580a2a7100628",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f54fc129b3c8f310",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f93e4eef531add2d",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_f97098bc2cdb9ecd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_fa2605695f5c25dd",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_fa701561fe9a91e7",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_fd5cfe129d20887f",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_fdfbc997a9f56148",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_fe73df5393b25020",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_fe7b6c296b5df7e6",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ff577a2aabba3ba4",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      },
+      {
+        "claim_id": "claim_fn_ffc73746edce7fac",
+        "confidence": 0.4,
+        "evidence": "observed",
+        "pass": true,
+        "reason": "",
+        "verification": null
+      }
+    ],
+    "failures": []
+  },
+  "warm": {
+    "coverage": "complete",
+    "derived": 40,
+    "files": 40,
+    "index_callees": 170,
+    "skipped": 0
+  }
+}

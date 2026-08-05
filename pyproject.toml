@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "true-memory-fragments"
+version = "0.1.0"
+description = "True Memory Fragments: lazy, source-bound code memory for AI coding agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Kyle (confirmation pending)" }
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Documentation",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/kyle641320/true-memory-fragments"
+Repository = "https://github.com/kyle641320/true-memory-fragments"
+
+[project.scripts]
+tmf = "tmf.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tmf*"]
+
+[tool.setuptools.package-data]
+tmf = ["py.typed"]

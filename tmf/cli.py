@@ -1,0 +1,226 @@
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from .feedback import apply_feedback
+from .explain import explain_claim, full_view, render_reviewer_text, thin_view
+from .freshness import check_freshness
+from .git import GitRepo
+from .retrieve import retrieve_path, retrieve_text, reverse_callers
+from .warm import warm_repo
+from .invalidation import diff_revisions
+from .store import Store, configure_state_root
+from .validation import run_heldout_validation, run_self_validation
+
+
+def _claim_thin_view(repo: GitRepo, claim) -> dict:
+    return thin_view(explain_claim(repo, claim))
+
+
+def cmd_retrieve(args: argparse.Namespace) -> int:
+    repo = GitRepo(args.repo)
+    if args.full:
+        store = Store(repo.root)
+        claim = store.get_claim(args.full)
+        if claim is None:
+            print(json.dumps({"error": "claim not found", "claim_id": args.full}, indent=2))
+            return 1
+        print(json.dumps(full_view(repo, claim), ensure_ascii=False, indent=2))
+        return 0
+
+    if args.path:
+        result = retrieve_path(args.repo, args.path, use_model=args.model_derive)
+    else:
+        result = retrieve_text(args.repo, args.query, limit=args.limit, use_model=args.model_derive)
+    payload = {
+        "query": result.query,
+        "view": "thin",
+        "claims": [_claim_thin_view(repo, item.claim) for item in result.claims],
+        "source_fallback_paths": list(result.source_fallback.keys()),
+        "next_steps": {
+            "explain": "tmf explain <claim-id> --repo <repo>",
+            "full": "tmf retrieve --full <claim-id> --repo <repo>",
+        },
+    }
+    if args.include_source:
+        payload["source_fallback"] = result.source_fallback
+    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_explain(args: argparse.Namespace) -> int:
+    repo = GitRepo(args.repo)
+    store = Store(repo.root)
+    claim = store.get_claim(args.claim_id)
+    if claim is None:
+        print(json.dumps({"error": "claim not found", "claim_id": args.claim_id}, indent=2))
+        return 1
+    payload = explain_claim(repo, claim)
+    if args.json:
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
+    else:
+        print(render_reviewer_text(payload))
+    return 0
+
+
+def cmd_feedback(args: argparse.Namespace) -> int:
+    store = Store(args.repo)
+    claim = store.get_claim(args.claim_id)
+    if claim is None:
+        print(json.dumps({"error": "claim not found", "claim_id": args.claim_id}, indent=2))
+        return 1
+    result = apply_feedback(claim, args.kind, args.note or "")
+    store.put_claim(result.claim)
+    print(json.dumps({"claim_id": claim.id, "changed": result.changed, "note": result.note, "confidence": claim.confidence, "evidence": claim.evidence, "claim": claim.claim}, ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_callers(args: argparse.Namespace) -> int:
+    print(json.dumps(reverse_callers(args.repo, args.claim_id), ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_warm(args: argparse.Namespace) -> int:
+    print(json.dumps(warm_repo(args.repo, per_file_timeout=args.per_file_timeout), ensure_ascii=False, indent=2))
+    return 0
+
+def cmd_diff(args: argparse.Namespace) -> int:
+    print(json.dumps(diff_revisions(args.repo, args.old, args.new, per_file_timeout=args.per_file_timeout), ensure_ascii=False, indent=2))
+    return 0
+
+
+
+def _make_validation_fixture(parent: Path, name: str, files: dict[str, str]) -> Path:
+    import subprocess
+
+    repo = parent / name
+    repo.mkdir(parents=True, exist_ok=True)
+    subprocess.run(["git", "init"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    subprocess.run(["git", "config", "user.email", "tmf@example.com"], cwd=repo, check=True)
+    subprocess.run(["git", "config", "user.name", "tmf"], cwd=repo, check=True)
+    for rel, text in files.items():
+        full = repo / rel
+        full.parent.mkdir(parents=True, exist_ok=True)
+        full.write_text(text, encoding="utf-8")
+    subprocess.run(["git", "add", *files.keys()], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    subprocess.run(["git", "commit", "-m", "tmf validation fixture"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    return repo
+
+
+def cmd_validate(args: argparse.Namespace) -> int:
+    import tempfile
+
+    repo = Path(args.repo).resolve()
+    out_dir = Path(args.out).resolve() if args.out else repo / "reports" / "cli-validate"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    payload = {}
+    run_heldout = args.heldout or not args.self_only
+    run_self = args.self_validate or not args.heldout
+
+    if run_heldout:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            fixture = _make_validation_fixture(root, "fixture", {
+                "a.py": "from b import helper\n\ndef main():\n    return helper()\n",
+                "b.py": "def helper():\n    return 1\n\ndef spare():\n    return 2\n",
+            })
+            realistic = _make_validation_fixture(root, "realistic", {
+                "service.py": "from dataclasses import dataclass\n\n@dataclass\nclass User:\n    name: str\n\ndef normalize(user):\n    return user.name.strip().lower()\n",
+                "api.py": "from service import normalize, User\n\ndef handler(raw):\n    return normalize(User(raw))\n",
+            })
+            payload["heldout"] = run_heldout_validation([fixture, realistic], out_dir / "heldout")
+    if run_self:
+        payload["self"] = run_self_validation(repo, out_dir / "self", sample_limit=args.sample_limit)
+
+    summary = {
+        "out_dir": str(out_dir),
+        "heldout_status": payload.get("heldout", {}).get("summary", {}).get("status"),
+        "heldout_precision": payload.get("heldout", {}).get("freshness", {}).get("precision"),
+        "heldout_recall": payload.get("heldout", {}).get("freshness", {}).get("recall"),
+        "self_status": payload.get("self", {}).get("summary", {}).get("status"),
+        "self_precision": payload.get("self", {}).get("freshness_sampling", {}).get("precision"),
+        "self_recall": payload.get("self", {}).get("freshness_sampling", {}).get("recall"),
+        "self_fp": payload.get("self", {}).get("freshness_sampling", {}).get("fp"),
+        "self_fn": payload.get("self", {}).get("freshness_sampling", {}).get("fn"),
+    }
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    failed = any(v == "fail" for k, v in summary.items() if k.endswith("status"))
+    return 1 if failed else 0
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="tmf", description="True Memory Fragments: lazy, source-bound code memory")
+    sub = parser.add_subparsers(dest="cmd", required=True)
+
+    retrieve = sub.add_parser("retrieve", help="retrieve a thin view by path or lexical query; use --full for one thick claim")
+    retrieve.add_argument("query", nargs="?", help="lexical query when --path is not set")
+    retrieve.add_argument("--path", help="repo-relative path to read through")
+    retrieve.add_argument("--repo", default=".")
+    retrieve.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    retrieve.add_argument("--limit", type=int, default=5)
+    retrieve.add_argument("--include-source", action="store_true")
+    retrieve.add_argument("--model-derive", action="store_true", help="derive function claims through model candidate+verification interface")
+    retrieve.add_argument("--full", metavar="CLAIM_ID", help="expand a single claim with thick body and full explain data")
+    retrieve.set_defaults(func=cmd_retrieve)
+
+    explain = sub.add_parser("explain", help="explain claim provenance, freshness, trust label, anchors, and action hint")
+    explain.add_argument("claim_id")
+    explain.add_argument("--repo", default=".")
+    explain.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    explain.add_argument("--json", action="store_true", help="emit structured agent-readable explanation")
+    explain.set_defaults(func=cmd_explain)
+
+    feedback = sub.add_parser("feedback", help="record feedback without treating hunches as facts")
+    feedback.add_argument("claim_id")
+    feedback.add_argument("kind", choices=["usage", "verified", "falsified", "hunch"])
+    feedback.add_argument("--note", default="")
+    feedback.add_argument("--repo", default=".")
+    feedback.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    feedback.set_defaults(func=cmd_feedback)
+
+    callers = sub.add_parser("callers", help="list conservative reverse callers for a function claim id")
+    callers.add_argument("claim_id")
+    callers.add_argument("--repo", default=".")
+    callers.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    callers.set_defaults(func=cmd_callers)
+
+    warm = sub.add_parser("warm", help="derive supported claims for a repository into .tmf/ and build indexes")
+    warm.add_argument("--repo", default=".")
+    warm.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    warm.add_argument("--per-file-timeout", type=float, default=60, help="engine-owned timeout budget per file in seconds; 0 disables isolation")
+    warm.set_defaults(func=cmd_warm)
+
+    diff = sub.add_parser("diff", help="compare two git revisions as a first-class blob manifest")
+    diff.add_argument("--repo", default=".")
+    diff.add_argument("--state-root", help="accepted for CLI consistency; rev-pair diff never reads or writes store state")
+    diff.add_argument("--old", required=True)
+    diff.add_argument("--new", required=True)
+    diff.add_argument("--per-file-timeout", type=float, default=60)
+    diff.set_defaults(func=cmd_diff)
+
+    validate = sub.add_parser("validate", help="run held-out validation and/or self-dogfood validation")
+    validate.add_argument("--repo", default=".", help="repository to self-validate; default: current directory")
+    validate.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    validate.add_argument("--out", help="output directory for validation reports; default: <repo>/reports/cli-validate")
+    group = validate.add_mutually_exclusive_group()
+    group.add_argument("--heldout", action="store_true", help="run only the held-out fixture bench")
+    group.add_argument("--self", dest="self_only", action="store_true", help="run only self-dogfood validation")
+    validate.add_argument("--self-validate", action="store_true", help="also run self-dogfood when --heldout is selected")
+    validate.add_argument("--sample-limit", type=int, default=10, help="self-dogfood freshness sample limit")
+    validate.set_defaults(func=cmd_validate)
+
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    configure_state_root(args.state_root)
+    if args.cmd == "retrieve" and not args.path and not args.query and not args.full:
+        parser.error("retrieve requires --path or query")
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

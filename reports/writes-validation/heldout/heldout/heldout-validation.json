@@ -1,0 +1,1371 @@
+{
+  "claim_support": {
+    "attributed_without_provenance_support": 0,
+    "observed_without_current_source_support": 0
+  },
+  "degrade_to_source": {
+    "failures": []
+  },
+  "freshness": {
+    "fn": 0,
+    "fp": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 2
+  },
+  "invariants": {
+    "by_repo": [
+      {
+        "total_violations": 0,
+        "violations": []
+      },
+      {
+        "total_violations": 0,
+        "violations": []
+      }
+    ],
+    "total_violations": 0
+  },
+  "properties": {
+    "by_repo": [
+      {
+        "checks": {
+          "api_nodes": {
+            "checks": [
+              {
+                "detail": "",
+                "name": "api_node_derived",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_node_fresh_initial",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_route_literal_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_handler_body_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_comment_format_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_unrelated_function_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_delete_reconciles",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_dynamic_unknown_skipped",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "config_nodes": {
+            "checks": [
+              {
+                "name": "config_value_change_stales",
+                "pass": true
+              },
+              {
+                "name": "config_reformat_and_key_order_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_unrelated_key_change_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_key_delete_reconciles",
+                "pass": true
+              },
+              {
+                "config_count": 0,
+                "name": "invalid_config_zero_nodes_no_crash",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "cross_file_edge_lifecycle": {
+            "checks": [
+              {
+                "callers": {
+                  "callers": [],
+                  "coverage": "partial",
+                  "node_id": "claim_fn_b9df6cbdca84b925",
+                  "note": "Known callers from already-derived files only; not a complete blast radius.",
+                  "stale_skipped": 0
+                },
+                "edge_removed": true,
+                "name": "cross_file_callee_delete_removes_edge",
+                "pass": true
+              },
+              {
+                "edge_id": "claim_edge_754739c47ecd7a50",
+                "name": "multi_binding_edge_survives_path_node_reconcile",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "degrade_all": {
+            "checks": [],
+            "failures": []
+          },
+          "embedding_router_additivity": {
+            "checks": [
+              {
+                "actual": [
+                  "claim_edge_754739c47ecd7a50",
+                  "claim_file_4a5b41e3baadee0b",
+                  "claim_file_f0de093a8c24f6a3",
+                  "claim_fn_b9df6cbdca84b925"
+                ],
+                "expected": [
+                  "claim_edge_754739c47ecd7a50",
+                  "claim_file_4a5b41e3baadee0b",
+                  "claim_file_f0de093a8c24f6a3",
+                  "claim_fn_b9df6cbdca84b925"
+                ],
+                "name": "embed_router_off_matches_lexical_baseline",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "provenance_freshness": {
+            "checks": [
+              {
+                "fresh_after_code_change": false,
+                "name": "provenance_not_freshness_gate",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "read_edges": {
+            "checks": [
+              {
+                "name": "resolved_read_edge",
+                "passed": true
+              },
+              {
+                "name": "reverse_readers_partial",
+                "passed": true
+              },
+              {
+                "name": "readers_not_callers",
+                "passed": true
+              },
+              {
+                "name": "unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "reader_change_stales",
+                "passed": true
+              },
+              {
+                "name": "declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "local_shadowing_no_edges",
+                "passed": true
+              },
+              {
+                "name": "unknown_name_unresolved",
+                "passed": true
+              },
+              {
+                "name": "reader_rename_reconciles_edge",
+                "passed": true
+              }
+            ],
+            "failures": []
+          },
+          "reverse_callers_coverage": {
+            "checks": [
+              {
+                "coverage": "complete",
+                "name": "warm_complete_coverage",
+                "pass": true
+              },
+              {
+                "coverage": "partial",
+                "name": "drift_forces_partial",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "thin_full_consistency": {
+            "checks": [
+              {
+                "claim_id": "claim_edge_754739c47ecd7a50",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_4a5b41e3baadee0b",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_f0de093a8c24f6a3",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_5f714384df59af9f",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_b9df6cbdca84b925",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_f163a39f3e035fd2",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              }
+            ],
+            "failures": []
+          },
+          "verification_boundaries": {
+            "checks": [
+              {
+                "cap": 0.6,
+                "confidence": 0.6,
+                "evidence": "observed",
+                "name": "supported_source",
+                "pass": true,
+                "verification": "source_support_literal"
+              },
+              {
+                "cap": 0.2,
+                "confidence": 0.2,
+                "evidence": "inferred",
+                "name": "unsupported_source",
+                "pass": true,
+                "verification": "unsupported_or_unverifiable"
+              },
+              {
+                "cap": 0.25,
+                "confidence": 0.25,
+                "evidence": "inferred",
+                "name": "intent_no_prov",
+                "pass": true,
+                "verification": "intent_requires_external_provenance"
+              },
+              {
+                "cap": 0.6,
+                "confidence": 0.6,
+                "evidence": "inferred",
+                "name": "intent_pr_prov",
+                "pass": true,
+                "verification": "attributed_external_provenance"
+              }
+            ],
+            "failures": []
+          },
+          "warm_idempotent_incremental": {
+            "checks": [
+              {
+                "first": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                },
+                "name": "warm_second_run_noop",
+                "pass": true,
+                "second": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                }
+              },
+              {
+                "name": "warm_single_file_incremental",
+                "pass": true,
+                "third": {
+                  "coverage": "complete",
+                  "derived": 1,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 1
+                }
+              }
+            ],
+            "failures": []
+          },
+          "write_edges": {
+            "checks": [
+              {
+                "name": "resolved_global_write_edge",
+                "passed": true
+              },
+              {
+                "name": "assignment_without_global_no_edge",
+                "passed": true
+              },
+              {
+                "name": "global_augassign_reads_and_writes",
+                "passed": true
+              },
+              {
+                "name": "reverse_writers_partial_and_distinct",
+                "passed": true
+              },
+              {
+                "name": "write_edge_unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_rename_reconciles",
+                "passed": true
+              }
+            ],
+            "failures": []
+          }
+        },
+        "failures": {},
+        "total_failures": 0
+      },
+      {
+        "checks": {
+          "api_nodes": {
+            "checks": [
+              {
+                "detail": "",
+                "name": "api_node_derived",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_node_fresh_initial",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_route_literal_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_handler_body_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_comment_format_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_unrelated_function_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_delete_reconciles",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_dynamic_unknown_skipped",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "config_nodes": {
+            "checks": [
+              {
+                "name": "config_value_change_stales",
+                "pass": true
+              },
+              {
+                "name": "config_reformat_and_key_order_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_unrelated_key_change_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_key_delete_reconciles",
+                "pass": true
+              },
+              {
+                "config_count": 0,
+                "name": "invalid_config_zero_nodes_no_crash",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "cross_file_edge_lifecycle": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "degrade_all": {
+            "checks": [],
+            "failures": []
+          },
+          "embedding_router_additivity": {
+            "checks": [
+              {
+                "actual": [],
+                "expected": null,
+                "name": "embed_router_off_matches_lexical_baseline",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "provenance_freshness": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "read_edges": {
+            "checks": [
+              {
+                "name": "resolved_read_edge",
+                "passed": true
+              },
+              {
+                "name": "reverse_readers_partial",
+                "passed": true
+              },
+              {
+                "name": "readers_not_callers",
+                "passed": true
+              },
+              {
+                "name": "unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "reader_change_stales",
+                "passed": true
+              },
+              {
+                "name": "declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "local_shadowing_no_edges",
+                "passed": true
+              },
+              {
+                "name": "unknown_name_unresolved",
+                "passed": true
+              },
+              {
+                "name": "reader_rename_reconciles_edge",
+                "passed": true
+              }
+            ],
+            "failures": []
+          },
+          "reverse_callers_coverage": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "thin_full_consistency": {
+            "checks": [
+              {
+                "claim_id": "claim_class_f3051a94e6d6aff7",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_edge_84872994c047ff35",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_1ed02c3495a2cbdf",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_3a47b4c168e35e57",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_43ed645022a3e805",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_e8b48a61c93fa073",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              }
+            ],
+            "failures": []
+          },
+          "verification_boundaries": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "warm_idempotent_incremental": {
+            "checks": [
+              {
+                "first": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                },
+                "name": "warm_second_run_noop",
+                "pass": true,
+                "second": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                }
+              }
+            ],
+            "failures": []
+          },
+          "write_edges": {
+            "checks": [
+              {
+                "name": "resolved_global_write_edge",
+                "passed": true
+              },
+              {
+                "name": "assignment_without_global_no_edge",
+                "passed": true
+              },
+              {
+                "name": "global_augassign_reads_and_writes",
+                "passed": true
+              },
+              {
+                "name": "reverse_writers_partial_and_distinct",
+                "passed": true
+              },
+              {
+                "name": "write_edge_unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_rename_reconciles",
+                "passed": true
+              }
+            ],
+            "failures": []
+          }
+        },
+        "failures": {},
+        "total_failures": 0
+      }
+    ],
+    "total_failures": 0
+  },
+  "repos": [
+    {
+      "claim_support": {
+        "attributed_without_provenance_support": 0,
+        "observed_without_current_source_support": 0,
+        "violations": []
+      },
+      "degrade_to_source": {
+        "checked": [
+          {
+            "action_hint": "degrade_to_source_or_rederive",
+            "claim_id": "claim_fn_b9df6cbdca84b925",
+            "fresh": false,
+            "has_anchor": true,
+            "pass": true
+          }
+        ],
+        "failures": []
+      },
+      "freshness": {
+        "events": [
+          {
+            "actual_stale": true,
+            "claim_id": "claim_fn_b9df6cbdca84b925",
+            "expected_stale": true,
+            "scenario": "function_body_change"
+          },
+          {
+            "actual_stale": false,
+            "claim_id": "claim_fn_5f714384df59af9f",
+            "expected_stale": false,
+            "scenario": "function_body_change"
+          },
+          {
+            "actual_stale": true,
+            "claim_id": "claim_edge_754739c47ecd7a50",
+            "expected_stale": true,
+            "scenario": "function_body_change"
+          },
+          {
+            "actual_stale": false,
+            "claim_id": "claim_fn_b9df6cbdca84b925",
+            "expected_stale": false,
+            "scenario": "comment_only_change"
+          },
+          {
+            "actual_removed": true,
+            "claim_id": "claim_fn_b9df6cbdca84b925",
+            "expected_removed": true,
+            "scenario": "rename_delete_reconcile"
+          }
+        ],
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "tp": 2
+      },
+      "invariants": {
+        "total_violations": 0,
+        "violations": []
+      },
+      "properties": {
+        "checks": {
+          "api_nodes": {
+            "checks": [
+              {
+                "detail": "",
+                "name": "api_node_derived",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_node_fresh_initial",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_route_literal_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_handler_body_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_comment_format_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_unrelated_function_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_delete_reconciles",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_dynamic_unknown_skipped",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "config_nodes": {
+            "checks": [
+              {
+                "name": "config_value_change_stales",
+                "pass": true
+              },
+              {
+                "name": "config_reformat_and_key_order_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_unrelated_key_change_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_key_delete_reconciles",
+                "pass": true
+              },
+              {
+                "config_count": 0,
+                "name": "invalid_config_zero_nodes_no_crash",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "cross_file_edge_lifecycle": {
+            "checks": [
+              {
+                "callers": {
+                  "callers": [],
+                  "coverage": "partial",
+                  "node_id": "claim_fn_b9df6cbdca84b925",
+                  "note": "Known callers from already-derived files only; not a complete blast radius.",
+                  "stale_skipped": 0
+                },
+                "edge_removed": true,
+                "name": "cross_file_callee_delete_removes_edge",
+                "pass": true
+              },
+              {
+                "edge_id": "claim_edge_754739c47ecd7a50",
+                "name": "multi_binding_edge_survives_path_node_reconcile",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "degrade_all": {
+            "checks": [],
+            "failures": []
+          },
+          "embedding_router_additivity": {
+            "checks": [
+              {
+                "actual": [
+                  "claim_edge_754739c47ecd7a50",
+                  "claim_file_4a5b41e3baadee0b",
+                  "claim_file_f0de093a8c24f6a3",
+                  "claim_fn_b9df6cbdca84b925"
+                ],
+                "expected": [
+                  "claim_edge_754739c47ecd7a50",
+                  "claim_file_4a5b41e3baadee0b",
+                  "claim_file_f0de093a8c24f6a3",
+                  "claim_fn_b9df6cbdca84b925"
+                ],
+                "name": "embed_router_off_matches_lexical_baseline",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "provenance_freshness": {
+            "checks": [
+              {
+                "fresh_after_code_change": false,
+                "name": "provenance_not_freshness_gate",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "read_edges": {
+            "checks": [
+              {
+                "name": "resolved_read_edge",
+                "passed": true
+              },
+              {
+                "name": "reverse_readers_partial",
+                "passed": true
+              },
+              {
+                "name": "readers_not_callers",
+                "passed": true
+              },
+              {
+                "name": "unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "reader_change_stales",
+                "passed": true
+              },
+              {
+                "name": "declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "local_shadowing_no_edges",
+                "passed": true
+              },
+              {
+                "name": "unknown_name_unresolved",
+                "passed": true
+              },
+              {
+                "name": "reader_rename_reconciles_edge",
+                "passed": true
+              }
+            ],
+            "failures": []
+          },
+          "reverse_callers_coverage": {
+            "checks": [
+              {
+                "coverage": "complete",
+                "name": "warm_complete_coverage",
+                "pass": true
+              },
+              {
+                "coverage": "partial",
+                "name": "drift_forces_partial",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "thin_full_consistency": {
+            "checks": [
+              {
+                "claim_id": "claim_edge_754739c47ecd7a50",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_4a5b41e3baadee0b",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_f0de093a8c24f6a3",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_5f714384df59af9f",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_b9df6cbdca84b925",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_f163a39f3e035fd2",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              }
+            ],
+            "failures": []
+          },
+          "verification_boundaries": {
+            "checks": [
+              {
+                "cap": 0.6,
+                "confidence": 0.6,
+                "evidence": "observed",
+                "name": "supported_source",
+                "pass": true,
+                "verification": "source_support_literal"
+              },
+              {
+                "cap": 0.2,
+                "confidence": 0.2,
+                "evidence": "inferred",
+                "name": "unsupported_source",
+                "pass": true,
+                "verification": "unsupported_or_unverifiable"
+              },
+              {
+                "cap": 0.25,
+                "confidence": 0.25,
+                "evidence": "inferred",
+                "name": "intent_no_prov",
+                "pass": true,
+                "verification": "intent_requires_external_provenance"
+              },
+              {
+                "cap": 0.6,
+                "confidence": 0.6,
+                "evidence": "inferred",
+                "name": "intent_pr_prov",
+                "pass": true,
+                "verification": "attributed_external_provenance"
+              }
+            ],
+            "failures": []
+          },
+          "warm_idempotent_incremental": {
+            "checks": [
+              {
+                "first": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                },
+                "name": "warm_second_run_noop",
+                "pass": true,
+                "second": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                }
+              },
+              {
+                "name": "warm_single_file_incremental",
+                "pass": true,
+                "third": {
+                  "coverage": "complete",
+                  "derived": 1,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 1
+                }
+              }
+            ],
+            "failures": []
+          },
+          "write_edges": {
+            "checks": [
+              {
+                "name": "resolved_global_write_edge",
+                "passed": true
+              },
+              {
+                "name": "assignment_without_global_no_edge",
+                "passed": true
+              },
+              {
+                "name": "global_augassign_reads_and_writes",
+                "passed": true
+              },
+              {
+                "name": "reverse_writers_partial_and_distinct",
+                "passed": true
+              },
+              {
+                "name": "write_edge_unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_rename_reconciles",
+                "passed": true
+              }
+            ],
+            "failures": []
+          }
+        },
+        "failures": {},
+        "total_failures": 0
+      },
+      "repo": "/tmp/tmp8dxqi0qz/fixture",
+      "status": "pass"
+    },
+    {
+      "claim_support": {
+        "attributed_without_provenance_support": 0,
+        "observed_without_current_source_support": 0,
+        "violations": []
+      },
+      "degrade_to_source": {
+        "checked": [],
+        "failures": [],
+        "skipped": "fixture lacks b.py helper target"
+      },
+      "freshness": {
+        "events": [],
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "skipped": "fixture lacks b.py helper/spare perturbation targets",
+        "tp": 0
+      },
+      "invariants": {
+        "total_violations": 0,
+        "violations": []
+      },
+      "properties": {
+        "checks": {
+          "api_nodes": {
+            "checks": [
+              {
+                "detail": "",
+                "name": "api_node_derived",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_node_fresh_initial",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_route_literal_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_handler_body_change_stales",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_comment_format_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_unrelated_function_fresh",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_delete_reconciles",
+                "pass": true
+              },
+              {
+                "detail": "",
+                "name": "api_dynamic_unknown_skipped",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "config_nodes": {
+            "checks": [
+              {
+                "name": "config_value_change_stales",
+                "pass": true
+              },
+              {
+                "name": "config_reformat_and_key_order_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_unrelated_key_change_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_key_delete_reconciles",
+                "pass": true
+              },
+              {
+                "config_count": 0,
+                "name": "invalid_config_zero_nodes_no_crash",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "cross_file_edge_lifecycle": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "degrade_all": {
+            "checks": [],
+            "failures": []
+          },
+          "embedding_router_additivity": {
+            "checks": [
+              {
+                "actual": [],
+                "expected": null,
+                "name": "embed_router_off_matches_lexical_baseline",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "provenance_freshness": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "read_edges": {
+            "checks": [
+              {
+                "name": "resolved_read_edge",
+                "passed": true
+              },
+              {
+                "name": "reverse_readers_partial",
+                "passed": true
+              },
+              {
+                "name": "readers_not_callers",
+                "passed": true
+              },
+              {
+                "name": "unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "reader_change_stales",
+                "passed": true
+              },
+              {
+                "name": "declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "local_shadowing_no_edges",
+                "passed": true
+              },
+              {
+                "name": "unknown_name_unresolved",
+                "passed": true
+              },
+              {
+                "name": "reader_rename_reconciles_edge",
+                "passed": true
+              }
+            ],
+            "failures": []
+          },
+          "reverse_callers_coverage": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "thin_full_consistency": {
+            "checks": [
+              {
+                "claim_id": "claim_class_f3051a94e6d6aff7",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_edge_84872994c047ff35",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_1ed02c3495a2cbdf",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_file_3a47b4c168e35e57",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_43ed645022a3e805",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              },
+              {
+                "claim_id": "claim_fn_e8b48a61c93fa073",
+                "full_restores": true,
+                "no_forbidden": true,
+                "pass": true,
+                "short_hashes": true,
+                "thin_subset": true
+              }
+            ],
+            "failures": []
+          },
+          "verification_boundaries": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "warm_idempotent_incremental": {
+            "checks": [
+              {
+                "first": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                },
+                "name": "warm_second_run_noop",
+                "pass": true,
+                "second": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 2,
+                  "index_callees": 1,
+                  "skipped": 2
+                }
+              }
+            ],
+            "failures": []
+          },
+          "write_edges": {
+            "checks": [
+              {
+                "name": "resolved_global_write_edge",
+                "passed": true
+              },
+              {
+                "name": "assignment_without_global_no_edge",
+                "passed": true
+              },
+              {
+                "name": "global_augassign_reads_and_writes",
+                "passed": true
+              },
+              {
+                "name": "reverse_writers_partial_and_distinct",
+                "passed": true
+              },
+              {
+                "name": "write_edge_unrelated_change_fresh",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_declaration_change_stales",
+                "passed": true
+              },
+              {
+                "name": "write_edge_writer_rename_reconciles",
+                "passed": true
+              }
+            ],
+            "failures": []
+          }
+        },
+        "failures": {},
+        "total_failures": 0
+      },
+      "repo": "/tmp/tmp8dxqi0qz/realistic",
+      "status": "pass"
+    }
+  ],
+  "summary": {
+    "claim_support_violations": 0,
+    "degrade_failures": 0,
+    "freshness_fn": 0,
+    "freshness_fp": 0,
+    "invariant_violations": 0,
+    "property_failures": 0,
+    "repos": 2,
+    "status": "pass"
+  }
+}

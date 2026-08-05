@@ -1,0 +1,126 @@
+{
+  "query": "cli",
+  "view": "thin",
+  "claims": [
+    {
+      "id": "claim_edge_0a80d4e0f008ab48",
+      "claim": "claim_fn_d186d01a43ede647 calls render_reviewer_text.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "1a66387f5ee8",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/explain.py",
+          "file_blob_prefix": "b1f5e8826f12",
+          "fn_hash_prefix": "73bcac9c9c18",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_10d7d40cc1005793",
+      "claim": "claim_fn_0b71edb4468e7801 calls apply_feedback.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "62181f93c009",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/feedback.py",
+          "file_blob_prefix": "9732341e91bc",
+          "fn_hash_prefix": "3e76deaaecf7",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    },
+    {
+      "id": "claim_edge_266fb4a1bc825bcb",
+      "claim": "claim_fn_25da627ed0062f1b calls build_parser.",
+      "kind": "structure",
+      "scope": "cross-repo",
+      "qualname": null,
+      "trust": {
+        "level": "observed",
+        "label": "源码观察"
+      },
+      "fresh": true,
+      "stale_reasons": [],
+      "confidence": 0.55,
+      "confidence_cap_applied": false,
+      "anchors": [],
+      "action_hint": "can_use_with_source_anchor_for_precision",
+      "belief_provenance_refs": [],
+      "freshness_binding_refs": [
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "eb0deb80c98f",
+          "commit_anchor_prefix": "22c39a805e81"
+        },
+        {
+          "path": "tmf/cli.py",
+          "file_blob_prefix": "a6df91c0eef7",
+          "fn_hash_prefix": "bf07bc4c3e59",
+          "commit_anchor_prefix": "22c39a805e81"
+        }
+      ],
+      "callees": [],
+      "callers": [],
+      "unresolved_calls": [],
+      "unresolved_call_count": 0,
+      "graph_coverage": "partial"
+    }
+  ],
+  "source_fallback_paths": [
+    "tmf/cli.py",
+    "tmf/explain.py",
+    "tmf/feedback.py"
+  ],
+  "next_steps": {
+    "explain": "tmf explain <claim-id> --repo <repo>",
+    "full": "tmf retrieve --full <claim-id> --repo <repo>"
+  }
+}

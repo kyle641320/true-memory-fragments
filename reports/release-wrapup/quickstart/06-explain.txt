@@ -1,0 +1,18 @@
+[FRESH] 源码观察 (0.40) :: Function _node_id in tmf/edges.py is a Python function node bound by worktree file_blob and token-stream fn_hash.
+action_hint: can_use_with_source_anchor_for_precision
+trust_basis: 从源码观察得到，但验证方式较粗
+belief_provenance: none
+graph:
+  callees:
+    - stable_function_claim_id claim_fn_dbe62b324f33a95c (observed)
+  callers:
+    - claim_fn_a6f87b68f6220a7d (observed)
+    - claim_fn_a6f87b68f6220a7d (observed)
+    - claim_fn_a6f87b68f6220a7d (observed)
+    - claim_fn_a6f87b68f6220a7d (observed)
+    - claim_fn_a6f87b68f6220a7d (observed)
+freshness_bindings:
+  - tmf/edges.py file_blob=e04fe91a416d4788690a0e3ad1f639d3bcf75a2f fn_hash=fc42a53ef3bf7d8dd4fed2809b5936907242dc9a4d80846e01e0034f7933d5c1 commit_anchor=22c39a805e816b31786b795e9b98777fda8a9863
+source_anchors:
+  - tmf/edges.py:33-34
+model: tmf-v1-heuristic | evidence: observed | verification: None

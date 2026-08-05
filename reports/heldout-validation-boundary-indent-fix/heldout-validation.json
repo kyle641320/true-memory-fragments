@@ -1,0 +1,257 @@
+{
+  "claim_support": {
+    "attributed_without_provenance_support": 0,
+    "observed_without_current_source_support": 0
+  },
+  "degrade_to_source": {
+    "failures": []
+  },
+  "freshness": {
+    "fn": 0,
+    "fp": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "tp": 0
+  },
+  "invariants": {
+    "by_repo": [
+      {
+        "total_violations": 0,
+        "violations": []
+      }
+    ],
+    "total_violations": 0
+  },
+  "properties": {
+    "by_repo": [
+      {
+        "checks": {
+          "config_nodes": {
+            "checks": [
+              {
+                "name": "config_value_change_stales",
+                "pass": true
+              },
+              {
+                "name": "config_reformat_and_key_order_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_unrelated_key_change_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_key_delete_reconciles",
+                "pass": true
+              },
+              {
+                "config_count": 0,
+                "name": "invalid_config_zero_nodes_no_crash",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "cross_file_edge_lifecycle": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "degrade_all": {
+            "checks": [],
+            "failures": []
+          },
+          "embedding_router_additivity": {
+            "checks": [
+              {
+                "actual": [],
+                "expected": null,
+                "name": "embed_router_off_matches_lexical_baseline",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "provenance_freshness": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "reverse_callers_coverage": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "thin_full_consistency": {
+            "checks": [],
+            "failures": []
+          },
+          "verification_boundaries": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "warm_idempotent_incremental": {
+            "checks": [
+              {
+                "first": {
+                  "coverage": "complete",
+                  "derived": 122,
+                  "files": 122,
+                  "index_callees": 170,
+                  "skipped": 0
+                },
+                "name": "warm_second_run_noop",
+                "pass": true,
+                "second": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 122,
+                  "index_callees": 170,
+                  "skipped": 122
+                }
+              }
+            ],
+            "failures": []
+          }
+        },
+        "failures": {},
+        "total_failures": 0
+      }
+    ],
+    "total_failures": 0
+  },
+  "repos": [
+    {
+      "claim_support": {
+        "attributed_without_provenance_support": 0,
+        "observed_without_current_source_support": 0,
+        "violations": []
+      },
+      "degrade_to_source": {
+        "checked": [],
+        "failures": [],
+        "skipped": "fixture lacks b.py helper target"
+      },
+      "freshness": {
+        "events": [],
+        "fn": 0,
+        "fp": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "skipped": "fixture lacks b.py helper/spare perturbation targets",
+        "tp": 0
+      },
+      "invariants": {
+        "total_violations": 0,
+        "violations": []
+      },
+      "properties": {
+        "checks": {
+          "config_nodes": {
+            "checks": [
+              {
+                "name": "config_value_change_stales",
+                "pass": true
+              },
+              {
+                "name": "config_reformat_and_key_order_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_unrelated_key_change_fresh",
+                "pass": true
+              },
+              {
+                "name": "config_key_delete_reconciles",
+                "pass": true
+              },
+              {
+                "config_count": 0,
+                "name": "invalid_config_zero_nodes_no_crash",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "cross_file_edge_lifecycle": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "degrade_all": {
+            "checks": [],
+            "failures": []
+          },
+          "embedding_router_additivity": {
+            "checks": [
+              {
+                "actual": [],
+                "expected": null,
+                "name": "embed_router_off_matches_lexical_baseline",
+                "pass": true
+              }
+            ],
+            "failures": []
+          },
+          "provenance_freshness": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "reverse_callers_coverage": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks cross-file a.py/b.py"
+          },
+          "thin_full_consistency": {
+            "checks": [],
+            "failures": []
+          },
+          "verification_boundaries": {
+            "checks": [],
+            "failures": [],
+            "skipped": "fixture lacks function target"
+          },
+          "warm_idempotent_incremental": {
+            "checks": [
+              {
+                "first": {
+                  "coverage": "complete",
+                  "derived": 122,
+                  "files": 122,
+                  "index_callees": 170,
+                  "skipped": 0
+                },
+                "name": "warm_second_run_noop",
+                "pass": true,
+                "second": {
+                  "coverage": "complete",
+                  "derived": 0,
+                  "files": 122,
+                  "index_callees": 170,
+                  "skipped": 122
+                }
+              }
+            ],
+            "failures": []
+          }
+        },
+        "failures": {},
+        "total_failures": 0
+      },
+      "repo": "/root/.openclaw/workspace/worktrees/tmf-fn-hash-fix",
+      "status": "pass"
+    }
+  ],
+  "summary": {
+    "claim_support_violations": 0,
+    "degrade_failures": 0,
+    "freshness_fn": 0,
+    "freshness_fp": 0,
+    "invariant_violations": 0,
+    "property_failures": 0,
+    "repos": 1,
+    "status": "pass"
+  }
+}
