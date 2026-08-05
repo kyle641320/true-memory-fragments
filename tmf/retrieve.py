@@ -45,14 +45,14 @@ def _replace_path_claims(store: Store, relpath: str, claims: list[Claim]) -> Non
     store.reconcile_edge_claims_for_caller_path(relpath, [c for c in claims if c.body.get("edge_kind") in {"calls", "reads", "writes"}])
 
 
-def retrieve_path(repo_root: str | Path, path: str, *, use_model: bool = False) -> RetrieveResult:
+def retrieve_path(repo_root: str | Path, path: str, *, use_model: bool = False, read_only: bool = False) -> RetrieveResult:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = Store(repo.root, read_only=read_only)
     rel = repo.relpath(path)
     claims = store.claims_for_path(rel)
 
     # v1 read-through: missing or stale => derive current file + function claims synchronously.
-    if not claims or any(not check_freshness(repo, c).fresh for c in claims):
+    if not read_only and (not claims or any(not check_freshness(repo, c).fresh for c in claims)):
         current_claims = derive_claims_for_path(repo, rel, use_model=use_model)
         _replace_path_claims(store, rel, current_claims)
         claims = current_claims
@@ -62,9 +62,9 @@ def retrieve_path(repo_root: str | Path, path: str, *, use_model: bool = False) 
     return RetrieveResult(query=rel, claims=retrieved, source_fallback={rel: source})
 
 
-def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_model: bool = False) -> RetrieveResult:
+def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_model: bool = False, read_only: bool = False) -> RetrieveResult:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = Store(repo.root, read_only=read_only)
     terms = {t.lower() for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query)}
     scored: list[tuple[int, Claim]] = []
     for claim in store.iter_claims():
@@ -79,7 +79,7 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
     for _, claim in scored[:limit]:
         current_claims = [claim]
         freshness = check_freshness(repo, claim)
-        if not freshness.fresh and claim.bindings:
+        if not read_only and not freshness.fresh and claim.bindings:
             path = claim.bindings[0].path
             if Path(repo.root / path).exists():
                 current_claims = derive_claims_for_path(repo, path, use_model=use_model)
@@ -93,9 +93,13 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
         if len(claims) >= limit:
             break
 
-    if len(claims) < limit:
+    # The locator surface is a read-only view over already-derived claims.
+    # Avoid router/embedding expansion there: both scan and freshness-check the
+    # full store, which is unnecessary after a lexical hit and can make a
+    # production-sized MCP query exceed its request timeout.
+    if not read_only and len(claims) < limit:
         _add_router_seeds(repo, store, query, claims, seen_ids, limit)
-    if len(claims) < limit:
+    if not read_only and len(claims) < limit:
         _add_embedding_seed_expansion(repo, store, query, claims, seen_ids, limit)
 
     retrieved = [_fresh_item(repo, claim) for claim in claims]
@@ -165,10 +169,10 @@ def _fresh_edge_neighbors(repo: GitRepo, store: Store, claim: Claim) -> list[Cla
     return out
 
 
-def reverse_callers(repo_root: str | Path, node_id: str) -> dict[str, Any]:
+def reverse_callers(repo_root: str | Path, node_id: str, *, read_only: bool = False) -> dict[str, Any]:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
-    index = load_complete_reverse_index(repo.root)
+    store = Store(repo.root, read_only=read_only)
+    index = load_complete_reverse_index(repo.root, read_only=read_only)
     if index is not None:
         indexed_callers = index.get("by_callee", {}).get(node_id, [])
         fresh_callers: list[dict[str, str | None]] = []
@@ -178,13 +182,13 @@ def reverse_callers(repo_root: str | Path, node_id: str) -> dict[str, Any]:
             edge_id = item.get("edge_id")
             claim = store.get_claim(edge_id) if isinstance(edge_id, str) else None
             if claim is None or not check_freshness(repo, claim).fresh:
-                return _reverse_callers_lazy(repo, store, node_id)
+                return _reverse_callers_lazy(repo, store, node_id, read_only=read_only)
             fresh_callers.append({k: item.get(k) for k in ["caller_id", "caller_path", "callee_qualname", "resolution", "evidence", "anchor"]})
         return {"node_id": node_id, "callers": fresh_callers, "stale_skipped": 0, "coverage": "complete", "note": COMPLETE_NOTE}
-    return _reverse_callers_lazy(repo, store, node_id)
+    return _reverse_callers_lazy(repo, store, node_id, read_only=read_only)
 
 
-def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str) -> dict[str, Any]:
+def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str, *, read_only: bool = False) -> dict[str, Any]:
     callers: list[dict[str, str | None]] = []
     stale_skipped = 0
     note = PARTIAL_NOTE
@@ -209,7 +213,7 @@ def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str) -> dict[str
         if collect(claim):
             continue
         caller_path = claim.body.get("caller_path")
-        if isinstance(caller_path, str) and Path(repo.root / caller_path).exists():
+        if not read_only and isinstance(caller_path, str) and Path(repo.root / caller_path).exists():
             # Lazy scan is the semantic baseline: future reverse indexes must return
             # the same fresh-caller set as this read-through path, only faster.
             current_claims = derive_claims_for_path(repo, caller_path)
@@ -222,9 +226,9 @@ def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str) -> dict[str
     return {"node_id": node_id, "callers": callers, "stale_skipped": stale_skipped, "coverage": "partial", "note": note}
 
 
-def reverse_readers(repo_root: str | Path, declaration_id: str) -> dict[str, Any]:
+def reverse_readers(repo_root: str | Path, declaration_id: str, *, read_only: bool = False) -> dict[str, Any]:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = Store(repo.root, read_only=read_only)
     readers: list[dict[str, str | None]] = []
     stale_skipped = 0
 
@@ -248,7 +252,7 @@ def reverse_readers(repo_root: str | Path, declaration_id: str) -> dict[str, Any
         if collect(claim):
             continue
         reader_path = claim.body.get("reader_path")
-        if isinstance(reader_path, str) and Path(repo.root / reader_path).exists():
+        if not read_only and isinstance(reader_path, str) and Path(repo.root / reader_path).exists():
             current_claims = derive_claims_for_path(repo, reader_path)
             _replace_path_claims(store, reader_path, current_claims)
             refreshed = store.get_claim(claim.id)
@@ -258,9 +262,9 @@ def reverse_readers(repo_root: str | Path, declaration_id: str) -> dict[str, Any
     return {"node_id": declaration_id, "readers": readers, "stale_skipped": stale_skipped, "coverage": "partial", "note": "Known readers from already-derived files only; not a complete blast radius."}
 
 
-def reverse_writers(repo_root: str | Path, declaration_id: str) -> dict[str, Any]:
+def reverse_writers(repo_root: str | Path, declaration_id: str, *, read_only: bool = False) -> dict[str, Any]:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = Store(repo.root, read_only=read_only)
     writers: list[dict[str, Any]] = []
     stale_skipped = 0
 
@@ -284,7 +288,7 @@ def reverse_writers(repo_root: str | Path, declaration_id: str) -> dict[str, Any
         if collect(claim):
             continue
         writer_path = claim.body.get("writer_path")
-        if isinstance(writer_path, str) and Path(repo.root / writer_path).exists():
+        if not read_only and isinstance(writer_path, str) and Path(repo.root / writer_path).exists():
             current_claims = derive_claims_for_path(repo, writer_path)
             _replace_path_claims(store, writer_path, current_claims)
             refreshed = store.get_claim(claim.id)

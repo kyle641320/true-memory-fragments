@@ -21,6 +21,11 @@ def _tmf_file(store: Store, name: str) -> Path:
     return store.root / name
 
 
+def _tmf_file_read_only(store: Store, name: str) -> Path:
+    store.require_initialized()
+    return store.root / name
+
+
 def _load_json(path: Path, default: Any) -> Any:
     if not path.exists():
         return default
@@ -96,27 +101,29 @@ def _current_warmed_files(repo: GitRepo) -> dict[str, str | None]:
     return {p: repo.blob_sha(p) for p in paths}
 
 
-def warm_is_complete(repo_root: str | Path, state_root: str | Path | None = None) -> bool:
+def warm_is_complete(repo_root: str | Path, state_root: str | Path | None = None, *, read_only: bool = False) -> bool:
     repo = GitRepo(repo_root)
-    store = Store(repo.root, state_root)
-    manifest = _load_json(_tmf_file(store, WARM_MANIFEST), {})
+    store = Store(repo.root, state_root, read_only=read_only)
+    manifest_path = _tmf_file_read_only(store, WARM_MANIFEST) if read_only else _tmf_file(store, WARM_MANIFEST)
+    manifest = _load_json(manifest_path, {})
     warmed_files = manifest.get("warmed_files") if isinstance(manifest, dict) else None
     if not isinstance(warmed_files, dict):
         return False
     return warmed_files == _current_warmed_files(repo)
 
 
-def load_complete_reverse_index(repo_root: str | Path, state_root: str | Path | None = None) -> dict[str, Any] | None:
+def load_complete_reverse_index(repo_root: str | Path, state_root: str | Path | None = None, *, read_only: bool = False) -> dict[str, Any] | None:
     repo = GitRepo(repo_root)
-    store = Store(repo.root, state_root)
-    manifest = _load_json(_tmf_file(store, WARM_MANIFEST), {})
+    store = Store(repo.root, state_root, read_only=read_only)
+    tmf_file = _tmf_file_read_only if read_only else _tmf_file
+    manifest = _load_json(tmf_file(store, WARM_MANIFEST), {})
     warmed_files = manifest.get("warmed_files") if isinstance(manifest, dict) else None
     if not isinstance(warmed_files, dict):
         return None
     current = _current_warmed_files(repo)
     if warmed_files != current:
         return None
-    index = _load_json(_tmf_file(store, REVERSE_INDEX), None)
+    index = _load_json(tmf_file(store, REVERSE_INDEX), None)
     if not isinstance(index, dict) or index.get("coverage") != "complete":
         return None
     if index.get("warmed_files") != current:

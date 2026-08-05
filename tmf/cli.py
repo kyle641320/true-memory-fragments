@@ -91,6 +91,11 @@ def cmd_diff(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_mcp(args: argparse.Namespace) -> int:
+    from .mcp_server import serve
+    return serve(args.repo, args.state_root)
+
+
 
 def _make_validation_fixture(parent: Path, name: str, files: dict[str, str]) -> Path:
     import subprocess
@@ -198,6 +203,11 @@ def build_parser() -> argparse.ArgumentParser:
     diff.add_argument("--new", required=True)
     diff.add_argument("--per-file-timeout", type=float, default=60)
     diff.set_defaults(func=cmd_diff)
+
+    mcp = sub.add_parser("mcp", help="run the strict read-only MCP stdio server")
+    mcp.add_argument("--repo", default=".")
+    mcp.add_argument("--state-root", help="TMF state directory; overrides TMF_STATE_ROOT and <repo>/.tmf")
+    mcp.set_defaults(func=cmd_mcp)
 
     validate = sub.add_parser("validate", help="run held-out validation and/or self-dogfood validation")
     validate.add_argument("--repo", default=".", help="repository to self-validate; default: current directory")

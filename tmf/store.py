@@ -6,11 +6,15 @@ import os
 from pathlib import Path
 from typing import Iterable
 
-from .schema import Claim
+from .schema import Claim, SUPPORTED_SCHEMA_VERSIONS
 
 logger = logging.getLogger(__name__)
 
 _state_root_override: Path | None = None
+
+
+class StoreNotInitializedError(RuntimeError):
+    pass
 
 
 def configure_state_root(state_root: str | Path | None) -> None:
@@ -31,18 +35,36 @@ def resolve_state_root(repo_root: str | Path, state_root: str | Path | None = No
 
 
 class Store:
-    def __init__(self, repo_root: str | Path = ".", state_root: str | Path | None = None) -> None:
+    def __init__(self, repo_root: str | Path = ".", state_root: str | Path | None = None, *, read_only: bool = False) -> None:
         self.repo_root = Path(repo_root).resolve()
         self.root = resolve_state_root(self.repo_root, state_root)
         self.claims_dir = self.root / "claims"
+        self.read_only = read_only
         # path -> set[claim_id]: in-memory index, lazily populated on first use
         self._path_index: dict[str, set[str]] | None = None
 
     def init(self) -> None:
+        if self.read_only:
+            raise RuntimeError("read-only TMF store cannot be initialized")
         self.claims_dir.mkdir(parents=True, exist_ok=True)
         version_file = self.root / "schema_version"
         if not version_file.exists():
             version_file.write_text("tmf.schema.v1\n", encoding="utf-8")
+
+    def require_initialized(self) -> None:
+        version_file = self.root / "schema_version"
+        if not self.root.is_dir() or not self.claims_dir.is_dir() or not version_file.is_file():
+            raise StoreNotInitializedError(f"TMF store is not initialized: {self.root}")
+        try:
+            version = version_file.read_text(encoding="utf-8").strip()
+        except OSError as exc:
+            raise StoreNotInitializedError(f"TMF store is not readable: {self.root}: {exc}") from exc
+        if version not in SUPPORTED_SCHEMA_VERSIONS:
+            raise StoreNotInitializedError(f"TMF store has unsupported schema {version!r}: {self.root}")
+
+    def _assert_writable(self) -> None:
+        if self.read_only:
+            raise RuntimeError(f"read-only TMF store cannot be modified: {self.root}")
 
     def claim_path(self, claim_id: str) -> Path:
         return self.claims_dir / f"{claim_id}.json"
@@ -76,12 +98,14 @@ class Store:
     # ------------------------------------------------------------------
 
     def put_claim(self, claim: Claim) -> None:
+        self._assert_writable()
         self.init()
         path = self.claim_path(claim.id)
         path.write_text(json.dumps(claim.to_dict(), ensure_ascii=False, indent=2, sort_keys=False) + "\n", encoding="utf-8")
         self._index_add(claim)
 
     def delete_claim(self, claim_id: str) -> bool:
+        self._assert_writable()
         path = self.claim_path(claim_id)
         if not path.exists():
             return False
@@ -90,13 +114,18 @@ class Store:
         return True
 
     def get_claim(self, claim_id: str) -> Claim | None:
+        if self.read_only:
+            self.require_initialized()
         path = self.claim_path(claim_id)
         if not path.exists():
             return None
         return Claim.from_dict(json.loads(path.read_text(encoding="utf-8")))
 
     def _iter_claims_raw(self) -> Iterable[Claim]:
-        self.init()
+        if self.read_only:
+            self.require_initialized()
+        else:
+            self.init()
         for path in sorted(self.claims_dir.glob("*.json")):
             try:
                 yield Claim.from_dict(json.loads(path.read_text(encoding="utf-8")))

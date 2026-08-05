@@ -65,7 +65,7 @@ def _short_hash(value: str | None, n: int = 12) -> str | None:
     return value[:n]
 
 
-def explain_claim(repo: GitRepo, claim: Claim) -> dict:
+def explain_claim(repo: GitRepo, claim: Claim, *, read_only: bool = False) -> dict:
     freshness: Freshness = check_freshness(repo, claim)
     trust = trust_label(claim)
     model_candidate = claim.body.get("model_candidate", {})
@@ -74,7 +74,7 @@ def explain_claim(repo: GitRepo, claim: Claim) -> dict:
     provenance = _provenance_items(claim)
     confidence = float(claim.confidence)
     raw_confidence = model_candidate.get("raw_confidence")
-    graph = _graph_with_fresh_edges(repo, claim)
+    graph = dict(claim.body.get("graph", {})) if read_only else _graph_with_fresh_edges(repo, claim)
     return {
         "id": claim.id,
         "claim": claim.claim,
@@ -99,7 +99,7 @@ def explain_claim(repo: GitRepo, claim: Claim) -> dict:
         "feedback_events": claim.body.get("feedback_events", []),
         "hunches": claim.body.get("hunches", []),
         "graph": graph,
-        "graph_coverage": "complete" if warm_is_complete(repo.root) else "partial",
+        "graph_coverage": "partial" if read_only else "complete" if warm_is_complete(repo.root) else "partial",
         "warnings": _warnings(fresh=freshness.fresh, trust=trust, claim=claim),
     }
 
@@ -117,11 +117,11 @@ def _warnings(*, fresh: bool, trust: dict[str, str], claim: Claim) -> list[str]:
     return warnings
 
 
-def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
+def _graph_with_fresh_edges(repo: GitRepo, claim: Claim, *, read_only: bool = False) -> dict:
     graph = dict(claim.body.get("graph", {}))
     if claim.scope not in {"function", "declaration"}:
         return graph
-    store = Store(repo.root)
+    store = Store(repo.root, read_only=read_only)
     if claim.scope == "function":
         callees = list(graph.get("callees", []))
         callers = list(graph.get("callers", []))
@@ -130,16 +130,23 @@ def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
         seen_callers = {item.get("source_id") for item in callers if isinstance(item, dict)}
         seen_reads = {item.get("target_id") for item in reads if isinstance(item, dict)}
         for edge in store.iter_claims():
+            edge_kind = edge.body.get("edge_kind")
+            relevant_call = edge_kind == "calls" and (
+                edge.body.get("caller_id") == claim.id or edge.body.get("callee_id") == claim.id
+            )
+            relevant_read = edge_kind == "reads" and edge.body.get("reader_id") == claim.id
+            if not relevant_call and not relevant_read:
+                continue
             if not check_freshness(repo, edge).fresh:
                 continue
-            if edge.body.get("edge_kind") == "calls":
+            if edge_kind == "calls":
                 if edge.body.get("caller_id") == claim.id and edge.body.get("callee_id") not in seen_callees:
                     callees.append({"target_id": edge.body.get("callee_id"), "target_qualname": edge.body.get("callee_qualname"), "target_path": edge.body.get("callee_path"), "evidence": edge.evidence, "resolution": edge.body.get("resolution")})
                     seen_callees.add(edge.body.get("callee_id"))
                 if edge.body.get("callee_id") == claim.id and edge.body.get("caller_id") not in seen_callers:
                     callers.append({"source_id": edge.body.get("caller_id"), "source_qualname": edge.bindings[0].qualname if edge.bindings else None, "source_path": edge.body.get("caller_path"), "evidence": edge.evidence, "resolution": edge.body.get("resolution")})
                     seen_callers.add(edge.body.get("caller_id"))
-            elif edge.body.get("edge_kind") == "reads" and edge.body.get("reader_id") == claim.id and edge.body.get("declaration_id") not in seen_reads:
+            elif edge_kind == "reads" and edge.body.get("declaration_id") not in seen_reads:
                 reads.append({"target_id": edge.body.get("declaration_id"), "target_qualname": edge.body.get("declaration_qualname"), "target_path": edge.body.get("declaration_path"), "evidence": edge.evidence, "resolution": edge.body.get("resolution")})
                 seen_reads.add(edge.body.get("declaration_id"))
         graph["callees"] = callees
@@ -151,9 +158,11 @@ def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
     read_by = list(graph.get("read_by", []))
     seen_readers = {item.get("source_id") for item in read_by if isinstance(item, dict)}
     for edge in store.iter_claims():
-        if edge.body.get("edge_kind") != "reads" or not check_freshness(repo, edge).fresh:
+        if edge.body.get("edge_kind") != "reads" or edge.body.get("declaration_id") != claim.id:
             continue
-        if edge.body.get("declaration_id") == claim.id and edge.body.get("reader_id") not in seen_readers:
+        if not check_freshness(repo, edge).fresh:
+            continue
+        if edge.body.get("reader_id") not in seen_readers:
             read_by.append({"source_id": edge.body.get("reader_id"), "source_path": edge.body.get("reader_path"), "evidence": edge.evidence, "resolution": edge.body.get("resolution")})
             seen_readers.add(edge.body.get("reader_id"))
     graph["read_by"] = read_by
@@ -212,8 +221,8 @@ def thin_view(explained: dict) -> dict:
     }
 
 
-def full_view(repo: GitRepo, claim: Claim) -> dict:
-    explained = explain_claim(repo, claim)
+def full_view(repo: GitRepo, claim: Claim, *, read_only: bool = False) -> dict:
+    explained = explain_claim(repo, claim, read_only=read_only)
     payload = dict(explained)
     payload["claim_record"] = claim.to_dict()
     return payload
