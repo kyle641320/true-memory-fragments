@@ -15,4 +15,4 @@ Status: **GO** under policy `tmf-java-clean-build-2vcpu-4g-v1`.
 
 Runtime broker delivery, transaction commit, dispatch, payload values, and compensation execution remain outside static TMF proof. Eventuate PARTIAL is not full-stack runtime certification.
 
-This is a release candidate. It is not a git tag, pushed release, or PyPI publication.
+This release candidate is published as Git tag and GitHub prerelease `v0.1.0rc2`, and on PyPI as `true-memory-fragments==0.1.0rc2`. PyPI publication used GitHub OIDC Trusted Publishing after SHA256 verification of the GitHub release artifacts.
