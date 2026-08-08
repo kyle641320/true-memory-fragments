@@ -1,0 +1,42 @@
+{
+  "schema": "tmf-clean-build-release-policy-v1",
+  "policy_id": "tmf-java-clean-build-2vcpu-4g-v1",
+  "scope": {
+    "execution": "serial",
+    "host_class": {
+      "cpu_count_min": 2,
+      "memory_gib_min": 3.5
+    },
+    "runtime_boundaries_allowed": [
+      "eventuate-choreography",
+      "eventuate-orchestration"
+    ]
+  },
+  "hard_limits": {
+    "clean_elapsed_seconds_max": 3600.0,
+    "clean_maxrss_kb_max": 1048576,
+    "noop_elapsed_seconds_max": 60.0
+  },
+  "target_limits": {
+    "clean_elapsed_seconds_max": 1800.0,
+    "clean_maxrss_kb_max": 786432,
+    "noop_elapsed_seconds_max": 30.0
+  },
+  "required_invariants": {
+    "coverage": "complete",
+    "failed_files_empty": true,
+    "noop_derived": 0,
+    "noop_failed_files_empty": true
+  },
+  "interpretation": {
+    "hard_limit_failure": "NO-GO",
+    "target_limit_failure": "GO_WITH_WARNINGS",
+    "all_limits_pass": "GO"
+  },
+  "rationale": [
+    "The release host has 2 vCPU and 3.6 GiB RAM; the policy reserves most memory for the OS and concurrent control-plane work by limiting a serial clean warm to 1 GiB RSS.",
+    "A one-hour hard limit keeps a first large-repository build operationally bounded while the 30-minute target records remaining performance debt.",
+    "No-op warm is expected to be substantially cheaper; 60 seconds is the hard release limit and 30 seconds is the target.",
+    "Eventuate runtime delivery, transaction commit, dispatch, payload values, and compensation execution remain outside static TMF evidence and are accepted only as declared PARTIAL boundaries."
+  ]
+}

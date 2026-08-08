@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tmf import extract as extract_mod
 from tmf.extract import extract_functions, fn_hash_for_span
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
@@ -71,6 +72,17 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
         before_node = {node.qualname: node for node in extract_functions("m.py", before)}["target"]
         after_node = {node.qualname: node for node in extract_functions("m.py", after)}["target"]
         self.assertEqual(before_node.fn_hash, after_node.fn_hash)
+
+
+    def test_extract_functions_reuses_single_file_token_stream_for_many_spans(self):
+        source = "".join(f"def f{i}():\n    return {i}\n\n" for i in range(12))
+        extract_mod._token_items_for_source.cache_clear()
+        before = extract_mod._token_items_for_source.cache_info()
+        nodes = extract_functions("m.py", source)
+        after = extract_mod._token_items_for_source.cache_info()
+        self.assertEqual(len(nodes), 12)
+        self.assertEqual(after.misses - before.misses, 1)
+        self.assertGreaterEqual(after.hits - before.hits, 11)
 
     def test_method_body_change_stales_method(self):
         with tempfile.TemporaryDirectory() as td:

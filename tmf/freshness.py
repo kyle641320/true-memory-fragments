@@ -113,6 +113,19 @@ def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
         if binding.file_blob == current_blob:
             continue
         qualname = binding.qualname or (str(body_qualname) if body_qualname else None)
+        if claim.scope == "api":
+            current_api_hash = _current_api_hash(
+                repo,
+                binding.path,
+                str(claim.body.get("method") or ""),
+                str(claim.body.get("route_path") or ""),
+                qualname,
+            )
+            if current_api_hash is None:
+                stale.append(f"{binding.path}:{qualname}: api missing")
+            elif binding.fn_hash != current_api_hash:
+                stale.append(f"{binding.path}:{qualname}: api_hash mismatch")
+            continue
         if claim.body.get("language") == "java":
             current_java_hash = _current_java_node_hash(repo, binding.path, qualname, str(claim.body.get("node_kind") or ""))
             if current_java_hash is None:
@@ -140,19 +153,6 @@ def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
                 stale.append(f"{binding.path}:{qualname}: config missing")
             elif binding.fn_hash != current_config_hash:
                 stale.append(f"{binding.path}:{qualname}: config_hash mismatch")
-            continue
-        if claim.scope == "api":
-            current_api_hash = _current_api_hash(
-                repo,
-                binding.path,
-                str(claim.body.get("method") or ""),
-                str(claim.body.get("route_path") or ""),
-                qualname,
-            )
-            if current_api_hash is None:
-                stale.append(f"{binding.path}:{qualname}: api missing")
-            elif binding.fn_hash != current_api_hash:
-                stale.append(f"{binding.path}:{qualname}: api_hash mismatch")
             continue
         if claim.body.get("edge_kind") in {"reads", "writes"} and binding.path == claim.body.get("declaration_path") and qualname == claim.body.get("declaration_qualname"):
             current_declaration_hash = _current_declaration_hash(repo, binding.path, qualname)

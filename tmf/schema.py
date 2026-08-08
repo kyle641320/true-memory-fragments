@@ -6,7 +6,7 @@ from typing import Any, Literal
 SCHEMA_VERSION = "tmf.schema.v1"
 SUPPORTED_SCHEMA_VERSIONS = {"tmf.schema.v0", SCHEMA_VERSION}
 ClaimKind = Literal["structure", "architecture", "intent", "convention", "gotcha"]
-ClaimScope = Literal["file", "function", "class", "module", "repo", "cross-repo", "declaration", "config", "api"]
+ClaimScope = Literal["file", "function", "class", "module", "repo", "cross-repo", "declaration", "config", "api", "contract"]
 Evidence = Literal["observed", "inferred", "verified"]
 
 

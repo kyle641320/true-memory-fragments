@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "true-memory-fragments"
-version = "0.1.0"
+version = "0.1.0rc2"
 description = "True Memory Fragments: lazy, source-bound code memory for AI coding agents"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
 authors = [
-  { name = "Kyle (confirmation pending)" }
+  { name = "kyle" }
 ]
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -26,6 +26,12 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = []
+
+[project.optional-dependencies]
+java = [
+  "tree_sitter==0.25.2",
+  "tree_sitter_java==0.23.5",
+]
 
 [project.urls]
 Homepage = "https://github.com/kyle641320/true-memory-fragments"

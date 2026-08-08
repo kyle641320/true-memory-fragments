@@ -13,7 +13,16 @@ def _verification(claim: Claim) -> str:
     return str(claim.body.get("model_candidate", {}).get("verification", "none"))
 
 
+UNVERIFIED_FOREIGN_CLAIM_PLACEHOLDER = "[unverified foreign claim — re-derive before trusting]"
+
+
+def _is_unverified_foreign(claim: Claim) -> bool:
+    return (claim.body or {}).get("source_provenance", {}).get("trust") == "unverified_foreign"
+
+
 def trust_label(claim: Claim) -> dict[str, str]:
+    if _is_unverified_foreign(claim):
+        return {"level": "unverified_foreign", "label": "外来未验证", "description": "来自外来 .tmf 缓存；必须按源码重派生后才可采信"}
     verification = _verification(claim)
     if claim.evidence == "verified":
         return {"level": "hard_verified", "label": "硬验证", "description": "由真实运行/测试/反馈验证过"}
@@ -72,12 +81,14 @@ def explain_claim(repo: GitRepo, claim: Claim) -> dict:
     anchors = claim.body.get("anchors", [])
     bindings = [asdict(binding) for binding in claim.bindings]
     provenance = _provenance_items(claim)
-    confidence = float(claim.confidence)
+    confidence = 0.0 if _is_unverified_foreign(claim) else float(claim.confidence)
     raw_confidence = model_candidate.get("raw_confidence")
     graph = _graph_with_fresh_edges(repo, claim)
-    return {
+    unverified_foreign = _is_unverified_foreign(claim)
+    view_claim = UNVERIFIED_FOREIGN_CLAIM_PLACEHOLDER if unverified_foreign else claim.claim
+    explained = {
         "id": claim.id,
-        "claim": claim.claim,
+        "claim": view_claim,
         "fresh": freshness.fresh,
         "stale_reasons": [] if freshness.fresh else freshness.stale_bindings,
         "trust": trust,
@@ -99,16 +110,22 @@ def explain_claim(repo: GitRepo, claim: Claim) -> dict:
         "belief_provenance": provenance,
         "freshness_bindings": bindings,
         "action_hint": action_hint(fresh=freshness.fresh, trust=trust),
+        "source_provenance": claim.body.get("source_provenance", {}),
         "feedback_events": claim.body.get("feedback_events", []),
         "hunches": claim.body.get("hunches", []),
         "graph": graph,
         "graph_coverage": "complete" if warm_is_complete(repo.root) else "partial",
         "warnings": _warnings(fresh=freshness.fresh, trust=trust, claim=claim),
     }
+    if unverified_foreign:
+        explained["raw_foreign_claim_untrusted_data"] = claim.claim
+    return explained
 
 
 def _warnings(*, fresh: bool, trust: dict[str, str], claim: Claim) -> list[str]:
     warnings: list[str] = []
+    if _is_unverified_foreign(claim):
+        warnings.append("UNVERIFIED_FOREIGN: external .tmf cache data; do not trust stored confidence; re-derive from source")
     if not fresh:
         warnings.append("STALE_BUT_STORED: this claim remains in storage but is not fresh for current worktree")
     if trust["level"] in {"hard_verified", "endorsed"}:
@@ -215,6 +232,7 @@ def thin_view(explained: dict) -> dict:
         "language": explained.get("language"),
         "node_kind": explained.get("node_kind"),
         "extraction_tier": explained.get("extraction_tier"),
+        "source_trust": explained.get("source_provenance", {}).get("trust"),
     }
 
 

@@ -1,5 +1,127 @@
 # TMF Changes
 
+## True LLM Agent A/B value-proof measurement (2026-06-10)
+
+### Scope / preregistration
+- Measurement-only window after benchmark universe decontamination. No engine behavior, MCP tool semantics, tasks/golden symbols, prompts, metrics, or scoring were tuned after seeing results.
+- Arms used the same model, temperature 0, same system prompt template except tool list, same budget, and fresh conversations per task/arm/rep.
+- Baseline tools: `list_files`, `grep`, `read_file` over the decontaminated universe only.
+- TMF tools: baseline tools plus `tmf_retrieve`, `tmf_explain`, `tmf_callers`, `tmf_readers`, `tmf_writers`, `tmf_subtypes`, `tmf_warm`, `tmf_status` via in-process `McpService`.
+- Budget: `max_tool_calls=12`, `max_model_turns=15`, `timeout=120s`, `reps=3`, tasks=18, total episodes=108.
+- Golden symbols were never inserted into agent prompts; mechanical scoring only.
+- Primary metric: `surfaced recall@budget`, where a golden `(path, qualname)` is counted only if a single tool-returned text contains both path and qualname. Secondary: final-answer `answer_anchored` path+qualname co-occurrence.
+
+### Environment
+- Model: `qwen3.5-plus` via `https://api.lingyaai.cn/v1` with API key from environment.
+- Universe: `50` files, manifest sha256 `ddb1fb3e25ab327076a744600aac5d44ac025e405a75c4ab7b9b165ebe87d54b`.
+- Output: `bench/agent_ab/llm_run_20260610T1355/report_llm.json`, `report_llm.md`.
+- Raw traces: `traces/agent_ab_llm_20260610T1355/*.jsonl`.
+
+### Validity threats / disclosure
+- Implementer pollution is real: the implementing assistant/model family has prior context on this repository. This can compress differences between arms by helping baseline navigate without graph tools; therefore TMF wins would be conservative, but ties/losses are inconclusive rather than proof TMF has no value.
+- Agent-as-athlete risk was handled by preregistering prompt, budget, metrics, and scorer before the completed run; no post-hoc prompt/task/metric tuning was performed.
+- Scoring is mechanical string/anchor matching, no LLM judge.
+
+### Operational notes
+- Initial run attempts exposed adapter bugs before completion: wrong in-process MCP class/method names (`MCPServer`/`tool_reverse`) and were fixed before successful completion. These were interface-adapter bugs, not prompt/metric/task tuning.
+- The long run experienced repeated process/session exits; rows/traces were preserved and resumed by skipping completed `(task, arm, rep)` keys. One episode contains a real provider `502 Bad Gateway`; it is kept as a failure row, not retried.
+- All 108 episodes completed in the final accumulated run. Failures are budget/API failures inside completed rows, not missing episodes.
+
+### Raw category results
+```text
+adversarial:
+- baseline: surfaced=0.778±0.299; answer=0.083±0.186; tokens=95538.1±32511.7; tool_calls=11.11±2.00; calls_to_full_surfaced=6.36±2.10; failures=15
+- tmf: surfaced=0.833±0.236; answer=0.083±0.186; tokens=103062.2±21620.2; tool_calls=11.61±1.11; calls_to_full_surfaced=6.17±2.54; failures=15
+graph-shaped:
+- baseline: surfaced=0.833±0.236; answer=0.583±0.382; tokens=53386.9±36123.6; tool_calls=8.00±2.56; calls_to_full_surfaced=4.67±2.49; failures=4
+- tmf: surfaced=0.833±0.236; answer=0.639±0.365; tokens=60295.7±41707.7; tool_calls=8.11±2.75; calls_to_full_surfaced=5.00±2.94; failures=3
+open:
+- baseline: surfaced=0.861±0.224; answer=0.750±0.344; tokens=34226.9±28847.5; tool_calls=5.94±2.95; calls_to_full_surfaced=3.46±1.55; failures=2
+- tmf: surfaced=0.833±0.236; answer=0.833±0.236; tokens=18866.9±9056.7; tool_calls=4.83±1.86; calls_to_full_surfaced=2.17±1.46; failures=0
+```
+
+Failure count: `39` rows.
+Failure types:
+```text
+- max_tool_calls_exceeded: 38
+- LLM HTTP 502: <html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+<hr><center>openresty</center>
+</body>
+</html>
+: 1
+```
+
+### Main finding
+- TMF did not dominate uniformly under this true-LLM agent setup.
+- surfaced recall: TMF slightly higher on adversarial (`0.833` vs `0.778`), tied on graph-shaped (`0.833` vs `0.833`), lower on open (`0.833` vs `0.861`).
+- Cost: TMF used fewer tokens and fewer calls on open tasks, but more tokens/calls on adversarial and slightly more on graph-shaped.
+- Given implementer pollution and high budget-truncation rate, this is a mixed/inconclusive value proof, not a clean TMF win. The honest conclusion is: TMF shows some adversarial/open-answer anchoring benefit, but this task set/model/budget does not prove broad retrieval superiority.
+
+### Reproduction commands
+```bash
+PYTHONPATH=. python3 bench/agent_ab/llm_adapter.py \
+  --repo . \
+  --tasks bench/agent_ab/tasks.jsonl \
+  --out bench/agent_ab/llm_run_20260610T1355 \
+  --traces traces/agent_ab_llm_20260610T1355 \
+  --reps 3 \
+  --max-tool-calls 12 \
+  --max-model-turns 15 \
+  --timeout 120
+```
+
+## Benchmark universe decontamination fix (2026-06-10)
+
+### Scope
+- Measurement-side repair only for the `bench/agent_ab` scripted proxy benchmark.
+- No engine behavior, task questions, golden symbols, or strategy expansion logic was changed.
+- Fixes review finding: the previous baseline enumerated `rglob("*")` over `.py/.java/.md/.toml`, allowing released documentation and reports such as `CHANGES.md` / `reports/` to contain golden names and drift benchmark results.
+
+### Fix
+- `bench/agent_ab/runner.py` now builds a fixed universe from `git ls-files` only.
+- The universe is restricted to tracked source/config files with suffixes `{.py, .java, .toml}`.
+- Explicitly excluded: `bench/`, `reports/`, `vendor/`, `scripts/`, dot-directories such as `.git`, `.tmf`, `.ts-venv`, and all Markdown files.
+- Both strategies use the same universe for reads/scoring. TMF seeds and graph expansions are filtered to in-universe claim bindings.
+- The benchmark store is prepared with generated/store/venv/report directories ignored so warm/read-through does not index benchmark artifacts.
+- Reports now include `universe_manifest_sha`, `universe_file_count`, suffix/prefix policy, and the sorted `(path, blob_sha)` manifest entries.
+- Golden validity guard now fails fast if any golden path is outside the universe or the qualname cannot be found in its file.
+
+### Before/after benchmark numbers
+Before (`tmf-value-proof-mcp-bench-coverage`, contaminated file enumeration):
+```text
+Tasks: 18  Budget: 6
+adversarial: baseline recall=0.000; tmf recall=0.250
+graph-shaped: baseline recall=0.250; tmf recall=0.500
+open: baseline recall=0.000; tmf recall=0.417
+TMF losses: graph-006
+```
+
+After (fixed universe, `universe_manifest_sha=ddb1fb3e25ab327076a744600aac5d44ac025e405a75c4ab7b9b165ebe87d54b`, `universe_file_count=50`):
+```text
+Tasks: 18  Budget: 6
+adversarial: baseline recall=0.417; tmf recall=0.250
+graph-shaped: baseline recall=0.833; tmf recall=0.500
+open: baseline recall=0.500; tmf recall=0.417
+TMF losses: graph-001, graph-002, graph-004, graph-006, open-002, adversarial-001, adversarial-004
+```
+
+### Important finding
+- The benchmark was previously deterministic but not validly isolated: documentation/report drift could improve baseline recall by exposing golden terms.
+- Directionally this made TMF look worse, not better; no cheating was indicated. Still, benchmark validity required fixing.
+- After decontamination, baseline remains stronger on several tasks and TMF losses increased. This is reported as a measurement finding, not hidden or tuned away.
+
+### Validation evidence
+```text
+python3 bench/agent_ab/runner.py --repo . --out bench/agent_ab/universe_fix1
+python3 bench/agent_ab/runner.py --repo . --out bench/agent_ab/universe_fix2
+cmp bench/agent_ab/universe_fix1/report.json bench/agent_ab/universe_fix2/report.json
+# deterministic cmp: OK
+```
+
+
 ## Value proof window: MCP service + agent A/B benchmark + graph coverage (2026-06-10)
 
 ### Scope
@@ -1081,3 +1203,219 @@ OK
 ### Open questions / risks
 - `.py` discovery currently uses `Path.rglob("*.py")` and skips `.git/` / `.tmf/`; it may include virtualenv or generated Python files if they live inside the target repo. Future work may need a conservative ignore mechanism, but this was not added to avoid changing project policy.
 - Complete means complete for repo-local Python files visible to this scanner and current conservative parser, not semantically complete for dynamic/runtime calls.
+
+## 2026-06-10 — MCP ergonomics Phase A for adoption measurement
+
+Scope: delivery/retrieval presentation only. No engine semantics, node/edge extraction, freshness, task golden, or benchmark policy changes.
+
+Changes:
+- Added `tmf_context(question, max_chars?)` MCP tool as the suggested first investigation entrypoint. It builds a deterministic thin bundle from lexical retrieval plus bounded fresh reverse graph expansion (`callers`, `readers`, `writers`, `subtypes`) with anchors, partial coverage labels, max-char truncation, and no claim bodies/source text.
+- Added name addressing for `tmf_callers`, `tmf_readers`, `tmf_writers`, and `tmf_subtypes`: callers can pass `qualname` plus optional `path` instead of a `claim_id`; `claim_id` remains compatible. Ambiguous names return candidate IDs/anchors and never guess.
+- Moved the repeated honesty framework out of per-call payloads and into MCP tool descriptions. Payloads retain only semantic labels such as `coverage`, `stale`/freshness data, and explicit `action_hint` stop guidance.
+- Reverse/no-edge and ambiguous-addressing responses now include stop-oriented hints: pick a concrete candidate, read the source anchor, or accept static uncertainty rather than continuing blind search.
+
+Offline protocol coverage:
+- `tests/test_mcp_ergonomics.py` covers: unique name lookup, ambiguous-name candidate returns, claim_id compatibility, `tmf_context` determinism, thin discipline, `max_chars` truncation, and payload slimming.
+- Existing MCP protocol/security tests updated to include `tmf_context`.
+
+Payload byte comparison on the same fixture/query (`helper caller`, limit=3):
+- Previous payload with repeated `framework`: 3133 bytes.
+- New slim payload: 2841 bytes.
+- Saved: 292 bytes per `tmf_retrieve` response on this fixture.
+
+Phase boundary:
+- This package is Phase A only. Do not run Phase B three-arm LLM A/B until external review/approval releases it.
+
+## Final adjudication Phase A — delivery economics, mechanical interface, contracts (2026-06-11)
+
+Scope: Phase A only. This package does **not** enter Phase B and does not tune any measurement results.
+
+### A1 Delivery economics
+- `tmf_context` now defaults to `max_chars=3000` instead of large context envelopes.
+- Retrieval candidate count is budgeted before expensive explain/reverse-edge work:
+  - `<=3000` chars: 8 candidates
+  - `<=6000` chars: 12 candidates
+  - larger explicit budgets: 16 candidates
+- Truncation is deterministic and linear: keep early relevant claims as full payloads where possible, then retain addressable `tmf_explain` stubs, and stop before exceeding budget.
+- Regression fixture (`reports/final裁决-a/context-byte-compare.log`): old 12000-byte envelope 11829 bytes; new default 3000-byte envelope 2993 bytes; saved 8836 bytes.
+
+### A2 Mechanical interface layer
+- Added Python `function_interface(source, function_node)` with mechanical facts only: signature, params, return annotation/shape, decorators, async/generator flags, observed raises, and coarse side effects.
+- Added Java `java_method_interface(source, method_node)` for tree-sitter Java method/constructor interface facts: signature, params/types, return type, throws, modifiers, annotations.
+- Function/method node bodies now expose interface facts for downstream consumers.
+
+### A3 Contract layer
+- Added claim scope `contract` and stable contract ids via `stable_contract_claim_id(path, qualname)`.
+- Added Python contract derivation for non-trivial functions from mechanical interface facts; bindings use function body hash so body edits stale the contract.
+- Added Java method/constructor contract derivation from mechanical Java interface facts; no semantic purpose is invented.
+- Contract payload includes `_contract_checks`, slot confidence, observed evidence, anchors, and explicit notes about offline mechanical limits.
+
+### A4 External-battlefield preparation
+- Deferred to the Phase A handoff package: no Phase B run was started in this window.
+
+### A5 Guardrails and regression
+- Added `tests/test_final_contracts.py` for interface facts, contract checks, stale-on-body-change, default context budget/stubs, retrieval budget limits, and Java interface facts when tree-sitter Java is available.
+- Final verification:
+  - `python3 -m unittest discover -s tests -q` → `Ran 115 tests in 47.159s OK`
+  - `bash scripts/verify_java_offline.sh` → `JAVA OFFLINE VERIFY: PASS`
+
+## Final adjudication A4+ and S supplement (2026-06-11)
+
+### A4+
+- Added semantic contract sanitizer (`tmf/contracts.py`) and validation stage `_contract_checks`.
+- Semantic contract model candidates are treated as untrusted data; accepted slots remain attributed/inferred and confidence-capped at <=0.6.
+- Sanitizer cross-examines parameters, raises/throws, return-value claims, and no-side-effect claims against mechanical interface facts and resolved write edges.
+- External battlefield prepared on `pypa/pip` @ `486db076e2f4f0bf6780c24cd487f09dc2a14015` with 30 mechanically validated tasks.
+- DS4 Pro true-model sample set produced 20 semantic contract claims; all remained inferred and sanitizer-capped.
+- One self-validation class freshness FP was disclosed as a measurement/expected-stale attribution issue, not suppressed.
+
+### S supplement
+- Added resumable true-model contract warming: `tmf warm --contracts --contract-command <cmd>`.
+- Contract warming writes one record per function under `.tmf/contract_warm/records`, is safe to resume, records elapsed time/call outcomes, and writes offline-review samples with embedded source spans under `.tmf/contract_warm/samples`.
+- External coverage now reports contract counts split by `contract_version` (`contract.v1.mechanical` vs `contract.v2.semantic_sanitized`).
+- `function_interface` side-effect limits: the function interface itself exposes signature/return/raise/decorator facts; side-effect contradiction checks depend on separately resolved conservative `writes` edges supplied to the sanitizer. If static write resolution does not see a write, sanitizer cannot reject a model's no-side-effect claim on that basis alone.
+- Packaging hygiene: offline Java wheels in `vendor/wheels` are intentionally included for reviewer-side `scripts/verify_java_offline.sh`.
+
+## 阶段 B 终局（2026-06-12）
+
+- Phase B v3 final three-arm LLM agent A/B completed measurement-only on external pip battlefield.
+- Battlefield: `vendor/external_battlefield/pip`, commit `486db076e2f4f0bf6780c24cd487f09dc2a14015`, tracked `.py` files 635, manifest sha `bd9975b25f92daf45f0f7c94a41678fd26cc9987d71a5e42b5dcd61800f730b7`.
+- Prewarmed contract store counts: `contract.v2.semantic_sanitized=5141`, `contract.v1.mechanical=253`; warm status `partial` (`succeeded=5177`, `failed=254`). `TMF_MODEL_COMMAND` was unset; no in-run model warming.
+- Protocol: 30 tasks, 3 arms (`baseline`, `tmf-offered`, `tmf-first`), reps=1, `qwen3.5-plus`, temperature 0, max_tool_calls=15, max_model_turns=18, timeout=150s.
+- Completion: 90/90 rows, traces 90/90. Failures retained as measured: `max_tool_calls_exceeded=5`, `timeout=3`.
+- Category means (answer / surfaced / total tokens):
+  - graph-shaped baseline `1.000 / 1.000 / 3921.6`; tmf-offered `1.000 / 1.000 / 5958.7`; tmf-first `1.000 / 1.000 / 7792.9`.
+  - adversarial baseline `0.800 / 1.000 / 38221.3`; tmf-offered `0.700 / 1.000 / 87928.6`; tmf-first `0.700 / 1.000 / 41253.4`.
+  - open baseline `1.000 / 1.000 / 5520.7`; tmf-offered `1.000 / 1.000 / 10271.9`; tmf-first `1.000 / 1.000 / 15675.3`.
+- Primary execution clause result: E1 answer(tmf-first - baseline) mean diff `-0.03333333333333333`, nonzero pairs 3, wins 1, losses 2, nonzero winrate `0.3333333333333333`; E2 total tokens mean diff `+5686.0` vs baseline mean `15887.866666666667` (not cheaper / worse).
+- Execution conclusion: `agent 运行时记忆假设在本协议下未获支持`.
+- Outputs: `bench/agent_ab/llm_run_v3_20260612T124957/report_llm_v3.json`, `report_llm_v3.md`, traces at `traces/agent_ab_llm_v3_20260612T124957/`, golden claims at `golden_contract_claims.json`.
+
+
+## Window 1/4 — D1/D4/D3/D2 maintenance (2026-06-12)
+
+Scope: window 1 only. This change does not add Java step2+, SCIP/LSP semantics, multi-language expansion, new node/edge families, or Phase B/v3 review work.
+
+### D1 defect fixes
+- Python nested class extraction now treats classes declared inside functions as function-scoped qualnames such as `outer.Inner`, matching existing function qualname scope rules.
+- Mechanical contract facts remain interface-derived and are confidence-capped at `<=0.6`; they are not promoted to semantic proof.
+- `self.method()` resolution stays conservative: direct same-class methods win; inherited methods link only when the base chain resolves uniquely inside the current v1 resolver scope (same-file bases in window 1). Cross-file inherited method resolution via unique imports is backlog, not claimed here.
+- `imported_module.func()` direct top-level calls are covered by regression tests and only resolve when the imported module target is unique and local.
+
+### D4 rename identity
+- Pure rename migration is allowed only for exact blob identity with one old missing path and one current path.
+- Rename+edit and ambiguous same-blob copies do not migrate identity; old-path claims are deleted as tombstones and current files are rederived.
+- Migrated claims remap node/contract ids, update `Binding.path`, and rebind edge claim bodies and ids through the endpoint id map.
+
+### D3 metrics/stats/FIELD_TEST harness
+- Metrics/stat tests cover rename migration and mass-invalidation counters.
+- Added `scripts/field_test_harness.py`, an offline plan-only harness for later field testing. It writes command templates and capture fields; it does not clone, fetch, run external reconnaissance, or warm models.
+
+### D2 documentation honesty
+- README/DESIGN/CHANGELOG/CHANGES disclose the conservative limits: fresh means all current bindings match the worktree, mechanical contracts are capped observations, rename identity is exact-blob-only, and FIELD_TEST is not started in this window.
+
+## Window 2/4 — J1 Java calls (2026-06-12)
+
+- Added conservative Java `calls` edges for syntactic method invocations.
+- Resolved cases only:
+  - same-class `m()` when exactly one same-class method candidate matches;
+  - `this.m()` under the same uniqueness rule;
+  - explicit-import type static call `Util.f()` when `Util` is a unique explicit import and `f` resolves to one imported top-level type method.
+- Unresolved by design:
+  - variable/unknown receivers such as `u.f()`;
+  - overloaded or ambiguous same-name methods;
+  - parent/superclass method calls, deferred to the override/semantic window.
+- Java call edges reuse the existing `calls` edge kind and reverse callers API, with `body.language="java"`, observed evidence, partial coverage, and precise Java method anchors.
+- Validation checkpoint: `python3 -m unittest tests.test_java_calls tests.test_java_inherit tests.test_java_nodes -q` → 14 tests OK; full suite `python3 -m unittest discover -s tests -q` → 139 tests OK.
+
+## Window 2/4 — J2 Java reads/writes (2026-06-12)
+
+- Added conservative Java field `reads`/`writes` edges, adapted onto the existing read/write edge claim and reverse reader/writer APIs.
+- Resolved cases only:
+  - `this.field` reads/writes to same-class fields;
+  - bare same-class fields when not shadowed by a local variable or parameter;
+  - explicit-import type field access such as `Config.LIMIT` when `Config` is a unique explicit import.
+- Unresolved by design:
+  - local/parameter shadowing;
+  - variable or unknown receivers such as `other.value`;
+  - external/JDK/wildcard import or ambiguous field references.
+- Java field edges carry `body.language="java"`, observed evidence, partial coverage, and Java method/field anchors.
+- Updated Java node tests so Java node assertions filter syntactic node claims rather than assuming no Java edge claims exist.
+- Validation checkpoint: Java calls/fields/inherit/nodes suite → 17 tests OK; full suite `python3 -m unittest discover -s tests -q` → 142 tests OK; `scripts/verify_java_offline.sh` → PASS.
+
+## Window 2 continuation: F0 J2 guard + J4/J5/J6 Java completion
+
+- F0 J2 field guard: explicit Java variable receiver field accesses (`x.field`) are now unresolved with `java_variable_receiver_field_not_resolved`; same-class binding is limited to `this.field` and unshadowed bare fields. Added regression fixture for `other.count` not cross-binding to `A.count`.
+- J4 Java Spring route API nodes: added conservative tree-sitter extraction for literal `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`, and `@RequestMapping`. Literal class-level prefix plus method-level path is concatenated; non-literal/dynamic paths do not fabricate API nodes. Java API claim bodies include `language`, `http_methods`, `route_path`, and handler qualname.
+- J5 Java `uses_type` edges: added `uses_type` edge IDs, derivation, graph backfills, and lazy reverse `reverse_used_by_types`. Resolution is limited to same-file types and explicit-import unique types. JDK/external/wildcard/unknown/ambiguous types remain unresolved with reasons.
+- J6 Java contracts: fixed semantic Java contract branch so sanitized model output is stored as inferred `contract.v2.semantic_sanitized` instead of being mislabeled observed/mechanical. Java contract sanitizer now receives method graph writes, allowing false no-side-effect claims to be rejected. Added adversarial Java tests for fabricated throws, fake no-side-effect with writes, void return lies, confidence cap, stale body hash, and trivial-method skip.
+
+Validation so far:
+- `python3 -m unittest tests.test_java_fields_edges tests.test_java_api_nodes tests.test_java_uses_type tests.test_java_contracts_window2 tests.test_java_calls tests.test_java_inherit tests.test_java_nodes tests.test_java_override tests.test_contract_sanitizer tests.test_final_contracts -q` -> 40 tests OK.
+
+## Window 4/4 robustness closeout (2026-06-15)
+
+### F-backfill from Window 3
+- Documented Window 3 R1/R2/R3/S semantics as final project behavior: env/config read edges, Spring DI `injects`, Kafka topic-mediated pub/sub, and the optional semantic-resolved tier.
+- R2/R3 remain `attributed` with confidence capped at `<=0.6`; framework convention and annotation inference are never promoted to `observed`.
+- SCIP/semantic-resolved remains a separate tier: external indexer resolution is neither syntactic direct evidence nor framework inference. The interface skeleton and degraded/default-off behavior are implemented; true `scip-python` end-to-end consumption still requires Kyle to verify in an environment with that indexer installed.
+
+### W1 foreign `.tmf` trust boundary
+- Added repository-local `.tmf/local_identity.json` plus machine-hash identity checks. A pre-existing `.tmf/claims` directory without this local identity is marked foreign via `.tmf/foreign_store.json`.
+- Foreign claims are surfaced as `source_provenance.trust = unverified_foreign`, trust label `unverified_foreign`, and effective confidence `0.0` in explain/thin views.
+- Retrieval treats unverified foreign claims as stale and performs read-through re-derive from source. Re-derived claims are stamped `locally_derived` and replace foreign cache content. The foreign cache never gets to preserve its self-asserted confidence or verification status.
+- Added `_trust_boundary_checks`: a malicious fresh-looking foreign claim asserting a mutating function is verified pure is marked unverified, then corrected by local re-derivation. Locally generated stores remain locally derived.
+
+### W2 scale benchmark measurement
+- Added deterministic scale benchmark `bench/scale/gen.py` and report outputs under `reports/window4/scale/`.
+- Measured two CI-friendly synthetic sizes in this environment:
+  - 200 functions / 4 files / 207 claims: warm 1.6544s, incremental warm 0.6236s, retrieve 0.0325s, reverse 0.0324s, store 490356 bytes, maxrss 26572 KB.
+  - 1000 functions / 20 files / 1039 claims: warm 8.6149s, incremental warm 2.6938s, retrieve 0.0890s, reverse 0.1342s, store 2467012 bytes, maxrss 41516 KB.
+- This is measurement, not optimization. Observed limitation remains: reverse/query paths can still scan claims when complete indexes are absent/inapplicable; 50k-node enterprise behavior is not claimed.
+
+### W3 concurrent writer safety
+- Added a repository-local interprocess `.tmf/.lock` using `fcntl.flock` around warm/read-through writes.
+- Claim/metadata writes use temp-file plus atomic replace so readers should see old complete files or new complete files, not half-written JSON.
+- This is a corruption guard, not full snapshot isolation. The documented guarantee is conservative: concurrent warm writers do not corrupt claim files; full multi-writer database semantics are out of scope.
+- Added `tests/test_concurrency.py`: two concurrent warm processes complete without deadlock and leave parseable claim files.
+
+### W4 retrieval relevance measurement
+- Added `bench/retrieval/queries.jsonl` with 20 natural-language diagnostic queries and `bench/retrieval/eval.py` for deterministic recall@k/MRR measurement.
+- Report output: `reports/window4/retrieval/`.
+- Observed result at k=10: recall@10 = 0.50, MRR = 0.34541666666666665.
+- Weak classes are explicitly preserved: pure semantic/descriptive queries and ignored-path documentation/script queries under `.tmfignore` miss often. This is diagnostic evidence for future retrieval work, not a hidden failure.
+
+### W5 YAML / SQL nodes
+- Added stdlib-only conservative YAML config support for a simple mapping/scalar subset in `.yaml`/`.yml`. Lists, anchors/tags, multiline scalars, duplicate keys, tabs, and ambiguous inline comments degrade to no YAML config nodes.
+- YAML config nodes reuse config semantics: canonical value hash, source-bound freshness, key-path qualnames, and line anchors.
+- Added conservative SQL declaration nodes for standalone `.sql` `CREATE TABLE` / `CREATE VIEW` clauses. Dynamic SQL strings embedded in code are intentionally not parsed.
+- Added `tests/test_yaml_sql_nodes.py` covering YAML value staleness, complex YAML degradation, SQL table/view nodes, and dynamic SQL skip behavior.
+
+### Validation evidence
+- Targeted Window 4 + Window 3 regression: 15 tests OK.
+- Full unit suite: `Ran 168 tests in 20.636s OK` (ResourceWarnings only).
+- Java offline verifier: `JAVA OFFLINE VERIFY: PASS`.
+- Held-out validation: PASS, precision/recall 1.0/1.0.
+- Self validation initially hit process SIGKILL/SIGTERM when copying/scanning oversized generated directories. Harness was fixed to respect `.tmfignore`/skip generated heavy directories; sample-limit 3 self validation then PASS: 3012 claims, precision/recall 1.0/1.0, fp/fn 0/0.
+
+### Known limits after Window 4
+- True SCIP/scip-python semantic indexer consumption is still not end-to-end verified in this environment.
+- Scale measurement covered 200 and 1000 synthetic functions here, not 20k/50k due runtime/resource constraints.
+- Self validation final pass used `sample-limit=3` after larger samples were killed by runtime limits.
+- Retrieval relevance is weak for some natural-language queries; current retrieval remains lexical/graph-seeded rather than a full semantic search engine.
+
+## Final hardening tail package (2026-06-16)
+
+### W1 depth-defense: redact unverified foreign assertion text in thin/default views
+- `unverified_foreign` claims now replace their default `claim` text with `[unverified foreign claim — re-derive before trusting]` in `explain_claim()` and therefore in `thin_view()`.
+- The original foreign assertion text is not emitted by thin view. Full explain keeps it only under `raw_foreign_claim_untrusted_data` for explicit audit use.
+- Locally derived claims are unchanged and continue to display their normal claim text.
+- Added trust-boundary assertions proving the malicious fixture text `verified pure` does not appear in default explain/thin claim fields while the trust label and placeholder do appear.
+
+### Final hardening validation
+- Trust boundary test: 2 tests OK.
+- Targeted regression: 15 tests OK.
+- Full unittest: 168 tests OK.
+- Java offline verifier: `JAVA OFFLINE VERIFY: PASS`.
+- Heldout validation: PASS, precision/recall 1.0/1.0.
+- Self validation: sample-limit 3 PASS, precision/recall 1.0/1.0, fp/fn 0/0.

@@ -9,8 +9,8 @@ from pathlib import Path
 from typing import Any
 
 from .extract import extract_apis, extract_classes, extract_configs, extract_declarations, extract_functions
-from .edges import resolve_call_edges, resolve_read_edges, resolve_write_edges
-from .java_extract import extract_java_classes, resolve_java_inherit_edges
+from .edges import resolve_call_edges, resolve_read_edges, resolve_write_edges, resolve_env_read_edges, resolve_config_key_read_edges
+from .java_extract import extract_java_classes, extract_java_methods, extract_java_fields, resolve_java_inherit_edges, resolve_java_type_use_edges, resolve_java_inject_edges, resolve_java_topic_edges
 from .explain import explain_claim, full_view, thin_view
 from .freshness import check_freshness
 from .git import GitRepo
@@ -314,6 +314,38 @@ def _provenance_freshness_checks(repo_path: Path) -> dict[str, Any]:
     check = {"name": "provenance_not_freshness_gate", "pass": not fresh, "fresh_after_code_change": fresh}
     return {"checks": [check], "failures": [] if check["pass"] else [check]}
 
+
+
+
+def _contract_checks_stage(repo_path: Path) -> dict[str, Any]:
+    """Deterministic sanitizer tooth-stage using a local adversarial stub candidate."""
+    from .contracts import sanitize_contract_candidate
+    interface = {
+        "params": [{"name": "x"}, {"name": "y"}],
+        "raises": ["ValueError"],
+        "return": {"shape": "none", "has_value": False},
+        "side_effects": {"writes": ["GLOBAL"]},
+    }
+    candidate = {
+        "purpose": "safe attributed purpose",
+        "params": [{"name": "x", "meaning": "real", "confidence": 0.99}, {"name": "z", "meaning": "fake", "confidence": 0.99}],
+        "returns": {"meaning": "returns a result dict", "confidence": 0.99},
+        "raises": [{"exception": "RuntimeError", "condition": "fake", "confidence": 0.99}, {"exception": "ValueError", "condition": "negative", "confidence": 0.99}],
+        "side_effects": [{"meaning": "pure function with no side effects", "confidence": 0.99}],
+        "gotchas": [{"meaning": "watch input", "confidence": 0.99}],
+        "confidence": 0.99,
+    }
+    out = sanitize_contract_candidate(candidate, interface, graph={"writes": [{"target_id": "GLOBAL"}]})
+    reasons = {c.get("reason") for c in out["_contract_checks"]["checks"]}
+    checks = [
+        {"name": "fabricated_raise_pruned", "pass": [r["exception"] for r in out["slots"]["raises"]] == ["ValueError"]},
+        {"name": "param_mismatch_pruned", "pass": [p["name"] for p in out["slots"]["params"]] == ["x"]},
+        {"name": "false_no_side_effect_rejected", "pass": out["slots"]["side_effects"] == []},
+        {"name": "false_return_value_rejected", "pass": "returns" not in out["slots"]},
+        {"name": "confidence_capped", "pass": all(float(v) <= 0.6 for v in out["slot_confidence"].values())},
+        {"name": "reasons_recorded", "pass": {"exception_not_mechanically_observed", "param_not_in_signature", "claims_no_side_effects_but_mechanical_writes_exist", "claims_return_value_but_mechanical_return_has_no_value"}.issubset(reasons)},
+    ]
+    return {"checks": checks, "failures": [c for c in checks if not c["pass"]], "sample": out}
 
 def _embedding_router_checks(repo_path: Path) -> dict[str, Any]:
     import os
@@ -643,7 +675,7 @@ def _language_for_path(path: str) -> str:
 
 
 def _empty_edge_stats() -> dict[str, Any]:
-    return {kind: {"resolved": 0, "unresolved": 0, "resolution_rate": 1.0, "unresolved_reasons": {}} for kind in ["calls", "reads", "writes", "inherits"]}
+    return {kind: {"resolved": 0, "unresolved": 0, "resolution_rate": 1.0, "unresolved_reasons": {}} for kind in ["calls", "reads", "writes", "inherits", "uses_type", "reads_env", "reads_config_key", "injects", "publishes_to", "subscribes_to"]}
 
 
 def _add_unresolved_reason(bucket: dict[str, Any], reason: str) -> None:
@@ -668,14 +700,38 @@ def _finalize_graph_coverage(raw: dict[str, dict[str, Any]]) -> dict[str, dict[s
     return out
 
 
+def _validation_ignore_prefixes(repo_path: Path) -> list[str]:
+    path = repo_path / ".tmfignore"
+    if not path.exists():
+        return []
+    prefixes: list[str] = []
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.endswith("/"):
+            prefixes.append(line)
+        else:
+            prefixes.append(line.rstrip("/") + "/")
+            prefixes.append(line)
+    return prefixes
+
+
+def _validation_is_ignored(rel: str, prefixes: list[str]) -> bool:
+    return any(rel == prefix.rstrip("/") or rel.startswith(prefix) for prefix in prefixes)
+
+
 def _measure_graph_coverage(repo_path: Path) -> dict[str, dict[str, Any]]:
     """Measure edge resolution coverage only; do not enforce targets or tune parsers."""
     repo = GitRepo(repo_path)
     stats = {"python": _empty_edge_stats(), "java": _empty_edge_stats()}
+    ignore_prefixes = _validation_ignore_prefixes(repo_path)
     for path in sorted(repo_path.rglob("*")):
         if not path.is_file() or ".tmf" in path.parts or ".git" in path.parts:
             continue
         rel = path.relative_to(repo_path).as_posix()
+        if _validation_is_ignored(rel, ignore_prefixes):
+            continue
         lang = _language_for_path(rel)
         if lang == "other":
             continue
@@ -688,19 +744,43 @@ def _measure_graph_coverage(repo_path: Path) -> dict[str, dict[str, Any]]:
             writes, unresolved_writes = resolve_write_edges(rel, text, functions, declarations, repo=repo)
             stats[lang]["calls"]["resolved"] += len(calls)
             stats[lang]["reads"]["resolved"] += len(reads)
+            env_reads, unresolved_env = resolve_env_read_edges(rel, text, functions)
+            config_nodes = extract_configs(rel, text)
+            config_reads, unresolved_config = resolve_config_key_read_edges(rel, text, config_nodes, repo=repo)
             stats[lang]["writes"]["resolved"] += len(writes)
+            stats[lang]["reads_env"]["resolved"] += len(env_reads)
+            stats[lang]["reads_config_key"]["resolved"] += len(config_reads)
             for item in [u for values in unresolved_calls.values() for u in values]:
                 stats[lang]["calls"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["calls"], item.reason)
             for item in [u for values in unresolved_reads.values() for u in values]:
                 stats[lang]["reads"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["reads"], item.reason)
             for item in [u for values in unresolved_writes.values() for u in values]:
                 stats[lang]["writes"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["writes"], item.reason)
+            for item in [u for values in unresolved_env.values() for u in values]:
+                stats[lang]["reads_env"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["reads_env"], item.reason)
+            for item in [u for values in unresolved_config.values() for u in values]:
+                stats[lang]["reads_config_key"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["reads_config_key"], item.reason)
         elif lang == "java":
-            classes = extract_java_classes(rel, text, repo=repo)
-            inherits, unresolved_inherits = resolve_java_inherit_edges(rel, text, classes, repo=repo) if classes else ([], {})
+            classes = extract_java_classes, extract_java_methods, extract_java_fields(rel, text, repo=repo)
+            inherits, unresolved_inherits = resolve_java_inherit_edges, resolve_java_type_use_edges, resolve_java_inject_edges, resolve_java_topic_edges(rel, text, classes, repo=repo) if classes else ([], {})
+            methods = extract_java_methods(rel, text, repo=repo)
+            fields = extract_java_fields(rel, text, repo=repo)
+            type_edges, unresolved_types = resolve_java_type_use_edges(rel, text, classes, methods, fields, repo=repo) if (classes or fields or methods) else ([], {})
+            inject_edges, unresolved_injects = resolve_java_inject_edges(rel, text, classes, fields, inherits, repo=repo) if classes else ([], {})
+            topic_edges, unresolved_topics = resolve_java_topic_edges(rel, text, methods) if methods else ([], {})
             stats[lang]["inherits"]["resolved"] += len(inherits)
+            stats[lang]["uses_type"]["resolved"] += len(type_edges)
+            stats[lang]["injects"]["resolved"] += len(inject_edges)
+            stats[lang]["publishes_to"]["resolved"] += len([e for e in topic_edges if e.edge_kind == "publishes_to"])
+            stats[lang]["subscribes_to"]["resolved"] += len([e for e in topic_edges if e.edge_kind == "subscribes_to"])
             for item in [u for values in unresolved_inherits.values() for u in values]:
                 stats[lang]["inherits"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["inherits"], item.reason)
+            for item in [u for values in unresolved_types.values() for u in values]:
+                stats[lang]["uses_type"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["uses_type"], item.reason)
+            for item in [u for values in unresolved_injects.values() for u in values]:
+                stats[lang]["injects"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["injects"], item.reason)
+            for item in [u for values in unresolved_topics.values() for u in values]:
+                stats[lang][item.edge_kind]["unresolved"] += 1; _add_unresolved_reason(stats[lang][item.edge_kind], item.reason)
     return _finalize_graph_coverage(stats)
 
 
@@ -708,7 +788,7 @@ def _merge_graph_coverage(items: list[dict[str, dict[str, Any]]]) -> dict[str, d
     merged = {"python": _empty_edge_stats(), "java": _empty_edge_stats()}
     for item in items:
         for language in ["python", "java"]:
-            for kind in ["calls", "reads", "writes", "inherits"]:
+            for kind in ["calls", "reads", "writes", "inherits", "uses_type", "reads_env", "reads_config_key", "injects", "publishes_to", "subscribes_to"]:
                 src = item.get(language, {}).get(kind, {})
                 dst = merged[language][kind]
                 dst["resolved"] += int(src.get("resolved", 0))
@@ -725,8 +805,9 @@ def _run_one_repo(repo_path: Path) -> dict[str, Any]:
     degrade = _degrade_checks(repo_path)
     properties = _property_checks(repo_path)
     graph_coverage = _measure_graph_coverage(repo_path)
-    status = "pass" if invariants["total_violations"] == 0 and claim_support["observed_without_current_source_support"] == 0 and not degrade["failures"] and properties["total_failures"] == 0 and freshness["fp"] == 0 and freshness["fn"] == 0 else "fail"
-    return {"repo": str(repo_path), "status": status, "freshness": freshness, "claim_support": claim_support, "invariants": invariants, "degrade_to_source": degrade, "properties": properties, "graph_coverage": graph_coverage}
+    contract_checks = _contract_checks_stage(repo_path)
+    status = "pass" if invariants["total_violations"] == 0 and claim_support["observed_without_current_source_support"] == 0 and not degrade["failures"] and properties["total_failures"] == 0 and not contract_checks["failures"] and freshness["fp"] == 0 and freshness["fn"] == 0 else "fail"
+    return {"repo": str(repo_path), "status": status, "freshness": freshness, "claim_support": claim_support, "invariants": invariants, "degrade_to_source": degrade, "properties": properties, "contract_checks": contract_checks, "graph_coverage": graph_coverage}
 
 
 def _summary(results: list[dict[str, Any]]) -> dict[str, Any]:
@@ -775,7 +856,8 @@ def _markdown(report: dict[str, Any]) -> str:
 
 def _copy_self_validation_repo(src: Path, parent: Path) -> Path:
     def ignore(_dir: str, names: list[str]) -> set[str]:
-        return {name for name in names if name in {".git", ".tmf", ".ts-venv", "vendor", "__pycache__", ".pytest_cache", "reports", "artifacts"}}
+        local_noise = {".git", ".tmf", ".ts-venv", "vendor", "__pycache__", ".pytest_cache", "reports", "artifacts", "bench", "scripts", "traces"}
+        return {name for name in names if name in local_noise or name.endswith(".pyc")}
 
     dst = parent / "self_repo"
     shutil.copytree(src, dst, ignore=ignore)
@@ -1057,6 +1139,7 @@ def _self_markdown(report: dict[str, Any]) -> str:
     lines.append(f"Verification boundary failures: {len(report['verification_boundaries']['failures'])}")
     lines.append(f"Degrade failures: {len(report['degrade_to_source']['failures'])}")
     lines.append(f"Router/embed off failures: {len(report['embed_router_off']['failures'])}")
+    lines.append(f"Contract check failures: {len(report.get('contract_checks', {}).get('failures', []))}")
     lines.append("")
     lines.append(f"Freshness sample count: {report['freshness_sampling']['samples']}")
     lines.append(f"Freshness sample precision: {report['freshness_sampling']['precision']:.3f}")
@@ -1097,6 +1180,7 @@ def run_self_validation(repo_root: str | Path, out_dir: str | Path, *, sample_li
         embed_router = _router_embed_off_equivalence_check(work)
         sampling = _self_freshness_sampling(work, sample_limit)
         graph_coverage = _measure_graph_coverage(work)
+        contract_checks = _contract_checks_stage(work)
         status = "pass" if (
             invariants["total_violations"] == 0
             and claim_support["observed_without_current_source_support"] == 0
@@ -1104,6 +1188,7 @@ def run_self_validation(repo_root: str | Path, out_dir: str | Path, *, sample_li
             and not verification["failures"]
             and not degrade["failures"]
             and not embed_router["failures"]
+            and not contract_checks["failures"]
             and sampling["fp"] == 0
             and sampling["fn"] == 0
         ) else "fail"
@@ -1116,6 +1201,7 @@ def run_self_validation(repo_root: str | Path, out_dir: str | Path, *, sample_li
             "verification_boundaries": verification,
             "degrade_to_source": degrade,
             "embed_router_off": embed_router,
+            "contract_checks": contract_checks,
             "freshness_sampling": sampling,
             "graph_coverage": graph_coverage,
         }
@@ -1142,6 +1228,7 @@ def run_heldout_validation(repo_paths: list[str | Path], out_dir: str | Path) ->
         "invariants": {"total_violations": sum(r["invariants"]["total_violations"] for r in results), "by_repo": [r["invariants"] for r in results]},
         "degrade_to_source": {"failures": [f for r in results for f in r["degrade_to_source"]["failures"]]},
         "properties": {"total_failures": sum(r["properties"]["total_failures"] for r in results), "by_repo": [r["properties"] for r in results]},
+        "contract_checks": {"total_failures": sum(len(r["contract_checks"]["failures"]) for r in results), "by_repo": [r["contract_checks"] for r in results]},
         "graph_coverage": _merge_graph_coverage([r["graph_coverage"] for r in results]),
         "repos": results,
     }

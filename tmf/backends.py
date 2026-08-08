@@ -49,6 +49,15 @@ class SemanticExtractorBackend(ABC):
     def enqueue_background_refresh(self, repo_root: str, path: str) -> None:
         raise NotImplementedError
 
+    def semantic_claims_for_path(self, repo, path: str, source: str):
+        """Return optional attributed semantic overlay claims for a path.
+
+        Step0 implementations may omit this and rely only on background refresh.
+        Any returned claims are treated as untrusted/attributed overlays by the
+        derive layer and are conservatively sanitized before being stored.
+        """
+        return []
+
 
 class SemanticBackendUnavailable(SemanticExtractorBackend):
     def available(self) -> bool:

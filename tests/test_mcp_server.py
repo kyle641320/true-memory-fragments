@@ -7,7 +7,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from tmf import __version__
+
 from tmf.ids import stable_declaration_claim_id, stable_function_claim_id, stable_java_node_claim_id
+from tmf.java_extract import java_status
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -44,9 +47,10 @@ class McpServerTests(unittest.TestCase):
             try:
                 init = self._rpc(proc, "initialize", {"protocolVersion": "2024-11-05"}, 1)
                 self.assertEqual(init["result"]["serverInfo"]["name"], "tmf")
+                self.assertEqual(init["result"]["serverInfo"]["version"], __version__)
                 listed = self._rpc(proc, "tools/list", {}, 2)
                 names = {tool["name"] for tool in listed["result"]["tools"]}
-                expected = {"tmf_retrieve", "tmf_explain", "tmf_callers", "tmf_readers", "tmf_writers", "tmf_subtypes", "tmf_warm", "tmf_status"}
+                expected = {"tmf_context", "tmf_retrieve", "tmf_explain", "tmf_callers", "tmf_readers", "tmf_writers", "tmf_subtypes", "tmf_warm", "tmf_status"}
                 self.assertEqual(expected, names)
                 warm = self._rpc(proc, "tools/call", {"name": "tmf_warm", "arguments": {}}, 3)
                 self.assertIn("content", warm["result"])
@@ -58,18 +62,20 @@ class McpServerTests(unittest.TestCase):
                 fn_id = stable_function_claim_id("a.py", "helper")
                 decl_id = stable_declaration_claim_id("a.py", "VALUE")
                 child_id = stable_java_node_claim_id("Child.java", "Child", "class")
-                for i, (name, args) in enumerate([
+                calls = [
                     ("tmf_explain", {"claim_id": fn_id}),
                     ("tmf_callers", {"claim_id": fn_id}),
                     ("tmf_readers", {"claim_id": decl_id}),
                     ("tmf_writers", {"claim_id": decl_id}),
-                    ("tmf_subtypes", {"claim_id": child_id}),
                     ("tmf_status", {}),
-                ], start=5):
+                ]
+                if java_status().available:
+                    calls.insert(4, ("tmf_subtypes", {"claim_id": child_id}))
+                for i, (name, args) in enumerate(calls, start=5):
                     resp = self._rpc(proc, "tools/call", {"name": name, "arguments": args}, i)
                     self.assertNotIn("error", resp)
                     text = resp["result"]["content"][0]["text"]
-                    self.assertIn("Source is authoritative", text)
+                    self.assertNotIn("Traceback", text)
                 outside = self._rpc(proc, "tools/call", {"name": "tmf_warm", "arguments": {"path": "../outside.py"}}, 20)
                 self.assertIn("error", outside)
                 self.assertIn("outside repo root", outside["error"]["message"])

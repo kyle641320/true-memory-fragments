@@ -4,10 +4,13 @@ import json
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+from tmf.derive import derive_call_edge_claim
 
 
 def run(cmd, cwd):
@@ -55,6 +58,41 @@ class CallsEdgeTests(unittest.TestCase):
             self.assertIn("print", exprs)
             self.assertIn("obj.run", exprs)
             self.assertIn("missing", exprs)
+
+
+    def test_call_edge_claim_uses_precomputed_anchors_without_reading_source(self):
+        edge = SimpleNamespace(
+            caller_path="m.py",
+            callee_path="m.py",
+            caller_fn_hash="callerhash",
+            callee_fn_hash="calleehash",
+            caller_id="fn:m.py:main",
+            callee_id="fn:m.py:helper",
+            caller_qualname="main",
+            callee_qualname="helper",
+            resolution="module_local_name",
+        )
+
+        class Repo:
+            def blob_sha(self, path):
+                return "blob"
+
+            def head(self):
+                return "HEAD"
+
+            def read_file(self, path):
+                raise AssertionError("precomputed anchors should avoid source reads")
+
+        claim = derive_call_edge_claim(
+            Repo(),
+            edge,
+            {
+                "fn:m.py:main": {"path": "m.py", "line_start": 3, "line_end": 4, "qualname": "main"},
+                "fn:m.py:helper": {"path": "m.py", "line_start": 1, "line_end": 2, "qualname": "helper"},
+            },
+        )
+        self.assertEqual(claim.body["caller_anchor"]["line_start"], 3)
+        self.assertEqual(claim.body["callee_anchor"]["line_start"], 1)
 
     def test_rename_delete_recomputes_edges_and_removes_dead_endpoint(self):
         with tempfile.TemporaryDirectory() as td:

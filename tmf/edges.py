@@ -3,7 +3,7 @@ from __future__ import annotations
 import ast
 from dataclasses import dataclass
 
-from .extract import DeclarationNode, FunctionNode, extract_declarations, extract_functions
+from .extract import ClassNode, DeclarationNode, FunctionNode, extract_classes, extract_declarations, extract_functions
 from .git import GitRepo
 from .imports import ImportTarget, parse_import_targets
 from .ids import stable_declaration_claim_id, stable_function_claim_id
@@ -60,6 +60,47 @@ class ReadEdge:
 
 @dataclass(frozen=True)
 class UnresolvedRead:
+    reader_id: str
+    expr: str
+    reason: str
+
+
+
+
+@dataclass(frozen=True)
+class EnvReadEdge:
+    reader_id: str
+    env_name: str
+    evidence: str = "observed"
+    resolution: str = "python_literal_env_key"
+    reader_path: str | None = None
+    reader_fn_hash: str | None = None
+    reader_qualname: str | None = None
+
+
+@dataclass(frozen=True)
+class UnresolvedEnvRead:
+    reader_id: str
+    expr: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class ConfigKeyReadEdge:
+    reader_id: str
+    config_id: str
+    config_key: str
+    evidence: str = "observed"
+    resolution: str = "python_literal_config_key_unique_file"
+    reader_path: str | None = None
+    config_path: str | None = None
+    reader_fn_hash: str | None = None
+    config_hash: str | None = None
+    reader_qualname: str | None = None
+
+
+@dataclass(frozen=True)
+class UnresolvedConfigKeyRead:
     reader_id: str
     expr: str
     reason: str
@@ -138,6 +179,83 @@ def _function_ast_nodes(source: str) -> dict[str, ast.FunctionDef | ast.AsyncFun
     return out
 
 
+
+
+def _class_ast_nodes(source: str) -> dict[str, ast.ClassDef]:
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return {}
+    out: dict[str, ast.ClassDef] = {}
+    stack: list[str] = []
+
+    class Visitor(ast.NodeVisitor):
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+            stack.append(node.name)
+            self.generic_visit(node)
+            stack.pop()
+
+        def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+            stack.append(node.name)
+            self.generic_visit(node)
+            stack.pop()
+
+        def visit_ClassDef(self, node: ast.ClassDef) -> None:
+            qualname = ".".join([*stack, node.name])
+            out[qualname] = node
+            stack.append(node.name)
+            self.generic_visit(node)
+            stack.pop()
+
+    Visitor().visit(tree)
+    return out
+
+
+def _base_name(expr: ast.AST) -> str | None:
+    if isinstance(expr, ast.Name):
+        return expr.id
+    if isinstance(expr, ast.Attribute):
+        return expr.attr
+    return None
+
+
+def _unique_inherited_method(class_qual: str, method: str, classes: list[ClassNode], class_ast: dict[str, ast.ClassDef], fn_by_qual: dict[str, FunctionNode]) -> str | None:
+    by_short: dict[str, list[str]] = {}
+    for cls in classes:
+        by_short.setdefault(cls.qualname.rsplit('.', 1)[-1], []).append(cls.qualname)
+    seen: set[str] = set()
+
+    def walk(cls_qual: str) -> list[str] | None:
+        if cls_qual in seen:
+            return []
+        seen.add(cls_qual)
+        node = class_ast.get(cls_qual)
+        if node is None:
+            return None
+        hits: list[str] = []
+        for base in node.bases:
+            name = _base_name(base)
+            if not name:
+                return None
+            candidates = by_short.get(name, [])
+            if len(candidates) != 1:
+                return None
+            parent = candidates[0]
+            direct = f"{parent}.{method}"
+            if direct in fn_by_qual:
+                hits.append(direct)
+            nested = walk(parent)
+            if nested is None:
+                return None
+            hits.extend(nested)
+        return hits
+
+    found = walk(class_qual)
+    if found is None:
+        return None
+    unique = sorted(set(found))
+    return unique[0] if len(unique) == 1 else None
+
 def resolve_call_edges(path: str, source: str, functions: list[FunctionNode], repo: GitRepo | None = None) -> tuple[list[CallEdge], dict[str, list[UnresolvedCall]]]:
     """Conservative Python call resolver.
 
@@ -151,6 +269,8 @@ def resolve_call_edges(path: str, source: str, functions: list[FunctionNode], re
     fn_by_qual = {fn.qualname: fn for fn in functions}
     fn_by_id = {_node_id(fn.path, fn.qualname): fn for fn in functions}
     top_level_by_name = {fn.qualname: fn for fn in functions if "." not in fn.qualname}
+    classes = extract_classes(path, source)
+    class_ast = _class_ast_nodes(source)
     import_table: dict[str, ImportTarget] = {}
     import_unresolved: dict[str, str] = {}
     external_functions_cache: dict[str, dict[str, FunctionNode]] = {}
@@ -228,7 +348,11 @@ def resolve_call_edges(path: str, source: str, functions: list[FunctionNode], re
                     if candidate in fn_by_qual:
                         callee_qual = candidate
                     else:
-                        reason = "self_method_not_found_in_class"
+                        inherited = _unique_inherited_method(class_name, call.func.attr, classes, class_ast, fn_by_qual)
+                        if inherited is not None:
+                            callee_qual = inherited
+                        else:
+                            reason = "self_method_not_found_in_class_or_unique_resolved_base"
                 else:
                     reason = "attribute_call_not_resolved"
             else:
@@ -502,4 +626,157 @@ def resolve_write_edges(path: str, source: str, functions: list[FunctionNode], d
                 declaration_hash=decl.declaration_hash,
                 writer_qualname=fn.qualname,
             ))
+    return edges, unresolved
+
+
+
+def _literal_str(node: ast.AST | None) -> str | None:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    return None
+
+
+def _is_os_environ(node: ast.AST) -> bool:
+    return isinstance(node, ast.Attribute) and node.attr == "environ" and isinstance(node.value, ast.Name) and node.value.id == "os"
+
+
+def _env_key_from_call(node: ast.Call) -> tuple[str | None, str | None]:
+    f = node.func
+    if isinstance(f, ast.Attribute):
+        if f.attr == "getenv" and isinstance(f.value, ast.Name) and f.value.id == "os":
+            if not node.args:
+                return None, "env_key_missing"
+            key = _literal_str(node.args[0])
+            return key, None if key is not None else "env_key_not_literal"
+        if f.attr == "get" and _is_os_environ(f.value):
+            if not node.args:
+                return None, "env_key_missing"
+            key = _literal_str(node.args[0])
+            return key, None if key is not None else "env_key_not_literal"
+    return None, None
+
+
+def resolve_env_read_edges(path: str, source: str, functions: list[FunctionNode]) -> tuple[list[EnvReadEdge], dict[str, list[UnresolvedEnvRead]]]:
+    if not path.endswith(".py"):
+        return [], {}
+    fn_nodes = _function_ast_nodes(source)
+    edges: list[EnvReadEdge] = []
+    unresolved: dict[str, list[UnresolvedEnvRead]] = {}
+    for fn in functions:
+        node = fn_nodes.get(fn.qualname)
+        if node is None:
+            continue
+        rid = stable_function_claim_id(fn.path, fn.qualname)
+        class V(ast.NodeVisitor):
+            def visit_FunctionDef(self, n: ast.FunctionDef) -> None:
+                if n is node:
+                    self.generic_visit(n)
+            def visit_AsyncFunctionDef(self, n: ast.AsyncFunctionDef) -> None:
+                if n is node:
+                    self.generic_visit(n)
+            def visit_Subscript(self, n: ast.Subscript) -> None:
+                if _is_os_environ(n.value):
+                    key = _literal_str(n.slice)
+                    if key is not None:
+                        edges.append(EnvReadEdge(rid, key, reader_path=fn.path, reader_fn_hash=fn.fn_hash, reader_qualname=fn.qualname))
+                    else:
+                        unresolved.setdefault(rid, []).append(UnresolvedEnvRead(rid, _expr_name(n), "env_key_not_literal"))
+                self.generic_visit(n)
+            def visit_Call(self, n: ast.Call) -> None:
+                key, reason = _env_key_from_call(n)
+                if key is not None:
+                    edges.append(EnvReadEdge(rid, key, reader_path=fn.path, reader_fn_hash=fn.fn_hash, reader_qualname=fn.qualname))
+                elif reason is not None:
+                    unresolved.setdefault(rid, []).append(UnresolvedEnvRead(rid, _expr_name(n), reason))
+                self.generic_visit(n)
+        V().visit(node)
+    return edges, unresolved
+
+
+def _config_load_assignments(fn_node: ast.AST) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for n in ast.walk(fn_node):
+        if not isinstance(n, ast.Assign) or not isinstance(n.value, ast.Call):
+            continue
+        if len(n.targets) != 1 or not isinstance(n.targets[0], ast.Name):
+            continue
+        call = n.value
+        f = call.func
+        if not (isinstance(f, ast.Attribute) and f.attr == "load" and isinstance(f.value, ast.Name) and f.value.id in {"json", "toml"}):
+            continue
+        if not call.args:
+            continue
+        arg = call.args[0]
+        config_path = None
+        if isinstance(arg, ast.Call) and isinstance(arg.func, ast.Name) and arg.func.id == "open" and arg.args:
+            config_path = _literal_str(arg.args[0])
+        if config_path:
+            out[n.targets[0].id] = config_path
+    return out
+
+
+def _subscript_literal_chain(n: ast.Subscript) -> tuple[str | None, list[str], str | None]:
+    parts: list[str] = []
+    cur: ast.AST = n
+    while isinstance(cur, ast.Subscript):
+        key = _literal_str(cur.slice)
+        if key is None:
+            if isinstance(cur.value, ast.Name):
+                return cur.value.id, list(reversed(parts)), "config_key_not_literal"
+            return None, list(reversed(parts)), "config_key_not_literal"
+        parts.append(key)
+        cur = cur.value
+    if isinstance(cur, ast.Name):
+        return cur.id, list(reversed(parts)), None
+    return None, list(reversed(parts)), "config_base_not_name"
+
+
+def resolve_config_key_read_edges(path: str, source: str, functions: list[FunctionNode], repo: GitRepo | None = None) -> tuple[list[ConfigKeyReadEdge], dict[str, list[UnresolvedConfigKeyRead]]]:
+    if not path.endswith(".py") or repo is None:
+        return [], {}
+    from .extract import extract_configs
+    from .ids import stable_config_claim_id
+    fn_nodes = _function_ast_nodes(source)
+    edges: list[ConfigKeyReadEdge] = []
+    unresolved: dict[str, list[UnresolvedConfigKeyRead]] = {}
+    seen_edges: set[tuple[str, str]] = set()
+    seen_unresolved: set[tuple[str, str, str]] = set()
+    for fn in functions:
+        node = fn_nodes.get(fn.qualname)
+        if node is None:
+            continue
+        rid = stable_function_claim_id(fn.path, fn.qualname)
+        assigns = _config_load_assignments(node)
+        if not assigns:
+            continue
+        class V(ast.NodeVisitor):
+            def visit_Subscript(self, n: ast.Subscript) -> None:
+                base, keys, reason = _subscript_literal_chain(n)
+                if base in assigns and (keys or reason is not None):
+                    if reason is not None:
+                        keyu = (rid, _expr_name(n), reason)
+                        if keyu not in seen_unresolved:
+                            unresolved.setdefault(rid, []).append(UnresolvedConfigKeyRead(rid, _expr_name(n), reason))
+                            seen_unresolved.add(keyu)
+                    else:
+                        cfg_path = assigns[base]
+                        key_path = ".".join(keys)
+                        try:
+                            cfg_text = repo.read_file(cfg_path)
+                            configs = {c.key: c for c in extract_configs(cfg_path, cfg_text)}
+                        except Exception:
+                            configs = {}
+                        cfg = configs.get(key_path)
+                        if cfg is None:
+                            keyu = (rid, _expr_name(n), "config_key_not_found")
+                            if keyu not in seen_unresolved:
+                                unresolved.setdefault(rid, []).append(UnresolvedConfigKeyRead(rid, _expr_name(n), "config_key_not_found"))
+                                seen_unresolved.add(keyu)
+                        else:
+                            edge_key = (rid, stable_config_claim_id(cfg_path, key_path))
+                            if edge_key not in seen_edges:
+                                edges.append(ConfigKeyReadEdge(rid, stable_config_claim_id(cfg_path, key_path), key_path, reader_path=fn.path, config_path=cfg_path, reader_fn_hash=fn.fn_hash, config_hash=cfg.config_hash, reader_qualname=fn.qualname))
+                                seen_edges.add(edge_key)
+                self.generic_visit(n)
+        V().visit(node)
     return edges, unresolved

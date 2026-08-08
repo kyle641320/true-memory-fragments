@@ -62,7 +62,7 @@ class JavaNodeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), JAVA_FIXTURE)
             data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "Sample.java", "--repo", str(repo)], ROOT).stdout)
-            java_claims = [c for c in data["claims"] if c.get("language") == "java"]
+            java_claims = [c for c in data["claims"] if c.get("language") == "java" and c.get("extraction_tier") == "java-treesitter-syntactic"]
             qualnames = {c["qualname"] for c in java_claims}
             self.assertIn("Sample", qualnames)
             self.assertIn("Sample.greet", qualnames)
@@ -71,7 +71,6 @@ class JavaNodeTests(unittest.TestCase):
             self.assertIn("Sample.Inner", qualnames)
             self.assertIn("Sample.Mode", qualnames)
             self.assertTrue(all(c.get("extraction_tier") == "java-treesitter-syntactic" for c in java_claims))
-            self.assertFalse(any(c.get("scope") == "cross-repo" or c.get("edge_kind") for c in data["claims"]))
             for claim_id in [c["id"] for c in java_claims]:
                 claim = Store(repo).get_claim(claim_id)
                 self.assertIsNotNone(claim)

@@ -15,8 +15,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install package
-        run: python -m pip install -e .
+      - name: Install package with Java parser support
+        run: python -m pip install -e ".[java]"
+      - name: Verify Java parser is active
+        run: python -c "from tmf.java_extract import java_status; status = java_status(); assert status.available, status.hint"
       - name: Unit tests
         run: python -m unittest discover -s tests -q
       - name: Held-out validation

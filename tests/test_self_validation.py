@@ -40,7 +40,7 @@ class SelfValidationTests(unittest.TestCase):
             retrieve_path(repo, "m.py")
             claims = list(Store(repo).iter_claims())
             by_qualname = {claim.body.get("qualname"): claim for claim in claims if isinstance(claim.body, dict)}
-            inner = by_qualname["Inner"]
+            inner = by_qualname["outer.Inner"]
             outer = by_qualname["outer"]
             expected = _expected_stale_ids_for_sample(inner, claims, insertion_after_line=2)
             self.assertIn(inner.id, expected)

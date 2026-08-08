@@ -299,7 +299,9 @@ def handle(service: McpService, request: dict[str, Any]) -> dict[str, Any] | Non
     if method == "notifications/initialized":
         return None
     if method == "initialize":
-        return _response(req_id, {"protocolVersion": "2024-11-05", "serverInfo": {"name": "tmf", "version": "0.1.0"}, "capabilities": {"tools": {}}})
+        from tmf import __version__
+
+        return _response(req_id, {"protocolVersion": "2024-11-05", "serverInfo": {"name": "tmf", "version": __version__}, "capabilities": {"tools": {}}})
     if method == "ping":
         return _response(req_id, {})
     if method == "tools/list":

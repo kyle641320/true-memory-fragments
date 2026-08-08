@@ -10,7 +10,9 @@ from .freshness import check_freshness
 from .git import GitRepo
 from .retrieve import retrieve_path, retrieve_text, reverse_callers
 from .warm import warm_repo
+from .contract_warm import warm_contracts
 from .store import Store
+from .metrics import stats as metrics_stats
 from .validation import run_heldout_validation, run_self_validation
 
 
@@ -87,7 +89,10 @@ def cmd_callers(args: argparse.Namespace) -> int:
 
 
 def cmd_warm(args: argparse.Namespace) -> int:
-    print(json.dumps(warm_repo(args.repo), ensure_ascii=False, indent=2))
+    if getattr(args, "contracts", False):
+        print(json.dumps(warm_contracts(args.repo, command=args.contract_command, limit=args.limit, sample_limit=args.sample_limit), ensure_ascii=False, indent=2))
+    else:
+        print(json.dumps(warm_repo(args.repo), ensure_ascii=False, indent=2))
     return 0
 
 
@@ -154,6 +159,11 @@ def cmd_mcp(args: argparse.Namespace) -> int:
     from .mcp_server import serve
     return serve(args.repo)
 
+
+def cmd_stats(args: argparse.Namespace) -> int:
+    print(json.dumps(metrics_stats(args.repo, since=args.since), ensure_ascii=False, indent=2))
+    return 0
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tmf", description="True Memory Fragments: lazy, source-bound code memory")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -188,6 +198,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     warm = sub.add_parser("warm", help="derive supported claims for a repository into .tmf/ and build indexes")
     warm.add_argument("--repo", default=".")
+    warm.add_argument("--contracts", action="store_true", help="resumably warm true-model semantic contract claims for non-trivial Python functions")
+    warm.add_argument("--contract-command", help="model command for --contracts; defaults to TMF_MODEL_COMMAND")
+    warm.add_argument("--limit", type=int, help="optional max functions to process this run")
+    warm.add_argument("--sample-limit", type=int, default=20, help="number of contract samples with embedded source spans to write")
     warm.set_defaults(func=cmd_warm)
 
     mcp = sub.add_parser("mcp", help="run a minimal MCP stdio server")
@@ -203,6 +217,11 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--self-validate", action="store_true", help="also run self-dogfood when --heldout is selected")
     validate.add_argument("--sample-limit", type=int, default=10, help="self-dogfood freshness sample limit")
     validate.set_defaults(func=cmd_validate)
+
+    stats = sub.add_parser("stats", help="summarize local TMF metrics events")
+    stats.add_argument("--repo", default=".")
+    stats.add_argument("--since", help="ISO timestamp lower bound")
+    stats.set_defaults(func=cmd_stats)
 
     return parser
 

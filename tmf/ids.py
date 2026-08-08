@@ -61,3 +61,53 @@ def stable_write_edge_claim_id(writer_id: str, declaration_id: str) -> str:
 def stable_inherit_edge_claim_id(child_id: str, parent_id: str, relation: str) -> str:
     digest = hashlib.sha256(f"inherits\0{relation}\0{child_id}\0{parent_id}".encode("utf-8")).hexdigest()[:16]
     return f"claim_inherit_edge_{digest}"
+
+
+def stable_contract_claim_id(path: str, qualname: str) -> str:
+    digest = hashlib.sha256(f"contract\0{path}\0{qualname}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_contract_{digest}"
+
+
+def stable_override_edge_claim_id(method_id: str, overridden_id: str) -> str:
+    digest = hashlib.sha256(f"overrides\0{method_id}\0{overridden_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_override_edge_{digest}"
+
+
+def stable_type_use_edge_claim_id(user_id: str, type_id: str, use_kind: str) -> str:
+    digest = hashlib.sha256(f"uses_type\0{use_kind}\0{user_id}\0{type_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_type_use_edge_{digest}"
+
+
+def stable_env_claim_id(env_name: str) -> str:
+    digest = hashlib.sha256(f"env\0{env_name}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_env_{digest}"
+
+
+def stable_env_read_edge_claim_id(reader_id: str, env_name: str) -> str:
+    digest = hashlib.sha256(f"reads_env\0{reader_id}\0{env_name}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_env_read_edge_{digest}"
+
+
+def stable_config_read_edge_claim_id(reader_id: str, config_id: str) -> str:
+    digest = hashlib.sha256(f"reads_config_key\0{reader_id}\0{config_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_config_read_edge_{digest}"
+
+
+def stable_inject_edge_claim_id(injector_id: str, bean_id: str, inject_kind: str) -> str:
+    digest = hashlib.sha256(f"injects\0{inject_kind}\0{injector_id}\0{bean_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_inject_edge_{digest}"
+
+
+def stable_topic_claim_id(topic_name: str) -> str:
+    digest = hashlib.sha256(f"topic\0{topic_name}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_topic_{digest}"
+
+
+def stable_topic_pub_edge_claim_id(publisher_id: str, topic_name: str) -> str:
+    digest = hashlib.sha256(f"publishes_to\0{publisher_id}\0{topic_name}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_topic_pub_edge_{digest}"
+
+
+def stable_topic_sub_edge_claim_id(subscriber_id: str, topic_name: str) -> str:
+    digest = hashlib.sha256(f"subscribes_to\0{subscriber_id}\0{topic_name}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_topic_sub_edge_{digest}"
