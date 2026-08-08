@@ -1,0 +1,53 @@
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing GitHub release tag to publish
+        required: true
+        default: v0.1.0rc2
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: Publish verified GitHub release assets
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/true-memory-fragments
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Download release distributions and checksums
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          mkdir dist
+          gh release download "$RELEASE_TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern '*.whl' \
+            --pattern '*.tar.gz' \
+            --pattern 'SHA256SUMS-release.txt' \
+            --dir dist
+
+      - name: Verify release distributions
+        run: |
+          set -euo pipefail
+          cd dist
+          sha256sum -c SHA256SUMS-release.txt
+          test "$(find . -maxdepth 1 -type f -name '*.whl' | wc -l)" -eq 1
+          test "$(find . -maxdepth 1 -type f -name '*.tar.gz' | wc -l)" -eq 1
+          rm SHA256SUMS-release.txt
+
+      - name: Publish distributions to PyPI with OIDC
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33
+        with:
+          packages-dir: dist/
+          print-hash: true
