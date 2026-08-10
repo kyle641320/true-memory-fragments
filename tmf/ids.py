@@ -199,6 +199,10 @@ def stable_exception_handler_declaration_claim_id(owner_id: str) -> str:
     digest=hashlib.sha256(f"exception_handler_declaration\0{owner_id}".encode()).hexdigest()[:16]
     return f"claim_exception_handler_decl_{digest}"
 
+def stable_controller_advice_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"controller_advice_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_controller_advice_decl_{digest}"
+
 
 def stable_pre_filter_declaration_claim_id(owner_id: str) -> str:
     digest=hashlib.sha256(f"pre_filter_declaration\0{owner_id}".encode()).hexdigest()[:16]

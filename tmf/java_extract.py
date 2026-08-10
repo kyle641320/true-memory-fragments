@@ -15,6 +15,19 @@ JAVA_DEGRADE_HINT = (
 )
 
 
+def _java_exact_simple_annotation_import(source: str, simple_name: str, expected_fqn: str) -> bool:
+    """Accept one exact non-static import and reject local/simple-name shadowing."""
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(rf"\bimport\s+(?:static\s+)?([^;]*{re.escape(simple_name)}[^;]*)\s*;", source)
+    declarations = rf"(?:@interface|class|interface|record|enum)\s+{re.escape(simple_name)}\b"
+    return (
+        imports.count(expected_fqn) == 1
+        and [value for value in imports if value.rsplit('.', 1)[-1] == simple_name] == [expected_fqn]
+        and raw == [expected_fqn]
+        and re.search(declarations, source) is None
+    )
+
+
 @dataclass(frozen=True)
 class JavaExtractionStatus:
     available: bool
@@ -315,6 +328,24 @@ class JavaUnresolvedExceptionHandlerDeclaration:
     reason: str
 
 @dataclass(frozen=True)
+class JavaControllerAdviceDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-controlleradvice-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedControllerAdviceDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
 class JavaPreFilterDeclaration:
     owner_id: str
     owner_qualname: str
@@ -573,9 +604,7 @@ def resolve_java_pre_authorize_declarations(path: str, source: str, classes: lis
     """Retain direct Spring Security PreAuthorize literals; infer no runtime behavior."""
     if "@PreAuthorize" not in source: return [], {}
     expected = "org.springframework.security.access.prepost.PreAuthorize"
-    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
-    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PreAuthorize[^;]*)\s*;", source)
-    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PreAuthorize'] == [expected] and raw == [expected] and re.search(r"@interface\s+PreAuthorize\b",source) is None
+    exact = _java_exact_simple_annotation_import(source, "PreAuthorize", expected)
     _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
     for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
     found=[];unresolved={}
@@ -662,9 +691,7 @@ def resolve_java_secured_declarations(path: str, source: str, classes: list[Clas
     """Retain direct Spring Security Secured role literals; infer no authorization semantics."""
     if "@Secured" not in source: return [], {}
     expected="org.springframework.security.access.annotation.Secured"
-    imports=re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;",source)
-    raw=re.findall(r"\bimport\s+(?:static\s+)?([^;]*Secured[^;]*)\s*;",source)
-    exact=imports.count(expected)==1 and [x for x in imports if x.rsplit('.',1)[-1]=='Secured']==[expected] and raw==[expected] and re.search(r"@interface\s+Secured\b",source) is None
+    exact = _java_exact_simple_annotation_import(source, "Secured", expected)
     _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
     for item in [*classes,*methods]:candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
     found=[];unresolved={}
@@ -695,9 +722,7 @@ def resolve_java_post_authorize_declarations(path: str, source: str, classes: li
     """Retain direct Spring Security PostAuthorize literals; infer no runtime behavior."""
     if "@PostAuthorize" not in source: return [], {}
     expected = "org.springframework.security.access.prepost.PostAuthorize"
-    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
-    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PostAuthorize[^;]*)\s*;", source)
-    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PostAuthorize'] == [expected] and raw == [expected] and re.search(r"@interface\s+PostAuthorize\b",source) is None
+    exact = _java_exact_simple_annotation_import(source, "PostAuthorize", expected)
     _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
     for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
     found=[];unresolved={}
@@ -747,9 +772,7 @@ def resolve_java_exception_handler_declarations(path: str, source: str, classes:
     """Retain direct Spring Web ExceptionHandler class literals; infer no dispatch/runtime behavior."""
     if "@ExceptionHandler" not in source: return [], {}
     expected="org.springframework.web.bind.annotation.ExceptionHandler"
-    imports=re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;",source)
-    raw=re.findall(r"\bimport\s+(?:static\s+)?([^;]*ExceptionHandler[^;]*)\s*;",source)
-    exact=imports.count(expected)==1 and [x for x in imports if x.rsplit('.',1)[-1]=='ExceptionHandler']==[expected] and raw==[expected] and re.search(r"(?:@interface|class|interface|record)\s+ExceptionHandler\b",source) is None
+    exact = _java_exact_simple_annotation_import(source, "ExceptionHandler", expected)
     _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
     for item in methods:candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
     found=[];unresolved={}
@@ -788,13 +811,41 @@ def resolve_java_exception_handler_declarations(path: str, source: str, classes:
         for child in _named_children(node):walk(child,ns)
     walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
 
+def resolve_java_controller_advice_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaControllerAdviceDeclaration], dict[str, list[JavaUnresolvedControllerAdviceDeclaration]]]:
+    """Retain direct ControllerAdvice presence; infer no discovery, scope, or runtime behavior."""
+    if "@ControllerAdvice" not in source: return [], {}
+    expected = "org.springframework.web.bind.annotation.ControllerAdvice"
+    exact = _java_exact_simple_annotation_import(source, "ControllerAdvice", expected)
+    _, parser = _language_and_parser(); data = source.encode(); tree = parser.parse(data); candidates = {}
+    for item in classes: candidates.setdefault((item.qualname, item.node_kind), []).append(item)
+    found=[]; unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedControllerAdviceDeclaration(owner,_node_text(data,ann),reason))
+    def walk(node,stack,in_method=False):
+        ns=stack; q=None; kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node); ns=[*stack,n] if n else stack; q='.'.join(ns)
+            kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        if q and kind in {'class','interface'} and not in_method:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='ControllerAdvice']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1: pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns: reject(owner,a,'controller_advice_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns: reject(owner,a,'controller_advice_duplicate_annotation')
+                elif len(pool)!=1: reject(owner,anns[0],'controller_advice_owner_ambiguous')
+                elif _java_annotation_args(anns[0]): reject(owner,anns[0],'controller_advice_metadata_unsupported')
+                else: found.append(JavaControllerAdviceDeclaration(owner,q,kind,path,_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node): walk(child,ns,in_method or node.type in {'method_declaration','constructor_declaration'})
+    walk(tree.root_node,[],False); return sorted(found,key=lambda x:x.owner_id),unresolved
+
 def resolve_java_pre_filter_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPreFilterDeclaration], dict[str, list[JavaUnresolvedPreFilterDeclaration]]]:
     """Retain direct Spring Security PreFilter literals; infer no runtime behavior."""
     if "@PreFilter" not in source: return [], {}
     expected = "org.springframework.security.access.prepost.PreFilter"
-    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
-    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PreFilter[^;]*)\s*;", source)
-    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PreFilter'] == [expected] and raw == [expected] and re.search(r"@interface\s+PreFilter\b",source) is None
+    exact = _java_exact_simple_annotation_import(source, "PreFilter", expected)
     _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
     for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
     found=[];unresolved={}
@@ -844,9 +895,7 @@ def resolve_java_post_filter_declarations(path: str, source: str, classes: list[
     """Retain direct Spring Security PostFilter literals; infer no runtime behavior."""
     if "@PostFilter" not in source: return [], {}
     expected = "org.springframework.security.access.prepost.PostFilter"
-    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
-    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PostFilter[^;]*)\s*;", source)
-    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PostFilter'] == [expected] and raw == [expected] and re.search(r"@interface\s+PostFilter\b",source) is None
+    exact = _java_exact_simple_annotation_import(source, "PostFilter", expected)
     _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
     for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
     found=[];unresolved={}

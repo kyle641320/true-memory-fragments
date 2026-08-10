@@ -2,13 +2,27 @@ from __future__ import annotations
 import tempfile, unittest
 from pathlib import Path
 from tmf.ids import stable_java_node_claim_id
-from tmf.java_extract import JAVA_DEGRADE_HINT, extract_java_classes, java_status
+from tmf.java_extract import JAVA_DEGRADE_HINT, _java_exact_simple_annotation_import, extract_java_classes, java_status
 from tmf.store import Store
 from tmf.warm import warm_repo
 from tests.test_java_inherit import init_repo
 
 @unittest.skipUnless(java_status().available, JAVA_DEGRADE_HINT)
 class JavaAnnotationTests(unittest.TestCase):
+    def test_exact_simple_annotation_import_rejects_all_shadowing_forms(self):
+        expected = "org.springframework.security.access.prepost.PreAuthorize"
+        self.assertTrue(_java_exact_simple_annotation_import(
+            "import org.springframework.security.access.prepost.PreAuthorize; class A {}",
+            "PreAuthorize", expected,
+        ))
+        for source in (
+            "import org.springframework.security.access.prepost.*; class A {}",
+            "import static org.springframework.security.access.prepost.PreAuthorize; class A {}",
+            "import org.springframework.security.access.prepost.PreAuthorize; import decoy.PreAuthorize; class A {}",
+            "import org.springframework.security.access.prepost.PreAuthorize; @interface PreAuthorize {}",
+        ):
+            self.assertFalse(_java_exact_simple_annotation_import(source, "PreAuthorize", expected))
+
     def test_declaration_and_uses_are_stable_type_evidence(self):
         source = '''@interface Mark { String value(); }
 @Mark("type") class Demo {
