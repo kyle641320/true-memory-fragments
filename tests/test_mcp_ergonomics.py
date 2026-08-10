@@ -11,7 +11,7 @@ from tmf.ids import stable_function_claim_id
 
 
 def _init_repo(root: Path) -> None:
-    subprocess.run(["git", "init"], cwd=root, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    subprocess.run(["git", "init", "-b", "master"], cwd=root, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     subprocess.run(["git", "config", "user.email", "tmf@example.com"], cwd=root, check=True)
     subprocess.run(["git", "config", "user.name", "tmf"], cwd=root, check=True)
     (root / "a.py").write_text(

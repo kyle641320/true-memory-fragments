@@ -24,7 +24,7 @@ class ReconcileGuardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "a.py").write_text("def a():\n    return 1\n", encoding="utf-8")

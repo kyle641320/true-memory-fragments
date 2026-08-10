@@ -33,7 +33,7 @@ def run(args: list[str], cwd: Path) -> bytes:
 def init_repo(root: Path, dirty: bool = False) -> Path:
     repo = root / "repo"
     repo.mkdir()
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     (repo / "A.java").write_text("package demo;\npublic class A { int x = 1; }\n", encoding="utf-8")

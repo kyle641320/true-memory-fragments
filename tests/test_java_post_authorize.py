@@ -7,7 +7,7 @@ def run(c,w):subprocess.run(c,cwd=w,check=True,stdout=subprocess.PIPE,stderr=sub
 class PostAuthorizeTests(unittest.TestCase):
  def claims(self,s):
   with tempfile.TemporaryDirectory() as td:
-   r=Path(td);(r/'A.java').write_text(s);run(['git','init'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
+   r=Path(td);(r/'A.java').write_text(s);run(['git','init','-b','master'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
  def pa(self,s):return [x for x in self.claims(s) if x.id.startswith('claim_post_authorize_decl_')]
  def test_opaque_literal_overloads(self):
   s='import org.springframework.security.access.prepost.PostAuthorize; class A{@PostAuthorize("hasRole(\\"ADMIN\\")") void x(){} @PostAuthorize(value="opaque #id") void x(String id){}}'

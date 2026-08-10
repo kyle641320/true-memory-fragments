@@ -75,13 +75,13 @@ def main() -> int:
         "No authorization outcome, security context, proxying, call graph, or runtime enforcement is inferred.",
     ]
     report = {"format": "tmf.java-post-authorize-qualification.v1", "status": "PASS" if ok else "FAIL",
-              "checks": checks, "checks_passed": sum(checks.values()), "checks_total": len(checks),
+              "checks": checks, "passed": sum(checks.values()), "total": len(checks),
               "declarations": len(declarations), "unresolved": len(rejected), "limitations": limitations}
     out = ROOT / "reports/java-post-authorize-qualification"
     out.mkdir(parents=True, exist_ok=True)
     (out / "report.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     lines = [f"# Java PostAuthorize qualification: {report['status']}", "",
-             f"- Checks: {report['checks_passed']}/{report['checks_total']}",
+             f"- Checks: {report['passed']}/{report['total']}",
              f"- Held-out declarations: {len(declarations)}", f"- Held-out unresolved: {len(rejected)}", "", "## Checks", ""]
     lines += [f"- [{'x' if passed else ' '}] `{name}`" for name, passed in checks.items()]
     lines += ["", "## Explicit limitations", ""] + [f"- {item}" for item in limitations]

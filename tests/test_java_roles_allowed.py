@@ -7,7 +7,7 @@ def run(c,w):subprocess.run(c,cwd=w,check=True,stdout=subprocess.PIPE,stderr=sub
 class RolesAllowedTests(unittest.TestCase):
  def claims(self,s):
   with tempfile.TemporaryDirectory() as td:
-   r=Path(td);(r/'A.java').write_text(s);run(['git','init'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
+   r=Path(td);(r/'A.java').write_text(s);run(['git','init','-b','master'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
  def roles(self,s):return [x for x in self.claims(s) if x.id.startswith('claim_roles_allowed_decl_')]
  def test_namespaces_literals_overloads_and_anchor(self):
   for ns in ('jakarta','javax'):

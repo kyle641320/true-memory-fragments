@@ -17,7 +17,7 @@ def run(cmd, cwd):
 def init_repo(tmp_path: Path, files: dict[str, str]) -> Path:
     repo = tmp_path / "repo"
     repo.mkdir()
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     for path, content in files.items():

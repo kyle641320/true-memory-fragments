@@ -8,7 +8,7 @@ def run(c,w):subprocess.run(c,cwd=w,check=True,stdout=subprocess.PIPE,stderr=sub
 class ControllerAdviceTests(unittest.TestCase):
  def claims(self,s):
   with tempfile.TemporaryDirectory() as td:
-   r=Path(td);(r/'A.java').write_text(s);run(['git','init'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
+   r=Path(td);(r/'A.java').write_text(s);run(['git','init','-b','master'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
  def declarations(self,s):return [x for x in self.claims(s) if x.id.startswith('claim_controller_advice_decl_')]
  def test_class_interface_presence_namespace_and_precise_anchor(self):
   s='''import org.springframework.web.bind.annotation.ControllerAdvice;\n@ControllerAdvice\nclass A {}\n@ControllerAdvice interface B {}''';a=self.declarations(s);self.assertEqual(len(a),2);self.assertEqual({x.body['owner_kind'] for x in a},{'class','interface'});self.assertTrue(all(x.body['source_namespace']=='org.springframework.web.bind.annotation' and x.bindings[0].hash_kind=='java_token_sha256' and x.bindings[0].line_start in (2,4) for x in a))

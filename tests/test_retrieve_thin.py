@@ -19,7 +19,7 @@ class RetrieveThinTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "app.py").write_text('def charge(x):\n    """Reject negative balances because ledger settlement cannot carry debt."""\n    return x >= 0\n', encoding="utf-8")
@@ -43,7 +43,7 @@ class RetrieveThinTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "app.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
@@ -61,7 +61,7 @@ class RetrieveThinTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "a.py").write_text("from b import helper\n\ndef main():\n    return helper()\n", encoding="utf-8")

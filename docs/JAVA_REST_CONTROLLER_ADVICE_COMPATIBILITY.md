@@ -1,0 +1,3 @@
+# Java RestControllerAdvice compatibility
+
+TMF conservatively records direct `@RestControllerAdvice` presence on class and interface declarations only with the single exact non-static import `org.springframework.web.bind.annotation.RestControllerAdvice` and no annotation arguments. This is an independent declaration fact: TMF does not expand the composed annotation into `@ControllerAdvice`, `@ResponseBody`, discovery, exception dispatch, response mapping, aliases, inheritance, AOP, or runtime behavior. Wildcard/static/conflicting imports, local or decoy declarations, duplicate annotations, and metadata fail closed.

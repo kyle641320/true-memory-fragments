@@ -17,7 +17,7 @@ def run(cmd, cwd):
 def init_repo(tmp_path: Path) -> Path:
     repo = tmp_path / "repo"
     repo.mkdir()
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     (repo / "app.py").write_text(
@@ -115,7 +115,7 @@ class TmfV1PrecisionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "m.py").write_text(
@@ -148,7 +148,7 @@ class TmfV1PrecisionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "m.py").write_text("def foo():\n    return 1\n\ndef keep():\n    return 2\n", encoding="utf-8")
@@ -176,7 +176,7 @@ class TmfV1PrecisionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "m.py").write_text("def foo():\n    return 1\n\ndef keep():\n    return 2\n", encoding="utf-8")

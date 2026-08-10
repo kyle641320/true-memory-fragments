@@ -1,0 +1,3 @@
+# Java RestController compatibility
+
+TMF records direct `@RestController` presence on class and interface declarations only when bound by the exact explicit non-static import `org.springframework.web.bind.annotation.RestController` and used without metadata. This is an independent declaration fact and does not expand composed `@Controller`/`@ResponseBody` semantics or infer routing, endpoints, bean discovery, serialization, inheritance, aliases, meta-annotations, proxies, or runtime behavior. Wildcard/static/conflicting imports, local or decoy declarations, records, local types, wrong targets, duplicate annotations, and metadata fail closed.

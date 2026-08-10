@@ -14,7 +14,7 @@ class YamlSqlNodeChecks(unittest.TestCase):
     def _repo(self, root: Path, files: dict[str, str]) -> Path:
         repo = root / "repo"
         repo.mkdir()
-        subprocess.run(["git", "init"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        subprocess.run(["git", "init", "-b", "master"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         subprocess.run(["git", "config", "user.email", "tmf@example.com"], cwd=repo, check=True)
         subprocess.run(["git", "config", "user.name", "tmf"], cwd=repo, check=True)
         for rel, text in files.items():

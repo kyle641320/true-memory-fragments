@@ -203,6 +203,84 @@ def stable_controller_advice_declaration_claim_id(owner_id: str) -> str:
     digest=hashlib.sha256(f"controller_advice_declaration\0{owner_id}".encode()).hexdigest()[:16]
     return f"claim_controller_advice_decl_{digest}"
 
+def stable_rest_controller_advice_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"rest_controller_advice_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_rest_controller_advice_decl_{digest}"
+
+def stable_init_binder_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"init_binder_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_init_binder_decl_{digest}"
+
+def stable_model_attribute_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"model_attribute_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_model_attribute_decl_{digest}"
+
+def stable_response_status_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"response_status_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_response_status_decl_{digest}"
+
+def stable_session_attributes_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"session_attributes_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_session_attributes_decl_{digest}"
+
+
+def stable_cross_origin_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"cross_origin_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_cross_origin_decl_{digest}"
+
+def stable_rest_controller_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"rest_controller_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_rest_controller_decl_{digest}"
+
+def stable_controller_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"controller_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_controller_decl_{digest}"
+
+def stable_service_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"service_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_service_decl_{digest}"
+
+def stable_component_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"component_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_component_decl_{digest}"
+
+def stable_repository_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"repository_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_repository_decl_{digest}"
+
+def stable_configuration_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"configuration_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_configuration_decl_{digest}"
+
+def stable_bean_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"bean_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_bean_decl_{digest}"
+
+def stable_primary_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"primary_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_primary_decl_{digest}"
+
+def stable_lazy_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"lazy_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_lazy_decl_{digest}"
+
+def stable_post_construct_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"post_construct_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_post_construct_decl_{digest}"
+
+def stable_pre_destroy_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"pre_destroy_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_pre_destroy_decl_{digest}"
+
+def stable_scope_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"scope_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_scope_decl_{digest}"
+
+def stable_response_body_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"response_body_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_response_body_decl_{digest}"
+
+
 
 def stable_pre_filter_declaration_claim_id(owner_id: str) -> str:
     digest=hashlib.sha256(f"pre_filter_declaration\0{owner_id}".encode()).hexdigest()[:16]

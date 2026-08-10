@@ -7,7 +7,7 @@ def run(cmd,cwd): subprocess.run(cmd,cwd=cwd,check=True,stdout=subprocess.PIPE,s
 class JavaAsyncTests(unittest.TestCase):
  def claims(self,source):
   with tempfile.TemporaryDirectory() as td:
-   root=Path(td);(root/'A.java').write_text(source);run(['git','init'],root);run(['git','config','user.email','x@y'],root);run(['git','config','user.name','x'],root);run(['git','add','A.java'],root);run(['git','commit','-m','x'],root);return derive_claims_for_path(GitRepo(root),'A.java')
+   root=Path(td);(root/'A.java').write_text(source);run(['git','init','-b','master'],root);run(['git','config','user.email','x@y'],root);run(['git','config','user.name','x'],root);run(['git','add','A.java'],root);run(['git','commit','-m','x'],root);return derive_claims_for_path(GitRepo(root),'A.java')
  def asyncs(self,s): return [c for c in self.claims(s) if c.id.startswith('claim_async_decl_')]
  def test_direct_class_methods_literals_overloads(self):
   s='''import org.springframework.scheduling.annotation.Async; @Async("classPool") class A { @Async void x(){} @Async(value="fast") void x(String s){} @Async(executor="fast") void y(){} }'''

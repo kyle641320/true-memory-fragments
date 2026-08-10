@@ -346,6 +346,349 @@ class JavaUnresolvedControllerAdviceDeclaration:
     reason: str
 
 @dataclass(frozen=True)
+class JavaRestControllerAdviceDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-restcontrolleradvice-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedRestControllerAdviceDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaInitBinderDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-initbinder-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedInitBinderDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaModelAttributeDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-modelattribute-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedModelAttributeDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaResponseStatusDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-responsestatus-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedResponseStatusDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaSessionAttributesDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-sessionattributes-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedSessionAttributesDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaCrossOriginDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-crossorigin-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedCrossOriginDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaRestControllerDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-restcontroller-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedRestControllerDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaControllerDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-stereotype-controller-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedControllerDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaServiceDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-stereotype-service-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedServiceDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaComponentDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-stereotype-component-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedComponentDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaRepositoryDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-stereotype-repository-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedRepositoryDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaConfigurationDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-context-configuration-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedConfigurationDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaBeanDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-context-bean-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedBeanDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaPrimaryDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-context-primary-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedPrimaryDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaLazyDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-context-lazy-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedLazyDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class JavaPostConstructDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "jakarta-annotation-postconstruct-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedPostConstructDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaPreDestroyDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "jakarta-annotation-predestroy-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedPreDestroyDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaScopeDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-context-scope-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedScopeDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaResponseBodyDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-responsebody-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedResponseBodyDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
 class JavaPreFilterDeclaration:
     owner_id: str
     owner_qualname: str
@@ -840,6 +1183,148 @@ def resolve_java_controller_advice_declarations(path: str, source: str, classes:
                 else: found.append(JavaControllerAdviceDeclaration(owner,q,kind,path,_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
         for child in _named_children(node): walk(child,ns,in_method or node.type in {'method_declaration','constructor_declaration'})
     walk(tree.root_node,[],False); return sorted(found,key=lambda x:x.owner_id),unresolved
+def _resolve_java_presence_declarations(
+    path: str,
+    source: str,
+    classes: list[ClassNode],
+    methods: list[ClassNode],
+    *,
+    annotation: str,
+    expected_fqn: str,
+    owner_kinds: frozenset[str],
+    declaration_type: type,
+    unresolved_type: type,
+    reason_prefix: str,
+    allow_nested_method_owner: bool = False,
+) -> tuple[list[Any], dict[str, list[Any]]]:
+    """Shared fail-closed resolver for direct, metadata-free annotation presence."""
+    if f"@{annotation}" not in source:
+        return [], {}
+    exact = _java_exact_simple_annotation_import(source, annotation, expected_fqn)
+    _, parser = _language_and_parser()
+    data = source.encode()
+    tree = parser.parse(data)
+    candidates: dict[tuple[str, str], list[ClassNode]] = {}
+    for item in [*classes, *methods]:
+        candidates.setdefault((item.qualname, item.node_kind), []).append(item)
+    found: list[Any] = []
+    unresolved: dict[str, list[Any]] = {}
+
+    def reject(owner: str, ann: Any, reason: str) -> None:
+        unresolved.setdefault(owner, []).append(unresolved_type(owner, _node_text(data, ann), reason))
+
+    def walk(node: Any, stack: list[str], in_method: bool = False) -> None:
+        next_stack = stack
+        qualname = None
+        kind = None
+        if node.type in _CLASS_TYPES:
+            name = _identifier_from_node(data, node)
+            next_stack = [*stack, name] if name else stack
+            qualname = ".".join(next_stack)
+            kind = "interface" if node.type == "interface_declaration" else ("record" if node.type == "record_declaration" else "class")
+        elif node.type == "method_declaration":
+            qualname = _method_qualname(data, node, stack)
+            kind = "method"
+        if qualname and kind in owner_kinds and not in_method or (qualname and kind == "method" and kind in owner_kinds and allow_nested_method_owner):
+            annotations = [ann for ann in _java_annotations(node) if _java_annotation_name(data, ann) == annotation]
+            pool = candidates.get((qualname, kind), [])
+            if len(pool) > 1:
+                node_hash = java_hash_for_node(source, node)
+                pool = [item for item in pool if item.class_hash == node_hash]
+            owner = java_node_id(pool[0]) if len(pool) == 1 else f"unresolved:{path}:{qualname}:{kind}"
+            for ann in annotations:
+                if not exact:
+                    reject(owner, ann, f"{reason_prefix}_annotation_not_exact_explicit_import")
+                elif len(annotations) != 1:
+                    reject(owner, ann, f"{reason_prefix}_duplicate_annotation")
+                elif len(pool) != 1:
+                    reject(owner, ann, f"{reason_prefix}_owner_ambiguous")
+                elif _java_annotation_args(ann):
+                    reject(owner, ann, f"{reason_prefix}_metadata_unsupported")
+                else:
+                    found.append(declaration_type(owner, qualname, kind, path, _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), pool[0].class_hash))
+        nested_method = in_method or node.type in {"method_declaration", "constructor_declaration"}
+        for child in _named_children(node):
+            walk(child, next_stack, nested_method)
+
+    walk(tree.root_node, [])
+    return sorted(found, key=lambda item: item.owner_id), unresolved
+
+
+def resolve_java_rest_controller_advice_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaRestControllerAdviceDeclaration], dict[str, list[JavaUnresolvedRestControllerAdviceDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="RestControllerAdvice", expected_fqn="org.springframework.web.bind.annotation.RestControllerAdvice", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaRestControllerAdviceDeclaration, unresolved_type=JavaUnresolvedRestControllerAdviceDeclaration, reason_prefix="rest_controller_advice")
+
+
+def resolve_java_init_binder_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaInitBinderDeclaration], dict[str, list[JavaUnresolvedInitBinderDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, annotation="InitBinder", expected_fqn="org.springframework.web.bind.annotation.InitBinder", owner_kinds=frozenset({"method"}), declaration_type=JavaInitBinderDeclaration, unresolved_type=JavaUnresolvedInitBinderDeclaration, reason_prefix="init_binder", allow_nested_method_owner=True)
+
+
+def resolve_java_model_attribute_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaModelAttributeDeclaration], dict[str, list[JavaUnresolvedModelAttributeDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, annotation="ModelAttribute", expected_fqn="org.springframework.web.bind.annotation.ModelAttribute", owner_kinds=frozenset({"method"}), declaration_type=JavaModelAttributeDeclaration, unresolved_type=JavaUnresolvedModelAttributeDeclaration, reason_prefix="model_attribute", allow_nested_method_owner=True)
+
+
+def resolve_java_response_status_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaResponseStatusDeclaration], dict[str, list[JavaUnresolvedResponseStatusDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, annotation="ResponseStatus", expected_fqn="org.springframework.web.bind.annotation.ResponseStatus", owner_kinds=frozenset({"class", "interface", "method"}), declaration_type=JavaResponseStatusDeclaration, unresolved_type=JavaUnresolvedResponseStatusDeclaration, reason_prefix="response_status", allow_nested_method_owner=True)
+
+
+def resolve_java_session_attributes_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaSessionAttributesDeclaration], dict[str, list[JavaUnresolvedSessionAttributesDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="SessionAttributes", expected_fqn="org.springframework.web.bind.annotation.SessionAttributes", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaSessionAttributesDeclaration, unresolved_type=JavaUnresolvedSessionAttributesDeclaration, reason_prefix="session_attributes")
+
+
+def resolve_java_cross_origin_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaCrossOriginDeclaration], dict[str, list[JavaUnresolvedCrossOriginDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, annotation="CrossOrigin", expected_fqn="org.springframework.web.bind.annotation.CrossOrigin", owner_kinds=frozenset({"class", "interface", "method"}), declaration_type=JavaCrossOriginDeclaration, unresolved_type=JavaUnresolvedCrossOriginDeclaration, reason_prefix="cross_origin", allow_nested_method_owner=True)
+
+
+def resolve_java_rest_controller_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaRestControllerDeclaration], dict[str, list[JavaUnresolvedRestControllerDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="RestController", expected_fqn="org.springframework.web.bind.annotation.RestController", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaRestControllerDeclaration, unresolved_type=JavaUnresolvedRestControllerDeclaration, reason_prefix="rest_controller")
+
+
+def resolve_java_controller_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaControllerDeclaration], dict[str, list[JavaUnresolvedControllerDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Controller", expected_fqn="org.springframework.stereotype.Controller", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaControllerDeclaration, unresolved_type=JavaUnresolvedControllerDeclaration, reason_prefix="controller")
+
+
+def resolve_java_service_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaServiceDeclaration], dict[str, list[JavaUnresolvedServiceDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Service", expected_fqn="org.springframework.stereotype.Service", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaServiceDeclaration, unresolved_type=JavaUnresolvedServiceDeclaration, reason_prefix="service")
+
+
+def resolve_java_component_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaComponentDeclaration], dict[str, list[JavaUnresolvedComponentDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Component", expected_fqn="org.springframework.stereotype.Component", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaComponentDeclaration, unresolved_type=JavaUnresolvedComponentDeclaration, reason_prefix="component")
+
+
+def resolve_java_repository_stereotype_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaRepositoryDeclaration], dict[str, list[JavaUnresolvedRepositoryDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Repository", expected_fqn="org.springframework.stereotype.Repository", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaRepositoryDeclaration, unresolved_type=JavaUnresolvedRepositoryDeclaration, reason_prefix="repository")
+
+
+def resolve_java_configuration_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaConfigurationDeclaration], dict[str, list[JavaUnresolvedConfigurationDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Configuration", expected_fqn="org.springframework.context.annotation.Configuration", owner_kinds=frozenset({"class", "interface"}), declaration_type=JavaConfigurationDeclaration, unresolved_type=JavaUnresolvedConfigurationDeclaration, reason_prefix="configuration")
+
+
+def resolve_java_bean_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaBeanDeclaration], dict[str, list[JavaUnresolvedBeanDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, annotation="Bean", expected_fqn="org.springframework.context.annotation.Bean", owner_kinds=frozenset({"method"}), declaration_type=JavaBeanDeclaration, unresolved_type=JavaUnresolvedBeanDeclaration, reason_prefix="bean")
+
+
+def resolve_java_primary_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPrimaryDeclaration], dict[str, list[JavaUnresolvedPrimaryDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, annotation="Primary", expected_fqn="org.springframework.context.annotation.Primary", owner_kinds=frozenset({"class", "interface", "method"}), declaration_type=JavaPrimaryDeclaration, unresolved_type=JavaUnresolvedPrimaryDeclaration, reason_prefix="primary")
+
+
+def resolve_java_lazy_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaLazyDeclaration], dict[str, list[JavaUnresolvedLazyDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, annotation="Lazy", expected_fqn="org.springframework.context.annotation.Lazy", owner_kinds=frozenset({"class", "interface", "method"}), declaration_type=JavaLazyDeclaration, unresolved_type=JavaUnresolvedLazyDeclaration, reason_prefix="lazy")
+
+
+def resolve_java_post_construct_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaPostConstructDeclaration], dict[str, list[JavaUnresolvedPostConstructDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, annotation="PostConstruct", expected_fqn="jakarta.annotation.PostConstruct", owner_kinds=frozenset({"method"}), declaration_type=JavaPostConstructDeclaration, unresolved_type=JavaUnresolvedPostConstructDeclaration, reason_prefix="post_construct")
+
+def resolve_java_pre_destroy_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaPreDestroyDeclaration], dict[str, list[JavaUnresolvedPreDestroyDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, annotation="PreDestroy", expected_fqn="jakarta.annotation.PreDestroy", owner_kinds=frozenset({"method"}), declaration_type=JavaPreDestroyDeclaration, unresolved_type=JavaUnresolvedPreDestroyDeclaration, reason_prefix="pre_destroy")
+
+
+def resolve_java_scope_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaScopeDeclaration], dict[str, list[JavaUnresolvedScopeDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, annotation="Scope", expected_fqn="org.springframework.context.annotation.Scope", owner_kinds=frozenset({"class", "interface", "method"}), declaration_type=JavaScopeDeclaration, unresolved_type=JavaUnresolvedScopeDeclaration, reason_prefix="scope")
+
+
+def resolve_java_response_body_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaResponseBodyDeclaration], dict[str, list[JavaUnresolvedResponseBodyDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, annotation="ResponseBody", expected_fqn="org.springframework.web.bind.annotation.ResponseBody", owner_kinds=frozenset({"class", "interface", "method"}), declaration_type=JavaResponseBodyDeclaration, unresolved_type=JavaUnresolvedResponseBodyDeclaration, reason_prefix="response_body", allow_nested_method_owner=True)
+
 
 def resolve_java_pre_filter_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPreFilterDeclaration], dict[str, list[JavaUnresolvedPreFilterDeclaration]]]:
     """Retain direct Spring Security PreFilter literals; infer no runtime behavior."""

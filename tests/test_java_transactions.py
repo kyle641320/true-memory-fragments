@@ -8,7 +8,7 @@ def run(cmd,cwd): subprocess.run(cmd,cwd=cwd,check=True,stdout=subprocess.PIPE,s
 class JavaTransactionTests(unittest.TestCase):
  def claims(self,source):
   with tempfile.TemporaryDirectory() as td:
-   root=Path(td);(root/'A.java').write_text(source);run(['git','init'],root);run(['git','config','user.email','x@y'],root);run(['git','config','user.name','x'],root);run(['git','add','A.java'],root);run(['git','commit','-m','x'],root)
+   root=Path(td);(root/'A.java').write_text(source);run(['git','init','-b','master'],root);run(['git','config','user.email','x@y'],root);run(['git','config','user.name','x'],root);run(['git','add','A.java'],root);run(['git','commit','-m','x'],root)
    return derive_claims_for_path(GitRepo(root),'A.java')
  def tx(self,source): return [c for c in self.claims(source) if c.id.startswith('claim_transaction_decl_')]
  def test_exact_literals_class_method_and_overloads(self):

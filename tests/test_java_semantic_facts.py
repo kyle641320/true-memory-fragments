@@ -11,7 +11,7 @@ def run(cmd, cwd): subprocess.run(cmd, cwd=cwd, check=True, stdout=subprocess.PI
 class JavaSemanticFactsTests(unittest.TestCase):
     def setUp(self):
         self.td=tempfile.TemporaryDirectory(); self.root=Path(self.td.name); self.repo=self.root/'repo'; self.repo.mkdir(); self.facts=self.root/'facts'; self.facts.mkdir()
-        run(['git','init'],self.repo); run(['git','config','user.email','x@y'],self.repo); run(['git','config','user.name','x'],self.repo)
+        run(['git','init','-b','master'],self.repo); run(['git','config','user.email','x@y'],self.repo); run(['git','config','user.name','x'],self.repo)
         self.source='package p;\nclass A { void f(){ g(); } void g(){} }\n'; (self.repo/'A.java').write_text(self.source); run(['git','add','A.java'],self.repo); run(['git','commit','-m','x'],self.repo)
     def tearDown(self): self.td.cleanup()
     def doc(self, facts=None, **kw):

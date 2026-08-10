@@ -243,11 +243,17 @@ Two validation layers are included:
 
 In this project, **precision** means: when TMF marks a claim stale, it should truly be affected by the source perturbation. **Recall** means: claims expected to become stale should be marked stale. Both are scoped to the validation scenarios, not to every possible Python program.
 
-Current completion-window evidence:
+Current unreleased worktree evidence:
 
 ```text
 python3 -m unittest discover -s tests -q
-# Ran 206 tests ... OK
+# Ran 455 tests ... OK
+
+python3 tools/run_java_qualifications.py
+# 41/41 qualifiers; 589/589 checks
+
+python3 tools/verify_java_source_only_smoke.py
+# source-only temporary export; no .git, uv.lock, generated state, caches, or reports
 
 python3 -m tmf.cli validate --repo . --out reports/window1-final --self-validate
 # heldout_status: pass
@@ -262,6 +268,11 @@ python3 -m tmf.cli validate --repo . --out reports/window1-final --self-validate
 bash scripts/verify_java_offline.sh
 # JAVA OFFLINE VERIFY: PASS
 ```
+
+The Java aggregate is governed by `tools/java_qualification_manifest.json`; it is bounded,
+source-only qualification evidence, not runtime or enterprise-wide certification. This
+worktree baseline is unreleased and does not assert a commit, tag, package, or publication.
+The current full unittest baseline is **455/455 tests**.
 
 Reproduce locally with:
 
@@ -307,6 +318,8 @@ Offline check: `python tools/verify_java_semantic_facts.py REPO FACTS_DIR path/t
 
 ### Spring declaration foundation (bounded, source-only)
 Exact explicit imports now expose declaration metadata for `@Profile`, `@Conditional*`, `@Scope`, `@Lazy`, `@DependsOn`, `@Primary`, and `@Transactional`. Only literal strings, booleans, and transaction enums are retained. These facts do **not** claim profile/condition activation, bean instantiation, lifecycle order, transaction interception, inheritance, or proxy behavior. SpEL/dynamic values, composed/meta annotations, classpath conditions, and unsupported transaction attributes remain explicitly unresolved. `@Primary` affects exact-type source-bean injection only when exactly one candidate is primary; literal qualifier precedence is unchanged and ambiguity fails closed.
+
+The same bounded declaration family includes direct exact-import bean/stereotype, MVC declaration, and lifecycle qualifiers. The manifest-key-to-capability matrix and common compatibility limits are in `docs/JAVA_SPRING_DECLARATION_COMPAT.md`; focused composed-web-stereotype limits are in `docs/JAVA_REST_CONTROLLER_COMPATIBILITY.md` and `docs/JAVA_REST_CONTROLLER_ADVICE_COMPATIBILITY.md`. All are source evidence only, not component scanning, dispatch, serialization, lifecycle, binding, or runtime certification.
 
 ### Spring Data repository declarations
 TMF conservatively records source-proven repository interface generic bindings and declared methods for exact explicit Spring Data imports. Exact `@Query` literal values are opaque JPQL/native declaration metadata only; TMF does not infer SQL execution, tables, columns, or reads/writes, and derived method names are not semantically parsed.

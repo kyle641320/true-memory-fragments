@@ -20,7 +20,7 @@ def run(cmd, cwd):
 def init_repo(root: Path, files: dict[str, str]) -> Path:
     repo = root / "repo"
     repo.mkdir(parents=True)
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     for path, content in files.items():

@@ -20,7 +20,7 @@ def run(cmd, cwd):
 
 def initialize(source: Path, target: Path):
     shutil.copytree(source, target)
-    run(["git", "init"], target); run(["git", "config", "user.email", "heldout@example.invalid"], target); run(["git", "config", "user.name", "TMF heldout"], target)
+    run(["git", "init", "-b", "master"], target); run(["git", "config", "user.email", "heldout@example.invalid"], target); run(["git", "config", "user.name", "TMF heldout"], target)
     run(["git", "add", "."], target); run(["git", "commit", "-m", "independent heldout fixture"], target)
 
 def claim(store, path, qualname, kind):
@@ -97,7 +97,7 @@ def main():
     ap=argparse.ArgumentParser(); ap.add_argument("--out",default=str(ROOT/"reports"/"java-persistence-qualification")); args=ap.parse_args()
     first=produce(); second=produce(); first["determinism"]["canonical_repeat_equal"]=(first==second)
     out=Path(args.out); out.mkdir(parents=True,exist_ok=True); raw=json.dumps(first,indent=2,sort_keys=True)+"\n"; (out/"report.json").write_text(raw)
-    summary=first["metrics"]; status="PASS" if summary["false_negative"]==0 and first["determinism"]["canonical_repeat_equal"] else "FAIL"
+    summary=first["metrics"]; checks={f"{fixture['fixture']}:{check['name']}": check["pass"] for fixture in first["fixtures"] for check in fixture["checks"]}; checks["deterministic_repeat"]=first["determinism"]["canonical_repeat_equal"]; status="PASS" if all(checks.values()) else "FAIL"
     md=f"# Java persistence qualification: {status}\n\n- Expected checks: {summary['expected']}\n- Precision: {summary['precision']:.3f}\n- Recall/resolution: {summary['recall']:.3f}\n- Deterministic repeat: {first['determinism']['canonical_repeat_equal']}\n- Scope: partial annotation declaration metadata; MyBatis XML deferred.\n"
-    (out/"report.md").write_text(md); print(f"JAVA PERSISTENCE QUALIFICATION: {status}"); print(json.dumps(summary,sort_keys=True)); return 0 if status=="PASS" else 1
+    (out/"report.md").write_text(md); print(json.dumps({"checks":checks,"passed":sum(checks.values()),"total":len(checks)},sort_keys=True)); return 0 if status=="PASS" else 1
 if __name__=="__main__": raise SystemExit(main())

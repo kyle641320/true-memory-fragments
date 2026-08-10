@@ -18,7 +18,7 @@ class TrustBoundaryChecks(unittest.TestCase):
     def _repo(self, root: Path) -> Path:
         repo = root / "repo"
         repo.mkdir()
-        subprocess.run(["git", "init"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        subprocess.run(["git", "init", "-b", "master"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         subprocess.run(["git", "config", "user.email", "tmf@example.com"], cwd=repo, check=True)
         subprocess.run(["git", "config", "user.name", "tmf"], cwd=repo, check=True)
         (repo / "svc.py").write_text("STATE = []\n\ndef mutate(x):\n    STATE.append(x)\n    return len(STATE)\n", encoding="utf-8")

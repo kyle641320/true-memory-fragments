@@ -1,0 +1,31 @@
+TMF Java/Spring bounded phase source handoff
+
+Scope
+- Java source/project/type/index and bounded semantic relationship implementation.
+- Bounded Spring declaration, bean/injection, annotated endpoint, messaging, persistence, resilience, scheduling, security, transaction, and functional WebFlux source evidence.
+- Bounded Spring Boot ConfigurationProperties literal declaration metadata.
+- Broad Java/Spring/enterprise runtime support remains partial.
+
+Verification evidence
+- python3 tools/verify_java_source_only_smoke.py: PASS; index-free temporary export, compileall, 41/41 qualification verifiers with 589/589 checks, and focused structure/configuration-properties/runner tests.
+- python3 -m unittest -v tests.test_java_extract_structure tests.test_run_java_qualifications: 24 tests OK.
+- python3 tools/run_java_qualifications.py: PASS; 41/41 qualifiers, 589/589 checks, empty stderr.
+- python3 -Werror -m unittest discover -s tests -v: 455 tests OK.
+- python3 -m compileall -q tmf tests scripts tools: PASS.
+- git diff --check: PASS.
+
+Warning classification
+- The full suite passes under `-Werror`; no warning exception is needed for this handoff.
+
+Diff/artifact audit
+- `uv.lock` remains excluded: untracked, package-manager generated, and unnecessary because runtime dependencies remain zero and optional Java wheels are pinned.
+- Source-only smoke exports declared files to a temporary directory; excludes .git/VCS state, lock files, runtime .tmf/database state, virtualenvs, Python/test caches, build and egg-info output, generated directories, and reports; tracked test-fixture metadata required by the exported tests is retained.
+- RELEASE_HANDOFF_JAVA_SPRING_CONFIGPROPS.md records capabilities and conservative limits.
+
+Known limits / blockers
+- No blocker for this bounded source handoff.
+- This is not enterprise-ready certification or a published release.
+- Compiler/JDT/SCIP semantics, classpath behavior, dynamic builds, and broad Spring runtime semantics remain incomplete.
+
+Recommended next phase
+- Hold adapter expansion at this natural review boundary; review and publish only after explicit authorization.

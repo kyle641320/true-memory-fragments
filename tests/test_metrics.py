@@ -20,7 +20,7 @@ def run(cmd, cwd):
 def init_repo(tmp_path: Path) -> Path:
     repo = tmp_path / "repo"
     repo.mkdir()
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     (repo / "m.py").write_text("def f():\n    return 1\n", encoding="utf-8")

@@ -46,7 +46,7 @@ class SemanticBackendStubTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo); run(["git", "config", "user.email", "tmf@example.com"], repo); run(["git", "config", "user.name", "tmf"], repo)
+            run(["git", "init", "-b", "master"], repo); run(["git", "config", "user.email", "tmf@example.com"], repo); run(["git", "config", "user.name", "tmf"], repo)
             (repo / "sample.py").write_text("def f():\n    return 1\n", encoding="utf-8"); run(["git", "add", "sample.py"], repo); run(["git", "commit", "-m", "init"], repo)
             backend = StubSemanticBackend()
             claims = derive_claims_for_path(GitRepo(repo), "sample.py", semantic_backend=backend)
@@ -67,7 +67,7 @@ class SemanticBackendStubTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo); run(["git", "config", "user.email", "tmf@example.com"], repo); run(["git", "config", "user.name", "tmf"], repo)
+            run(["git", "init", "-b", "master"], repo); run(["git", "config", "user.email", "tmf@example.com"], repo); run(["git", "config", "user.name", "tmf"], repo)
             (repo / "sample.py").write_text("def f():\n    return 1\n", encoding="utf-8"); run(["git", "add", "sample.py"], repo); run(["git", "commit", "-m", "init"], repo)
             claims = derive_claims_for_path(GitRepo(repo), "sample.py", semantic_backend=UnavailableSemanticBackend())
         self.assertEqual(claims[0].body["semantic_extraction"], {
@@ -83,7 +83,7 @@ class SemanticBackendStubTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo); run(["git", "config", "user.email", "tmf@example.com"], repo); run(["git", "config", "user.name", "tmf"], repo)
+            run(["git", "init", "-b", "master"], repo); run(["git", "config", "user.email", "tmf@example.com"], repo); run(["git", "config", "user.name", "tmf"], repo)
             (repo / "sample.py").write_text("def f():\n    return 1\n", encoding="utf-8"); run(["git", "add", "sample.py"], repo); run(["git", "commit", "-m", "init"], repo)
             syntactic_id = stable_function_claim_id("sample.py", "f")
             semantic = Claim(

@@ -17,7 +17,7 @@ def run(cmd, cwd):
 def init_repo(tmp_path: Path) -> Path:
     repo = tmp_path / "repo"
     repo.mkdir()
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     (repo / "app.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
@@ -64,7 +64,7 @@ class ExplainTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo_path = Path(td) / "repo"
             repo_path.mkdir()
-            run(["git", "init"], repo_path)
+            run(["git", "init", "-b", "master"], repo_path)
             run(["git", "config", "user.email", "tmf@example.com"], repo_path)
             run(["git", "config", "user.name", "tmf"], repo_path)
             (repo_path / "app.py").write_text('def charge(x):\n    """Reject negative balances because ledger settlement cannot carry debt."""\n    return x >= 0\n', encoding="utf-8")

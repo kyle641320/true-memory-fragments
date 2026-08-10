@@ -1,0 +1,50 @@
+{
+  "bindings": [
+    {
+      "path": "gradle/src/main/java/heldout/configprops/Owners.java",
+      "qualname": "HttpProperties",
+      "target_kind": "class",
+      "prefix": "app.http",
+      "resolution": "spring_configuration_properties_literal"
+    },
+    {
+      "path": "gradle/src/main/java/heldout/configprops/Owners.java",
+      "qualname": "DatabaseProperties",
+      "target_kind": "class",
+      "prefix": "app.db",
+      "resolution": "spring_configuration_properties_literal"
+    },
+    {
+      "path": "gradle/src/main/java/heldout/configprops/Owners.java",
+      "qualname": "Factories.worker",
+      "target_kind": "factory_method",
+      "prefix": "app.worker",
+      "resolution": "spring_configuration_properties_literal_factory"
+    },
+    {
+      "path": "maven/src/main/java/heldout/configprops/Owners.java",
+      "qualname": "HttpProperties",
+      "target_kind": "class",
+      "prefix": "app.http",
+      "resolution": "spring_configuration_properties_literal"
+    },
+    {
+      "path": "maven/src/main/java/heldout/configprops/Owners.java",
+      "qualname": "DatabaseProperties",
+      "target_kind": "class",
+      "prefix": "app.db",
+      "resolution": "spring_configuration_properties_literal"
+    },
+    {
+      "path": "maven/src/main/java/heldout/configprops/Owners.java",
+      "qualname": "Factories.worker",
+      "target_kind": "factory_method",
+      "prefix": "app.worker",
+      "resolution": "spring_configuration_properties_literal_factory"
+    }
+  ],
+  "unresolved_reasons": [
+    "spring_configuration_properties_factory_not_explicit_bean",
+    "spring_configuration_properties_prefix_not_literal"
+  ]
+}

@@ -13,7 +13,7 @@ def run(args,cwd): subprocess.run(args,cwd=cwd,check=True,capture_output=True)
 def produce():
   with tempfile.TemporaryDirectory() as td:
     repo=Path(td)/"repo"; shutil.copytree(ROOT/"fixtures/java-kafka-heldout",repo)
-    run(["git","init"],repo); run(["git","config","user.email","heldout@example.invalid"],repo); run(["git","config","user.name","TMF heldout"],repo); run(["git","add","."],repo); run(["git","commit","-m","fixture"],repo)
+    run(["git","init","-b","master"],repo); run(["git","config","user.email","heldout@example.invalid"],repo); run(["git","config","user.name","TMF heldout"],repo); run(["git","add","."],repo); run(["git","commit","-m","fixture"],repo)
     warm_repo(repo); store=Store(repo); path="src/main/java/heldout/kafka/Messaging.java"
     pid=stable_java_node_claim_id(path,"Publisher.publish","method"); did=stable_java_node_claim_id(path,"Publisher.dynamic","method"); sid=stable_java_node_claim_id(path,"Subscriber.receive","method")
     pub=store.get_claim(stable_topic_pub_edge_claim_id(pid,"heldout.orders")); sub=store.get_claim(stable_topic_sub_edge_claim_id(sid,"heldout.orders")); dynamic=store.get_claim(did)
@@ -23,5 +23,5 @@ def produce():
     return checks
 
 def main():
-  a=produce(); b=produce(); report={"format":"tmf.java-kafka-qualification.v1","checks":a,"deterministic":a==b,"limitations":["source-only exact imports and literal topics","no runtime delivery, broker, serializer, partition/key/header semantics"]}; out=ROOT/"reports/java-kafka-qualification"; out.mkdir(parents=True,exist_ok=True); (out/"report.json").write_text(json.dumps(report,indent=2,sort_keys=True)+"\n"); ok=all(a.values()) and a==b; (out/"report.md").write_text(f"# Java Kafka qualification: {'PASS' if ok else 'FAIL'}\n\n- Checks: {sum(bool(v) for v in a.values())}/{len(a)}\n- Deterministic repeat: {a==b}\n- Scope: bounded source evidence only.\n"); print(f"JAVA KAFKA QUALIFICATION: {'PASS' if ok else 'FAIL'} ({sum(bool(v) for v in a.values())}/{len(a)})"); return 0 if ok else 1
+  a=produce(); b=produce(); report={"format":"tmf.java-kafka-qualification.v1","checks":a,"passed":sum(bool(v) for v in a.values()),"total":len(a),"deterministic":a==b,"limitations":["source-only exact imports and literal topics","no runtime delivery, broker, serializer, partition/key/header semantics"]}; out=ROOT/"reports/java-kafka-qualification"; out.mkdir(parents=True,exist_ok=True); (out/"report.json").write_text(json.dumps(report,indent=2,sort_keys=True)+"\n"); ok=all(a.values()) and a==b; (out/"report.md").write_text(f"# Java Kafka qualification: {'PASS' if ok else 'FAIL'}\n\n- Checks: {sum(bool(v) for v in a.values())}/{len(a)}\n- Deterministic repeat: {a==b}\n- Scope: bounded source evidence only.\n"); print(json.dumps(report,sort_keys=True)); return 0 if ok else 1
 if __name__=="__main__": raise SystemExit(main())

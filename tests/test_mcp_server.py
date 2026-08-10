@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _init_repo(root: Path) -> None:
-    subprocess.run(["git", "init"], cwd=root, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    subprocess.run(["git", "init", "-b", "master"], cwd=root, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     subprocess.run(["git", "config", "user.email", "tmf@example.com"], cwd=root, check=True)
     subprocess.run(["git", "config", "user.name", "tmf"], cwd=root, check=True)
     (root / "a.py").write_text("VALUE = 1\n\ndef helper():\n    return VALUE\n\ndef caller():\n    return helper()\n", encoding="utf-8")
@@ -90,6 +90,12 @@ class McpServerTests(unittest.TestCase):
                 proc.wait(timeout=5)
                 stderr = proc.stderr.read()
                 self.assertNotIn("Traceback", stderr)
+                proc.stdin.close()
+                proc.stdout.close()
+                proc.stderr.close()
+                self.assertTrue(proc.stdin.closed)
+                self.assertTrue(proc.stdout.closed)
+                self.assertTrue(proc.stderr.closed)
 
 
 if __name__ == "__main__":

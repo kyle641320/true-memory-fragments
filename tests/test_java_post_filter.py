@@ -7,7 +7,7 @@ def run(c,w):subprocess.run(c,cwd=w,check=True,stdout=subprocess.PIPE,stderr=sub
 class PostFilterTests(unittest.TestCase):
  def claims(self,s):
   with tempfile.TemporaryDirectory() as td:
-   r=Path(td);(r/'A.java').write_text(s);run(['git','init'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
+   r=Path(td);(r/'A.java').write_text(s);run(['git','init','-b','master'],r);run(['git','config','user.email','x@y'],r);run(['git','config','user.name','x'],r);run(['git','add','.'],r);run(['git','commit','-m','x'],r);return derive_claims_for_path(GitRepo(r),'A.java')
  def pof(self,s):return [x for x in self.claims(s) if x.id.startswith('claim_post_filter_decl_')]
  def test_opaque_literals_overloads_only(self):
   s='import org.springframework.security.access.prepost.PostFilter; class A{@PostFilter("filterObject.owner == authentication.name") void x(){} @PostFilter(value="opaque #id") void x(String id){}}'

@@ -17,7 +17,7 @@ def run(cmd, cwd, env=None):
 def init_repo(tmp_path: Path, content: str) -> Path:
     repo = tmp_path / "repo"
     repo.mkdir()
-    run(["git", "init"], repo)
+    run(["git", "init", "-b", "master"], repo)
     run(["git", "config", "user.email", "tmf@example.com"], repo)
     run(["git", "config", "user.name", "tmf"], repo)
     (repo / "app.py").write_text(content, encoding="utf-8")
@@ -165,7 +165,7 @@ class TmfExternalProvenanceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "app.py").write_text("def charge(x):\n    return x >= 0\n", encoding="utf-8")
@@ -201,7 +201,7 @@ class TmfExternalProvenanceTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td) / "repo"
             repo.mkdir()
-            run(["git", "init"], repo)
+            run(["git", "init", "-b", "master"], repo)
             run(["git", "config", "user.email", "tmf@example.com"], repo)
             run(["git", "config", "user.name", "tmf"], repo)
             (repo / "app.py").write_text("def safe():\n    return True\n", encoding="utf-8")

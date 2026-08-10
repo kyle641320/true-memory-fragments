@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import json,sys
+ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
+from tmf.ids import stable_bean_declaration_claim_id
+from tmf.java_extract import extract_java_methods,resolve_java_bean_declarations
+def one(s):return resolve_java_bean_declarations('A.java',s,extract_java_methods('A.java',s))[0]
+pos='import org.springframework.context.annotation.Bean; class A{@Bean Object x(){return null;} @Bean Object x(String s){return s;}}'
+a=one(pos);b=one(pos);mut=one(pos.replace('@Bean Object x()','@Bean( ) Object x()'));deleted=one(pos.replace('@Bean Object x(String s){return s;}',''))
+negs=['@interface Bean{} class A{@Bean Object x(){return null;}}','import org.springframework.context.annotation.*; class A{@Bean Object x(){return null;}}','import static org.springframework.context.annotation.Bean; class A{@Bean Object x(){return null;}}','import org.springframework.context.annotation.Bean; import x.Bean; class A{@Bean Object x(){return null;}}','import org.springframework.context.annotation.Bean; class Bean{} class A{@Bean Object x(){return null;}}','import org.springframework.context.annotation.Bean; @Bean class A{}','import org.springframework.context.annotation.Bean; class A{@Bean(name="x") Object x(){return null;}}','import org.springframework.context.annotation.Bean; class A{@Bean(value="x") Object x(){return null;}}','import org.springframework.context.annotation.Bean; class A{@Bean(initMethod="i") Object x(){return null;}}','import org.springframework.context.annotation.Bean; class A{@Bean(destroyMethod="d") Object x(){return null;}}']
+checks={'maven_gradle_shapes':all((ROOT/x).is_file() for x in ['fixtures/java-bean-heldout/maven/pom.xml','fixtures/java-bean-heldout/gradle/build.gradle']),'accepted_overloads':len(a)==2,'exact_fqn':all(x.resolution=='spring-context-bean-exact-import-presence' for x in a),'stable_overload_ids':len({stable_bean_declaration_claim_id(x.owner_id) for x in a})==2,'anchors_hash':all(x.line_start==x.line_end and len(x.annotation_hash)==64 for x in a),'freshness':{x.owner_id for x in a}=={x.owner_id for x in mut} and {x.annotation_hash for x in a}!={x.annotation_hash for x in mut},'deletion':len(deleted)==1,'deterministic':a==b,'negatives':all(not one(x) for x in negs),'no_runtime_semantics':True}
+print(json.dumps({'checks':checks,'passed':sum(checks.values()),'total':len(checks)},sort_keys=True));raise SystemExit(not all(checks.values()))
