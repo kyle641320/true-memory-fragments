@@ -48,7 +48,7 @@ class Child extends Base implements Api {
             reverse = reverse_overridden_by(repo, base_name)["overridden_by"]
             self.assertEqual(reverse[0]["method_id"], child_name)
 
-    def test_overloads_cross_file_and_unknown_parent_are_unresolved(self):
+    def test_overloads_and_unknown_parent_are_unresolved_while_cross_file_override_resolves(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {
                 "pkg/Base.java": "package pkg; public class Base { void imported() {} }\n",
@@ -64,10 +64,47 @@ class Child extends Base implements Api {
             unknown_graph = store.get_claim(unknown_ghost).body["graph"]
             self.assertEqual(child_graph["overrides"], [])
             self.assertIn({"expr": "m", "reason": "java_overloaded_or_ambiguous_override"}, child_graph["overrides_unresolved"])
-            self.assertEqual(ext_graph["overrides"], [])
-            self.assertIn({"expr": "imported", "reason": "java_cross_file_override_deferred"}, ext_graph["overrides_unresolved"])
+            base_imported = stable_java_node_claim_id("pkg/Base.java", "Base.imported", "method")
+            self.assertEqual(ext_graph["overrides"][0]["target_id"], base_imported)
+            self.assertEqual(ext_graph["overrides"][0]["resolution"], "java_cross_file_override_candidate")
             self.assertEqual(unknown_graph["overrides"], [])
             self.assertIn({"expr": "ghost", "reason": "java_parent_type_unresolved"}, unknown_graph["overrides_unresolved"])
+
+
+    def test_interface_default_and_multilevel_transitive_override(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "Api.java": "interface Api { default String label(int x) { return \"api\"; } }\n",
+                "Middle.java": "interface Middle extends Api {}\n",
+                "Impl.java": "class Impl implements Middle { public String label(int x) { return \"impl\"; } }\n",
+            })
+            warm_repo(repo)
+            store = Store(repo)
+            method = stable_java_node_claim_id("Impl.java", "Impl.label", "method")
+            target = stable_java_node_claim_id("Api.java", "Api.label", "method")
+            graph = store.get_claim(method).body["graph"]
+            self.assertEqual([(item["target_id"], item["resolution"]) for item in graph["overrides"]],
+                             [(target, "java_cross_file_override_candidate")])
+
+    def test_diamond_convergence_is_deduplicated_but_distinct_defaults_are_ambiguous(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "Root.java": "interface Root { default void run() {} }\n",
+                "Left.java": "interface Left extends Root {}\n",
+                "Right.java": "interface Right extends Root {}\n",
+                "Good.java": "class Good implements Right, Left { public void run() {} }\n",
+                "A.java": "interface A { default void clash() {} }\n",
+                "B.java": "interface B { default void clash() {} }\n",
+                "Bad.java": "class Bad implements B, A { public void clash() {} }\n",
+            })
+            warm_repo(repo)
+            store = Store(repo)
+            good = stable_java_node_claim_id("Good.java", "Good.run", "method")
+            root = stable_java_node_claim_id("Root.java", "Root.run", "method")
+            self.assertEqual([x["target_id"] for x in store.get_claim(good).body["graph"]["overrides"]], [root])
+            bad = store.get_claim(stable_java_node_claim_id("Bad.java", "Bad.clash", "method")).body["graph"]
+            self.assertEqual(bad["overrides"], [])
+            self.assertIn({"expr": "clash", "reason": "java_overloaded_or_ambiguous_override"}, bad["overrides_unresolved"])
 
 
 if __name__ == "__main__":

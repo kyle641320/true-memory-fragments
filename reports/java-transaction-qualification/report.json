@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "class_manager": true,
+    "decoy_excluded": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "gradle_fixture": true,
+    "maven_fixture": true,
+    "method_literal_metadata": true,
+    "two_direct_declarations": true
+  },
+  "format": "tmf.java-transaction-qualification.v1",
+  "limitations": [
+    "direct exact-import source annotation metadata only",
+    "literal values retained opaquely",
+    "no transaction boundary, database effect, rollback behavior, proxying, propagation execution, manager resolution, call graph, inheritance, composition, or runtime semantics"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

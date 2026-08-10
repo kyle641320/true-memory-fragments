@@ -761,12 +761,12 @@ def _measure_graph_coverage(repo_path: Path) -> dict[str, dict[str, Any]]:
             for item in [u for values in unresolved_config.values() for u in values]:
                 stats[lang]["reads_config_key"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["reads_config_key"], item.reason)
         elif lang == "java":
-            classes = extract_java_classes, extract_java_methods, extract_java_fields(rel, text, repo=repo)
-            inherits, unresolved_inherits = resolve_java_inherit_edges, resolve_java_type_use_edges, resolve_java_inject_edges, resolve_java_topic_edges(rel, text, classes, repo=repo) if classes else ([], {})
-            methods = extract_java_methods(rel, text, repo=repo)
-            fields = extract_java_fields(rel, text, repo=repo)
+            classes = extract_java_classes(rel, text)
+            inherits, unresolved_inherits = resolve_java_inherit_edges(rel, text, classes, repo=repo) if classes else ([], {})
+            methods = extract_java_methods(rel, text)
+            fields = extract_java_fields(rel, text)
             type_edges, unresolved_types = resolve_java_type_use_edges(rel, text, classes, methods, fields, repo=repo) if (classes or fields or methods) else ([], {})
-            inject_edges, unresolved_injects = resolve_java_inject_edges(rel, text, classes, fields, inherits, repo=repo) if classes else ([], {})
+            inject_edges, unresolved_injects = resolve_java_inject_edges(rel, text, classes, fields, inherits, repo=repo, java_methods=methods) if classes else ([], {})
             topic_edges, unresolved_topics = resolve_java_topic_edges(rel, text, methods) if methods else ([], {})
             stats[lang]["inherits"]["resolved"] += len(inherits)
             stats[lang]["uses_type"]["resolved"] += len(type_edges)

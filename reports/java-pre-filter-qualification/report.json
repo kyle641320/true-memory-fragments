@@ -1,0 +1,34 @@
+{
+  "checks": {
+    "class_target_rejected": true,
+    "decoy_annotation_excluded": true,
+    "deletion_reconciliation": true,
+    "deterministic_repeat": true,
+    "dynamic_constant_placeholder_unresolved": true,
+    "exact_literal_metadata": true,
+    "filter_target_constant_placeholder_unresolved": true,
+    "import_ambiguity_excluded": true,
+    "independent_gradle_fixture": true,
+    "independent_maven_fixture": true,
+    "method_only_and_overload_safe_declarations": true,
+    "optional_filter_target_retained_opaquely": true,
+    "owner_token_hash_changes_on_annotation_mutation": true,
+    "precise_annotation_anchors": true,
+    "stable_ids_under_literal_mutation": true,
+    "token_hash_changes_on_literal_mutation": true,
+    "unknown_and_duplicate_attributes_unresolved": true,
+    "wildcard_and_static_imports_rejected": true
+  },
+  "checks_passed": 18,
+  "checks_total": 18,
+  "declarations": 2,
+  "format": "tmf.java-pre-filter-qualification.v1",
+  "limitations": [
+    "Declaration-only: exact explicit Spring Security PreFilter imports and direct annotations are recognized.",
+    "Expression strings are retained as opaque literals; SpEL is never parsed or evaluated.",
+    "Constants, computed expressions, placeholders, wildcard/ambiguous imports, aliases, meta-annotations, and inheritance are unresolved or excluded.",
+    "No authorization outcome, security context, proxying, call graph, or runtime enforcement is inferred."
+  ],
+  "status": "PASS",
+  "unresolved": 13
+}

@@ -171,6 +171,11 @@ class Store:
         current_ids = {claim.id for claim in current_claims}
         deleted: list[str] = []
         for claim in list(self.claims_for_path(relpath)):
+            if claim.scope == "api" and claim.body.get("api_binding_model") == "dual-v2":
+                if claim.body.get("route_source_path") == relpath and claim.id not in current_ids:
+                    if self.delete_claim(claim.id):
+                        deleted.append(claim.id)
+                continue
             # v2 guardrail: path-level reconciliation may only delete claims
             # whose entire freshness dependency set is this one path. Cross-file
             # architecture/module claims are multi-binding and must be managed by

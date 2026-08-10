@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "client_exact": true,
+    "decoy_absent": true,
+    "deletion_reconciles": true,
+    "dual_fresh": true,
+    "method_mutation_stales": true,
+    "route_mutation_reconciles": true,
+    "route_mutation_stales": true,
+    "server_reuse": true
+  },
+  "deterministic": true,
+  "format": "tmf.java-feign-qualification.v1",
+  "limitations": [
+    "source-only exact explicit imports and literals",
+    "no runtime, discovery, balancing, serialization, auth, retry, fallback or client/server equivalence inference"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

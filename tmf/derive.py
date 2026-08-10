@@ -8,15 +8,94 @@ from .edges import resolve_call_edges, resolve_read_edges, resolve_write_edges, 
 from .extract import ApiNode, ClassNode, ConfigNode, DeclarationNode, FunctionNode, extract_apis, extract_classes, extract_configs, extract_declarations, extract_functions, extract_sql_declarations, function_interface
 from .backends import SemanticExtractorBackend
 from .contracts import derive_contract_candidate_with_command, sanitize_contract_candidate
-from .java_extract import JAVA_DEGRADE_HINT, extract_java_apis, extract_java_classes, extract_java_fields, extract_java_methods, java_status, resolve_java_inherit_edges, resolve_java_call_edges, resolve_java_field_edges, resolve_java_override_edges, resolve_java_type_use_edges, resolve_java_inject_edges, resolve_java_topic_edges, resolve_java_saga_definitions, java_method_interface
+from .java_extract import JAVA_DEGRADE_HINT, extract_java_apis, extract_java_functional_apis, extract_java_feign_apis, extract_java_classes, extract_java_fields, extract_java_methods, java_status, resolve_java_inherit_edges, resolve_java_call_edges, resolve_java_field_edges, resolve_java_override_edges, resolve_java_type_use_edges, resolve_java_inject_edges, resolve_java_topic_edges, resolve_java_saga_definitions, resolve_java_configuration_properties, resolve_java_spring_declarations, resolve_java_persistence_declarations, resolve_java_repository_declarations, resolve_java_mybatis_declarations, resolve_java_cache_declarations, resolve_java_scheduling_declarations, resolve_java_transaction_declarations, resolve_java_async_declarations, resolve_java_retry_declarations, resolve_java_circuit_breaker_declarations, resolve_java_rate_limiter_declarations, resolve_java_bulkhead_declarations, resolve_java_time_limiter_declarations, resolve_java_resilience4j_retry_declarations, resolve_java_pre_authorize_declarations, resolve_java_roles_allowed_declarations, resolve_java_secured_declarations, resolve_java_post_authorize_declarations, resolve_java_exception_handler_declarations, resolve_java_pre_filter_declarations, resolve_java_post_filter_declarations, java_method_interface, java_node_id
 from .llm import DeriverModel
 from .model_derive import derive_model_function_claims
 from .git import GitRepo
-from .ids import now_utc, stable_api_claim_id, stable_call_edge_claim_id, stable_class_claim_id, stable_config_claim_id, stable_declaration_claim_id, stable_file_claim_id, stable_function_claim_id, stable_java_node_claim_id, stable_read_edge_claim_id, stable_write_edge_claim_id, stable_inherit_edge_claim_id, stable_override_edge_claim_id, stable_contract_claim_id, stable_type_use_edge_claim_id, stable_env_claim_id, stable_env_read_edge_claim_id, stable_config_read_edge_claim_id, stable_inject_edge_claim_id, stable_topic_claim_id, stable_topic_pub_edge_claim_id, stable_topic_sub_edge_claim_id
+from .ids import now_utc, stable_api_claim_id, stable_api_relationship_claim_id, stable_call_edge_claim_id, stable_class_claim_id, stable_config_claim_id, stable_declaration_claim_id, stable_file_claim_id, stable_function_claim_id, stable_java_node_claim_id, stable_read_edge_claim_id, stable_write_edge_claim_id, stable_inherit_edge_claim_id, stable_override_edge_claim_id, stable_contract_claim_id, stable_type_use_edge_claim_id, stable_env_claim_id, stable_env_read_edge_claim_id, stable_config_read_edge_claim_id, stable_inject_edge_claim_id, stable_configuration_properties_edge_claim_id, stable_topic_claim_id, stable_topic_pub_edge_claim_id, stable_topic_sub_edge_claim_id, stable_cache_declaration_claim_id, stable_scheduling_declaration_claim_id, stable_transaction_declaration_claim_id, stable_async_declaration_claim_id, stable_retry_declaration_claim_id, stable_circuit_breaker_declaration_claim_id, stable_rate_limiter_declaration_claim_id, stable_bulkhead_declaration_claim_id, stable_time_limiter_declaration_claim_id, stable_resilience4j_retry_declaration_claim_id, stable_pre_authorize_declaration_claim_id, stable_roles_allowed_declaration_claim_id, stable_secured_declaration_claim_id, stable_post_authorize_declaration_claim_id, stable_exception_handler_declaration_claim_id, stable_pre_filter_declaration_claim_id, stable_post_filter_declaration_claim_id
 from .schema import Binding, Claim
 from .verify import verify_observed_claim
 
 MODEL = "tmf-v1-heuristic"
+
+
+def derive_cache_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_cache_declaration_claim_id(item.method_id, item.operation, item.cache_names),
+        claim=f"Java method {item.method_qualname} declares Spring Cache {item.operation} metadata for {', '.join(item.cache_names)}.",
+        kind="structure", scope="declaration",
+        bindings=[Binding(path=item.path, file_blob=repo.blob_sha(item.path), fn_hash=item.annotation_hash,
+            commit=repo.head(), qualname=item.method_qualname, role="cache_annotation", line_start=item.line_start,
+            line_end=item.line_end, hash_kind="java_token_sha256")], provenance="git", evidence="observed",
+        confidence=1.0, endorsed_by=None, last_verified=now_utc(), model=MODEL,
+        body={"language":"java", "edge_kind":"declares_cache_metadata", "operation":item.operation,
+            "cache_names":list(item.cache_names), "key":item.key, "condition":item.condition, "unless":item.unless,
+            "spel_handling":"opaque-never-evaluated", "method_id":item.method_id, "method_qualname":item.method_qualname,
+            "resolution":item.resolution, "coverage":"partial", "tier":"observed",
+            "notes":["Declaration metadata only; no cache hit, storage, serialization, ordering, proxy, transaction, or runtime effect is inferred."]})
+
+
+def derive_scheduling_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_scheduling_declaration_claim_id(item.method_id),
+        claim=f"Java method {item.method_qualname} declares literal Spring scheduling metadata.", kind="structure", scope="declaration",
+        bindings=[Binding(path=item.path, file_blob=repo.blob_sha(item.path), fn_hash=item.annotation_hash, commit=repo.head(), qualname=item.method_qualname, role="scheduled_annotation", line_start=item.line_start, line_end=item.line_end, hash_kind="java_token_sha256")],
+        provenance="git", evidence="observed", confidence=1.0, endorsed_by=None, last_verified=now_utc(), model=MODEL,
+        body={"language":"java", "edge_kind":"declares_scheduling_metadata", "method_id":item.method_id, "method_qualname":item.method_qualname,
+              "fixed_rate":item.fixed_rate, "fixed_delay":item.fixed_delay, "initial_delay":item.initial_delay, "cron":item.cron, "zone":item.zone, "time_unit":item.time_unit,
+              "values_handling":"opaque-never-calculated", "resolution":item.resolution, "coverage":"partial", "tier":"observed",
+              "notes":["Source declaration only; no schedule calculation, invocation, timezone semantics, concurrency, proxy, EnableScheduling, inheritance, composition, placeholders, SpEL, or runtime execution is inferred."]})
+
+
+def derive_transaction_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_transaction_declaration_claim_id(item.owner_id), claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares literal Spring transaction annotation metadata.", kind="structure", scope="declaration",
+        bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="transactional_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],
+        provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,
+        body={"language":"java","edge_kind":"declares_transaction_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"declaration_precedence":"method_over_class_source_metadata" if item.owner_kind=="method" else "class_source_metadata","propagation":item.propagation,"isolation":item.isolation,"read_only":item.read_only,"timeout":item.timeout,"transaction_manager":item.transaction_manager,"rollback_for":list(item.rollback_for),"no_rollback_for":list(item.no_rollback_for),"rollback_for_class_name":list(item.rollback_for_class_name),"no_rollback_for_class_name":list(item.no_rollback_for_class_name),"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct source annotation metadata only; no boundary, database effect, rollback behavior, proxying, propagation execution, manager resolution, call graph, inheritance, composition, or runtime semantics is inferred."]})
+
+
+
+def derive_async_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_async_declaration_claim_id(item.owner_id), claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Async metadata.", kind="structure", scope="declaration", bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="async_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")], provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL, body={"language":"java","edge_kind":"declares_async_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"declaration_precedence":"method_over_class_source_metadata" if item.owner_kind=="method" else "class_source_metadata","executor_qualifier":item.executor_qualifier,"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct source annotation metadata only; no runtime calls, executor resolution, threads, scheduling, proxy, exception, ordering, EnableAsync, inheritance, composition, or external symbols are inferred."]})
+
+
+def derive_retry_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_retry_declaration_claim_id(item.owner_id,item.annotation_kind), claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Retry {item.annotation_kind} metadata.", kind="structure", scope="declaration", bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role=f"{item.annotation_kind}_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")], provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_retry_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"annotation_kind":item.annotation_kind,"metadata":{k:list(v) if isinstance(v,tuple) else v for k,v in item.metadata.items()},"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct annotation metadata only; no retries, runtime attempts/backoff, exception matching, recovery dispatch, proxies, calls, inheritance/composition, or external symbols are inferred."]})
+
+def derive_circuit_breaker_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_circuit_breaker_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Resilience4j CircuitBreaker metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="circuit_breaker_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_circuit_breaker_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"name":item.name,"fallback_method":item.fallback_method,"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct declaration metadata only; no circuit state, failure classification, thresholds, fallback dispatch, configuration, proxy/AOP, calls, inheritance/composition, or runtime behavior is inferred."]})
+
+def derive_rate_limiter_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_rate_limiter_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Resilience4j RateLimiter metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="rate_limiter_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_rate_limiter_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"name":item.name,"fallback_method":item.fallback_method,"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct declaration metadata only; no permits, waiting, refresh periods, fallback dispatch, configuration, proxy/AOP, calls, inheritance/composition, or runtime behavior is inferred."]})
+
+
+def derive_bulkhead_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_bulkhead_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Resilience4j Bulkhead metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="bulkhead_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_bulkhead_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"name":item.name,"fallback_method":item.fallback_method,"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct declaration metadata only; no concurrency limits, queueing, isolation, fallback dispatch, configuration, proxy/AOP, calls, inheritance/composition, or runtime behavior is inferred."]})
+
+
+def derive_time_limiter_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_time_limiter_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Resilience4j TimeLimiter metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="time_limiter_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_time_limiter_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"name":item.name,"fallback_method":item.fallback_method,"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Direct declaration metadata only; no timing, cancellation, futures/reactive behavior, fallback dispatch, configuration, proxy/AOP, calls, inheritance/composition, or runtime behavior is inferred."]})
+
+
+def derive_pre_authorize_declaration_claim(repo,item):
+    return Claim(id=stable_pre_authorize_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Security PreAuthorize metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="pre_authorize_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_pre_authorize_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"expression":item.expression,"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No runtime authorization, expression truth, role hierarchy, proxy/AOP, config, calls, inheritance/composition, or external symbols inferred."]})
+
+def derive_roles_allowed_declaration_claim(repo,item):
+    return Claim(id=stable_roles_allowed_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares {item.source_namespace} RolesAllowed metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="roles_allowed_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_roles_allowed_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"roles":list(item.roles),"source_namespace":item.source_namespace,"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No authorization decision, role hierarchy, proxy/AOP, calls, inheritance/composition, or runtime enforcement inferred."]})
+
+def derive_secured_declaration_claim(repo,item):
+    return Claim(id=stable_secured_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Security Secured metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="secured_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_secured_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"roles":list(item.roles),"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No role hierarchy, authorization decision, proxy/AOP, config, calls, inheritance/composition, aliases/meta-annotations, or runtime enforcement inferred."]})
+
+def derive_post_authorize_declaration_claim(repo,item):
+    return Claim(id=stable_post_authorize_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Security PostAuthorize metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="post_authorize_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_post_authorize_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"expression":item.expression,"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No runtime authorization, expression truth, security context, role hierarchy, proxy/AOP, config, calls, inheritance/composition, meta-annotations, aliases, or external symbols inferred."]})
+def derive_exception_handler_declaration_claim(repo,item):
+    return Claim(id=stable_exception_handler_declaration_claim_id(item.owner_id),claim=f"Java method {item.owner_qualname} directly declares Spring Web ExceptionHandler metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="exception_handler_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_exception_handler_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"exception_types":list(item.exception_types),"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No exception dispatch, matching, response mapping, controller advice scope, inheritance, calls, aliases, proxy/AOP, or runtime behavior inferred."]})
+def derive_pre_filter_declaration_claim(repo,item):
+    return Claim(id=stable_pre_filter_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Security PreFilter metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="pre_filter_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_pre_filter_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"expression":item.expression,"filter_target":item.filter_target,"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No runtime authorization, expression truth, security context, role hierarchy, proxy/AOP, config, calls, inheritance/composition, meta-annotations, aliases, or external symbols inferred."]})
+
+def derive_post_filter_declaration_claim(repo,item):
+    return Claim(id=stable_post_filter_declaration_claim_id(item.owner_id),claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Spring Security PostFilter metadata.",kind="structure",scope="declaration",bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="post_filter_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")],provenance="git",evidence="observed",confidence=1.0,endorsed_by=None,last_verified=now_utc(),model=MODEL,body={"language":"java","edge_kind":"declares_post_filter_metadata","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"expression":item.expression,"values_handling":"opaque-never-interpreted","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["No filtering, authorization, security context, proxy/AOP, config, calls, inheritance/composition, aliases/meta-annotations, or runtime enforcement inferred."]})
+
+def derive_resilience4j_retry_declaration_claim(repo: GitRepo, item) -> Claim:
+    return Claim(id=stable_resilience4j_retry_declaration_claim_id(item.owner_id), claim=f"Java {item.owner_kind} {item.owner_qualname} directly declares Resilience4j Retry metadata.", kind="structure", scope="declaration", bindings=[Binding(path=item.path,file_blob=repo.blob_sha(item.path),fn_hash=item.annotation_hash,commit=repo.head(),qualname=item.owner_qualname,role="resilience4j_retry_annotation",line_start=item.line_start,line_end=item.line_end,hash_kind="java_token_sha256")], provenance="git", evidence="observed", confidence=1.0, endorsed_by=None, last_verified=now_utc(), model=MODEL, body={"language":"java","edge_kind":"declares_resilience4j_retry_metadata","declaration_kind":"resilience4j_retry","owner_id":item.owner_id,"owner_qualname":item.owner_qualname,"owner_kind":item.owner_kind,"name":item.name,"fallback_method":item.fallback_method,"values_handling":"opaque-never-resolved","resolution":item.resolution,"coverage":"partial","tier":"observed","notes":["Distinct from Spring Retryable; no runtime retries/backoff/exception matching/config/fallback dispatch/proxy/AOP/calls/inheritance/composition/external symbols inferred."]})
 
 
 def _anchor(path: str, line_start: int | None, line_end: int | None, qualname: str | None) -> dict:
@@ -210,7 +289,7 @@ def derive_java_node_claim(repo: GitRepo, node: ClassNode | DeclarationNode) -> 
     node_hash = node.declaration_hash if is_decl else node.class_hash
     scope = "declaration" if is_decl else "class"
     claim = Claim(
-        id=stable_java_node_claim_id(node.path, node.qualname, node_kind),
+        id=java_node_id(node),
         claim=f"Java {node_kind} {node.qualname} in {node.path} is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
         kind="structure",
         scope=scope,
@@ -225,6 +304,7 @@ def derive_java_node_claim(repo: GitRepo, node: ClassNode | DeclarationNode) -> 
             "summary": f"Observed Java {node_kind} {node.qualname} syntactically; Java inheritance edges may be derived conservatively when extends/implements targets resolve without ambiguity.",
             "keywords": node.keywords,
             "qualname": node.qualname,
+            "identity_key": None if is_decl else node.identity_key,
             "language": "java",
             "node_kind": node_kind,
             "extraction_tier": "java-treesitter-syntactic",
@@ -448,12 +528,21 @@ def derive_api_claim(repo: GitRepo, api: ApiNode) -> Claim:
     text = repo.read_file(api.path)
     blob = repo.blob_sha(api.path)
     head = repo.head()
+    relationship = bool(api.route_path_source and api.handler_path and api.handler_hash and api.handler_node_id)
     claim = Claim(
-        id=stable_api_claim_id(api.path, api.method, api.route_path, api.handler_qualname),
+        id=(stable_api_relationship_claim_id(api.route_path_source, api.method, api.route_path, api.handler_node_id)
+            if relationship else stable_api_claim_id(api.path, api.method, api.route_path, api.handler_qualname)),
         claim=f"API route {api.method} {api.route_path} in {api.path} is handled by {api.handler_qualname}.",
         kind="structure",
         scope="api",
-        bindings=[Binding(path=api.path, file_blob=blob, fn_hash=api.api_hash, commit=head, qualname=api.handler_qualname)],
+        bindings=([
+            Binding(path=api.route_path_source, file_blob=repo.blob_sha(api.route_path_source), fn_hash=api.route_hash, commit=head,
+                    qualname=api.route_qualname, role="route_declaration", line_start=api.route_line_start,
+                    line_end=api.route_line_end, hash_kind="java_ast_span"),
+            Binding(path=api.handler_path, file_blob=repo.blob_sha(api.handler_path), fn_hash=api.handler_hash, commit=head,
+                    qualname=api.handler_qualname, role="handler", line_start=None, line_end=None,
+                    hash_kind="java_node"),
+        ] if relationship else [Binding(path=api.path, file_blob=blob, fn_hash=api.api_hash, commit=head, qualname=api.handler_qualname)]),
         provenance="git",
         evidence="observed",
         confidence=0.45,
@@ -469,8 +558,19 @@ def derive_api_claim(repo: GitRepo, api: ApiNode) -> Claim:
             "http_methods": [api.method.lower() if api.method.upper() == "UNSPECIFIED" else api.method.upper()],
             "language": "java" if api.path.endswith(".java") else "python",
             "handler_qualname": api.handler_qualname,
+            "handler_node_id": api.handler_node_id,
+            "service_name": api.service_name,
+            "service_url": api.service_url,
+            "rpc_adapter": api.adapter,
+            "api_binding_model": "dual-v2" if relationship else "legacy-single-v1",
+            "route_source_path": api.route_path_source,
+            "route_qualname": api.route_qualname,
+            "handler_path": api.handler_path,
             "qualname": api.handler_qualname,
-            "anchors": [{"path": api.path, "line_start": api.line_start, "line_end": api.line_end}],
+            "anchors": ([
+                {"path": api.route_path_source, "line_start": api.route_line_start, "line_end": api.route_line_end, "role": "route_declaration"},
+                {"path": api.handler_path, "line_start": None, "line_end": None, "qualname": api.handler_qualname, "role": "handler"},
+            ] if relationship else [{"path": api.path, "line_start": api.line_start, "line_end": api.line_end}]),
             "notes": ["api_hash includes recognized route decorators plus handler body using the same token-stream span hash rules as functions."],
         },
     )
@@ -631,6 +731,21 @@ def derive_inject_edge_claim(repo: GitRepo, edge) -> Claim | None:
     )
 
 
+def derive_configuration_properties_claim(repo: GitRepo, edge) -> Claim:
+    return Claim(
+        id=stable_configuration_properties_edge_claim_id(edge.source_id, edge.prefix),
+        claim=f"{edge.source_id} declares Spring ConfigurationProperties prefix {edge.prefix}.",
+        kind="structure", scope="config",
+        bindings=[Binding(path=edge.source_path, file_blob=repo.blob_sha(edge.source_path), fn_hash=edge.source_hash, commit=repo.head(), qualname=edge.source_qualname)],
+        provenance="git", evidence="attributed", confidence=min(edge.confidence, 0.6), endorsed_by=None,
+        last_verified=now_utc(), model=MODEL,
+        body={"edge_kind": "configuration_properties", "source_id": edge.source_id, "source_path": edge.source_path,
+              "source_qualname": edge.source_qualname, "target_kind": edge.target_kind, "prefix": edge.prefix,
+              "resolution": edge.resolution, "coverage": "partial", "tier": "attributed",
+              "notes": ["Literal annotation metadata only; no runtime binding, property keys, member writes, validation, scanning, or calls are inferred."]},
+    )
+
+
 def derive_topic_edge_claim(repo: GitRepo, edge) -> Claim | None:
     if not edge.source_path or not edge.source_hash:
         return None
@@ -643,7 +758,7 @@ def derive_topic_edge_claim(repo: GitRepo, edge) -> Claim | None:
         id=edge_id, claim=f"{edge.source_id} {edge.edge_kind} message topic/channel {edge.topic_name}.", kind="structure", scope="cross-repo",
         bindings=bindings,
         provenance="git", evidence="attributed", confidence=min(float(getattr(edge, "confidence", 0.5)), 0.6), endorsed_by=None, last_verified=now_utc(), model=MODEL,
-        body={"edge_kind": edge.edge_kind, "source_id": edge.source_id, "topic_id": stable_topic_claim_id(edge.topic_name), "topic_name": edge.topic_name, "source_path": edge.source_path, "source_qualname": edge.source_qualname, "dependency_path": getattr(edge, "dependency_path", None), "dependency_qualname": getattr(edge, "dependency_qualname", None), "resolution": edge.resolution, "coverage": "partial", "tier": "attributed", "notes": ["Messaging pub-sub edges attach producers/consumers to a literal topic/channel node only; no direct producer-consumer edge is inferred."]},
+        body={"edge_kind": edge.edge_kind, "source_id": edge.source_id, "topic_id": stable_topic_claim_id(edge.topic_name), "topic_name": edge.topic_name, "source_path": edge.source_path, "source_qualname": edge.source_qualname, "source_anchor": _java_node_anchor_for(repo, edge.source_path, edge.source_qualname, "method"), "dependency_path": getattr(edge, "dependency_path", None), "dependency_qualname": getattr(edge, "dependency_qualname", None), "group_id": getattr(edge, "group_id", None), "payload_type": getattr(edge, "payload_type", None), "resolution": edge.resolution, "coverage": "partial", "tier": "attributed", "notes": ["Messaging pub-sub edges attach producers/consumers to a literal topic/channel node only; group and payload are declaration/observed expression metadata, not runtime delivery semantics."]},
     )
 
 
@@ -893,7 +1008,7 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
             java_classes = extract_java_classes(path, text)
             java_methods = extract_java_methods(path, text)
             java_fields = extract_java_fields(path, text)
-            java_apis = extract_java_apis(path, text)
+            java_apis = [*extract_java_apis(path, text), *extract_java_functional_apis(repo, path, text), *extract_java_feign_apis(path, text)]
         else:
             java_degrade_hint = status.degrade_hint or JAVA_DEGRADE_HINT
     claims = [derive_file_claim(repo, path)]
@@ -903,8 +1018,14 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
             semantic_backend.enqueue_background_refresh(str(repo.root), path)
             semantic_overlay_candidates = list(semantic_backend.semantic_claims_for_path(repo, path, text) or [])
             claims[0].body["semantic_extraction"] = {"available": True, "degraded": True, "queued_background_refresh": True, "extraction_tier": "semantic-resolved", "accepted_claims": 0, "rejected_claims": 0}
+            status = getattr(semantic_backend, "last_status", None)
+            if isinstance(status, dict):
+                claims[0].body["semantic_extraction"]["provider_status"] = dict(status)
         else:
             claims[0].body["semantic_extraction"] = {"available": False, "degraded": True, "queued_background_refresh": False, "extraction_tier": "semantic-resolved", "accepted_claims": 0, "rejected_claims": 0}
+            status = getattr(semantic_backend, "last_status", None)
+            if isinstance(status, dict):
+                claims[0].body["semantic_extraction"]["provider_status"] = dict(status)
     if java_degrade_hint:
         claims[0].body["java_extraction"] = {"available": False, "degraded": True, "degrade_hint": java_degrade_hint}
     claims.extend(derive_class_claim(repo, cls) for cls in classes)
@@ -920,13 +1041,35 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
         claims.append(derive_env_claim(repo, _env))
     config_key_read_edges, unresolved_config_key_reads = resolve_config_key_read_edges(path, text, functions, repo=repo)
     inherit_edges, unresolved_inherits = resolve_java_inherit_edges(path, text, java_classes, repo=repo) if java_classes else ([], {})
-    java_call_edges, unresolved_java_calls = resolve_java_call_edges(path, text, java_methods, repo=repo) if java_methods else ([], {})
-    java_field_edges, unresolved_java_fields = resolve_java_field_edges(path, text, java_methods, java_fields, repo=repo) if java_methods else ([], {})
-    java_override_edges, unresolved_java_overrides = resolve_java_override_edges(path, text, java_classes, java_methods, inherit_edges, unresolved_inherits) if java_methods else ([], {})
+    java_call_edges, unresolved_java_calls = resolve_java_call_edges(path, text, java_methods, repo=repo, inherit_edges=inherit_edges) if java_methods else ([], {})
+    java_field_edges, unresolved_java_fields = resolve_java_field_edges(path, text, java_methods, java_fields, repo=repo, inherit_edges=inherit_edges) if java_methods else ([], {})
+    java_override_edges, unresolved_java_overrides = resolve_java_override_edges(path, text, java_classes, java_methods, inherit_edges, unresolved_inherits, repo=repo) if java_methods else ([], {})
     java_type_edges, unresolved_java_types = resolve_java_type_use_edges(path, text, java_classes, java_methods, java_fields, repo=repo) if (java_classes or java_fields or java_methods) else ([], {})
-    java_inject_edges, unresolved_java_injects = resolve_java_inject_edges(path, text, java_classes, java_fields, inherit_edges, repo=repo) if java_classes else ([], {})
+    java_inject_edges, unresolved_java_injects = resolve_java_inject_edges(path, text, java_classes, java_fields, inherit_edges, repo=repo, java_methods=java_methods) if java_classes else ([], {})
     java_topic_edges, unresolved_java_topics = resolve_java_topic_edges(path, text, java_methods, repo=repo) if java_methods else ([], {})
+    java_cache_declarations, unresolved_java_cache = resolve_java_cache_declarations(path, text, java_methods) if java_methods else ([], {})
+    java_scheduling_declarations, unresolved_java_scheduling = resolve_java_scheduling_declarations(path, text, java_methods) if java_methods else ([], {})
+    java_transaction_declarations, unresolved_java_transactions = resolve_java_transaction_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_async_declarations, unresolved_java_async = resolve_java_async_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_retry_declarations, unresolved_java_retry = resolve_java_retry_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_circuit_breaker_declarations, unresolved_java_circuit_breaker = resolve_java_circuit_breaker_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_rate_limiter_declarations, unresolved_java_rate_limiter = resolve_java_rate_limiter_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_bulkhead_declarations, unresolved_java_bulkhead = resolve_java_bulkhead_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_time_limiter_declarations, unresolved_java_time_limiter = resolve_java_time_limiter_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_pre_authorize_declarations, unresolved_java_pre_authorize = resolve_java_pre_authorize_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_roles_allowed_declarations, unresolved_java_roles_allowed = resolve_java_roles_allowed_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_secured_declarations, unresolved_java_secured = resolve_java_secured_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_post_authorize_declarations, unresolved_java_post_authorize = resolve_java_post_authorize_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_exception_handler_declarations, unresolved_java_exception_handler = resolve_java_exception_handler_declarations(path, text, java_classes, java_methods) if java_methods else ([], {})
+    java_pre_filter_declarations, unresolved_java_pre_filter = resolve_java_pre_filter_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_post_filter_declarations, unresolved_java_post_filter = resolve_java_post_filter_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_resilience4j_retry_declarations, unresolved_java_resilience4j_retry = resolve_java_resilience4j_retry_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
     java_sagas, unresolved_java_sagas = resolve_java_saga_definitions(path, text, java_classes, repo=repo) if java_classes else ({}, {})
+    java_config_properties, unresolved_java_config_properties = resolve_java_configuration_properties(path, text, java_classes, java_methods) if (java_classes or java_methods) else ([], {})
+    java_spring_declarations, unresolved_java_spring_declarations = resolve_java_spring_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ({}, {})
+    java_persistence_declarations, unresolved_java_persistence_declarations = resolve_java_persistence_declarations(path, text, java_classes, java_methods, java_fields) if (java_classes or java_methods or java_fields) else ({}, {})
+    java_repository_declarations, unresolved_java_repository_declarations = resolve_java_repository_declarations(path, text, java_classes, java_methods, repo=repo) if (java_classes or java_methods) else ({}, {})
+    java_mybatis_declarations, unresolved_java_mybatis_declarations = resolve_java_mybatis_declarations(path, text, java_classes, java_methods) if (java_classes or java_methods) else ({}, {})
     for _topic in sorted({edge.topic_name for edge in java_topic_edges}):
         claims.append(derive_topic_claim(repo, _topic))
     edges = [*edges, *java_call_edges]
@@ -953,7 +1096,7 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
     callees_by_caller: dict[str, list[dict]] = {}
     callers_by_callee: dict[str, list[dict]] = {}
     fn_anchor_by_id = {stable_function_claim_id(fn.path, fn.qualname): _anchor(fn.path, fn.line_start, fn.line_end, fn.qualname) for fn in functions}
-    fn_anchor_by_id.update({stable_java_node_claim_id(m.path, m.qualname, m.node_kind): _anchor(m.path, m.line_start, m.line_end, m.qualname) for m in java_methods})
+    fn_anchor_by_id.update({java_node_id(m): _anchor(m.path, m.line_start, m.line_end, m.qualname) for m in java_methods})
     decl_anchor_by_id = {stable_declaration_claim_id(decl.path, decl.qualname): _anchor(decl.path, decl.line_start, decl.line_end, decl.qualname) for decl in declarations}
     decl_anchor_by_id.update({stable_java_node_claim_id(decl.path, decl.qualname, decl.declaration_kind): _anchor(decl.path, decl.line_start, decl.line_end, decl.qualname) for decl in java_fields})
     for edge in edges:
@@ -998,6 +1141,8 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
         injects_by_source.setdefault(edge.injector_id, []).append({"target_id": edge.bean_id, "target_qualname": edge.bean_qualname, "inject_kind": edge.inject_kind, "evidence": edge.evidence, "confidence": edge.confidence, "resolution": edge.resolution, "tier": "attributed"})
         injected_by_target.setdefault(edge.bean_id, []).append({"source_id": edge.injector_id, "source_path": edge.injector_path, "inject_kind": edge.inject_kind, "evidence": edge.evidence, "confidence": edge.confidence, "resolution": edge.resolution, "tier": "attributed"})
     unresolved_injects_by_source = {src: [{"type": item.type_expr, "reason": item.reason, "inject_kind": item.inject_kind, "candidates": item.candidates or []} for item in items] for src, items in unresolved_java_injects.items()}
+    config_properties_by_source = {edge.source_id: {"prefix": edge.prefix, "target_kind": edge.target_kind, "evidence": edge.evidence, "confidence": edge.confidence, "resolution": edge.resolution, "tier": "attributed"} for edge in java_config_properties}
+    unresolved_config_properties_by_source = {src: [{"expr": item.expr, "reason": item.reason} for item in items] for src, items in unresolved_java_config_properties.items()}
     topic_pubs_by_source: dict[str, list[dict]] = {}
     topic_subs_by_source: dict[str, list[dict]] = {}
     topic_publishers: dict[str, list[dict]] = {}
@@ -1091,6 +1236,26 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
             graph["injected_by"] = injected_by_target.get(claim.id, [])
             graph["injects_unresolved"] = unresolved_injects_by_source.get(claim.id, [])
             graph["injects_coverage"] = "partial"
+            if claim.id in java_spring_declarations:
+                graph["spring_declaration"] = java_spring_declarations[claim.id]
+            if claim.id in unresolved_java_spring_declarations:
+                graph["spring_declaration_unresolved"] = unresolved_java_spring_declarations[claim.id]
+            if claim.id in java_persistence_declarations:
+                graph["persistence_declaration"] = java_persistence_declarations[claim.id]
+            if claim.id in unresolved_java_persistence_declarations:
+                graph["persistence_declaration_unresolved"] = unresolved_java_persistence_declarations[claim.id]
+            if claim.id in java_repository_declarations:
+                graph["repository_declaration"] = java_repository_declarations[claim.id]
+            if claim.id in unresolved_java_repository_declarations:
+                graph["repository_declaration_unresolved"] = unresolved_java_repository_declarations[claim.id]
+            if claim.id in java_mybatis_declarations:
+                graph["mybatis_declaration"] = java_mybatis_declarations[claim.id]
+            if claim.id in unresolved_java_mybatis_declarations:
+                graph["mybatis_declaration_unresolved"] = unresolved_java_mybatis_declarations[claim.id]
+            if claim.id in config_properties_by_source:
+                graph["configuration_properties"] = config_properties_by_source[claim.id]
+            if claim.id in unresolved_config_properties_by_source:
+                graph["configuration_properties_unresolved"] = unresolved_config_properties_by_source[claim.id]
             if claim.id in java_sagas:
                 graph["saga_definition"] = java_sagas[claim.id]
                 graph["saga_definition_unresolved"] = unresolved_java_sagas.get(claim.id, [])
@@ -1117,6 +1282,26 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
             graph["used_by_types"] = used_by_type.get(claim.id, [])
             graph["uses_type_unresolved"] = unresolved_types_by_user.get(claim.id, [])
             graph["uses_type_coverage"] = "partial"
+            if claim.id in java_spring_declarations:
+                graph["spring_declaration"] = java_spring_declarations[claim.id]
+            if claim.id in unresolved_java_spring_declarations:
+                graph["spring_declaration_unresolved"] = unresolved_java_spring_declarations[claim.id]
+            if claim.id in java_persistence_declarations:
+                graph["persistence_declaration"] = java_persistence_declarations[claim.id]
+            if claim.id in unresolved_java_persistence_declarations:
+                graph["persistence_declaration_unresolved"] = unresolved_java_persistence_declarations[claim.id]
+            if claim.id in java_repository_declarations:
+                graph["repository_declaration"] = java_repository_declarations[claim.id]
+            if claim.id in unresolved_java_repository_declarations:
+                graph["repository_declaration_unresolved"] = unresolved_java_repository_declarations[claim.id]
+            if claim.id in java_mybatis_declarations:
+                graph["mybatis_declaration"] = java_mybatis_declarations[claim.id]
+            if claim.id in unresolved_java_mybatis_declarations:
+                graph["mybatis_declaration_unresolved"] = unresolved_java_mybatis_declarations[claim.id]
+            if claim.id in config_properties_by_source:
+                graph["configuration_properties"] = config_properties_by_source[claim.id]
+            if claim.id in unresolved_config_properties_by_source:
+                graph["configuration_properties_unresolved"] = unresolved_config_properties_by_source[claim.id]
             graph["publishes_to"] = topic_pubs_by_source.get(claim.id, [])
             graph["publishes_to_unresolved"] = [x for x in unresolved_topics_by_source.get(claim.id, []) if x.get("edge_kind") == "publishes_to"]
             graph["subscribes_to"] = topic_subs_by_source.get(claim.id, [])
@@ -1193,7 +1378,7 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
     inherit_edge_claims = [claim for edge in inherit_edges if (claim := derive_inherit_edge_claim(repo, edge)) is not None]
     java_contract_claims = []
     for node in java_methods:
-        node_id = stable_java_node_claim_id(node.path, node.qualname, node.node_kind)
+        node_id = java_node_id(node)
         graph = {
             "writes": writes_by_writer.get(node_id, []),
             "reads": reads_by_reader.get(node_id, []),
@@ -1207,7 +1392,25 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
     env_read_edge_claims = [claim for edge in env_read_edges if (claim := derive_env_read_edge_claim(repo, edge)) is not None]
     config_key_read_edge_claims = [claim for edge in config_key_read_edges if (claim := derive_config_key_read_edge_claim(repo, edge)) is not None]
     inject_edge_claims = [claim for edge in java_inject_edges if (claim := derive_inject_edge_claim(repo, edge)) is not None]
+    configuration_properties_claims = [derive_configuration_properties_claim(repo, edge) for edge in java_config_properties]
     topic_edge_claims = [claim for edge in java_topic_edges if (claim := derive_topic_edge_claim(repo, edge)) is not None]
+    cache_declaration_claims = [derive_cache_declaration_claim(repo, item) for item in java_cache_declarations]
+    scheduling_declaration_claims = [derive_scheduling_declaration_claim(repo, item) for item in java_scheduling_declarations]
+    transaction_declaration_claims = [derive_transaction_declaration_claim(repo, item) for item in java_transaction_declarations]
+    async_declaration_claims = [derive_async_declaration_claim(repo, item) for item in java_async_declarations]
+    retry_declaration_claims = [derive_retry_declaration_claim(repo, item) for item in java_retry_declarations]
+    circuit_breaker_declaration_claims = [derive_circuit_breaker_declaration_claim(repo, item) for item in java_circuit_breaker_declarations]
+    rate_limiter_declaration_claims = [derive_rate_limiter_declaration_claim(repo, item) for item in java_rate_limiter_declarations]
+    bulkhead_declaration_claims = [derive_bulkhead_declaration_claim(repo, item) for item in java_bulkhead_declarations]
+    time_limiter_declaration_claims = [derive_time_limiter_declaration_claim(repo, item) for item in java_time_limiter_declarations]
+    pre_authorize_declaration_claims = [derive_pre_authorize_declaration_claim(repo,x) for x in java_pre_authorize_declarations]
+    roles_allowed_declaration_claims = [derive_roles_allowed_declaration_claim(repo,x) for x in java_roles_allowed_declarations]
+    secured_declaration_claims = [derive_secured_declaration_claim(repo,x) for x in java_secured_declarations]
+    post_authorize_declaration_claims = [derive_post_authorize_declaration_claim(repo,x) for x in java_post_authorize_declarations]
+    exception_handler_declaration_claims = [derive_exception_handler_declaration_claim(repo,x) for x in java_exception_handler_declarations]
+    pre_filter_declaration_claims = [derive_pre_filter_declaration_claim(repo,x) for x in java_pre_filter_declarations]
+    post_filter_declaration_claims = [derive_post_filter_declaration_claim(repo,x) for x in java_post_filter_declarations]
+    resilience4j_retry_declaration_claims = [derive_resilience4j_retry_declaration_claim(repo, item) for item in java_resilience4j_retry_declarations]
     for claim in claims:
         saga = claim.body.get("graph", {}).get("saga_definition") if isinstance(claim.body.get("graph"), dict) else None
         if not saga:
@@ -1234,7 +1437,59 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
     claims.extend(env_read_edge_claims)
     claims.extend(config_key_read_edge_claims)
     claims.extend(inject_edge_claims)
+    claims.extend(configuration_properties_claims)
     claims.extend(topic_edge_claims)
+    claims.extend(cache_declaration_claims)
+    claims.extend(scheduling_declaration_claims)
+    claims.extend(transaction_declaration_claims)
+    claims.extend(async_declaration_claims)
+    claims.extend(retry_declaration_claims)
+    claims.extend(circuit_breaker_declaration_claims)
+    claims.extend(rate_limiter_declaration_claims)
+    claims.extend(bulkhead_declaration_claims)
+    claims.extend(time_limiter_declaration_claims)
+    claims.extend(resilience4j_retry_declaration_claims)
+    claims.extend(pre_authorize_declaration_claims)
+    claims.extend(roles_allowed_declaration_claims)
+    claims.extend(secured_declaration_claims)
+    claims.extend(post_authorize_declaration_claims)
+    claims.extend(exception_handler_declaration_claims)
+    claims.extend(pre_filter_declaration_claims)
+    claims.extend(post_filter_declaration_claims)
+    if unresolved_java_cache:
+        claims[0].body["java_cache_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_cache.items())}
+    if unresolved_java_scheduling:
+        claims[0].body["java_scheduling_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_scheduling.items())}
+    if unresolved_java_transactions:
+        claims[0].body["java_transaction_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_transactions.items())}
+    if unresolved_java_async:
+        claims[0].body["java_async_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_async.items())}
+    if unresolved_java_retry:
+        claims[0].body["java_retry_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_retry.items())}
+    if unresolved_java_circuit_breaker:
+        claims[0].body["java_circuit_breaker_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_circuit_breaker.items())}
+    if unresolved_java_rate_limiter:
+        claims[0].body["java_rate_limiter_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_rate_limiter.items())}
+    if unresolved_java_bulkhead:
+        claims[0].body["java_bulkhead_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_bulkhead.items())}
+    if unresolved_java_time_limiter:
+        claims[0].body["java_time_limiter_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_time_limiter.items())}
+    if unresolved_java_pre_authorize:
+        claims[0].body["java_pre_authorize_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_pre_authorize.items())}
+    if unresolved_java_roles_allowed:
+        claims[0].body["java_roles_allowed_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_roles_allowed.items())}
+    if unresolved_java_secured:
+        claims[0].body["java_secured_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_secured.items())}
+    if unresolved_java_post_authorize:
+        claims[0].body["java_post_authorize_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_post_authorize.items())}
+    if unresolved_java_exception_handler:
+        claims[0].body["java_exception_handler_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_exception_handler.items())}
+    if unresolved_java_pre_filter:
+        claims[0].body["java_pre_filter_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_pre_filter.items())}
+    if unresolved_java_post_filter:
+        claims[0].body["java_post_filter_unresolved"]={k:[{"expr":x.expr,"reason":x.reason} for x in v] for k,v in sorted(unresolved_java_post_filter.items())}
+    if unresolved_java_resilience4j_retry:
+        claims[0].body["java_resilience4j_retry_unresolved"] = {key: [{"expr": x.expr, "reason": x.reason} for x in value] for key, value in sorted(unresolved_java_resilience4j_retry.items())}
     if semantic_backend is not None and semantic_overlay_candidates:
         accepted = 0
         rejected = 0

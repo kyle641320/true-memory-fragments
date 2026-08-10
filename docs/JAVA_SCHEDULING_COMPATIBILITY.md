@@ -1,0 +1,7 @@
+# Conservative Spring scheduling declaration metadata
+
+Schema remains `tmf.schema.v2`; v0/v1 reads and every existing claim ID remain unchanged. TMF recognizes only the exact explicit import `org.springframework.scheduling.annotation.Scheduled` attached directly to uniquely identified source methods. A stable `claim_scheduling_decl_*` ID is keyed by overload-safe method identity. The binding uses the exact annotation line anchor and Java token hash; ordinary blob/token freshness, path replacement, mutation, deletion, and warm reconciliation apply.
+
+Only literal Java integer tokens for `fixedRate`, `fixedDelay`, and `initialDelay`, literal strings for `cron` and `zone`, and direct `TimeUnit.CONSTANT`/`java.util.concurrent.TimeUnit.CONSTANT` tokens are retained. Values are opaque declaration metadata: TMF does not calculate schedules or infer invocation/runtime execution, timezone semantics, concurrency, proxying, `EnableScheduling`, inherited/composed annotations, placeholders, or SpEL. Conflicting triggers, dynamic expressions/constants, unsupported attributes (including `*String` variants), malformed values, ambiguous methods, and same-simple-name decoys fail closed with explicit `java_scheduling_unresolved` reasons.
+
+Rollback requires no migration: remove the scheduling extractor/deriver, held-out fixture/verifier, tests, report, and this document. Existing caches simply reconcile the additive claims away.

@@ -1,0 +1,24 @@
+{
+  "checks": {
+    "decoy_excluded": true,
+    "deletion_reconciles_declaration": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "gradle_fixture": true,
+    "literal_metadata": true,
+    "maven_fixture": true,
+    "mutation_changes_token_hash": true,
+    "overload_safe": true,
+    "precise_anchors": true,
+    "stable_ids_under_literal_mutation": true,
+    "two_direct_declarations": true
+  },
+  "format": "tmf.java-circuit-breaker-qualification.v1",
+  "limitations": [
+    "direct exact-import source @CircuitBreaker metadata only",
+    "literal name/fallbackMethod retained opaquely",
+    "no circuit state, thresholds, failure classification, fallback dispatch, configuration, proxy/AOP, calls, inheritance, composition, or runtime behavior"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

@@ -38,8 +38,21 @@ def stable_api_claim_id(path: str, method: str, route_path: str, handler_qualnam
     return f"claim_api_{digest}"
 
 
-def stable_java_node_claim_id(path: str, qualname: str, node_kind: str) -> str:
-    digest = hashlib.sha256(f"java\0{node_kind}\0{path}\0{qualname}".encode("utf-8")).hexdigest()[:16]
+def stable_api_relationship_claim_id(route_path_source: str, method: str, route_path: str, handler_node_id: str) -> str:
+    """v2 identity: route declaration + resolved handler identity.
+
+    This intentionally uses a new namespace.  Legacy claim_api_* IDs retain
+    their historical path/verb/URI/qualname meaning and are not reinterpreted.
+    """
+    digest = hashlib.sha256(
+        f"api_relationship_v2\0{route_path_source}\0{method.upper()}\0{route_path}\0{handler_node_id}".encode("utf-8")
+    ).hexdigest()[:16]
+    return f"claim_api_rel_{digest}"
+
+
+def stable_java_node_claim_id(path: str, qualname: str, node_kind: str, identity_key: str | None = None) -> str:
+    identity = identity_key or qualname
+    digest = hashlib.sha256(f"java\0{node_kind}\0{path}\0{identity}".encode("utf-8")).hexdigest()[:16]
     return f"claim_java_{digest}"
 
 
@@ -98,6 +111,11 @@ def stable_inject_edge_claim_id(injector_id: str, bean_id: str, inject_kind: str
     return f"claim_inject_edge_{digest}"
 
 
+def stable_configuration_properties_edge_claim_id(source_id: str, prefix: str) -> str:
+    digest = hashlib.sha256(f"configuration_properties\0{source_id}\0{prefix}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_configuration_properties_edge_{digest}"
+
+
 def stable_topic_claim_id(topic_name: str) -> str:
     digest = hashlib.sha256(f"topic\0{topic_name}".encode("utf-8")).hexdigest()[:16]
     return f"claim_topic_{digest}"
@@ -111,3 +129,82 @@ def stable_topic_pub_edge_claim_id(publisher_id: str, topic_name: str) -> str:
 def stable_topic_sub_edge_claim_id(subscriber_id: str, topic_name: str) -> str:
     digest = hashlib.sha256(f"subscribes_to\0{subscriber_id}\0{topic_name}".encode("utf-8")).hexdigest()[:16]
     return f"claim_topic_sub_edge_{digest}"
+
+
+def stable_cache_declaration_claim_id(method_id: str, operation: str, cache_names: tuple[str, ...]) -> str:
+    digest = hashlib.sha256(f"cache_declaration\0{method_id}\0{operation}\0{'|'.join(cache_names)}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_cache_decl_{digest}"
+
+
+def stable_scheduling_declaration_claim_id(method_id: str) -> str:
+    digest = hashlib.sha256(f"scheduling_declaration\0{method_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_scheduling_decl_{digest}"
+
+
+def stable_transaction_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"transaction_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_transaction_decl_{digest}"
+
+def stable_async_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"async_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_async_decl_{digest}"
+
+def stable_retry_declaration_claim_id(owner_id: str, annotation_kind: str) -> str:
+    digest = hashlib.sha256(f"retry_declaration\0{owner_id}\0{annotation_kind}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_retry_decl_{digest}"
+
+def stable_circuit_breaker_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"circuit_breaker_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_circuit_breaker_decl_{digest}"
+
+
+def stable_rate_limiter_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"rate_limiter_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_rate_limiter_decl_{digest}"
+
+
+def stable_bulkhead_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"bulkhead_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_bulkhead_decl_{digest}"
+
+
+def stable_time_limiter_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"time_limiter_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_time_limiter_decl_{digest}"
+
+
+def stable_resilience4j_retry_declaration_claim_id(owner_id: str) -> str:
+    digest = hashlib.sha256(f"resilience4j_retry_declaration\0{owner_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_resilience4j_retry_decl_{digest}"
+
+
+def stable_pre_authorize_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"pre_authorize_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_pre_authorize_decl_{digest}"
+
+def stable_roles_allowed_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"roles_allowed_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_roles_allowed_decl_{digest}"
+
+def stable_secured_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"secured_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_secured_decl_{digest}"
+
+
+def stable_post_authorize_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"post_authorize_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_post_authorize_decl_{digest}"
+
+def stable_exception_handler_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"exception_handler_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_exception_handler_decl_{digest}"
+
+
+def stable_pre_filter_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"pre_filter_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_pre_filter_decl_{digest}"
+
+
+def stable_post_filter_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"post_filter_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_post_filter_decl_{digest}"

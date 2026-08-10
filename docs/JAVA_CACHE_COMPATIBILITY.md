@@ -1,0 +1,5 @@
+# Java Spring Cache source-evidence compatibility
+
+Schema remains `tmf.schema.v2`; v0/v1 reads and all existing IDs are unchanged. The bounded adapter recognizes exact explicit imports of `org.springframework.cache.annotation.Cacheable`, `CachePut`, and `CacheEvict` on uniquely identified source methods. Only literal `value`/`cacheNames` strings or arrays are accepted. Literal `key`, `condition`, and `unless` strings are retained as opaque metadata and never evaluated. Claims have stable `claim_cache_decl_*` IDs, annotation-token hashes, exact annotation anchors, method identity, normal blob freshness, and deletion reconciliation.
+
+Dynamic names, unsupported attributes, alias conflicts, same-simple-name decoys, composed/meta annotations, inherited annotations, ambiguous source methods, CacheManager/cache invocations, and runtime behavior fail closed or remain deferred. TMF does not infer hits, misses, storage, serialization, invalidation ordering, proxy behavior, transactions, or any runtime effect.

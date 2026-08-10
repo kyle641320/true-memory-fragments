@@ -127,6 +127,38 @@ class Child extends Base implements ChildMarker {}
             self.assertIsNotNone(Store(repo).get_claim(stable_inherit_edge_claim_id(child, new_parent, "extends")))
             self.assertIsNotNone(Store(repo).get_claim(impl_id))
 
+    def test_project_index_resolves_same_package_import_and_fqn_across_source_roots(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "lib/src/main/java/acme/base/Base.java": "package acme.base; public class Base {}\n",
+                "lib/src/main/java/acme/base/Marker.java": "package acme.base; public interface Marker {}\n",
+                "app/src/main/java/acme/base/SamePackage.java": "package acme.base; class SamePackage extends Base {}\n",
+                "app/src/main/java/acme/app/Imported.java": "package acme.app; import acme.base.Base; class Imported extends Base {}\n",
+                "app/src/main/java/acme/app/Qualified.java": "package acme.app; class Qualified implements acme.base.Marker {}\n",
+            })
+            warm_repo(repo)
+            store = Store(repo)
+            base = stable_java_node_claim_id("lib/src/main/java/acme/base/Base.java", "Base", "class")
+            marker = stable_java_node_claim_id("lib/src/main/java/acme/base/Marker.java", "Marker", "interface")
+            same = stable_java_node_claim_id("app/src/main/java/acme/base/SamePackage.java", "SamePackage", "class")
+            imported = stable_java_node_claim_id("app/src/main/java/acme/app/Imported.java", "Imported", "class")
+            qualified = stable_java_node_claim_id("app/src/main/java/acme/app/Qualified.java", "Qualified", "class")
+            self.assertIsNotNone(store.get_claim(stable_inherit_edge_claim_id(same, base, "extends")))
+            self.assertIsNotNone(store.get_claim(stable_inherit_edge_claim_id(imported, base, "extends")))
+            self.assertIsNotNone(store.get_claim(stable_inherit_edge_claim_id(qualified, marker, "implements")))
+
+    def test_project_index_does_not_guess_cross_package_ambiguous_or_unimported_type(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "a/Thing.java": "package a; public class Thing {}\n",
+                "b/Thing.java": "package b; public class Thing {}\n",
+                "app/Bad.java": "package app; class Bad extends Thing {}\n",
+            })
+            warm_repo(repo)
+            bad = stable_java_node_claim_id("app/Bad.java", "Bad", "class")
+            unresolved = Store(repo).get_claim(bad).body["graph"]["inherits_unresolved"]
+            self.assertIn(("Thing", "ambiguous_type"), {(x["expr"], x["reason"]) for x in unresolved})
+
     def test_unrelated_change_fresh_parent_body_change_stale_and_endpoint_delete_clears_edge(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"Sample.java": "class Base { int x = 1; }\nclass Child extends Base {}\nclass Spare { int y = 1; }\n"})

@@ -78,6 +78,22 @@ class Service {
             self.assertEqual(edge.body["user_id"], constructor_id)
             self.assertEqual(edge.body["user_anchor"]["line_start"], 4)
 
+    def test_project_index_resolves_same_package_and_fully_qualified_signature_types(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "domain/src/main/java/acme/model/Value.java": "package acme.model; public class Value {}\n",
+                "app/src/main/java/acme/model/Holder.java": "package acme.model; class Holder { Value value; }\n",
+                "app/src/main/java/acme/app/Service.java": "package acme.app; class Service { acme.model.Value load(acme.model.Value value) { return value; } }\n",
+            })
+            warm_repo(repo)
+            store = Store(repo)
+            value = stable_java_node_claim_id("domain/src/main/java/acme/model/Value.java", "Value", "class")
+            field = stable_java_node_claim_id("app/src/main/java/acme/model/Holder.java", "Holder.value", "field")
+            method = stable_java_node_claim_id("app/src/main/java/acme/app/Service.java", "Service.load", "method")
+            self.assertIsNotNone(store.get_claim(stable_type_use_edge_claim_id(field, value, "field_type")))
+            self.assertIsNotNone(store.get_claim(stable_type_use_edge_claim_id(method, value, "return_type")))
+            self.assertIsNotNone(store.get_claim(stable_type_use_edge_claim_id(method, value, "param_type")))
+
     def test_rewarm_removes_stale_constructor_type_edge(self):
         source = """class Outer {
   static class Value {}
@@ -109,6 +125,37 @@ class Service {
             subprocess.run(["git", "commit", "-m", "change"], cwd=repo, check=True, capture_output=True)
             warm_repo(repo)
             self.assertIsNone(store.get_claim(stale_edge_id))
+
+    def test_nested_generic_array_and_wildcard_type_references_resolve(self):
+        source = """class Value {}
+class Box<T> { java.util.Map<String, java.util.List<? extends Value[]>> values; }
+"""
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"Box.java": source})
+            warm_repo(repo)
+            store = Store(repo)
+            value_id = stable_java_node_claim_id("Box.java", "Value", "class")
+            field_id = stable_java_node_claim_id("Box.java", "Box.values", "field")
+            self.assertIsNotNone(store.get_claim(stable_type_use_edge_claim_id(field_id, value_id, "field_type")))
+
+    def test_project_index_cache_invalidates_after_java_file_change(self):
+        from tmf.git import GitRepo
+        from tmf.java_extract import extract_java_classes, extract_java_fields, extract_java_methods, resolve_java_type_use_edges
+
+        with tempfile.TemporaryDirectory() as td:
+            root = init_repo(Path(td), {
+                "model/Old.java": "package model; public class Old {}\n",
+                "app/App.java": "package app; import model.Old; class App { Old value; }\n",
+            })
+            repo = GitRepo(root)
+            source = repo.read_file("app/App.java")
+            args = ("app/App.java", source, extract_java_classes("app/App.java", source), extract_java_methods("app/App.java", source), extract_java_fields("app/App.java", source))
+            edges, _ = resolve_java_type_use_edges(*args, repo=repo)
+            self.assertEqual(1, len(edges))
+            (root / "model/Old.java").unlink()
+            edges, unresolved = resolve_java_type_use_edges(*args, repo=repo)
+            self.assertEqual([], edges)
+            self.assertTrue(unresolved)
 
 
 if __name__ == "__main__":

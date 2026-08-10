@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from functools import lru_cache
 from dataclasses import dataclass
 from typing import Any
@@ -18,6 +19,899 @@ JAVA_DEGRADE_HINT = (
 class JavaExtractionStatus:
     available: bool
     degrade_hint: str | None = None
+
+
+@dataclass(frozen=True)
+class JavaCacheDeclaration:
+    method_id: str
+    method_qualname: str
+    path: str
+    operation: str
+    cache_names: tuple[str, ...]
+    key: str | None
+    condition: str | None
+    unless: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    method_hash: str
+    resolution: str = "spring-cache-exact-import-literal"
+
+
+@dataclass(frozen=True)
+class JavaUnresolvedCacheDeclaration:
+    method_id: str
+    expr: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class JavaSchedulingDeclaration:
+    method_id: str
+    method_qualname: str
+    path: str
+    fixed_rate: str | None
+    fixed_delay: str | None
+    initial_delay: str | None
+    cron: str | None
+    zone: str | None
+    time_unit: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    method_hash: str
+    resolution: str = "spring-scheduling-exact-import-literal"
+
+
+@dataclass(frozen=True)
+class JavaUnresolvedSchedulingDeclaration:
+    method_id: str
+    expr: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class JavaTransactionDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    propagation: str | None
+    isolation: str | None
+    read_only: bool | None
+    timeout: str | None
+    transaction_manager: str | None
+    rollback_for: tuple[str, ...]
+    no_rollback_for: tuple[str, ...]
+    rollback_for_class_name: tuple[str, ...]
+    no_rollback_for_class_name: tuple[str, ...]
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-transactional-exact-import-literal"
+
+
+@dataclass(frozen=True)
+class JavaUnresolvedTransactionDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaAsyncDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    executor_qualifier: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-async-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedAsyncDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaRetryDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    annotation_kind: str
+    path: str
+    metadata: dict[str, Any]
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-retry-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedRetryDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaCircuitBreakerDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    name: str
+    fallback_method: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "resilience4j-circuitbreaker-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedCircuitBreakerDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaRateLimiterDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    name: str
+    fallback_method: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "resilience4j-ratelimiter-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedRateLimiterDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class JavaBulkheadDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    name: str
+    fallback_method: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "resilience4j-bulkhead-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedBulkheadDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class JavaTimeLimiterDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    name: str
+    fallback_method: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "resilience4j-timelimiter-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedTimeLimiterDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaPreAuthorizeDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    expression: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-security-preauthorize-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedPreAuthorizeDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaRolesAllowedDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    roles: tuple[str, ...]
+    source_namespace: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "roles-allowed-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedRolesAllowedDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaSecuredDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    roles: tuple[str, ...]
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-security-secured-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedSecuredDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+@dataclass(frozen=True)
+class JavaPostAuthorizeDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    expression: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-security-postauthorize-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedPostAuthorizeDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaExceptionHandlerDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    exception_types: tuple[str, ...]
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-web-exceptionhandler-exact-import-class-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedExceptionHandlerDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaPreFilterDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    expression: str
+    filter_target: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-security-prefilter-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaPostFilterDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    expression: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-security-postfilter-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedPostFilterDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaUnresolvedPreFilterDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+
+
+
+
+
+
+
+_SKIP_LEAF_TYPES = {"line_comment", "block_comment"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_CLASS_TYPES = {"class_declaration", "interface_declaration", "enum_declaration", "record_declaration", "annotation_type_declaration"}
+_METHOD_TYPES = {"method_declaration", "constructor_declaration", "compact_constructor_declaration"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_WEBFLUX_FQNS = {
+    "RouterFunctions": "org.springframework.web.reactive.function.server.RouterFunctions",
+    "RequestPredicates": "org.springframework.web.reactive.function.server.RequestPredicates",
+}
+_WEBFLUX_VERBS = "GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_JAVA_KNOWN_EXTERNAL_TYPES = {"String", "List", "Map", "Set", "Collection", "Optional", "Integer", "Long", "Boolean", "Double", "Float", "Object", "Void"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_EXTERNAL_OR_JDK_SIMPLE_TYPES = {
+    "Object", "String", "Exception", "RuntimeException", "Throwable", "Error",
+    "List", "ArrayList", "LinkedList", "Map", "HashMap", "Set", "HashSet",
+    "Comparable", "Comparator", "Iterable", "Collection", "Optional", "Number",
+    "Integer", "Long", "Boolean", "Double", "Float", "Short", "Byte", "Character",
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def resolve_java_pre_authorize_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPreAuthorizeDeclaration], dict[str, list[JavaUnresolvedPreAuthorizeDeclaration]]]:
+    """Retain direct Spring Security PreAuthorize literals; infer no runtime behavior."""
+    if "@PreAuthorize" not in source: return [], {}
+    expected = "org.springframework.security.access.prepost.PreAuthorize"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PreAuthorize[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PreAuthorize'] == [expected] and raw == [expected] and re.search(r"@interface\s+PreAuthorize\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedPreAuthorizeDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair':
+                if len(_java_annotation_args(ann)) != 1: return None,'pre_authorize_attribute_count'
+                value=_java_string_literal_value(data,arg)
+                if value is None or not value or '${' in value or '#{' in value:return None,'pre_authorize_value_not_literal_string'
+                values['value']=value;continue
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'pre_authorize_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'value'}:return None,f'pre_authorize_unsupported_attribute:{key}'
+            if key in seen:return None,f'pre_authorize_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'pre_authorize_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('value'):return None,'pre_authorize_value_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='PreAuthorize']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'pre_authorize_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'pre_authorize_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'pre_authorize_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaPreAuthorizeDeclaration(owner,q,kind,path,values['value'],_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+def resolve_java_roles_allowed_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaRolesAllowedDeclaration], dict[str, list[JavaUnresolvedRolesAllowedDeclaration]]]:
+    """Retain direct Jakarta/Javax RolesAllowed literals; infer no authorization semantics."""
+    if "@RolesAllowed" not in source: return [], {}
+    expected={"jakarta.annotation.security.RolesAllowed":"jakarta","javax.annotation.security.RolesAllowed":"javax"}
+    imports=re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;",source)
+    raw=re.findall(r"\bimport\s+(?:static\s+)?([^;]*RolesAllowed[^;]*)\s*;",source)
+    matches=[x for x in imports if x in expected]
+    simple=[x for x in imports if x.rsplit('.',1)[-1]=='RolesAllowed']
+    exact=len(matches)==1 and simple==matches and raw==matches and re.search(r"@interface\s+RolesAllowed\b",source) is None
+    namespace=expected[matches[0]] if exact else None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]:candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason):unresolved.setdefault(owner,[]).append(JavaUnresolvedRolesAllowedDeclaration(owner,_node_text(data,ann),reason))
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='RolesAllowed']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for ann in anns:reject(owner,ann,'roles_allowed_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for ann in anns:reject(owner,ann,'roles_allowed_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'roles_allowed_owner_ambiguous')
+                else:
+                    args=_java_annotation_args(anns[0]);roles=_java_literal_string_array(data,args[0]) if len(args)==1 else None
+                    if not roles or any(not role or '${' in role or '#{' in role for role in roles):reject(owner,anns[0],'roles_allowed_value_not_literal_string_array')
+                    else:found.append(JavaRolesAllowedDeclaration(owner,q,kind,path,tuple(roles),namespace,_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+def resolve_java_secured_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaSecuredDeclaration], dict[str, list[JavaUnresolvedSecuredDeclaration]]]:
+    """Retain direct Spring Security Secured role literals; infer no authorization semantics."""
+    if "@Secured" not in source: return [], {}
+    expected="org.springframework.security.access.annotation.Secured"
+    imports=re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;",source)
+    raw=re.findall(r"\bimport\s+(?:static\s+)?([^;]*Secured[^;]*)\s*;",source)
+    exact=imports.count(expected)==1 and [x for x in imports if x.rsplit('.',1)[-1]=='Secured']==[expected] and raw==[expected] and re.search(r"@interface\s+Secured\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]:candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason):unresolved.setdefault(owner,[]).append(JavaUnresolvedSecuredDeclaration(owner,_node_text(data,ann),reason))
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='Secured']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for ann in anns:reject(owner,ann,'secured_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for ann in anns:reject(owner,ann,'secured_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'secured_owner_ambiguous')
+                else:
+                    args=_java_annotation_args(anns[0]);roles=_java_literal_string_array(data,args[0]) if len(args)==1 else None
+                    if not roles or any(not role or '${' in role or '#{' in role for role in roles):reject(owner,anns[0],'secured_value_not_literal_string_array')
+                    else:found.append(JavaSecuredDeclaration(owner,q,kind,path,tuple(roles),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+def resolve_java_post_authorize_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPostAuthorizeDeclaration], dict[str, list[JavaUnresolvedPostAuthorizeDeclaration]]]:
+    """Retain direct Spring Security PostAuthorize literals; infer no runtime behavior."""
+    if "@PostAuthorize" not in source: return [], {}
+    expected = "org.springframework.security.access.prepost.PostAuthorize"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PostAuthorize[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PostAuthorize'] == [expected] and raw == [expected] and re.search(r"@interface\s+PostAuthorize\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedPostAuthorizeDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair':
+                if len(_java_annotation_args(ann)) != 1: return None,'post_authorize_attribute_count'
+                value=_java_string_literal_value(data,arg)
+                if value is None or not value or '${' in value or '#{' in value:return None,'post_authorize_value_not_literal_string'
+                values['value']=value;continue
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'post_authorize_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'value'}:return None,f'post_authorize_unsupported_attribute:{key}'
+            if key in seen:return None,f'post_authorize_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'post_authorize_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('value'):return None,'post_authorize_value_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='PostAuthorize']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'post_authorize_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'post_authorize_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'post_authorize_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaPostAuthorizeDeclaration(owner,q,kind,path,values['value'],_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+def resolve_java_exception_handler_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaExceptionHandlerDeclaration], dict[str, list[JavaUnresolvedExceptionHandlerDeclaration]]]:
+    """Retain direct Spring Web ExceptionHandler class literals; infer no dispatch/runtime behavior."""
+    if "@ExceptionHandler" not in source: return [], {}
+    expected="org.springframework.web.bind.annotation.ExceptionHandler"
+    imports=re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;",source)
+    raw=re.findall(r"\bimport\s+(?:static\s+)?([^;]*ExceptionHandler[^;]*)\s*;",source)
+    exact=imports.count(expected)==1 and [x for x in imports if x.rsplit('.',1)[-1]=='ExceptionHandler']==[expected] and raw==[expected] and re.search(r"(?:@interface|class|interface|record)\s+ExceptionHandler\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in methods:candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason):unresolved.setdefault(owner,[]).append(JavaUnresolvedExceptionHandlerDeclaration(owner,_node_text(data,ann),reason))
+    def parse_classes(node):
+        nodes=_named_children(node) if node.type=='element_value_array_initializer' else [node]
+        vals=tuple(_node_text(data,x).strip()[:-6] for x in nodes if _node_text(data,x).strip().endswith('.class'))
+        return vals if len(vals)==len(nodes) and all(re.fullmatch(r'(?:[A-Za-z_$][\w$]*\.)*[A-Za-z_$][\w$]*',x) for x in vals) else None
+    def walk(node,stack):
+        ns=stack;q=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack)
+        if q:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='ExceptionHandler']
+            if anns:
+                pool=candidates.get((q,'method'),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:method'
+                if not exact:
+                    for a in anns:reject(owner,a,'exception_handler_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'exception_handler_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'exception_handler_owner_ambiguous')
+                else:
+                    args=_java_annotation_args(anns[0]);vals=()
+                    if len(args)>1:reject(owner,anns[0],'exception_handler_attribute_count')
+                    elif args:
+                        arg=args[0]
+                        if arg.type=='element_value_pair':
+                            key=_child_by_field(arg,'key');arg=_child_by_field(arg,'value')
+                            if key is None or _node_text(data,key) not in {'value','exception'}:arg=None
+                        vals=parse_classes(arg) if arg is not None else None
+                        if vals is None:reject(owner,anns[0],'exception_handler_value_not_class_literals')
+                    if vals is not None:found.append(JavaExceptionHandlerDeclaration(owner,q,'method',path,tuple(vals),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+def resolve_java_pre_filter_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPreFilterDeclaration], dict[str, list[JavaUnresolvedPreFilterDeclaration]]]:
+    """Retain direct Spring Security PreFilter literals; infer no runtime behavior."""
+    if "@PreFilter" not in source: return [], {}
+    expected = "org.springframework.security.access.prepost.PreFilter"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PreFilter[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PreFilter'] == [expected] and raw == [expected] and re.search(r"@interface\s+PreFilter\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedPreFilterDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair':
+                if len(_java_annotation_args(ann)) != 1: return None,'pre_filter_attribute_count'
+                value=_java_string_literal_value(data,arg)
+                if value is None or not value or '${' in value or '#{' in value:return None,'pre_filter_value_not_literal_string'
+                values['value']=value;continue
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'pre_filter_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'value','filterTarget'}:return None,f'pre_filter_unsupported_attribute:{key}'
+            if key in seen:return None,f'pre_filter_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'pre_filter_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('value'):return None,'pre_filter_value_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='PreFilter']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'pre_filter_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'pre_filter_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'pre_filter_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    elif kind!='method':reject(owner,anns[0],'pre_filter_target_not_method')
+                    else:found.append(JavaPreFilterDeclaration(owner,q,kind,path,values['value'],values.get('filterTarget'),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+def resolve_java_post_filter_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaPostFilterDeclaration], dict[str, list[JavaUnresolvedPostFilterDeclaration]]]:
+    """Retain direct Spring Security PostFilter literals; infer no runtime behavior."""
+    if "@PostFilter" not in source: return [], {}
+    expected = "org.springframework.security.access.prepost.PostFilter"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*PostFilter[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='PostFilter'] == [expected] and raw == [expected] and re.search(r"@interface\s+PostFilter\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedPostFilterDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair':
+                if len(_java_annotation_args(ann)) != 1: return None,'post_filter_attribute_count'
+                value=_java_string_literal_value(data,arg)
+                if value is None or not value or '${' in value or '#{' in value:return None,'post_filter_value_not_literal_string'
+                values['value']=value;continue
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'post_filter_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'value'}:return None,f'post_filter_unsupported_attribute:{key}'
+            if key in seen:return None,f'post_filter_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'post_filter_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('value'):return None,'post_filter_value_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='PostFilter']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'post_filter_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'post_filter_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'post_filter_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    elif kind!='method':reject(owner,anns[0],'post_filter_target_not_method')
+                    else:found.append(JavaPostFilterDeclaration(owner,q,kind,path,values['value'],_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+@dataclass(frozen=True)
+class JavaResilience4jRetryDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    name: str
+    fallback_method: str | None
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "resilience4j-retry-exact-import-literal"
+
+@dataclass(frozen=True)
+class JavaUnresolvedResilience4jRetryDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
 
 
 @lru_cache(maxsize=1)
@@ -172,8 +1066,8 @@ def _method_qualname(source_bytes: bytes, method_node: Any, container_stack: lis
     return ".".join([*container_stack, name])
 
 
-_CLASS_TYPES = {"class_declaration", "interface_declaration", "enum_declaration"}
-_METHOD_TYPES = {"method_declaration", "constructor_declaration"}
+_CLASS_TYPES = {"class_declaration", "interface_declaration", "enum_declaration", "record_declaration", "annotation_type_declaration"}
+_METHOD_TYPES = {"method_declaration", "constructor_declaration", "compact_constructor_declaration"}
 
 
 
@@ -201,18 +1095,40 @@ def _java_annotation_args(node: Any) -> list[Any]:
     return _named_children(args)
 
 
-def _java_annotation_literal_path(source_bytes: bytes, node: Any) -> tuple[str | None, str | None]:
+def _java_literal_string_array(source_bytes: bytes, node: Any) -> list[str] | None:
+    if node.type == "string_literal":
+        value = _java_string_literal_value(source_bytes, node)
+        return [value] if value is not None else None
+    if node.type != "element_value_array_initializer":
+        return None
+    values = [_java_string_literal_value(source_bytes, child) for child in _named_children(node)]
+    return None if any(value is None for value in values) else [value for value in values if value is not None]
+
+
+def _java_annotation_literal_paths(source_bytes: bytes, node: Any) -> tuple[list[str] | None, str | None]:
     args = _java_annotation_args(node)
-    for arg in args:
-        if arg.type == "string_literal":
-            return _java_string_literal_value(source_bytes, arg), None
-        # element_value_pair value="/x" or path="/x"
-        value = _child_by_field(arg, "value")
-        if value is not None and value.type == "string_literal":
-            return _java_string_literal_value(source_bytes, value), None
-    if args:
+    if not args:
+        return [""], None
+    if len(args) == 1 and args[0].type in {"string_literal", "element_value_array_initializer"}:
+        values = _java_literal_string_array(source_bytes, args[0])
+        return (values, None) if values else (None, "java_route_path_not_literal")
+    if any(arg.type != "element_value_pair" for arg in args):
         return None, "java_route_path_not_literal"
-    return "", None
+    aliases: dict[str, list[str]] = {}
+    for arg in args:
+        if arg.type != "element_value_pair":
+            continue
+        name = _child_by_field(arg, "key") or (_named_children(arg)[0] if _named_children(arg) else None)
+        value = _child_by_field(arg, "value")
+        key = _node_text(source_bytes, name) if name is not None else ""
+        if key in {"path", "value"}:
+            literals = _java_literal_string_array(source_bytes, value) if value is not None else None
+            if not literals:
+                return None, "java_route_path_not_literal"
+            aliases[key] = literals
+    if len(aliases) > 1:
+        return None, "java_route_path_alias_ambiguous"
+    return (next(iter(aliases.values())), None) if aliases else ([""], None)
 
 
 def _join_java_paths(prefix: str, route: str) -> str:
@@ -223,7 +1139,30 @@ def _join_java_paths(prefix: str, route: str) -> str:
     return "/" + prefix.strip("/") + "/" + route.strip("/")
 
 
-def _java_route_contract(source_bytes: bytes, annotation: Any) -> tuple[list[str], str | None, str | None] | None:
+def _java_request_methods(source_bytes: bytes, annotation: Any) -> list[str] | None:
+    for arg in _java_annotation_args(annotation):
+        if arg.type != "element_value_pair":
+            continue
+        children = _named_children(arg)
+        key_node = _child_by_field(arg, "key") or (children[0] if children else None)
+        if key_node is None or _node_text(source_bytes, key_node) != "method":
+            continue
+        value = _child_by_field(arg, "value")
+        values = _named_children(value) if value is not None and value.type == "element_value_array_initializer" else ([value] if value is not None else [])
+        methods: list[str] = []
+        for item in values:
+            text = _node_text(source_bytes, item)
+            if item.type != "field_access" or not text.startswith("RequestMethod.") or text.count(".") != 1:
+                return None
+            method = text.split(".")[1]
+            if method not in {"GET", "POST", "PUT", "DELETE", "PATCH"}:
+                return None
+            methods.append(method)
+        return methods or None
+    return None
+
+
+def _java_route_contract(source_bytes: bytes, annotation: Any) -> tuple[list[str], list[str] | None, str | None] | None:
     name = _java_annotation_name(source_bytes, annotation)
     if name is None:
         return None
@@ -232,14 +1171,15 @@ def _java_route_contract(source_bytes: bytes, annotation: Any) -> tuple[list[str
         "PostMapping": "POST",
         "PutMapping": "PUT",
         "DeleteMapping": "DELETE",
+        "PatchMapping": "PATCH",
     }
     if name in shortcut:
-        path, reason = _java_annotation_literal_path(source_bytes, annotation)
-        return [shortcut[name]], path, reason
+        paths, reason = _java_annotation_literal_paths(source_bytes, annotation)
+        return [shortcut[name]], paths, reason
     if name == "RequestMapping":
-        path, reason = _java_annotation_literal_path(source_bytes, annotation)
-        # Conservative MVP: only literal path is parsed; method attribute parsing can be extended later.
-        return ["UNSPECIFIED"], path, reason
+        paths, reason = _java_annotation_literal_paths(source_bytes, annotation)
+        methods = _java_request_methods(source_bytes, annotation)
+        return (methods or [], paths, reason or (None if methods else "java_route_method_not_literal"))
     return None
 
 
@@ -260,40 +1200,63 @@ def extract_java_apis(path: str, source: str) -> list[ApiNode]:
     _language, parser = _language_and_parser()
     source_bytes = source.encode("utf-8")
     tree = parser.parse(source_bytes)
+    imports = _java_explicit_imports(source)
+    mapping_fqn = "org.springframework.web.bind.annotation."
+    allowed_mappings = {"RequestMapping", "GetMapping", "PostMapping", "PutMapping", "DeleteMapping", "PatchMapping"}
+    exact_mappings = {name for name in allowed_mappings if imports.get(name) == mapping_fqn + name}
+    exact_controllers = {
+        name for name, fqn in {
+            "Controller": "org.springframework.stereotype.Controller",
+            "RestController": mapping_fqn + "RestController",
+        }.items() if imports.get(name) == fqn
+    }
+    methods_by_qualname: dict[str, list[ClassNode]] = {}
+    for method_node in extract_java_methods(path, source):
+        if method_node.node_kind == "method":
+            methods_by_qualname.setdefault(method_node.qualname, []).append(method_node)
     out: list[ApiNode] = []
 
-    def walk(node: Any, stack: list[str], class_prefix: str) -> None:
+    def walk(node: Any, stack: list[str], class_prefixes: list[str] | None, controller: bool) -> None:
         next_stack = stack
-        next_prefix = class_prefix
+        next_prefixes = class_prefixes
+        next_controller = controller
         if node.type in _CLASS_TYPES:
             name = _identifier_from_node(source_bytes, node)
             if name:
                 next_stack = [*stack, name]
-            for ann in _java_annotations(node):
-                contract = _java_route_contract(source_bytes, ann)
-                if contract is None:
+            annotations = _java_annotations(node)
+            next_controller = any(_java_annotation_name(source_bytes, ann) in exact_controllers for ann in annotations)
+            for ann in annotations:
+                if _java_annotation_name(source_bytes, ann) not in exact_mappings:
                     continue
-                _methods, prefix, reason = contract
-                if reason is None and prefix is not None:
-                    next_prefix = prefix
-                elif reason is not None:
-                    next_prefix = ""
-        elif node.type == "method_declaration":
+                prefixes, reason = _java_annotation_literal_paths(source_bytes, ann)
+                next_prefixes = prefixes if reason is None else None
+        elif node.type == "method_declaration" and controller and class_prefixes is not None:
             qualname = _method_qualname(source_bytes, node, stack)
             if qualname:
+                handler_candidates = methods_by_qualname.get(qualname, [])
+                # A method reference cannot be represented honestly when overload
+                # resolution would be required, so omit the route conservatively.
+                if len(handler_candidates) != 1:
+                    return
+                handler_node_id = java_node_id(handler_candidates[0])
                 for ann in _java_annotations(node):
+                    if _java_annotation_name(source_bytes, ann) not in exact_mappings:
+                        continue
                     contract = _java_route_contract(source_bytes, ann)
                     if contract is None:
                         continue
-                    methods, route, reason = contract
-                    if reason is not None or route is None:
+                    methods, routes, reason = contract
+                    if reason is not None or routes is None or not methods:
                         continue
-                    full_path = _join_java_paths(class_prefix, route)
                     line_start = _line_start(ann)
                     line_end = _line_end(node)
                     api_hash = java_hash_for_node(source, node)
-                    for method in methods:
-                        out.append(ApiNode(
+                    for prefix in class_prefixes:
+                        for route in routes:
+                            full_path = _join_java_paths(prefix, route)
+                            for method in methods:
+                                out.append(ApiNode(
                             path=path,
                             method=method,
                             route_path=full_path,
@@ -302,12 +1265,220 @@ def extract_java_apis(path: str, source: str) -> list[ApiNode]:
                             line_end=line_end,
                             api_hash=api_hash,
                             keywords=_identifier_keywords(f"{full_path}_{qualname}"),
-                        ))
+                            handler_node_id=handler_node_id,
+                                ))
         for child in _named_children(node):
-            walk(child, next_stack, next_prefix)
+            walk(child, next_stack, next_prefixes, next_controller)
 
-    walk(tree.root_node, [], "")
+    walk(tree.root_node, [], [""], False)
     return out
+
+
+
+
+def extract_java_feign_apis(path: str, source: str) -> list[ApiNode]:
+    """Exact-import, literal-only Spring Cloud OpenFeign declaration slice.
+
+    A Feign interface method is represented as a dual-bound API relationship:
+    the client annotation is the independently mutable route declaration and
+    the interface method is the handler/declaration endpoint. Runtime client
+    behavior is deliberately not inferred.
+    """
+    if not path.endswith(".java"):
+        return []
+    imports = _java_explicit_imports(source)
+    if imports.get("FeignClient") != "org.springframework.cloud.openfeign.FeignClient":
+        return []
+    mapping_fqn = "org.springframework.web.bind.annotation."
+    allowed = {"RequestMapping", "GetMapping", "PostMapping", "PutMapping", "DeleteMapping", "PatchMapping"}
+    exact = {name for name in allowed if imports.get(name) == mapping_fqn + name}
+    if not exact:
+        return []
+    _language, parser = _language_and_parser()
+    source_bytes = source.encode("utf-8")
+    tree = parser.parse(source_bytes)
+    methods = [m for m in extract_java_methods(path, source) if m.node_kind == "method"]
+    by_q: dict[str, list[ClassNode]] = {}
+    for method in methods:
+        by_q.setdefault(method.qualname, []).append(method)
+    out: list[ApiNode] = []
+
+    def literal_arg(ann: Any, names: set[str], positional: bool = False) -> str | None:
+        args = _java_annotation_args(ann)
+        if positional and len(args) == 1 and args[0].type == "string_literal":
+            text = _node_text(source_bytes, args[0]); return text[1:-1] if len(text) >= 2 else None
+        for arg in args:
+            if arg.type != "element_value_pair": continue
+            children = _named_children(arg)
+            key = _child_by_field(arg, "key") or (children[0] if children else None)
+            value = _child_by_field(arg, "value")
+            if key is not None and value is not None and _node_text(source_bytes, key) in names and value.type == "string_literal":
+                text = _node_text(source_bytes, value); return text[1:-1]
+        return None
+
+    def walk(node: Any, stack: list[str], client: tuple[str, str | None, str, Any] | None) -> None:
+        next_stack, next_client = stack, client
+        if node.type in _CLASS_TYPES:
+            name = _identifier_from_node(source_bytes, node)
+            if name: next_stack = [*stack, name]
+            next_client = None
+            if node.type == "interface_declaration":
+                for ann in _java_annotations(node):
+                    if _java_annotation_name(source_bytes, ann) != "FeignClient": continue
+                    service = literal_arg(ann, {"name", "value"}, positional=True)
+                    url = literal_arg(ann, {"url"})
+                    prefix = literal_arg(ann, {"path"}) or ""
+                    # Any present but non-literal supported field fails closed.
+                    text = _node_text(source_bytes, ann)
+                    if service and not any(token in text for token in ("${", "#{")):
+                        next_client = (service, url, prefix, ann)
+        elif node.type == "method_declaration" and client is not None:
+            q = _method_qualname(source_bytes, node, stack)
+            candidates = by_q.get(q or "", [])
+            if q and len(candidates) == 1:
+                for ann in _java_annotations(node):
+                    if _java_annotation_name(source_bytes, ann) not in exact: continue
+                    contract = _java_route_contract(source_bytes, ann)
+                    if contract is None: continue
+                    verbs, paths, reason = contract
+                    if reason is not None or paths is None or len(verbs) != 1: continue
+                    service, url, prefix, client_ann = client
+                    handler = candidates[0]
+                    route_hash = java_hash_for_node(source, client_ann)
+                    for route in paths:
+                        full = _join_java_paths(prefix, route)
+                        out.append(ApiNode(path=path, method=verbs[0], route_path=full,
+                            handler_qualname=q, line_start=_line_start(client_ann), line_end=_line_end(client_ann),
+                            api_hash=route_hash, keywords=_identifier_keywords(f"{service}_{full}_{q}"),
+                            handler_node_id=java_node_id(handler), route_path_source=path,
+                            route_qualname=f"FeignClient {service}", route_line_start=_line_start(client_ann),
+                            route_line_end=_line_end(client_ann), route_hash=route_hash,
+                            handler_path=path, handler_hash=handler.class_hash, service_name=service,
+                            service_url=url, adapter="spring-cloud-openfeign-literal"))
+        for child in _named_children(node): walk(child, next_stack, next_client)
+    walk(tree.root_node, [], None)
+    return out
+
+
+_WEBFLUX_FQNS = {
+    "RouterFunctions": "org.springframework.web.reactive.function.server.RouterFunctions",
+    "RequestPredicates": "org.springframework.web.reactive.function.server.RequestPredicates",
+}
+_WEBFLUX_VERBS = "GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS"
+
+
+def extract_java_functional_apis(repo: Any, path: str, source: str) -> list[ApiNode]:
+    """Resolve the deliberately small, exact-import WebFlux functional subset.
+
+    Accepted route expressions are direct ``RouterFunctions.route`` and flat
+    ``RouterFunctions.route().VERB(...).VERB(...).build()`` chains.  Anything
+    requiring Java typing, predicate composition, nesting, lambdas, filters,
+    resources, or overload selection is omitted rather than guessed.
+    """
+    if not path.endswith(".java"):
+        return []
+    imports = _java_explicit_imports(source)
+    if any(imports.get(k) != v for k, v in _WEBFLUX_FQNS.items()):
+        return []
+    java_paths = [p for p in repo.run("ls-files").splitlines() if p.endswith(".java")]
+    class_candidates: dict[str, list[tuple[str, ClassNode]]] = {}
+    method_candidates: dict[tuple[str, str], list[ClassNode]] = {}
+    for candidate_path in java_paths:
+        try:
+            candidate_source = repo.read_file(candidate_path)
+            classes = [c for c in extract_java_classes(candidate_path, candidate_source) if c.node_kind in {"class", "record"}]
+            methods = [m for m in extract_java_methods(candidate_path, candidate_source) if m.node_kind == "method"]
+        except Exception:
+            continue
+        for cls in classes:
+            simple = cls.qualname.rsplit(".", 1)[-1]
+            class_candidates.setdefault(simple, []).append((candidate_path, cls))
+        for method in methods:
+            owner, _, name = method.qualname.rpartition(".")
+            method_candidates.setdefault((owner.rsplit(".", 1)[-1], name), []).append(method)
+
+    # Only declared field/parameter/local identifiers with an exactly imported
+    # or uniquely repository-local handler type are eligible.
+    variable_types: dict[str, str] = {}
+    decl_re = re.compile(r"\b([A-Z][A-Za-z0-9_]*)\s+([a-zA-Z_$][\w$]*)\s*(?=[,;)=])")
+    for type_name, variable in decl_re.findall(source):
+        if imports.get(type_name) or len(class_candidates.get(type_name, [])) == 1:
+            variable_types[variable] = type_name
+
+    def resolved_handler(variable: str, method_name: str) -> tuple[str, ClassNode] | None:
+        type_name = variable_types.get(variable)
+        if not type_name:
+            return None
+        classes = class_candidates.get(type_name, [])
+        imported = imports.get(type_name)
+        if imported:
+            classes = [(p, c) for p, c in classes if _java_package(repo.read_file(p)) + "." + type_name == imported]
+        if len(classes) != 1:
+            return None
+        handler_path, handler_class = classes[0]
+        methods = method_candidates.get((handler_class.qualname.rsplit(".", 1)[-1], method_name), [])
+        if len(methods) != 1 or methods[0].path != handler_path:
+            return None
+        return handler_path, methods[0]
+
+    _language, parser = _language_and_parser()
+    source_bytes = source.encode("utf-8")
+    tree = parser.parse(source_bytes)
+    out: list[ApiNode] = []
+    direct = re.compile(
+        rf"^RouterFunctions\.route\(\s*RequestPredicates\.({_WEBFLUX_VERBS})\(\s*\"([^\"\\]*)\"\s*\)\s*,\s*([A-Za-z_$][\w$]*)::([A-Za-z_$][\w$]*)\s*\)$",
+        re.S,
+    )
+    builder_item = re.compile(
+        rf"\.({_WEBFLUX_VERBS})\(\s*\"([^\"\\]*)\"\s*,\s*([A-Za-z_$][\w$]*)::([A-Za-z_$][\w$]*)\s*\)", re.S
+    )
+
+    def add(node: Any, verb: str, uri: str, variable: str, method_name: str) -> None:
+        resolved = resolved_handler(variable, method_name)
+        if resolved is None:
+            return
+        handler_path, handler = resolved
+        route_hash = java_hash_for_node(source, node)
+        out.append(ApiNode(
+            path=path, method=verb, route_path=uri, handler_qualname=handler.qualname,
+            line_start=_line_start(node), line_end=_line_end(node), api_hash=route_hash,
+            keywords=_identifier_keywords(f"{uri}_{handler.qualname}"), handler_node_id=java_node_id(handler),
+            route_path_source=path, route_qualname=f"{verb} {uri}",
+            route_line_start=_line_start(node), route_line_end=_line_end(node), route_hash=route_hash,
+            handler_path=handler_path, handler_hash=handler.class_hash,
+        ))
+
+    def walk(node: Any) -> None:
+        if node.type == "method_invocation":
+            text = source_bytes[node.start_byte:node.end_byte].decode("utf-8")
+            match = direct.fullmatch(text.strip())
+            ancestor = node.parent
+            nested_or_filtered = False
+            while ancestor is not None and ancestor.type not in {"return_statement", "expression_statement", "local_variable_declaration"}:
+                if ancestor.type == "method_invocation":
+                    outer = source_bytes[ancestor.start_byte:ancestor.end_byte].decode("utf-8")
+                    if "RouterFunctions.nest(" in outer or ".filter(" in outer or ".resources(" in outer:
+                        nested_or_filtered = True
+                        break
+                ancestor = ancestor.parent
+            if match and not nested_or_filtered:
+                add(node, *match.groups())
+            elif text.strip().startswith("RouterFunctions.route()") and text.strip().endswith(".build()"):
+                # Ensure the complete middle consists solely of accepted items.
+                middle = text.strip()[len("RouterFunctions.route()"):-len(".build()")]
+                matches = list(builder_item.finditer(middle))
+                if matches and "".join(m.group(0) for m in matches) == middle:
+                    for item in matches:
+                        add(node, *item.groups())
+        for child in _named_children(node):
+            walk(child)
+
+    walk(tree.root_node)
+    # Nested method-invocation AST nodes can expose the same builder prefix.
+    unique = {(a.method, a.route_path, a.handler_node_id): a for a in out}
+    return list(unique.values())
+
+
 
 
 def extract_java_classes(path: str, source: str) -> list[ClassNode]:
@@ -324,7 +1495,13 @@ def extract_java_classes(path: str, source: str) -> list[ClassNode]:
             name = _identifier_from_node(source_bytes, node)
             if name:
                 qualname = ".".join([*stack, name])
-                kind = node.type.replace("_declaration", "")
+                # Records use the established class/type identity semantics.  Do
+                # not synthesize their implicit fields, accessors, or methods.
+                kind = (
+                    "class" if node.type == "record_declaration"
+                    else "interface" if node.type == "annotation_type_declaration"
+                    else node.type.replace("_declaration", "")
+                )
                 out.append(ClassNode(
                     path=path,
                     qualname=qualname,
@@ -352,7 +1529,7 @@ def extract_java_methods(path: str, source: str) -> list[ClassNode]:
     source_bytes = source.encode("utf-8")
     tree = parser.parse(source_bytes)
     root = tree.root_node
-    out: list[ClassNode] = []
+    raw: list[tuple[Any, str, str, tuple[str, ...]]] = []
 
     def walk(node: Any, stack: list[str]) -> None:
         next_stack = stack
@@ -363,7 +1540,21 @@ def extract_java_methods(path: str, source: str) -> list[ClassNode]:
         elif node.type in _METHOD_TYPES:
             qualname = _method_qualname(source_bytes, node, stack)
             if qualname:
-                out.append(ClassNode(
+                _name, _argc, parameter_types = _method_signature_parts(source_bytes, node)
+                raw.append((node, qualname, "method" if node.type == "method_declaration" else "constructor", parameter_types))
+        for child in _named_children(node):
+            walk(child, next_stack)
+
+    walk(root, [])
+    counts: dict[tuple[str, str], int] = {}
+    for _node, qualname, kind, _types in raw:
+        counts[(qualname, kind)] = counts.get((qualname, kind), 0) + 1
+    out: list[ClassNode] = []
+    for node, qualname, kind, parameter_types in raw:
+        identity_key = qualname
+        if counts[(qualname, kind)] > 1:
+            identity_key = f"{qualname}({','.join(parameter_types)})"
+        out.append(ClassNode(
                     path=path,
                     qualname=qualname,
                     line_start=_line_start(node),
@@ -372,14 +1563,18 @@ def extract_java_methods(path: str, source: str) -> list[ClassNode]:
                     keywords=_identifier_keywords(qualname),
                     docstring=None,
                     language="java",
-                    node_kind="method" if node.type == "method_declaration" else "constructor",
+                    node_kind=kind,
                     extraction_tier="java-treesitter-syntactic",
+                    identity_key=identity_key,
                 ))
-        for child in _named_children(node):
-            walk(child, next_stack)
-
-    walk(root, [])
     return out
+
+
+def java_node_id(node: ClassNode | DeclarationNode) -> str:
+    ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
+    kind = node.declaration_kind if isinstance(node, DeclarationNode) else node.node_kind
+    identity_key = None if isinstance(node, DeclarationNode) else node.identity_key
+    return ids.stable_java_node_claim_id(node.path, node.qualname, kind, identity_key)
 
 
 def extract_java_fields(path: str, source: str) -> list[DeclarationNode]:
@@ -444,6 +1639,7 @@ class JavaUnresolvedCall:
 
 
 def _method_signature_parts(source_bytes: bytes, node: Any) -> tuple[str | None, int, tuple[str, ...]]:
+    from .java_types import parse_java_type
     name = _identifier_from_node(source_bytes, node)
     params = _child_by_field(node, "parameters")
     types: list[str] = []
@@ -451,8 +1647,43 @@ def _method_signature_parts(source_bytes: bytes, node: Any) -> tuple[str | None,
         for child in _named_children(params):
             if child.type in {"formal_parameter", "spread_parameter"}:
                 typ = _child_by_field(child, "type")
-                types.append(_node_text(source_bytes, typ).strip() if typ is not None else "")
+                if typ is None:
+                    types.append("")
+                else:
+                    parsed = parse_java_type(_node_text(source_bytes, typ).strip() + ("..." if child.type == "spread_parameter" else ""))
+                    types.append(parsed.canonical + ("..." if parsed.varargs else ""))
     return name, len(types), tuple(types)
+
+
+def _method_type_parameters(source_bytes: bytes, node: Any) -> dict[str, str | None] | None:
+    """Read the deliberately small method-generic inference surface.
+
+    Constructors and multi-variable, intersection, recursive, or parameterized
+    bounds are excluded. ``None`` also marks an unsupported declaration.
+    """
+    if node.type != "method_declaration":
+        return {}
+    params = _child_by_field(node, "type_parameters")
+    if params is None:
+        params = next((c for c in _named_children(node) if c.type == "type_parameters"), None)
+    if params is None:
+        return {}
+    declarations = [c for c in _named_children(params) if c.type == "type_parameter"]
+    if len(declarations) != 1:
+        return None
+    declaration = declarations[0]
+    name_node = next((c for c in _named_children(declaration) if c.type == "type_identifier"), None)
+    if name_node is None:
+        return None
+    name = _node_text(source_bytes, name_node).strip()
+    bound_node = next((c for c in _named_children(declaration) if c.type == "type_bound"), None)
+    if bound_node is None:
+        return {name: None}
+    bound = _node_text(source_bytes, bound_node).strip()
+    bound = bound[len("extends"):].strip() if bound.startswith("extends") else bound
+    if not bound or "&" in bound or "<" in bound or name in bound:
+        return None
+    return {name: bound}
 
 
 def _method_signature_index(path: str, source: str) -> dict[str, tuple[int, tuple[str, ...]]]:
@@ -499,34 +1730,77 @@ def _call_arg_count(node: Any) -> int:
     return len([c for c in _named_children(args) if c.type not in {",", "(" , ")"}])
 
 
-def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode], repo: Any | None = None) -> tuple[list[JavaCallEdge], dict[str, list[JavaUnresolvedCall]]]:
+def _call_argument_types(source_bytes: bytes, node: Any, declared: dict[str, str]) -> tuple[str | None, ...]:
+    from .java_types import parse_java_type
+    args = _child_by_field(node, "arguments")
+    if args is None:
+        return ()
+    out: list[str | None] = []
+    literal_types = {
+        "decimal_integer_literal": "int", "hex_integer_literal": "int", "octal_integer_literal": "int", "binary_integer_literal": "int",
+        "decimal_floating_point_literal": "double", "hex_floating_point_literal": "double",
+        "true": "boolean", "false": "boolean", "character_literal": "char", "string_literal": "String", "null_literal": None,
+    }
+    for arg in _named_children(args):
+        typ: str | None = literal_types.get(arg.type)
+        text = _node_text(source_bytes, arg).strip()
+        if arg.type == "identifier":
+            declared_type = declared.get(text)
+            typ = parse_java_type(declared_type).canonical if declared_type else None
+        elif arg.type == "object_creation_expression":
+            type_node = _child_by_field(arg, "type")
+            typ = parse_java_type(_node_text(source_bytes, type_node)).canonical if type_node is not None else None
+        elif arg.type == "array_creation_expression":
+            type_node = _child_by_field(arg, "type")
+            if type_node is not None:
+                base = parse_java_type(_node_text(source_bytes, type_node))
+                dimensions = sum(1 for child in _named_children(arg)
+                                 if child.type in {"dimensions_expr", "dimensions"})
+                typ = base.canonical + "[]" * dimensions if dimensions else None
+        elif arg.type not in literal_types:
+            typ = None
+        out.append(typ)
+    return tuple(out)
+
+
+def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode], repo: Any | None = None, inherit_edges: list[JavaInheritEdge] | None = None) -> tuple[list[JavaCallEdge], dict[str, list[JavaUnresolvedCall]]]:
     if not path.endswith(".java"):
         return [], {}
     _language, parser = _language_and_parser()
     source_bytes = source.encode("utf-8")
     tree = parser.parse(source_bytes)
     root = tree.root_node
+    java_classes = extract_java_classes(path, source)
     explicit_imports, _wildcards = _java_imports(source_bytes, root)
+    project_index = None
+    package = ""
+    if repo is not None:
+        from .java_index import java_package, java_project_index
+        project_index = java_project_index(repo)
+        package = java_package(source)
     by_qual = {m.qualname: m for m in java_methods if m.node_kind == "method"}
     by_class: dict[str, list[ClassNode]] = {}
     for m in java_methods:
         if m.node_kind == "method" and "." in m.qualname:
             cls = m.qualname.rsplit(".", 1)[0]
             by_class.setdefault(cls, []).append(m)
-    classes_by_qual = {cls.qualname: cls for cls in extract_java_classes(path, source)}
+    constructors_by_class: dict[str, list[ClassNode]] = {}
+    for m in java_methods:
+        if m.node_kind == "constructor" and "." in m.qualname:
+            constructors_by_class.setdefault(m.qualname.rsplit(".", 1)[0], []).append(m)
     sigs_current = _method_signature_index(path, source)
     edges: list[JavaCallEdge] = []
     unresolved: dict[str, list[JavaUnresolvedCall]] = {}
 
     def add_unresolved(caller: ClassNode, expr: str, reason: str) -> None:
-        caller_id = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"]).stable_java_node_claim_id(caller.path, caller.qualname, caller.node_kind)
+        caller_id = java_node_id(caller)
         unresolved.setdefault(caller_id, []).append(JavaUnresolvedCall(caller_id=caller_id, expr=expr, reason=reason))
 
     def add_edge(caller: ClassNode, callee: ClassNode, resolution: str) -> None:
         ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
         edges.append(JavaCallEdge(
-            caller_id=ids.stable_java_node_claim_id(caller.path, caller.qualname, caller.node_kind),
-            callee_id=ids.stable_java_node_claim_id(callee.path, callee.qualname, callee.node_kind),
+            caller_id=java_node_id(caller),
+            callee_id=java_node_id(callee),
             callee_qualname=callee.qualname,
             resolution=resolution,
             caller_path=caller.path,
@@ -537,23 +1811,172 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             callee_node_kind=callee.node_kind,
         ))
 
-    def unique_method(methods: list[ClassNode], name: str, argc: int) -> tuple[ClassNode | None, str | None]:
+    signature_cache: dict[tuple[str, int, int, str], tuple[str, ...] | None] = {}
+    type_parameter_cache: dict[tuple[str, int, int, str], dict[str, str | None] | None] = {}
+
+    def method_signature(method: ClassNode) -> tuple[str, ...] | None:
+        key = (method.path, method.line_start, method.line_end, method.identity_key or method.qualname)
+        if key in signature_cache:
+            return signature_cache[key]
+        try:
+            method_source = source if method.path == path else repo.read_file(method.path)
+            source_data = method_source.encode("utf-8")
+            _language, method_parser = _language_and_parser()
+            method_tree = method_parser.parse(source_data)
+            found = None
+            def walk(cur: Any) -> None:
+                nonlocal found
+                if found is not None:
+                    return
+                if cur.type in _METHOD_TYPES and _line_start(cur) == method.line_start and _line_end(cur) == method.line_end:
+                    signature = _method_signature_parts(source_data, cur)[2]
+                    identity = f"{method.qualname}({','.join(signature)})"
+                    if method.identity_key in {None, method.qualname, identity}:
+                        found = signature
+                        return
+                for child in _named_children(cur):
+                    walk(child)
+            walk(method_tree.root_node)
+        except Exception:
+            found = None
+        signature_cache[key] = found
+        return found
+
+    def method_type_parameters(method: ClassNode) -> dict[str, str | None] | None:
+        key = (method.path, method.line_start, method.line_end, method.identity_key or method.qualname)
+        if key in type_parameter_cache:
+            return type_parameter_cache[key]
+        found = None
+        try:
+            method_source = source if method.path == path else repo.read_file(method.path)
+            data = method_source.encode("utf-8")
+            _language, parser = _language_and_parser()
+            tree = parser.parse(data)
+            def walk(cur: Any) -> None:
+                nonlocal found
+                if found is not None:
+                    return
+                if cur.type in _METHOD_TYPES and _line_start(cur) == method.line_start and _line_end(cur) == method.line_end:
+                    found = _method_type_parameters(data, cur)
+                    return
+                for child in _named_children(cur):
+                    walk(child)
+            walk(tree.root_node)
+        except Exception:
+            found = None
+        type_parameter_cache[key] = found
+        return found
+
+    def reference_distance(source_type: str, target_type: str) -> int | None:
+        """Return the shortest wholly source-defined reference upcast."""
+        from .java_types import parse_java_type
+        source_ref, target_ref = parse_java_type(source_type), parse_java_type(target_type)
+        if (source_ref.primitive or target_ref.primitive or source_ref.array_dims or target_ref.array_dims
+                or source_ref.type_arguments or target_ref.type_arguments
+                or source_ref.wildcard or target_ref.wildcard):
+            return None
+
+        def resolve_ref(ref: Any) -> tuple[str, str] | None:
+            local = [c for c in java_classes if c.qualname == ref.simple_name]
+            if len(local) == 1:
+                return path, local[0].qualname
+            if project_index is None:
+                return None
+            symbol, _ = project_index.resolve(ref.erased, package=package, imports=explicit_imports)
+            return (symbol.path, symbol.simple_name) if symbol is not None else None
+
+        start, goal = resolve_ref(source_ref), resolve_ref(target_ref)
+        if start is None or goal is None or start == goal:
+            return None
+        frontier: list[tuple[str, str | None, str, int]] = [(start[0], source if start[0] == path else None, start[1], 0)]
+        seen = {start}
+        while frontier:
+            file_path, file_source, qualname, distance = frontier.pop(0)
+            if file_source is None:
+                try:
+                    file_source = repo.read_file(file_path) if repo is not None else None
+                except Exception:
+                    file_source = None
+            if file_source is None:
+                continue
+            for parent_path, parent_qualname, _relation in parent_specs_for(file_path, file_source, qualname):
+                parent = (parent_path, parent_qualname)
+                if parent == goal:
+                    return distance + 1
+                if parent not in seen:
+                    seen.add(parent)
+                    frontier.append((parent_path, file_source if parent_path == file_path else None, parent_qualname, distance + 1))
+        return None
+
+    def unique_method(methods: list[ClassNode], name: str, argc: int, argument_types: tuple[str | None, ...]) -> tuple[ClassNode | None, str | None]:
+        from .java_types import unique_applicable_signature
         cands = [m for m in methods if m.qualname.rsplit(".", 1)[-1] == name]
         if not cands:
             return None, "java_method_not_found"
         argc_matches = []
         for m in cands:
-            sig = sigs_current.get(m.qualname)
-            if sig is None or sig[0] == argc:
+            sig = method_signature(m)
+            if sig is None or len(sig) == argc or (sig and sig[-1].endswith("...") and argc >= len(sig) - 1):
                 argc_matches.append(m)
-        if len(argc_matches) == 1:
+        lone_sig = method_signature(argc_matches[0]) if len(argc_matches) == 1 else None
+        lone_type_parameters = method_type_parameters(argc_matches[0]) if len(argc_matches) == 1 else None
+        if (len(argc_matches) == 1 and not (lone_sig and lone_sig[-1].endswith("..."))
+                and lone_type_parameters == {}):
             return argc_matches[0], None
+        if argc_matches and all(item is not None for item in argument_types):
+            selected = unique_applicable_signature(argument_types, [method_signature(m) for m in argc_matches], reference_distance,
+                                                   [method_type_parameters(m) for m in argc_matches])
+            if selected is not None:
+                return argc_matches[selected], None
         return None, "java_overloaded_or_ambiguous_method"
 
+    def unique_constructor(constructors: list[ClassNode], argc: int, argument_types: tuple[str | None, ...]) -> tuple[ClassNode | None, str | None]:
+        from .java_types import unique_applicable_signature
+        if not constructors:
+            return None, "java_constructor_not_found"
+        argc_matches = [c for c in constructors if (
+            method_signature(c) is None
+            or len(method_signature(c) or ()) == argc
+            or (method_signature(c) and method_signature(c)[-1].endswith("...") and argc >= len(method_signature(c)) - 1)
+        )]
+        lone_sig = method_signature(argc_matches[0]) if len(argc_matches) == 1 else None
+        if len(argc_matches) == 1 and not (lone_sig and lone_sig[-1].endswith("...")):
+            return argc_matches[0], None
+        if argc_matches and all(item is not None for item in argument_types):
+            selected = unique_applicable_signature(argument_types, [method_signature(c) for c in argc_matches], reference_distance,
+                                                   [method_type_parameters(c) for c in argc_matches])
+            if selected is not None:
+                return argc_matches[selected], None
+        return None, "java_overloaded_or_ambiguous_constructor"
+
+    def constructors_for_type(type_expr: str) -> tuple[list[ClassNode], str]:
+        simple = type_expr.rsplit(".", 1)[-1]
+        local = constructors_by_class.get(simple, [])
+        if local:
+            return local, "java_same_file_constructor"
+        if repo is None or project_index is None:
+            return [], "java_constructor_type_not_resolved"
+        symbol, resolution = project_index.resolve(type_expr, package=package, imports=explicit_imports)
+        if symbol is None:
+            return [], "java_constructor_type_not_resolved"
+        try:
+            target_source = repo.read_file(symbol.path)
+        except Exception:
+            return [], "java_constructor_type_not_resolved"
+        constructors = [m for m in extract_java_methods(symbol.path, target_source)
+                        if m.node_kind == "constructor" and m.qualname.rsplit(".", 1)[0] == symbol.simple_name]
+        return constructors, f"java_project_constructor_{resolution}"
+
     def imported_methods(type_name: str) -> tuple[list[ClassNode], str | None]:
-        if repo is None or type_name not in explicit_imports:
+        if repo is None:
             return [], "java_variable_or_unknown_receiver"
-        target_path = explicit_imports[type_name]
+        target_path = explicit_imports.get(type_name)
+        if project_index is not None:
+            symbol, resolution = project_index.resolve(type_name, package=package, imports=explicit_imports)
+            if symbol is not None:
+                target_path = symbol.path
+        if target_path is None:
+            return [], "java_variable_or_unknown_receiver"
         try:
             target_source = repo.read_file(target_path)
         except Exception:
@@ -561,6 +1984,120 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         methods = extract_java_methods(target_path, target_source)
         methods = [m for m in methods if m.qualname.startswith(type_name + ".")]
         return methods, None
+
+    def receiver_types(method_node: Any) -> dict[str, str]:
+        types: dict[str, str] = {}
+        params = _child_by_field(method_node, "parameters")
+        if params is not None:
+            for child in _named_children(params):
+                if child.type in {"formal_parameter", "spread_parameter"}:
+                    name = _child_by_field(child, "name")
+                    typ = _child_by_field(child, "type")
+                    if name is not None and typ is not None:
+                        types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+        def walk(cur: Any) -> None:
+            if cur.type == "local_variable_declaration":
+                typ = _child_by_field(cur, "type")
+                if typ is not None:
+                    for child in _named_children(cur):
+                        if child.type == "variable_declarator":
+                            name = _child_by_field(child, "name")
+                            if name is not None:
+                                types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+            for child in _named_children(cur):
+                walk(child)
+        body = _child_by_field(method_node, "body")
+        if body is not None:
+            walk(body)
+        return types
+
+    def field_receiver_types() -> dict[str, dict[str, str]]:
+        found: dict[str, dict[str, str]] = {}
+        def walk(cur: Any, stack: list[str]) -> None:
+            next_stack = stack
+            if cur.type in _CLASS_TYPES:
+                name = _identifier_from_node(source_bytes, cur)
+                if name:
+                    next_stack = [*stack, name]
+            if cur.type in {"field_declaration", "constant_declaration"}:
+                typ = _child_by_field(cur, "type")
+                if typ is not None and next_stack:
+                    bucket = found.setdefault(".".join(next_stack), {})
+                    for child in _named_children(cur):
+                        if child.type == "variable_declarator":
+                            name = _child_by_field(child, "name")
+                            if name is not None:
+                                bucket[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+            for child in _named_children(cur):
+                walk(child, next_stack)
+        walk(root, [])
+        return found
+
+    fields_by_class = field_receiver_types()
+
+    parent_specs: dict[str, list[tuple[str, str, str]]] = {}
+    for edge in inherit_edges or []:
+        if edge.child_path == path and edge.child_qualname:
+            parent_specs.setdefault(edge.child_qualname, []).append(
+                (edge.parent_path or path, edge.parent_qualname, edge.relation)
+            )
+
+    parent_cache: dict[tuple[str, str], list[tuple[str, str, str]]] = {}
+
+    def parent_specs_for(file_path: str, file_source: str, class_qual: str) -> list[tuple[str, str, str]]:
+        key = (file_path, class_qual)
+        if key in parent_cache:
+            return parent_cache[key]
+        if file_path == path:
+            specs = parent_specs.get(class_qual, [])
+        elif repo is not None:
+            classes = extract_java_classes(file_path, file_source)
+            edges_for_file, _ = resolve_java_inherit_edges(file_path, file_source, classes, repo=repo)
+            specs = [
+                (edge.parent_path or file_path, edge.parent_qualname, edge.relation)
+                for edge in edges_for_file
+                if edge.child_qualname == class_qual
+            ]
+        else:
+            specs = []
+        parent_cache[key] = specs
+        return specs
+
+    def inherited_parent_methods(class_qual: str, *, extends_only: bool = False) -> list[ClassNode]:
+        found: list[ClassNode] = []
+        seen: set[tuple[str, str]] = set()
+
+        def walk(file_path: str, file_source: str, current_qual: str) -> None:
+            marker = (file_path, current_qual)
+            if marker in seen:
+                return
+            seen.add(marker)
+            for parent_path, parent_qual, relation in parent_specs_for(file_path, file_source, current_qual):
+                if extends_only and relation != "extends":
+                    continue
+                try:
+                    parent_source = file_source if parent_path == file_path else repo.read_file(parent_path)
+                except Exception:
+                    continue
+                methods = java_methods if parent_path == path else extract_java_methods(parent_path, parent_source)
+                found.extend(m for m in methods if m.qualname.rsplit(".", 1)[0] == parent_qual)
+                walk(parent_path, parent_source, parent_qual)
+
+        walk(path, source, class_qual)
+        return found
+
+    def typed_receiver_methods(type_expr: str, name: str) -> tuple[list[ClassNode], str]:
+        if repo is None or project_index is None:
+            return [], "java_variable_or_unknown_receiver"
+        symbol, resolution = project_index.resolve(type_expr, package=package, imports=explicit_imports)
+        if symbol is None:
+            return [], "java_ambiguous_or_unknown_receiver"
+        try:
+            target_source = repo.read_file(symbol.path)
+        except Exception:
+            return [], "java_external_or_jdk_receiver"
+        methods = [m for m in extract_java_methods(symbol.path, target_source) if m.qualname.startswith(symbol.simple_name + ".")]
+        return methods, f"java_project_typed_receiver_{resolution}"
 
     def visit(node: Any, stack: list[str]) -> None:
         next_stack = stack
@@ -571,43 +2108,131 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                 next_stack = [*stack, name]
         elif node.type in _METHOD_TYPES:
             q = _method_qualname(source_bytes, node, stack)
-            current_method = by_qual.get(q or "")
+            signature = _method_signature_parts(source_bytes, node)[2]
+            identity = f"{q}({','.join(signature)})"
+            candidates = [m for m in java_methods if m.node_kind == ("constructor" if node.type == "constructor_declaration" else "method") and m.qualname == q]
+            current_method = next((m for m in candidates if m.identity_key == identity), candidates[0] if len(candidates) == 1 else None)
         if current_method is not None:
             class_qual = current_method.qualname.rsplit(".", 1)[0]
             local_methods = by_class.get(class_qual, [])
             local_names = {m.qualname.rsplit(".", 1)[-1] for m in local_methods}
-            parent_names: set[str] = set()
-            superclass = classes_by_qual.get(class_qual)
+            types_by_name = receiver_types(node)
+            types_by_name.update(fields_by_class.get(class_qual, {}))
             def walk_calls(cur: Any) -> None:
+                if cur is not node and cur.type in _METHOD_TYPES:
+                    return
+                # Annotation element values are metadata expressions, never
+                # runtime invocations of the annotated callable. Class
+                # literals, enum constants, nested annotations, and arrays are
+                # deliberately left to annotation/type evidence.
+                if cur.type in {"annotation", "marker_annotation"}:
+                    return
+                # Lambda bodies are deferred code, not calls made by the enclosing
+                # method. The graph has no callable/context node for them yet.
+                if cur.type == "lambda_expression":
+                    add_unresolved(current_method, _node_text(source_bytes, cur).strip(), "java_lambda_deferred_context_not_modeled")
+                    return
+                # A method reference creates a function value; it is not an
+                # invocation. Preserve evidence until a reference edge exists.
+                if cur.type == "method_reference":
+                    add_unresolved(current_method, _node_text(source_bytes, cur).strip(), "java_method_reference_relationship_not_modeled")
+                    return
                 if cur.type == "method_invocation":
                     parsed = _call_expr_name(source_bytes, cur)
                     if parsed is not None:
                         name, receiver = parsed
                         argc = _call_arg_count(cur)
+                        argument_types = _call_argument_types(source_bytes, cur, types_by_name)
                         if receiver is None:
-                            callee, reason = unique_method(local_methods, name, argc)
+                            callee, reason = unique_method(local_methods, name, argc, argument_types)
                             if callee is not None:
                                 add_edge(current_method, callee, "java_same_class_method")
                             elif name not in local_names:
-                                add_unresolved(current_method, name, "java_parent_method_deferred_to_override_window")
+                                callee, parent_reason = unique_method(inherited_parent_methods(class_qual), name, argc, argument_types)
+                                if callee is not None:
+                                    add_edge(current_method, callee, "java_direct_parent_method")
+                                else:
+                                    add_unresolved(current_method, name, parent_reason or "java_parent_method_not_found")
                             else:
                                 add_unresolved(current_method, name, reason or "java_overloaded_or_ambiguous_method")
                         elif receiver == "this":
-                            callee, reason = unique_method(local_methods, name, argc)
+                            callee, reason = unique_method(local_methods, name, argc, argument_types)
                             if callee is not None:
                                 add_edge(current_method, callee, "java_this_method")
                             else:
                                 add_unresolved(current_method, f"this.{name}", reason or "java_method_not_found")
+                        elif receiver == "super":
+                            callee, reason = unique_method(inherited_parent_methods(class_qual, extends_only=True), name, argc, argument_types)
+                            if callee is not None:
+                                add_edge(current_method, callee, "java_super_method")
+                            else:
+                                add_unresolved(current_method, f"super.{name}", reason or "java_parent_method_not_found")
                         elif receiver in explicit_imports:
                             methods, reason = imported_methods(receiver)
-                            callee, why = unique_method(methods, name, argc)
+                            callee, why = unique_method(methods, name, argc, argument_types)
                             if callee is not None:
                                 add_edge(current_method, callee, "java_explicit_import_static_method")
                             else:
                                 add_unresolved(current_method, f"{receiver}.{name}", why or reason or "java_method_not_found")
+                        elif receiver in types_by_name or receiver.startswith("this.") and receiver[5:] in types_by_name:
+                            receiver_name = receiver[5:] if receiver.startswith("this.") else receiver
+                            methods, resolution = typed_receiver_methods(types_by_name[receiver_name], name)
+                            callee, why = unique_method(methods, name, argc, argument_types)
+                            if callee is not None:
+                                add_edge(current_method, callee, resolution)
+                            else:
+                                add_unresolved(current_method, f"{receiver}.{name}", why or resolution)
                         else:
                             add_unresolved(current_method, f"{receiver}.{name}", "java_variable_or_unknown_receiver")
+                elif cur.type == "object_creation_expression":
+                    type_node = _child_by_field(cur, "type")
+                    type_expr = _node_text(source_bytes, type_node).strip() if type_node is not None else "<unknown>"
+                    constructors, resolution = constructors_for_type(type_expr)
+                    callee, reason = unique_constructor(constructors, _call_arg_count(cur), _call_argument_types(source_bytes, cur, types_by_name))
+                    if callee is not None:
+                        add_edge(current_method, callee, resolution)
+                    else:
+                        add_unresolved(current_method, f"new {type_expr}", reason or resolution)
+                elif cur.type == "explicit_constructor_invocation":
+                    invocation = next((c.type for c in _named_children(cur) if c.type in {"this", "super"}), None)
+                    argc = _call_arg_count(cur)
+                    argument_types = _call_argument_types(source_bytes, cur, types_by_name)
+                    if invocation == "this":
+                        candidates = constructors_by_class.get(class_qual, [])
+                        resolution = "java_this_constructor"
+                    elif invocation == "super":
+                        direct = parent_specs_for(path, source, class_qual)
+                        candidates = []
+                        for parent_path, parent_qual, relation in direct:
+                            if relation != "extends":
+                                continue
+                            try:
+                                parent_source = source if parent_path == path else repo.read_file(parent_path)
+                            except Exception:
+                                continue
+                            candidates.extend(m for m in extract_java_methods(parent_path, parent_source)
+                                              if m.node_kind == "constructor" and m.qualname.rsplit(".", 1)[0] == parent_qual)
+                        resolution = "java_super_constructor"
+                    else:
+                        candidates, resolution = [], "java_constructor_invocation_not_resolved"
+                    callee, reason = unique_constructor(candidates, argc, argument_types)
+                    if callee is not None:
+                        add_edge(current_method, callee, resolution)
+                    else:
+                        add_unresolved(current_method, invocation or "constructor", reason or resolution)
                 for child in _named_children(cur):
+                    # The anonymous body is deferred executable context.  Its
+                    # methods and initializers do not execute as calls of the
+                    # method which evaluates the explicit `new Base(args)`.
+                    # Keep one explicit evidence item until anonymous callable
+                    # identity/context nodes have a collision-free schema.
+                    if cur.type == "object_creation_expression" and child.type == "class_body":
+                        add_unresolved(
+                            current_method,
+                            _node_text(source_bytes, child).strip(),
+                            "java_anonymous_class_body_deferred_context_not_modeled",
+                        )
+                        continue
                     walk_calls(child)
             walk_calls(node)
             return
@@ -652,7 +2277,15 @@ def _method_params_and_locals(source_bytes: bytes, method_node: Any) -> set[str]
                 if name is not None:
                     names.add(_node_text(source_bytes, name))
     def walk(cur: Any) -> None:
+        if cur.type == "lambda_expression":
+            return
+        if cur.type == "object_creation_expression" and any(c.type == "class_body" for c in _named_children(cur)):
+            return
         if cur.type == "variable_declarator":
+            name = _child_by_field(cur, "name")
+            if name is not None:
+                names.add(_node_text(source_bytes, name))
+        elif cur.type in {"resource", "catch_formal_parameter"}:
             name = _child_by_field(cur, "name")
             if name is not None:
                 names.add(_node_text(source_bytes, name))
@@ -674,7 +2307,7 @@ def _field_index_by_class(java_fields: list[DeclarationNode]) -> dict[str, dict[
     return out
 
 
-def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNode], java_fields: list[DeclarationNode], repo: Any | None = None) -> tuple[list[JavaFieldEdge], dict[str, list[JavaUnresolvedFieldAccess]]]:
+def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNode], java_fields: list[DeclarationNode], repo: Any | None = None, inherit_edges: list[JavaInheritEdge] | None = None) -> tuple[list[JavaFieldEdge], dict[str, list[JavaUnresolvedFieldAccess]]]:
     if not path.endswith(".java"):
         return [], {}
     _language, parser = _language_and_parser()
@@ -684,13 +2317,63 @@ def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNod
     explicit_imports, _wildcards = _java_imports(source_bytes, root)
     methods_by_qual = {m.qualname: m for m in java_methods if m.node_kind == "method"}
     fields_by_class = _field_index_by_class(java_fields)
+    if inherit_edges is None:
+        inherit_edges, _ = resolve_java_inherit_edges(path, source, extract_java_classes(path, source), repo=repo)
+    parent_edges_by_child: dict[tuple[str, str], list[JavaInheritEdge]] = {}
+    for edge in inherit_edges:
+        if edge.relation == "extends" and edge.child_path and edge.child_qualname:
+            parent_edges_by_child.setdefault((edge.child_path, edge.child_qualname), []).append(edge)
+    parent_edges_loaded: set[str] = {path}
+
+    def load_parent_edges(file_path: str, file_source: str) -> None:
+        if file_path in parent_edges_loaded:
+            return
+        parent_edges_loaded.add(file_path)
+        classes = extract_java_classes(file_path, file_source)
+        edges, _ = resolve_java_inherit_edges(file_path, file_source, classes, repo=repo)
+        for edge in edges:
+            if edge.relation == "extends" and edge.child_path and edge.child_qualname:
+                parent_edges_by_child.setdefault((edge.child_path, edge.child_qualname), []).append(edge)
+    inherited_fields_cache: dict[tuple[str, str], tuple[dict[str, DeclarationNode], set[str]]] = {}
+
+    def inherited_fields(file_path: str, file_source: str, class_qual: str, seen: set[tuple[str, str]] | None = None) -> tuple[dict[str, DeclarationNode], set[str]]:
+        key = (file_path, class_qual)
+        if key in inherited_fields_cache:
+            return inherited_fields_cache[key]
+        seen = set() if seen is None else seen
+        if key in seen:
+            return {}, set()
+        seen.add(key)
+        found: dict[str, DeclarationNode] = {}
+        ambiguous: set[str] = set()
+        for edge in parent_edges_by_child.get(key, []):
+            parent_path = edge.parent_path or file_path
+            try:
+                parent_source = file_source if parent_path == file_path else repo.read_file(parent_path)
+            except Exception:
+                continue
+            load_parent_edges(parent_path, parent_source)
+            parent_fields = java_fields if parent_path == path else extract_java_fields(parent_path, parent_source)
+            direct = _field_index_by_class(parent_fields)
+            candidates = dict(direct.get(edge.parent_qualname, {}))
+            transitive, transitive_ambiguous = inherited_fields(parent_path, parent_source, edge.parent_qualname, seen.copy())
+            for name, field in {**transitive, **candidates}.items():
+                if name in found and found[name].path != field.path:
+                    ambiguous.add(name)
+                else:
+                    found[name] = field
+            ambiguous.update(transitive_ambiguous)
+        for name in ambiguous:
+            found.pop(name, None)
+        inherited_fields_cache[key] = (found, ambiguous)
+        return found, ambiguous
     edges: list[JavaFieldEdge] = []
     unresolved: dict[str, list[JavaUnresolvedFieldAccess]] = {}
 
     ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
 
     def accessor_id(m: ClassNode) -> str:
-        return ids.stable_java_node_claim_id(m.path, m.qualname, m.node_kind)
+        return java_node_id(m)
 
     def field_id(f: DeclarationNode) -> str:
         return ids.stable_java_node_claim_id(f.path, f.qualname, f.declaration_kind)
@@ -727,21 +2410,6 @@ def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNod
             return None, "java_ambiguous_field"
         return None, "java_field_not_found"
 
-    def assignment_lefts(method_node: Any) -> set[int]:
-        lefts: set[int] = set()
-        def walk(cur: Any) -> None:
-            if cur.type == "assignment_expression":
-                left = _child_by_field(cur, "left")
-                if left is not None:
-                    lefts.add(int(left.start_byte))
-            elif cur.type == "update_expression":
-                for c in _named_children(cur):
-                    lefts.add(int(c.start_byte))
-            for child in _named_children(cur):
-                walk(child)
-        walk(method_node)
-        return lefts
-
     def field_expr(cur: Any) -> tuple[str, str | None] | None:
         if cur.type == "field_access":
             field = _child_by_field(cur, "field")
@@ -766,23 +2434,67 @@ def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNod
             class_qual = current_method.qualname.rsplit(".", 1)[0]
             locals_ = _method_params_and_locals(source_bytes, node)
             class_fields = fields_by_class.get(class_qual, {})
-            lefts = assignment_lefts(node)
+            inherited, inherited_ambiguous = inherited_fields(path, source, class_qual)
             seen: set[tuple[str, str]] = set()
-            def walk_access(cur: Any) -> None:
-                # avoid counting method invocation names as fields
+            def walk_access(cur: Any, modes: tuple[str, ...] = ("reads",)) -> None:
+                # A nested executable context is not part of this method's execution.
+                if cur.type == "lambda_expression":
+                    text = _node_text(source_bytes, cur).strip()
+                    add_unresolved(current_method, text, "java_lambda_deferred_context_not_modeled", "reads")
+                    return
+                if cur.type == "object_creation_expression" and any(c.type == "class_body" for c in _named_children(cur)):
+                    text = _node_text(source_bytes, cur).strip()
+                    add_unresolved(current_method, text, "java_anonymous_class_body_deferred_context_not_modeled", "reads")
+                    # Constructor arguments execute here, but the anonymous body does not.
+                    args = _child_by_field(cur, "arguments")
+                    if args is not None:
+                        walk_access(args)
+                    return
+                if cur.type == "assignment_expression":
+                    left = _child_by_field(cur, "left")
+                    right = _child_by_field(cur, "right")
+                    operator = next((c.type for c in cur.children if not c.is_named and c.type.endswith("=")), "=")
+                    if left is not None:
+                        walk_access(left, ("writes",) if operator == "=" else ("reads", "writes"))
+                    if right is not None:
+                        walk_access(right)
+                    return
+                if cur.type == "update_expression":
+                    for child in _named_children(cur):
+                        walk_access(child, ("reads", "writes"))
+                    return
+                if cur.type == "variable_declarator":
+                    value = _child_by_field(cur, "value")
+                    if value is not None:
+                        walk_access(value)
+                    return
+                if cur.type in {"formal_parameter", "spread_parameter", "catch_formal_parameter"}:
+                    return
+                # An invocation name is not a field, but its receiver and arguments may read fields.
                 if cur.type == "method_invocation":
+                    obj = _child_by_field(cur, "object")
+                    args = _child_by_field(cur, "arguments")
+                    if obj is not None:
+                        walk_access(obj)
+                    if args is not None:
+                        walk_access(args)
                     return
                 parsed = field_expr(cur)
                 if parsed is not None:
                     name, receiver = parsed
-                    kind = "writes" if int(cur.start_byte) in lefts else "reads"
-                    key = (kind, f"{receiver+'.' if receiver else ''}{name}")
-                    if key not in seen:
+                    expr = f"{receiver+'.' if receiver else ''}{name}"
+                    for kind in modes:
+                      key = (kind, expr)
+                      if key not in seen:
                         seen.add(key)
                         if receiver == "this":
                             f = class_fields.get(name)
                             if f is not None:
                                 add_edge(current_method, f, kind, "java_this_field")
+                            elif name in inherited:
+                                add_edge(current_method, inherited[name], kind, "java_inherited_field")
+                            elif name in inherited_ambiguous:
+                                add_unresolved(current_method, f"this.{name}", "java_ambiguous_inherited_field", kind)
                             else:
                                 add_unresolved(current_method, f"this.{name}", "java_field_not_found", kind)
                         elif receiver is None:
@@ -790,6 +2502,10 @@ def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNod
                                 add_unresolved(current_method, name, "java_local_or_parameter_shadow", kind)
                             elif name in class_fields:
                                 add_edge(current_method, class_fields[name], kind, "java_same_class_static_or_field")
+                            elif name in inherited:
+                                add_edge(current_method, inherited[name], kind, "java_inherited_field")
+                            elif name in inherited_ambiguous:
+                                add_unresolved(current_method, name, "java_ambiguous_inherited_field", kind)
                         elif receiver in explicit_imports:
                             f, reason = imported_field(receiver, name)
                             if f is not None:
@@ -799,9 +2515,13 @@ def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNod
                         else:
                             add_unresolved(current_method, f"{receiver}.{name}", "java_variable_receiver_field_not_resolved", kind)
                     if receiver is not None:
+                        # The object expression itself is evaluated as a read.
+                        obj = _child_by_field(cur, "object")
+                        if obj is not None and obj.type not in {"this", "type_identifier"}:
+                            walk_access(obj)
                         return
                 for child in _named_children(cur):
-                    walk_access(child)
+                    walk_access(child, modes)
             body = _child_by_field(node, "body") or node
             walk_access(body)
             return
@@ -844,14 +2564,8 @@ _JAVA_KNOWN_EXTERNAL_TYPES = {"String", "List", "Map", "Set", "Collection", "Opt
 
 
 def _java_type_tokens(type_text: str) -> list[str]:
-    import re
-    cleaned = type_text.replace("[]", " ").replace("?", " ")
-    out: list[str] = []
-    for tok in re.findall(r"[A-Za-z_][A-Za-z0-9_]*", cleaned):
-        if tok in {"extends", "super"}:
-            continue
-        out.append(tok.split(".")[-1])
-    return out
+    from .java_types import java_type_references
+    return [item.erased for item in java_type_references(type_text)]
 
 
 def resolve_java_type_use_edges(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode], java_fields: list[DeclarationNode], repo: Any | None = None) -> tuple[list[JavaTypeUseEdge], dict[str, list[JavaUnresolvedTypeUse]]]:
@@ -862,6 +2576,12 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
     tree = parser.parse(source_bytes)
     root = tree.root_node
     explicit_imports, wildcard_imports = _java_imports(source_bytes, root)
+    project_index = None
+    if repo is not None:
+        from .java_index import java_project_index
+        project_index = java_project_index(repo)
+    from .java_index import java_package
+    package = java_package(source)
     ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
     class_by_qual = {c.qualname: c for c in java_classes if c.node_kind in {"class", "interface", "enum"}}
     same_by_simple: dict[str, list[ClassNode]] = {}
@@ -891,15 +2611,28 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
     def add_unresolved(uid: str, type_expr: str, reason: str, use_kind: str) -> None:
         unresolved.setdefault(uid, []).append(JavaUnresolvedTypeUse(user_id=uid, type_expr=type_expr, reason=reason, use_kind=use_kind))
 
-    def resolve_one(simple: str) -> tuple[ClassNode | None, str]:
+    def resolve_one(type_expr: str) -> tuple[ClassNode | None, str]:
+        simple = type_expr.rsplit(".", 1)[-1]
         same = same_by_simple.get(simple, [])
         if len(same) == 1:
             return same[0], "java_same_file_type"
         if len(same) > 1:
             return None, "java_ambiguous_type"
+        if project_index is not None:
+            symbol, resolution = project_index.resolve(type_expr, package=package, imports=explicit_imports)
+            if symbol is not None:
+                target_path = symbol.path
+                try:
+                    target_source = repo.read_file(target_path)
+                except Exception:
+                    return None, "java_type_not_resolved"
+                candidates = [c for c in extract_java_classes(target_path, target_source) if c.qualname == symbol.simple_name]
+                if len(candidates) == 1:
+                    return candidates[0], f"java_{resolution}"
+                return None, "java_ambiguous_type"
+            if resolution == "project_ambiguous_simple_name":
+                return None, "java_ambiguous_type"
         if simple in explicit_imports:
-            if repo is None:
-                return None, "java_type_not_resolved"
             target_path = explicit_imports[simple]
             try:
                 target_source = repo.read_file(target_path)
@@ -933,6 +2666,28 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
                 user_qualname=user_q, user_node_kind=user_kind, type_node_kind=target.node_kind,
             ))
 
+    def add_annotations(user_kind: str, user_q: str, roots: list[Any]) -> None:
+        """Attach only annotations syntactically owned by one declaration.
+
+        Callers pass modifiers/type/parameter subtrees rather than declaration
+        bodies, preventing annotations on nested members from leaking upward.
+        """
+        seen: set[tuple[int, int]] = set()
+        def visit_annotation(cur: Any) -> None:
+            if cur.type in {"annotation", "marker_annotation"}:
+                marker = (int(cur.start_byte), int(cur.end_byte))
+                if marker not in seen:
+                    seen.add(marker)
+                    name = _java_annotation_name(source_bytes, cur)
+                    if name:
+                        add_type_uses(user_kind, user_q, name, "annotation_type")
+                return  # nested annotation values are separate metadata, not ownership
+            for child in _named_children(cur):
+                visit_annotation(child)
+        for root_node in roots:
+            if root_node is not None:
+                visit_annotation(root_node)
+
     def walk(node: Any, stack: list[str]) -> None:
         next_stack = stack
         if node.type in _CLASS_TYPES:
@@ -940,19 +2695,46 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
             if name:
                 q = ".".join([*stack, name])
                 next_stack = [*stack, name]
+                kind = class_by_qual[q].node_kind
+                modifiers = next((c for c in _named_children(node) if c.type == "modifiers"), None)
+                if node.type == "annotation_type_declaration":
+                    # Meta-annotations have retention/target/processor meaning
+                    # outside this source-only relationship slice.
+                    if modifiers is not None:
+                        uid = user_id_for(kind, q)
+                        for annotation in _named_children(modifiers):
+                            if annotation.type in {"annotation", "marker_annotation"}:
+                                annotation_name = _java_annotation_name(source_bytes, annotation)
+                                if annotation_name:
+                                    add_unresolved(uid, annotation_name, "java_meta_annotation_not_modeled", "annotation_type")
+                else:
+                    add_annotations(kind, q, [modifiers])
                 # superclass/interfaces are handled by inherits; field/method signatures below.
+                if node.type == "record_declaration":
+                    components = _child_by_field(node, "parameters")
+                    if components is not None:
+                        for component in _named_children(components):
+                            if component.type == "formal_parameter":
+                                typ = _child_by_field(component, "type")
+                                if typ is not None:
+                                    add_type_uses("class", q, _node_text(source_bytes, typ).strip(), "record_component_type")
+                                add_annotations("class", q, [component])
         elif node.type in {"field_declaration", "constant_declaration"}:
             typ = _child_by_field(node, "type")
             if typ is not None:
                 for fq in _field_qualnames(source_bytes, node, stack):
                     add_type_uses("field", fq, _node_text(source_bytes, typ).strip(), "field_type")
+                    modifiers = next((c for c in _named_children(node) if c.type == "modifiers"), None)
+                    add_annotations("field", fq, [modifiers, typ])
         elif node.type in _METHOD_TYPES:
             q = _method_qualname(source_bytes, node, stack)
             if q:
-                user_kind = "constructor" if node.type == "constructor_declaration" else "method"
+                user_kind = "constructor" if node.type in {"constructor_declaration", "compact_constructor_declaration"} else "method"
                 ret = _child_by_field(node, "type")
                 if ret is not None:
                     add_type_uses(user_kind, q, _node_text(source_bytes, ret).strip(), "return_type")
+                modifiers = next((c for c in _named_children(node) if c.type == "modifiers"), None)
+                annotation_roots = [modifiers, ret]
                 params = _child_by_field(node, "parameters")
                 if params is not None:
                     for child in _named_children(params):
@@ -960,6 +2742,8 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
                             typ = _child_by_field(child, "type")
                             if typ is not None:
                                 add_type_uses(user_kind, q, _node_text(source_bytes, typ).strip(), "param_type")
+                            annotation_roots.append(child)
+                add_annotations(user_kind, q, annotation_roots)
         for child in _named_children(node):
             walk(child, next_stack)
 
@@ -989,76 +2773,71 @@ class JavaUnresolvedOverride:
     reason: str
 
 
-def resolve_java_override_edges(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode], inherit_edges: list[JavaInheritEdge], unresolved_inherits: dict[str, list[JavaUnresolvedInherit]]) -> tuple[list[JavaOverrideEdge], dict[str, list[JavaUnresolvedOverride]]]:
+def resolve_java_override_edges(path, source, java_classes, java_methods, inherit_edges, unresolved_inherits, repo=None):
+    """Resolve the unique nearest source-defined ancestor method, transitively."""
     ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
-    method_by_qual = {m.qualname: m for m in java_methods if m.node_kind == "method"}
-    methods_by_class: dict[str, list[ClassNode]] = {}
-    sigs = _method_signature_index(path, source)
+    edges, unresolved = [], {}
+    files = {}
+    parents = {}
+
+    def load(p):
+        if p in files: return files[p]
+        try: text = source if p == path else repo.read_file(p)
+        except Exception: return None
+        cs = java_classes if p == path else extract_java_classes(p, text)
+        ms = java_methods if p == path else extract_java_methods(p, text)
+        files[p] = (text, cs, ms, _method_signature_index(p, text))
+        return files[p]
+
+    def direct(type_id, p):
+        if type_id in parents: return parents[type_id]
+        loaded = load(p)
+        if not loaded: return []
+        if p == path: found = [e for e in inherit_edges if e.child_id == type_id]
+        elif repo is not None:
+            found, _ = resolve_java_inherit_edges(p, loaded[0], loaded[1], repo=repo)
+            found = [e for e in found if e.child_id == type_id]
+        else: found = []
+        parents[type_id] = sorted(found, key=lambda e: (e.parent_id, e.parent_path or "", e.parent_qualname))
+        return parents[type_id]
+
+    def fail(m, reason):
+        item = JavaUnresolvedOverride(java_node_id(m), m.qualname.rsplit(".", 1)[-1], reason)
+        if item not in unresolved.setdefault(java_node_id(m), []): unresolved[java_node_id(m)].append(item)
+
+    load(path)
+    unresolved_owners = set(unresolved_inherits)
     for m in java_methods:
-        if m.node_kind == "method" and "." in m.qualname:
-            cls = m.qualname.rsplit(".", 1)[0]
-            methods_by_class.setdefault(cls, []).append(m)
-    class_id_to_qual = {ids.stable_java_node_claim_id(c.path, c.qualname, c.node_kind): c.qualname for c in java_classes}
-    same_file_parent_by_child: dict[str, list[str]] = {}
-    cross_file_child_ids: set[str] = set()
-    for e in inherit_edges:
-        if e.child_path == path and e.parent_path == path:
-            pq = class_id_to_qual.get(e.parent_id)
-            cq = class_id_to_qual.get(e.child_id)
-            if pq and cq:
-                same_file_parent_by_child.setdefault(cq, []).append(pq)
-        elif e.child_path == path:
-            cross_file_child_ids.add(e.child_id)
-    unresolved_parent_child_ids = set(unresolved_inherits.keys())
-    edges: list[JavaOverrideEdge] = []
-    unresolved: dict[str, list[JavaUnresolvedOverride]] = {}
-
-    def mid(m: ClassNode) -> str:
-        return ids.stable_java_node_claim_id(m.path, m.qualname, m.node_kind)
-
-    def add_unresolved(m: ClassNode, reason: str) -> None:
-        name = m.qualname.rsplit(".", 1)[-1]
-        unresolved.setdefault(mid(m), []).append(JavaUnresolvedOverride(method_id=mid(m), expr=name, reason=reason))
-
-    for m in java_methods:
-        if m.node_kind != "method" or "." not in m.qualname:
+        if m.node_kind != "method" or "." not in m.qualname: continue
+        owner_q = m.qualname.rsplit(".", 1)[0]
+        owner = next((c for c in java_classes if c.qualname == owner_q and c.node_kind in {"class", "interface"}), None)
+        if not owner: continue
+        owner_id = ids.stable_java_node_claim_id(path, owner.qualname, owner.node_kind)
+        frontier = direct(owner_id, path)
+        if not frontier:
+            if owner_id in unresolved_owners: fail(m, "java_parent_type_unresolved")
             continue
-        cls = m.qualname.rsplit(".", 1)[0]
-        cls_id = ids.stable_java_node_claim_id(path, cls, "class")
-        if cls_id not in class_id_to_qual:
-            cls_id = ids.stable_java_node_claim_id(path, cls, "interface")
-        parents = same_file_parent_by_child.get(cls, [])
-        name = m.qualname.rsplit(".", 1)[-1]
-        if not parents:
-            if cls_id in cross_file_child_ids:
-                add_unresolved(m, "java_cross_file_override_deferred")
-            elif cls_id in unresolved_parent_child_ids:
-                add_unresolved(m, "java_parent_type_unresolved")
-            continue
-        msig = sigs.get(m.qualname)
-        candidates: list[ClassNode] = []
-        ambiguous = False
-        for parent in parents:
-            pcands = [pm for pm in methods_by_class.get(parent, []) if pm.qualname.rsplit(".", 1)[-1] == name]
-            if not pcands:
-                continue
-            if len(pcands) > 1:
-                ambiguous = True
-                continue
-            pm = pcands[0]
-            psig = sigs.get(pm.qualname)
-            if msig is not None and psig is not None and msig != psig:
-                continue
-            candidates.append(pm)
-        if len(candidates) == 1 and not ambiguous:
-            target = candidates[0]
-            edges.append(JavaOverrideEdge(
-                method_id=mid(m), overridden_id=mid(target), overridden_qualname=target.qualname,
-                method_path=m.path, overridden_path=target.path, method_hash=m.class_hash,
-                overridden_hash=target.class_hash, method_qualname=m.qualname,
-            ))
-        elif ambiguous or len(candidates) > 1:
-            add_unresolved(m, "java_overloaded_or_ambiguous_override")
+        name, sig = m.qualname.rsplit(".", 1)[-1], files[path][3].get(m.qualname)
+        visited, matches, ambiguous = {owner_id}, {}, False
+        while frontier and not matches and not ambiguous:
+            nxt = []
+            for pe in frontier:
+                if pe.parent_id in visited: continue
+                visited.add(pe.parent_id)
+                loaded = load(pe.parent_path or "")
+                if not loaded: ambiguous = True; continue
+                named = [x for x in loaded[2] if x.node_kind == "method" and x.qualname.rsplit(".",1)[0] == pe.parent_qualname and x.qualname.rsplit(".",1)[-1] == name]
+                good = [x for x in named if sig is None or loaded[3].get(x.qualname) is None or loaded[3].get(x.qualname) == sig]
+                if len(named) > 1: ambiguous = True
+                elif len(good) == 1: matches[java_node_id(good[0])] = good[0]
+                elif not named: nxt.extend(direct(pe.parent_id, pe.parent_path or ""))
+            frontier = sorted(nxt, key=lambda e: (e.parent_id, e.parent_path or "", e.parent_qualname))
+        if len(matches) == 1 and not ambiguous:
+            t = next(iter(matches.values()))
+            edges.append(JavaOverrideEdge(java_node_id(m), java_node_id(t), t.qualname,
+                method_path=m.path, overridden_path=t.path, method_hash=m.class_hash, overridden_hash=t.class_hash,
+                method_qualname=m.qualname, resolution="java_cross_file_override_candidate" if t.path != path else "java_same_file_override_candidate"))
+        elif ambiguous or len(matches) > 1: fail(m, "java_overloaded_or_ambiguous_override")
     return edges, unresolved
 
 
@@ -1129,7 +2908,7 @@ def _type_list_names(source_bytes: bytes, node: Any | None) -> list[str]:
         return []
     # For interface lists, collect direct entries under type_list.
     type_list = node
-    if node.type in {"super_interfaces", "extends_interfaces"}:
+    if node.type in {"super_interfaces", "extends_interfaces", "permits"}:
         for child in _named_children(node):
             if child.type == "type_list":
                 type_list = child
@@ -1180,6 +2959,21 @@ def _resolve_java_supertype(repo: Any, current_path: str, source: str, type_expr
         return same[0], "same_file_unique"
     if len(same) > 1:
         return None, "ambiguous_type"
+    from .java_index import java_package, java_project_index
+    symbol, resolution = java_project_index(repo).resolve(
+        type_expr, package=java_package(source), imports=explicit_imports
+    )
+    if symbol is not None:
+        try:
+            target_source = repo.read_file(symbol.path)
+        except Exception:
+            return None, "external_or_jdk_type"
+        candidates = [node for node in _current_java_type_nodes(symbol.path, target_source) if node.qualname == symbol.simple_name]
+        if len(candidates) == 1:
+            return candidates[0], resolution
+        return None, "ambiguous_type"
+    if resolution == "project_ambiguous_simple_name":
+        return None, "ambiguous_type"
     if simple in explicit_imports:
         target_path = explicit_imports[simple]
         try:
@@ -1218,7 +3012,7 @@ def resolve_java_inherit_edges(path: str, source: str, java_classes: list[ClassN
 
     def visit(node: Any, stack: list[str]) -> None:
         next_stack = stack
-        if node.type in {"class_declaration", "interface_declaration"}:
+        if node.type in {"class_declaration", "interface_declaration", "record_declaration"}:
             name = _identifier_from_node(source_bytes, node)
             if name:
                 qualname = ".".join([*stack, name])
@@ -1237,6 +3031,10 @@ def resolve_java_inherit_edges(path: str, source: str, java_classes: list[ClassN
                         ext_ifaces = next((c for c in _named_children(node) if c.type == "extends_interfaces"), None)
                         for expr in _type_list_names(source_bytes, ext_ifaces):
                             specs.append(("extends", expr))
+                    elif node.type == "record_declaration":
+                        super_ifaces = next((c for c in _named_children(node) if c.type == "super_interfaces"), None)
+                        for expr in _type_list_names(source_bytes, super_ifaces):
+                            specs.append(("implements", expr))
                     for relation, expr in specs:
                         parent, reason = _resolve_java_supertype(repo, path, source, expr, same_file_by_simple, explicit_imports, wildcard_imports)
                         if parent is None:
@@ -1256,6 +3054,21 @@ def resolve_java_inherit_edges(path: str, source: str, java_classes: list[ClassN
                             child_qualname=child.qualname,
                             child_node_kind=child.node_kind,
                             parent_node_kind=parent.node_kind,
+                        ))
+                    permits = next((c for c in _named_children(node) if c.type == "permits"), None)
+                    for expr in _type_list_names(source_bytes, permits):
+                        permitted, reason = _resolve_java_supertype(repo, path, source, expr, same_file_by_simple, explicit_imports, wildcard_imports)
+                        if permitted is None:
+                            unresolved.setdefault(child_id, []).append(JavaUnresolvedInherit(child_id=child_id, expr=_simple_name(expr), reason=reason, relation="permits"))
+                            continue
+                        permitted_id = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"]).stable_java_node_claim_id(permitted.path, permitted.qualname, permitted.node_kind)
+                        edges.append(JavaInheritEdge(
+                            child_id=permitted_id, parent_id=child_id, relation="permits",
+                            parent_qualname=child.qualname, resolution=reason,
+                            child_path=permitted.path, parent_path=child.path,
+                            child_hash=permitted.class_hash, parent_hash=child.class_hash,
+                            child_qualname=permitted.qualname, child_node_kind=permitted.node_kind,
+                            parent_node_kind=child.node_kind,
                         ))
         for child_node in _named_children(node):
             visit(child_node, next_stack)
@@ -1408,6 +3221,8 @@ class JavaTopicEdge:
     source_qualname: str | None = None
     dependency_path: str | None = None
     dependency_qualname: str | None = None
+    group_id: str | None = None
+    payload_type: str | None = None
 
 
 @dataclass(frozen=True)
@@ -1416,6 +3231,134 @@ class JavaUnresolvedTopic:
     expr: str
     reason: str
     edge_kind: str
+
+
+@dataclass(frozen=True)
+class JavaConfigurationPropertiesBinding:
+    source_id: str
+    prefix: str
+    target_kind: str
+    source_path: str
+    source_hash: str
+    source_qualname: str
+    evidence: str = "attributed"
+    confidence: float = 0.55
+    resolution: str = "spring_configuration_properties_literal"
+
+
+@dataclass(frozen=True)
+class JavaUnresolvedConfigurationProperties:
+    source_id: str
+    expr: str
+    reason: str
+
+
+def resolve_java_spring_declarations(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode]) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, str]]]]:
+    """Extract declaration-only Spring metadata from exact explicit imports."""
+    if not path.endswith(".java"):
+        return {}, {}
+    import re
+    ids = __import__('tmf.ids', fromlist=['stable_java_node_claim_id'])
+    imports = _java_explicit_imports(source)
+    exact = {"Profile":"org.springframework.context.annotation.Profile", "Conditional":"org.springframework.context.annotation.Conditional", "ConditionalOnProperty":"org.springframework.boot.autoconfigure.condition.ConditionalOnProperty", "ConditionalOnClass":"org.springframework.boot.autoconfigure.condition.ConditionalOnClass", "Scope":"org.springframework.context.annotation.Scope", "Lazy":"org.springframework.context.annotation.Lazy", "DependsOn":"org.springframework.context.annotation.DependsOn", "Primary":"org.springframework.context.annotation.Primary", "Transactional":"org.springframework.transaction.annotation.Transactional"}
+    lines = source.splitlines(); metadata: dict[str, dict[str, Any]] = {}; unresolved: dict[str, list[dict[str, str]]] = {}
+    def strings(arg: str) -> list[str] | None:
+        arg = re.sub(r"^(?:value|name)\s*=\s*", "", arg.strip())
+        if re.fullmatch(r'"[^"\\]*"', arg): return [arg[1:-1]]
+        if re.fullmatch(r'\{\s*"[^"\\]*"(?:\s*,\s*"[^"\\]*")*\s*\}', arg): return re.findall(r'"([^"\\]*)"', arg)
+        return None
+    for node in [*java_classes, *java_methods]:
+        if node.node_kind not in {"class", "interface", "record", "method", "constructor"}: continue
+        node_id = ids.stable_java_node_claim_id(path, node.identity_key or node.qualname, node.node_kind)
+        snippet = '\n'.join(lines[max(0, node.line_start - 9):min(len(lines), node.line_start + 1)])
+        found: dict[str, Any] = {"coverage":"partial", "effect":"declaration_only", "confidence":0.6}; bad: list[dict[str, str]] = []
+        for name, fqn in exact.items():
+            if not re.search(r'@' + name + r'\b', snippet): continue
+            if imports.get(name) != fqn: bad.append({"annotation":name,"reason":"spring_annotation_not_exact_explicit_import"}); continue
+            matches = list(re.finditer(r'@' + name + r'(?:\s*\((.*?)\))?', snippet, re.S)); match = matches[-1] if matches else None; args = match.group(1) if match else None
+            if name == "Primary": found["primary"] = True
+            elif name == "Lazy":
+                if args is None or args.strip() == "true": found["lazy"] = True
+                elif args.strip() == "false": found["lazy"] = False
+                else: bad.append({"annotation":name,"reason":"spring_annotation_value_dynamic"})
+            elif name in {"Profile","Scope","DependsOn"}:
+                vals = strings(args or "")
+                if vals is None or any("${" in x or "#{" in x for x in vals): bad.append({"annotation":name,"reason":"spring_annotation_value_spel_or_dynamic"})
+                else: found[{"Profile":"profiles","Scope":"scope","DependsOn":"depends_on"}[name]] = vals if name != "Scope" else vals[0]
+            elif name == "Transactional":
+                tx: dict[str, Any] = {"boundary":"method" if node.node_kind in {"method","constructor"} else "class"}; valid = True
+                for part in [x.strip() for x in (args or "").split(',') if x.strip()]:
+                    if re.fullmatch(r'readOnly\s*=\s*(?:true|false)', part): tx["read_only"] = part.endswith("true")
+                    elif (m := re.fullmatch(r'(propagation|isolation)\s*=\s*(?:Propagation|Isolation)\.([A-Z_]+)', part)): tx[m.group(1)] = m.group(2)
+                    else: valid = False
+                if valid: found["transactional"] = tx
+                else: bad.append({"annotation":name,"reason":"spring_transaction_attribute_dynamic_or_unsupported"})
+            else:
+                vals = strings(args or "")
+                if vals is not None: found.setdefault("conditions", []).append({"annotation":name,"literal_values":vals})
+                else: bad.append({"annotation":name,"reason":"spring_condition_classpath_or_dynamic_deferred"})
+        if len(found) > 3: metadata[node_id] = found
+        if bad: unresolved[node_id] = bad
+    return metadata, unresolved
+
+
+def resolve_java_configuration_properties(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode]) -> tuple[list[JavaConfigurationPropertiesBinding], dict[str, list[JavaUnresolvedConfigurationProperties]]]:
+    """Extract declaration metadata only; this deliberately models no binder execution."""
+    if not path.endswith('.java'):
+        return [], {}
+    import re
+    imports = _java_explicit_imports(source)
+    if imports.get('ConfigurationProperties') != 'org.springframework.boot.context.properties.ConfigurationProperties':
+        return [], {}
+    ids = __import__('tmf.ids', fromlist=['stable_java_node_claim_id'])
+    lines = source.splitlines()
+    bindings: list[JavaConfigurationPropertiesBinding] = []
+    unresolved: dict[str, list[JavaUnresolvedConfigurationProperties]] = {}
+
+    def annotation(snippet: str) -> tuple[str | None, str | None]:
+        match = re.search(r'@ConfigurationProperties\s*\((.*?)\)', snippet, re.S)
+        if not match:
+            return None, None
+        args = match.group(1).strip()
+        literal = re.fullmatch(r'(?:prefix\s*=\s*|value\s*=\s*)?"([^"\\]*)"', args)
+        return (literal.group(1), None) if literal else (None, args)
+
+    for node in java_classes:
+        if node.node_kind != 'class':
+            continue
+        start = max(0, node.line_start - 8)
+        snippet = '\n'.join(lines[start:node.line_start])
+        declaration = re.search(r'@ConfigurationProperties\s*\(([^)]*)\)[^;{}]*?(?:public\s+|protected\s+|private\s+)?(?:class|record)\s+' + re.escape(node.qualname.rsplit('.', 1)[-1]) + r'\b', snippet, re.S)
+        if not declaration:
+            continue
+        snippet = '@ConfigurationProperties(' + declaration.group(1) + ')'
+        source_id = ids.stable_java_node_claim_id(path, node.qualname, node.node_kind, node.identity_key)
+        prefix, bad = annotation(snippet)
+        if prefix is not None:
+            bindings.append(JavaConfigurationPropertiesBinding(source_id, prefix, node.node_kind, path, node.class_hash, node.qualname))
+        else:
+            unresolved.setdefault(source_id, []).append(JavaUnresolvedConfigurationProperties(source_id, bad or '@ConfigurationProperties', 'spring_configuration_properties_prefix_not_literal'))
+
+    for node in java_methods:
+        if node.node_kind != 'method':
+            continue
+        start = max(0, node.line_start - 8)
+        snippet = '\n'.join(lines[start:node.line_start])
+        method_name = node.qualname.rsplit('.', 1)[-1]
+        declaration = re.search(r'@ConfigurationProperties\s*\(([^)]*)\)[^;{}]*?(?:public\s+|protected\s+|private\s+)?[A-Za-z_]\w*(?:<[^>]+>)?\s+' + re.escape(method_name) + r'\s*\(', snippet, re.S)
+        if not declaration:
+            continue
+        annotation_snippet = '@ConfigurationProperties(' + declaration.group(1) + ')'
+        source_id = ids.stable_java_node_claim_id(path, node.qualname, node.node_kind, node.identity_key)
+        prefix, bad = annotation(annotation_snippet)
+        # Factory identity is supported only when @Bean itself is exact and explicit.
+        if imports.get('Bean') != 'org.springframework.context.annotation.Bean' or not re.search(r'@Bean(?:\s*\([^)]*\))?', snippet):
+            unresolved.setdefault(source_id, []).append(JavaUnresolvedConfigurationProperties(source_id, bad or '@ConfigurationProperties', 'spring_configuration_properties_factory_not_explicit_bean'))
+        elif prefix is None:
+            unresolved.setdefault(source_id, []).append(JavaUnresolvedConfigurationProperties(source_id, bad or '@ConfigurationProperties', 'spring_configuration_properties_prefix_not_literal'))
+        else:
+            bindings.append(JavaConfigurationPropertiesBinding(source_id, prefix, 'factory_method', path, node.class_hash, node.qualname, resolution='spring_configuration_properties_literal_factory'))
+    return bindings, unresolved
 
 
 def _java_class_annotations_regex(source: str) -> dict[str, set[str]]:
@@ -1436,21 +3379,100 @@ def _java_implements_regex(source: str) -> dict[str, list[str]]:
     return out
 
 
-def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNode], java_fields: list[DeclarationNode], inherit_edges: list[JavaInheritEdge] | None = None, repo: Any | None = None) -> tuple[list[JavaInjectEdge], dict[str, list[JavaUnresolvedInject]]]:
+def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNode], java_fields: list[DeclarationNode], inherit_edges: list[JavaInheritEdge] | None = None, repo: Any | None = None, java_methods: list[ClassNode] | None = None) -> tuple[list[JavaInjectEdge], dict[str, list[JavaUnresolvedInject]]]:
+    """Conservative source-only Spring injection evidence.
+
+    Supported annotations must have an exact fully-qualified spelling or exact
+    explicit import.  Simple-name lookalikes, wildcard/classpath-only symbols,
+    interface assignability, scanning, and runtime bean naming are not guessed.
+    """
     if not path.endswith('.java'):
         return [], {}
+    import re
     ids = __import__('tmf.ids', fromlist=['stable_java_node_claim_id'])
     lines = source.splitlines()
+    imports = _java_explicit_imports(source)
+    spring = {
+        'Component': 'org.springframework.stereotype.Component',
+        'Service': 'org.springframework.stereotype.Service',
+        'Repository': 'org.springframework.stereotype.Repository',
+        'Controller': 'org.springframework.stereotype.Controller',
+        'Configuration': 'org.springframework.context.annotation.Configuration',
+        'ConfigurationProperties': 'org.springframework.boot.context.properties.ConfigurationProperties',
+        'Autowired': 'org.springframework.beans.factory.annotation.Autowired',
+        'Inject': {'javax.inject.Inject', 'jakarta.inject.Inject'},
+        'Qualifier': 'org.springframework.beans.factory.annotation.Qualifier',
+        'Bean': 'org.springframework.context.annotation.Bean',
+        'Primary': 'org.springframework.context.annotation.Primary',
+    }
+    def genuine(name: str) -> bool:
+        target = spring[name]
+        imported = imports.get(name)
+        return imported in target if isinstance(target, set) else imported == target
     anns = _java_class_annotations_regex(source)
-    bean_ann = {'Component','Service','Repository','Controller','RestController'}
+    bean_ann = {'Component','Service','Repository','Controller','Configuration','ConfigurationProperties'}
     class_by_simple = {c.qualname.rsplit('.',1)[-1]: c for c in java_classes if c.node_kind in {'class','interface'}}
-    beans = {simple: c for simple, c in class_by_simple.items() if anns.get(simple, set()) & bean_ann}
+    component_beans = {simple: c for simple, c in class_by_simple.items()
+                       if any(a in anns.get(simple, set()) and genuine(a) for a in bean_ann)}
+    # Project-wide, tracked-source bean registry. This is not package scanning:
+    # only declarations carrying exact explicitly imported annotations enter it.
+    bean_candidates: list[tuple[str, ClassNode, str | None]] = []
+    primary_candidate_keys: set[tuple[str, str, str]] = set()
+    project_sources = [(path, source, java_classes, java_methods or [])]
+    if repo is not None:
+        from .java_project import java_project_model
+        project_sources = []
+        for candidate_path in java_project_model(repo).java_paths():
+            candidate_source = repo.read_file(candidate_path)
+            project_sources.append((candidate_path, candidate_source,
+                                    extract_java_classes(candidate_path, candidate_source),
+                                    extract_java_methods(candidate_path, candidate_source)))
+    for candidate_path, candidate_source, candidate_classes, candidate_methods in project_sources:
+        candidate_imports = _java_explicit_imports(candidate_source)
+        candidate_package = _java_package(candidate_source) or ''
+        candidate_anns = _java_class_annotations_regex(candidate_source)
+        def candidate_genuine(name: str) -> bool:
+            target = spring[name]; imported = candidate_imports.get(name)
+            return imported in target if isinstance(target, set) else imported == target
+        candidate_by_simple = {c.qualname.rsplit('.', 1)[-1]: c for c in candidate_classes if c.node_kind in {'class','interface'}}
+        for simple, node in candidate_by_simple.items():
+            if any(a in candidate_anns.get(simple, set()) and candidate_genuine(a) for a in bean_ann):
+                bean_candidates.append((f'{candidate_package}.{simple}' if candidate_package else simple, node, simple[:1].lower()+simple[1:]))
+                if candidate_genuine('Primary') and 'Primary' in candidate_anns.get(simple, set()): primary_candidate_keys.add((node.path, node.qualname, node.node_kind))
+        candidate_lines = candidate_source.splitlines()
+        for method in candidate_methods:
+            if method.node_kind != 'method' or not candidate_genuine('Bean'): continue
+            snippet = '\n'.join(candidate_lines[method.line_start-1:method.line_end]); method_name=method.qualname.rsplit('.',1)[-1]
+            match = re.search(r'@Bean(?:\s*\(\s*(?:name\s*=\s*)?"([^"]+)"\s*\))?(?:\s*@Primary\b)?\s+(?:public\s+|protected\s+|private\s+)?([A-Za-z_]\w*)\s+'+re.escape(method_name)+r'\s*\(', snippet)
+            if not match: continue
+            if repo is None:
+                return_fqn = match.group(2) if match.group(2) in candidate_by_simple else None
+            else:
+                from .java_index import java_project_index
+                symbol, _ = java_project_index(repo).resolve(match.group(2), package=candidate_package, imports=candidate_imports)
+                return_fqn = symbol.fqn if symbol else None
+            if return_fqn:
+                bean_candidates.append((return_fqn, method, match.group(1) or method_name))
+                if candidate_genuine('Primary') and re.search(r'@Primary\b', snippet): primary_candidate_keys.add((method.path, method.qualname, method.node_kind))
+    def primary_only(nodes: list[ClassNode]) -> ClassNode | None:
+        selected = [n for n in nodes if (n.path, n.qualname, n.node_kind) in primary_candidate_keys]
+        return selected[0] if len(selected) == 1 else None
+    def injection_fqn(type_name: str) -> str | None:
+        if repo is None: return type_name if type_name in class_by_simple else None
+        from .java_index import java_package, java_project_index
+        symbol, _ = java_project_index(repo).resolve(type_name, package=java_package(source), imports=imports)
+        return symbol.fqn if symbol else None
+    method_snippets: dict[str, str] = {}
+    for method in java_methods or []:
+        snippet = '\n'.join(lines[method.line_start - 1:method.line_end])
+        method_snippets[method.identity_key or method.qualname] = snippet
+        method_name = method.qualname.rsplit('.', 1)[-1]
     implements = _java_implements_regex(source)
     impls_by_iface: dict[str, list[ClassNode]] = {}
     for impl_simple, ifaces in implements.items():
-        if impl_simple in beans:
+        if impl_simple in component_beans:
             for iface in ifaces:
-                impls_by_iface.setdefault(iface, []).append(beans[impl_simple])
+                impls_by_iface.setdefault(iface, []).append(component_beans[impl_simple])
     fields_by_owner: dict[str, list[DeclarationNode]] = {}
     for field in java_fields:
         owner = field.qualname.rsplit('.', 1)[0] if '.' in field.qualname else ''
@@ -1458,7 +3480,6 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
     edges: list[JavaInjectEdge] = []
     unresolved: dict[str, list[JavaUnresolvedInject]] = {}
     seen: set[tuple[str,str,str]] = set()
-    import re
     for owner, fields in fields_by_owner.items():
         cls = class_by_simple.get(owner)
         if cls is None:
@@ -1466,26 +3487,39 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
         injector_id = ids.stable_java_node_claim_id(path, cls.qualname, cls.node_kind)
         for field in fields:
             line = lines[field.line_start-1] if 0 < field.line_start <= len(lines) else ''
-            if '@Autowired' not in line:
+            has_inject = ('@Autowired' in line and genuine('Autowired')) or ('@Inject' in line and genuine('Inject'))
+            if not has_inject:
                 continue
-            fm = re.search(r"@Autowired\s+(?:private\s+|public\s+|protected\s+)?([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;", line)
+            fm = re.search(r"(?:@(?:Autowired|Inject)\s+)(?:@Qualifier\(\s*\"[^\"]+\"\s*\)\s+)?(?:private\s+|public\s+|protected\s+)?([A-Za-z_][A-Za-z0-9_]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*;", line)
             if not fm:
                 continue
             typ = fm.group(1)
-            target = beans.get(typ)
+            resolved_type = injection_fqn(typ)
+            typed = [(node, name) for candidate_type, node, name in bean_candidates if resolved_type is not None and candidate_type == resolved_type]
+            target = typed[0][0] if len(typed) == 1 else None
+            qualifier = re.search(r'@Qualifier\(\s*"([^"]+)"\s*\)', line) if genuine('Qualifier') else None
+            if qualifier:
+                literal = qualifier.group(1)
+                named = [node for candidate_type, node, name in bean_candidates if resolved_type is not None and candidate_type == resolved_type and name == literal]
+                if len(named) != 1:
+                    unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(injector_id, typ, 'spring_qualifier_literal_not_unique', 'field', [x.qualname for x in named]))
+                    continue
+                target = named[0]
+            elif len(typed) > 1:
+                target = primary_only([node for node, _ in typed])
             reason = 'spring_autowired_field_type'
             candidates: list[str] = []
+            # This first slice permits exact declared type only. Interface
+            # assignability requires a project-wide bean registry/schema pass.
             if target is None and typ in class_by_simple and class_by_simple[typ].node_kind == 'interface':
                 impls = impls_by_iface.get(typ, [])
                 candidates = [x.qualname for x in impls]
-                if len(impls) == 1:
-                    target = impls[0]
-                    reason = 'spring_autowired_interface_unique_bean'
-                elif len(impls) > 1:
+                if len(impls) > 1:
                     unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(injector_id, typ, 'spring_interface_multiple_beans', 'field', candidates))
                     continue
             if target is None:
-                unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(injector_id, typ, 'spring_injection_type_not_resolved', 'field', candidates))
+                reason = 'spring_injection_multiple_beans' if len(typed) > 1 else 'spring_injection_type_not_resolved'
+                unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(injector_id, typ, reason, 'field', [x[0].qualname for x in typed] or candidates))
                 continue
             bean_id = ids.stable_java_node_claim_id(target.path, target.qualname, target.node_kind)
             key=(injector_id, bean_id, 'field')
@@ -1493,6 +3527,51 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
                 continue
             seen.add(key)
             edges.append(JavaInjectEdge(injector_id, bean_id, target.qualname, 'field', resolution=reason, injector_path=cls.path, bean_path=target.path, injector_hash=cls.class_hash, bean_hash=target.class_hash, injector_qualname=cls.qualname, bean_node_kind=target.node_kind))
+
+    # Explicitly annotated constructors and methods.  Parameter types must be
+    # plain, source-declared identifiers; containers/generics/providers are
+    # deliberately left unresolved rather than unwrapped.
+    for method in java_methods or []:
+        if method.node_kind not in {'constructor', 'method'}:
+            continue
+        snippet = method_snippets.get(method.identity_key or method.qualname, '')
+        method_name = method.qualname.rsplit('.', 1)[-1]
+        annotated = re.search(r'@(?:Autowired|Inject)\b[\s\S]*?\b' + re.escape(method_name) + r'\s*\(((?:[^()]|\([^()]*\))*)\)\s*(?:throws\s+[^\{]+)?\{', snippet)
+        if not annotated or not ((re.search(r'@Autowired\b', annotated.group(0)) and genuine('Autowired')) or
+                (re.search(r'@Inject\b', annotated.group(0)) and genuine('Inject'))):
+            continue
+        owner = method.qualname.rsplit('.', 1)[0]
+        cls = class_by_simple.get(owner)
+        if cls is None:
+            continue
+        injector_id = ids.stable_java_node_claim_id(path, cls.qualname, cls.node_kind)
+        inject_kind = 'constructor' if method.node_kind == 'constructor' else 'method'
+        for raw_param in [p.strip() for p in annotated.group(1).split(',') if p.strip()]:
+            q = re.search(r'@Qualifier\(\s*"([^"]+)"\s*\)', raw_param) if genuine('Qualifier') else None
+            clean = re.sub(r'@\w+(?:\([^)]*\))?\s*', '', raw_param).strip()
+            mparam = re.fullmatch(r'(?:final\s+)?([A-Za-z_]\w*)\s+[A-Za-z_]\w*', clean)
+            if not mparam:
+                unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(injector_id, clean, 'spring_injection_parameter_not_plain_type', inject_kind, []))
+                continue
+            typ = mparam.group(1)
+            resolved_type = injection_fqn(typ)
+            typed = [(node, name) for candidate_type, node, name in bean_candidates if resolved_type is not None and candidate_type == resolved_type]
+            selected = [node for node, name in typed if q and name == q.group(1)] if q else [node for node, _ in typed]
+            if not q and len(selected) > 1:
+                primary = primary_only(selected)
+                selected = [primary] if primary is not None else selected
+            if len(selected) != 1:
+                reason = 'spring_qualifier_literal_not_unique' if q else ('spring_injection_multiple_beans' if len(selected) > 1 else 'spring_injection_type_not_resolved')
+                unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(injector_id, typ, reason, inject_kind, [x.qualname for x in selected or [n for n, _ in typed]]))
+                continue
+            target = selected[0]
+            bean_id = ids.stable_java_node_claim_id(target.path, target.identity_key or target.qualname, target.node_kind)
+            key = (injector_id, bean_id, inject_kind)
+            if key in seen:
+                continue
+            seen.add(key)
+            resolution = f'spring_explicit_{inject_kind}_primary' if (target.path, target.qualname, target.node_kind) in primary_candidate_keys and len(typed) > 1 and not q else f'spring_explicit_{inject_kind}_type'
+            edges.append(JavaInjectEdge(injector_id, bean_id, target.qualname, inject_kind, resolution=resolution, injector_path=cls.path, bean_path=target.path, injector_hash=cls.class_hash, bean_hash=target.class_hash, injector_qualname=cls.qualname, bean_node_kind=target.node_kind))
     return edges, unresolved
 
 def _java_package(source: str) -> str | None:
@@ -1504,6 +3583,607 @@ def _java_package(source: str) -> str | None:
 def _java_explicit_imports(source: str) -> dict[str, str]:
     import re
     return {name.rsplit('.', 1)[-1]: name for name in re.findall(r"(?m)^\s*import\s+([A-Za-z_][\w.]*)\s*;", source)}
+
+
+def resolve_java_cache_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaCacheDeclaration], dict[str, list[JavaUnresolvedCacheDeclaration]]]:
+    """Extract declaration-only Spring Cache metadata; never interpret SpEL/runtime effects."""
+    imports = _java_explicit_imports(source)
+    fqn = "org.springframework.cache.annotation."
+    exact = {name for name in ("Cacheable", "CachePut", "CacheEvict") if imports.get(name) == fqn + name}
+    if not exact:
+        return [], {}
+    _language, parser = _language_and_parser(); data = source.encode("utf-8"); tree = parser.parse(data)
+    by_q: dict[str, list[ClassNode]] = {}
+    for method in methods: by_q.setdefault(method.qualname, []).append(method)
+    found: list[JavaCacheDeclaration] = []; unresolved: dict[str, list[JavaUnresolvedCacheDeclaration]] = {}
+
+    def reject(mid: str, ann: Any, reason: str) -> None:
+        unresolved.setdefault(mid, []).append(JavaUnresolvedCacheDeclaration(mid, _node_text(data, ann), reason))
+
+    def parse(ann: Any) -> tuple[tuple[str, ...] | None, dict[str, str | None], str | None]:
+        args = _java_annotation_args(ann); names: list[str] | None = None; opaque = {"key": None, "condition": None, "unless": None}
+        if len(args) == 1 and args[0].type in {"string_literal", "element_value_array_initializer"}:
+            values = _java_literal_string_array(data, args[0]); return (tuple(values) if values else None), opaque, None if values else "cache_names_not_literal"
+        for arg in args:
+            if arg.type != "element_value_pair": return None, opaque, "unsupported_annotation_argument"
+            children = _named_children(arg); key_node = _child_by_field(arg, "key") or (children[0] if children else None); val = _child_by_field(arg, "value")
+            if key_node is None or val is None: return None, opaque, "malformed_annotation_argument"
+            key = _node_text(data, key_node)
+            if key in {"value", "cacheNames"}:
+                values = _java_literal_string_array(data, val)
+                if not values: return None, opaque, "cache_names_not_literal"
+                if names is not None and names != values: return None, opaque, "conflicting_cache_name_aliases"
+                names = values
+            elif key in opaque:
+                value = _java_string_literal_value(data, val)
+                if value is None: return None, opaque, f"{key}_not_literal"
+                opaque[key] = value
+            else:
+                return None, opaque, f"unsupported_cache_attribute:{key}"
+        return (tuple(names) if names else None), opaque, None if names else "cache_names_missing"
+
+    def walk(node: Any, stack: list[str]) -> None:
+        ns = stack
+        if node.type in _CLASS_TYPES:
+            name = _identifier_from_node(data, node); ns = [*stack, name] if name else stack
+        elif node.type == "method_declaration":
+            q = _method_qualname(data, node, stack); candidates = by_q.get(q or "", [])
+            if len(candidates) > 1:
+                node_hash = java_hash_for_node(source, node)
+                candidates = [candidate for candidate in candidates if candidate.class_hash == node_hash]
+            anns = [a for a in _java_annotations(node) if _java_annotation_name(data, a) in exact]
+            if anns and q:
+                mid = java_node_id(candidates[0]) if len(candidates) == 1 else f"unresolved:{path}:{q}"
+                if len(candidates) != 1:
+                    for ann in anns: reject(mid, ann, "method_overload_ambiguous")
+                else:
+                    for ann in anns:
+                        names, opaque, reason = parse(ann)
+                        if reason: reject(mid, ann, reason); continue
+                        found.append(JavaCacheDeclaration(mid, q, path, _java_annotation_name(data, ann) or "", names or (), opaque["key"], opaque["condition"], opaque["unless"], _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), candidates[0].class_hash))
+        for child in _named_children(node): walk(child, ns)
+    walk(tree.root_node, [])
+    return sorted(found, key=lambda x: (x.method_id, x.line_start, x.operation)), unresolved
+
+
+def resolve_java_scheduling_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaSchedulingDeclaration], dict[str, list[JavaUnresolvedSchedulingDeclaration]]]:
+    """Extract only literal @Scheduled source declarations; never model execution."""
+    imports = _java_explicit_imports(source)
+    exact = imports.get("Scheduled") == "org.springframework.scheduling.annotation.Scheduled"
+    if "@Scheduled" not in source:
+        return [], {}
+    _language, parser = _language_and_parser(); data = source.encode("utf-8"); tree = parser.parse(data)
+    by_q: dict[str, list[ClassNode]] = {}
+    for method in methods: by_q.setdefault(method.qualname, []).append(method)
+    found: list[JavaSchedulingDeclaration] = []; unresolved: dict[str, list[JavaUnresolvedSchedulingDeclaration]] = {}
+
+    def reject(mid: str, ann: Any, reason: str) -> None:
+        unresolved.setdefault(mid, []).append(JavaUnresolvedSchedulingDeclaration(mid, _node_text(data, ann), reason))
+
+    def parse(ann: Any) -> tuple[dict[str, str | None], str | None]:
+        values = {k: None for k in ("fixedRate", "fixedDelay", "initialDelay", "cron", "zone", "timeUnit")}
+        for arg in _java_annotation_args(ann):
+            if arg.type != "element_value_pair": return values, "spring_scheduled_unsupported_positional_argument"
+            children = _named_children(arg); key_node = _child_by_field(arg, "key") or (children[0] if children else None); val = _child_by_field(arg, "value")
+            if key_node is None or val is None: return values, "spring_scheduled_malformed_argument"
+            key = _node_text(data, key_node); raw = _node_text(data, val).strip()
+            if key not in values: return values, f"spring_scheduled_unsupported_attribute:{key}"
+            if values[key] is not None: return values, f"spring_scheduled_conflicting_attribute:{key}"
+            if key in {"cron", "zone"}:
+                literal = _java_string_literal_value(data, val)
+                if literal is None: return values, f"spring_scheduled_{key}_not_literal"
+                if "${" in literal or "#{" in literal:
+                    return values, f"spring_scheduled_{key}_dynamic_expression_unsupported"
+                values[key] = literal
+            elif key == "timeUnit":
+                if not re.fullmatch(r"(?:java\.util\.concurrent\.)?TimeUnit\.[A-Z_]+", raw):
+                    return values, "spring_scheduled_timeUnit_not_literal"
+                values[key] = raw
+            else:
+                # Preserve the Java token spelling; signs, constants, arithmetic and strings fail closed.
+                if not re.fullmatch(r"[0-9][0-9_]*[lL]?", raw):
+                    return values, f"spring_scheduled_{key}_not_literal"
+                values[key] = raw
+        if not any(values[k] is not None for k in ("fixedRate", "fixedDelay", "cron")):
+            return values, "spring_scheduled_trigger_missing"
+        if sum(values[k] is not None for k in ("fixedRate", "fixedDelay", "cron")) != 1:
+            return values, "spring_scheduled_conflicting_triggers"
+        return values, None
+
+    def walk(node: Any, stack: list[str]) -> None:
+        ns = stack
+        if node.type in _CLASS_TYPES:
+            name = _identifier_from_node(data, node); ns = [*stack, name] if name else stack
+        elif node.type == "method_declaration":
+            q = _method_qualname(data, node, stack); candidates = by_q.get(q or "", [])
+            if len(candidates) > 1:
+                node_hash = java_hash_for_node(source, node); candidates = [x for x in candidates if x.class_hash == node_hash]
+            anns = [a for a in _java_annotations(node) if _java_annotation_name(data, a) == "Scheduled"]
+            if anns and q:
+                mid = java_node_id(candidates[0]) if len(candidates) == 1 else f"unresolved:{path}:{q}"
+                for ann in anns:
+                    if not exact: reject(mid, ann, "spring_scheduled_annotation_not_exact_explicit_import"); continue
+                    if len(candidates) != 1: reject(mid, ann, "spring_scheduled_method_overload_ambiguous"); continue
+                    values, reason = parse(ann)
+                    if reason: reject(mid, ann, reason); continue
+                    found.append(JavaSchedulingDeclaration(mid, q, path, values["fixedRate"], values["fixedDelay"], values["initialDelay"], values["cron"], values["zone"], values["timeUnit"], _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), candidates[0].class_hash))
+        for child in _named_children(node): walk(child, ns)
+    walk(tree.root_node, [])
+    return sorted(found, key=lambda x: (x.method_id, x.line_start)), unresolved
+
+
+def resolve_java_transaction_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaTransactionDeclaration], dict[str, list[JavaUnresolvedTransactionDeclaration]]]:
+    """Retain direct literal @Transactional syntax only; never infer transaction semantics."""
+    if "@Transactional" not in source:
+        return [], {}
+    exact = (_java_explicit_imports(source).get("Transactional") == "org.springframework.transaction.annotation.Transactional"
+             and re.search(r"@interface\s+Transactional\b", source) is None)
+    _language, parser = _language_and_parser(); data = source.encode("utf-8"); tree = parser.parse(data)
+    candidates: dict[tuple[str, str], list[ClassNode]] = {}
+    for item in [*classes, *methods]: candidates.setdefault((item.qualname, item.node_kind), []).append(item)
+    found: list[JavaTransactionDeclaration] = []; unresolved: dict[str, list[JavaUnresolvedTransactionDeclaration]] = {}
+
+    def reject(owner_id: str, ann: Any, reason: str) -> None:
+        unresolved.setdefault(owner_id, []).append(JavaUnresolvedTransactionDeclaration(owner_id, _node_text(data, ann), reason))
+
+    def string_array(node: Any) -> tuple[str, ...] | None:
+        values = _java_literal_string_array(data, node)
+        if not values or any("${" in x or "#{" in x for x in values): return None
+        return tuple(values)
+
+    def class_array(node: Any) -> tuple[str, ...] | None:
+        nodes = _named_children(node) if node.type == "element_value_array_initializer" else [node]
+        values = tuple(_node_text(data, x).strip() for x in nodes)
+        return values if values and all(re.fullmatch(r"(?:[A-Za-z_$][\w$]*\.)*[A-Za-z_$][\w$]*\.class", x) for x in values) else None
+
+    def parse(ann: Any) -> tuple[dict[str, Any], str | None]:
+        out: dict[str, Any] = {"propagation":None,"isolation":None,"read_only":None,"timeout":None,"transaction_manager":None,"rollback_for":(),"no_rollback_for":(),"rollback_for_class_name":(),"no_rollback_for_class_name":()}
+        seen: set[str] = set()
+        for arg in _java_annotation_args(ann):
+            if arg.type != "element_value_pair":
+                if seen: return out, "spring_transaction_conflicting_manager_aliases"
+                value = _java_string_literal_value(data, arg)
+                if value is None or "${" in value or "#{" in value: return out, "spring_transaction_value_not_literal_string"
+                seen.add("value"); out["transaction_manager"] = value; continue
+            children = _named_children(arg); key_node = _child_by_field(arg, "key") or (children[0] if children else None); val = _child_by_field(arg, "value")
+            if key_node is None or val is None: return out, "spring_transaction_malformed_attribute"
+            key = _node_text(data, key_node); raw = _node_text(data, val).strip()
+            if key in seen: return out, f"spring_transaction_conflicting_attribute:{key}"
+            seen.add(key)
+            if key in {"propagation","isolation"}:
+                prefix = "Propagation" if key == "propagation" else "Isolation"
+                m = re.fullmatch(rf"(?:org\.springframework\.transaction\.annotation\.)?{prefix}\.([A-Z_]+)", raw)
+                if not m: return out, f"spring_transaction_{key}_not_literal_enum"
+                out[key] = m.group(1)
+            elif key == "readOnly":
+                if raw not in {"true","false"}: return out, "spring_transaction_readOnly_not_literal_boolean"
+                out["read_only"] = raw == "true"
+            elif key == "timeout":
+                if not re.fullmatch(r"-?(?:0|[1-9][0-9_]*)", raw): return out, "spring_transaction_timeout_not_literal_int"
+                out["timeout"] = raw
+            elif key in {"value","transactionManager"}:
+                value = _java_string_literal_value(data, val)
+                if value is None or "${" in value or "#{" in value: return out, f"spring_transaction_{key}_not_literal_string"
+                if out["transaction_manager"] is not None and out["transaction_manager"] != value: return out, "spring_transaction_conflicting_manager_aliases"
+                out["transaction_manager"] = value
+            elif key in {"rollbackFor","noRollbackFor"}:
+                value = class_array(val)
+                if value is None: return out, f"spring_transaction_{key}_not_class_literals"
+                out["rollback_for" if key == "rollbackFor" else "no_rollback_for"] = value
+            elif key in {"rollbackForClassName","noRollbackForClassName"}:
+                value = string_array(val)
+                if value is None: return out, f"spring_transaction_{key}_not_literal_names"
+                out["rollback_for_class_name" if key == "rollbackForClassName" else "no_rollback_for_class_name"] = value
+            else: return out, f"spring_transaction_unsupported_attribute:{key}"
+        return out, None
+
+    def walk(node: Any, stack: list[str]) -> None:
+        ns = stack; q: str | None = None; kind: str | None = None
+        if node.type in _CLASS_TYPES:
+            name = _identifier_from_node(data, node); ns = [*stack, name] if name else stack; q = ".".join(ns); kind = "interface" if node.type == "interface_declaration" else ("record" if node.type == "record_declaration" else "class")
+        elif node.type == "method_declaration": q = _method_qualname(data, node, stack); kind = "method"
+        if q and kind:
+            anns = [a for a in _java_annotations(node) if _java_annotation_name(data, a) == "Transactional"]
+            if anns:
+                pool = candidates.get((q, kind), [])
+                if len(pool) > 1: pool = [x for x in pool if x.class_hash == java_hash_for_node(source, node)]
+                owner_id = java_node_id(pool[0]) if len(pool) == 1 else f"unresolved:{path}:{q}:{kind}"
+                if not exact:
+                    for ann in anns: reject(owner_id, ann, "spring_transaction_annotation_not_exact_explicit_import")
+                elif len(anns) != 1:
+                    for ann in anns: reject(owner_id, ann, "spring_transaction_duplicate_annotation")
+                elif len(pool) != 1: reject(owner_id, anns[0], "spring_transaction_owner_ambiguous")
+                else:
+                    values, reason = parse(anns[0])
+                    if reason: reject(owner_id, anns[0], reason)
+                    else: found.append(JavaTransactionDeclaration(owner_id,q,kind,path,values["propagation"],values["isolation"],values["read_only"],values["timeout"],values["transaction_manager"],values["rollback_for"],values["no_rollback_for"],values["rollback_for_class_name"],values["no_rollback_for_class_name"],_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node): walk(child, ns)
+    walk(tree.root_node, [])
+    return sorted(found,key=lambda x:(x.owner_id,x.line_start)), unresolved
+
+
+def resolve_java_async_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaAsyncDeclaration], dict[str, list[JavaUnresolvedAsyncDeclaration]]]:
+    """Retain direct @Async declarations and literal qualifiers; infer no execution semantics."""
+    if "@Async" not in source:
+        return [], {}
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    async_imports = [name for name in imports if name.rsplit(".", 1)[-1] == "Async"]
+    all_async_imports = re.findall(r"\bimport\s+(?:static\s+)?([^;]*Async[^;]*)\s*;", source)
+    exact = (async_imports == ["org.springframework.scheduling.annotation.Async"]
+             and all_async_imports == ["org.springframework.scheduling.annotation.Async"]
+             and re.search(r"@interface\s+Async\b", source) is None)
+    _language, parser = _language_and_parser(); data = source.encode("utf-8"); tree = parser.parse(data)
+    candidates: dict[tuple[str, str], list[ClassNode]] = {}
+    for item in [*classes, *methods]: candidates.setdefault((item.qualname, item.node_kind), []).append(item)
+    found: list[JavaAsyncDeclaration] = []; unresolved: dict[str, list[JavaUnresolvedAsyncDeclaration]] = {}
+
+    def reject(owner_id: str, ann: Any, reason: str) -> None:
+        unresolved.setdefault(owner_id, []).append(JavaUnresolvedAsyncDeclaration(owner_id, _node_text(data, ann), reason))
+
+    def parse(ann: Any) -> tuple[str | None, str | None]:
+        args = _java_annotation_args(ann)
+        if not args:
+            return None, None
+        qualifier: str | None = None
+        seen: set[str] = set()
+        for arg in args:
+            if arg.type == "element_value_pair":
+                children = _named_children(arg); key_node = _child_by_field(arg, "key") or (children[0] if children else None); val = _child_by_field(arg, "value")
+                if key_node is None or val is None: return None, "spring_async_malformed_attribute"
+                key = _node_text(data, key_node)
+                if key not in {"value", "executor"}: return None, f"spring_async_unsupported_attribute:{key}"
+            else:
+                key, val = "value", arg
+            if key in seen: return None, f"spring_async_conflicting_attribute:{key}"
+            seen.add(key)
+            value = _java_string_literal_value(data, val)
+            if value is None or "${" in value or "#{" in value: return None, f"spring_async_{key}_not_literal_string"
+            if qualifier is not None and qualifier != value: return None, "spring_async_conflicting_executor_aliases"
+            qualifier = value
+        return qualifier, None
+
+    def walk(node: Any, stack: list[str]) -> None:
+        ns = stack; q: str | None = None; kind: str | None = None
+        if node.type in _CLASS_TYPES:
+            name = _identifier_from_node(data, node); ns = [*stack, name] if name else stack; q = ".".join(ns)
+            kind = "interface" if node.type == "interface_declaration" else ("record" if node.type == "record_declaration" else "class")
+        elif node.type == "method_declaration": q = _method_qualname(data, node, stack); kind = "method"
+        if q and kind:
+            anns = [a for a in _java_annotations(node) if _java_annotation_name(data, a) == "Async"]
+            if anns:
+                pool = candidates.get((q, kind), [])
+                if len(pool) > 1: pool = [x for x in pool if x.class_hash == java_hash_for_node(source, node)]
+                owner_id = java_node_id(pool[0]) if len(pool) == 1 else f"unresolved:{path}:{q}:{kind}"
+                if not exact:
+                    for ann in anns: reject(owner_id, ann, "spring_async_annotation_not_exact_explicit_import")
+                elif len(anns) != 1:
+                    for ann in anns: reject(owner_id, ann, "spring_async_duplicate_annotation")
+                elif len(pool) != 1: reject(owner_id, anns[0], "spring_async_owner_ambiguous")
+                else:
+                    qualifier, reason = parse(anns[0])
+                    if reason: reject(owner_id, anns[0], reason)
+                    else: found.append(JavaAsyncDeclaration(owner_id,q,kind,path,qualifier,_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node): walk(child, ns)
+    walk(tree.root_node, [])
+    return sorted(found,key=lambda x:(x.owner_id,x.line_start)), unresolved
+
+
+def resolve_java_retry_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaRetryDeclaration], dict[str, list[JavaUnresolvedRetryDeclaration]]]:
+    """Retain direct Spring Retry literals; infer no retry/recovery behavior."""
+    if "@Retryable" not in source and "@Recover" not in source: return [], {}
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw_imports = re.findall(r"\bimport\s+(?:static\s+)?([^;]*(?:Retryable|Recover)[^;]*)\s*;", source)
+    expected={"Retryable":"org.springframework.retry.annotation.Retryable","Recover":"org.springframework.retry.annotation.Recover"}
+    exact={n: imports.count(f)==1 and len([x for x in imports if x.rsplit('.',1)[-1]==n])==1 and f in raw_imports for n,f in expected.items()}
+    if any('*' in x or x not in expected.values() for x in raw_imports) or re.search(r"@interface\s+(?:Retryable|Recover)\b",source): exact={n:False for n in exact}
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data); candidates={}
+    for item in [*classes,*methods]:candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason):unresolved.setdefault(owner,[]).append(JavaUnresolvedRetryDeclaration(owner,_node_text(data,ann),reason))
+    def class_array(node):
+        nodes=_named_children(node) if node.type=='element_value_array_initializer' else [node];vals=tuple(_node_text(data,x).strip() for x in nodes)
+        return vals if vals and all(re.fullmatch(r"(?:[A-Za-z_$][\w$]*\.)*[A-Za-z_$][\w$]*\.class",x) for x in vals) else None
+    def strings(node):
+        vals=_java_literal_string_array(data,node)
+        return tuple(vals) if vals and all('${' not in x and '#{' not in x for x in vals) else None
+    def parse(ann):
+        out={"retry_for":(),"no_retry_for":(),"max_attempts":None,"max_attempts_expression":None,"exception_expression":None,"label":None,"stateful":None,"interceptor":None,"listeners":()};seen=set();aliases={"value":"retry_for","include":"retry_for","retryFor":"retry_for","exclude":"no_retry_for","noRetryFor":"no_retry_for"}
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair':return out,'spring_retry_retryable_unnamed_attribute'
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return out,'spring_retry_malformed_attribute'
+            key=_node_text(data,kn);canonical=aliases.get(key,key)
+            if key in seen or canonical in seen:return out,f'spring_retry_conflicting_attribute:{key}'
+            seen|={key,canonical};raw=_node_text(data,val).strip()
+            if canonical in {'retry_for','no_retry_for'}:
+                v=class_array(val)
+                if v is None:return out,f'spring_retry_{key}_not_class_literals'
+                out[canonical]=v
+            elif key=='maxAttempts':
+                if not re.fullmatch(r'(?:0|[1-9][0-9_]*)',raw):return out,'spring_retry_maxAttempts_not_literal_int'
+                out['max_attempts']=raw
+            elif key=='stateful':
+                if raw not in {'true','false'}:return out,'spring_retry_stateful_not_literal_boolean'
+                out['stateful']=raw=='true'
+            elif key=='listeners':
+                v=strings(val)
+                if v is None:return out,'spring_retry_listeners_not_literal_strings'
+                out['listeners']=v
+            elif key in {'maxAttemptsExpression','exceptionExpression','label','interceptor'}:
+                v=_java_string_literal_value(data,val)
+                if v is None or '${' in v or '#{' in v:return out,f'spring_retry_{key}_not_literal_string'
+                out[{'maxAttemptsExpression':'max_attempts_expression','exceptionExpression':'exception_expression'}.get(key,key)]=v
+            else:return out,f'spring_retry_unsupported_attribute:{key}'
+        return out,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            for name in ('Retryable','Recover'):
+                anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)==name]
+                if not anns:continue
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact[name]:
+                    for a in anns:reject(owner,a,'spring_retry_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'spring_retry_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'spring_retry_owner_ambiguous')
+                elif name=='Recover' and _java_annotation_args(anns[0]):reject(owner,anns[0],'spring_retry_recover_unsupported_attribute')
+                else:
+                    metadata,reason=parse(anns[0]) if name=='Retryable' else ({},None)
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaRetryDeclaration(owner,q,kind,name.lower(),path,metadata,_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:(x.owner_id,x.annotation_kind)),unresolved
+
+
+def resolve_java_circuit_breaker_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaCircuitBreakerDeclaration], dict[str, list[JavaUnresolvedCircuitBreakerDeclaration]]]:
+    """Retain direct Resilience4j CircuitBreaker literals; infer no runtime behavior."""
+    if "@CircuitBreaker" not in source: return [], {}
+    expected = "io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*CircuitBreaker[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='CircuitBreaker'] == [expected] and raw == [expected] and re.search(r"@interface\s+CircuitBreaker\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedCircuitBreakerDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair': return None,'resilience4j_circuit_breaker_unnamed_attribute'
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'resilience4j_circuit_breaker_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'name','fallbackMethod'}:return None,f'resilience4j_circuit_breaker_unsupported_attribute:{key}'
+            if key in seen:return None,f'resilience4j_circuit_breaker_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'resilience4j_circuit_breaker_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('name'):return None,'resilience4j_circuit_breaker_name_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='CircuitBreaker']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'resilience4j_circuit_breaker_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'resilience4j_circuit_breaker_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'resilience4j_circuit_breaker_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaCircuitBreakerDeclaration(owner,q,kind,path,values['name'],values.get('fallbackMethod'),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+
+def resolve_java_rate_limiter_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaRateLimiterDeclaration], dict[str, list[JavaUnresolvedRateLimiterDeclaration]]]:
+    """Retain direct Resilience4j RateLimiter literals; infer no runtime behavior."""
+    if "@RateLimiter" not in source: return [], {}
+    expected = "io.github.resilience4j.ratelimiter.annotation.RateLimiter"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*RateLimiter[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='RateLimiter'] == [expected] and raw == [expected] and re.search(r"@interface\s+RateLimiter\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedRateLimiterDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair': return None,'resilience4j_rate_limiter_unnamed_attribute'
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'resilience4j_rate_limiter_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'name','fallbackMethod'}:return None,f'resilience4j_rate_limiter_unsupported_attribute:{key}'
+            if key in seen:return None,f'resilience4j_rate_limiter_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'resilience4j_rate_limiter_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('name'):return None,'resilience4j_rate_limiter_name_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='RateLimiter']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'resilience4j_rate_limiter_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'resilience4j_rate_limiter_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'resilience4j_rate_limiter_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaRateLimiterDeclaration(owner,q,kind,path,values['name'],values.get('fallbackMethod'),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+
+def resolve_java_bulkhead_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaBulkheadDeclaration], dict[str, list[JavaUnresolvedBulkheadDeclaration]]]:
+    """Retain direct Resilience4j Bulkhead literals; infer no runtime behavior."""
+    if "@Bulkhead" not in source: return [], {}
+    expected = "io.github.resilience4j.bulkhead.annotation.Bulkhead"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*Bulkhead[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='Bulkhead'] == [expected] and raw == [expected] and re.search(r"@interface\s+Bulkhead\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedBulkheadDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair': return None,'resilience4j_bulkhead_unnamed_attribute'
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'resilience4j_bulkhead_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'name','fallbackMethod'}:return None,f'resilience4j_bulkhead_unsupported_attribute:{key}'
+            if key in seen:return None,f'resilience4j_bulkhead_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'resilience4j_bulkhead_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('name'):return None,'resilience4j_bulkhead_name_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='Bulkhead']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'resilience4j_bulkhead_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'resilience4j_bulkhead_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'resilience4j_bulkhead_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaBulkheadDeclaration(owner,q,kind,path,values['name'],values.get('fallbackMethod'),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+
+def resolve_java_time_limiter_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaTimeLimiterDeclaration], dict[str, list[JavaUnresolvedTimeLimiterDeclaration]]]:
+    """Retain direct Resilience4j TimeLimiter literals; infer no runtime behavior."""
+    if "@TimeLimiter" not in source: return [], {}
+    expected = "io.github.resilience4j.timelimiter.annotation.TimeLimiter"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*TimeLimiter[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='TimeLimiter'] == [expected] and raw == [expected] and re.search(r"@interface\s+TimeLimiter\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedTimeLimiterDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair': return None,'resilience4j_time_limiter_unnamed_attribute'
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'resilience4j_time_limiter_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'name','fallbackMethod'}:return None,f'resilience4j_time_limiter_unsupported_attribute:{key}'
+            if key in seen:return None,f'resilience4j_time_limiter_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'resilience4j_time_limiter_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('name'):return None,'resilience4j_time_limiter_name_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='TimeLimiter']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'resilience4j_time_limiter_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'resilience4j_time_limiter_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'resilience4j_time_limiter_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaTimeLimiterDeclaration(owner,q,kind,path,values['name'],values.get('fallbackMethod'),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
+
+
+def resolve_java_resilience4j_retry_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode]) -> tuple[list[JavaResilience4jRetryDeclaration], dict[str, list[JavaUnresolvedResilience4jRetryDeclaration]]]:
+    """Retain direct Resilience4j Retry literals; infer no runtime behavior."""
+    if "@Retry" not in source: return [], {}
+    expected = "io.github.resilience4j.retry.annotation.Retry"
+    imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
+    raw = re.findall(r"\bimport\s+(?:static\s+)?([^;]*Retry[^;]*)\s*;", source)
+    exact = imports.count(expected) == 1 and [x for x in imports if x.rsplit('.',1)[-1]=='Retry'] == [expected] and raw == [expected] and re.search(r"@interface\s+Retry\b",source) is None
+    _,parser=_language_and_parser();data=source.encode();tree=parser.parse(data);candidates={}
+    for item in [*classes,*methods]: candidates.setdefault((item.qualname,item.node_kind),[]).append(item)
+    found=[];unresolved={}
+    def reject(owner,ann,reason): unresolved.setdefault(owner,[]).append(JavaUnresolvedResilience4jRetryDeclaration(owner,_node_text(data,ann),reason))
+    def parse(ann):
+        values={};seen=set()
+        for arg in _java_annotation_args(ann):
+            if arg.type!='element_value_pair': return None,'resilience4j_retry_unnamed_attribute'
+            ch=_named_children(arg);kn=_child_by_field(arg,'key') or (ch[0] if ch else None);val=_child_by_field(arg,'value')
+            if kn is None or val is None:return None,'resilience4j_retry_malformed_attribute'
+            key=_node_text(data,kn)
+            if key not in {'name','fallbackMethod'}:return None,f'resilience4j_retry_unsupported_attribute:{key}'
+            if key in seen:return None,f'resilience4j_retry_duplicate_attribute:{key}'
+            seen.add(key);value=_java_string_literal_value(data,val)
+            if value is None or '${' in value or '#{' in value:return None,f'resilience4j_retry_{key}_not_literal_string'
+            values[key]=value
+        if not values.get('name'):return None,'resilience4j_retry_name_missing_or_empty'
+        return values,None
+    def walk(node,stack):
+        ns=stack;q=None;kind=None
+        if node.type in _CLASS_TYPES:
+            n=_identifier_from_node(data,node);ns=[*stack,n] if n else stack;q='.'.join(ns);kind='interface' if node.type=='interface_declaration' else ('record' if node.type=='record_declaration' else 'class')
+        elif node.type=='method_declaration':q=_method_qualname(data,node,stack);kind='method'
+        if q and kind:
+            anns=[a for a in _java_annotations(node) if _java_annotation_name(data,a)=='Retry']
+            if anns:
+                pool=candidates.get((q,kind),[])
+                if len(pool)>1:pool=[x for x in pool if x.class_hash==java_hash_for_node(source,node)]
+                owner=java_node_id(pool[0]) if len(pool)==1 else f'unresolved:{path}:{q}:{kind}'
+                if not exact:
+                    for a in anns:reject(owner,a,'resilience4j_retry_annotation_not_exact_explicit_import')
+                elif len(anns)!=1:
+                    for a in anns:reject(owner,a,'resilience4j_retry_duplicate_annotation')
+                elif len(pool)!=1:reject(owner,anns[0],'resilience4j_retry_owner_ambiguous')
+                else:
+                    values,reason=parse(anns[0])
+                    if reason:reject(owner,anns[0],reason)
+                    else:found.append(JavaResilience4jRetryDeclaration(owner,q,kind,path,values['name'],values.get('fallbackMethod'),_line_start(anns[0]),_line_end(anns[0]),java_hash_for_node(source,anns[0]),pool[0].class_hash))
+        for child in _named_children(node):walk(child,ns)
+    walk(tree.root_node,[]);return sorted(found,key=lambda x:x.owner_id),unresolved
 
 
 def _java_source_type_fqn(source: str, type_name: str) -> str | None:
@@ -1569,6 +4249,11 @@ def resolve_java_topic_edges(path: str, source: str, java_methods: list[ClassNod
     edges: list[JavaTopicEdge] = []
     unresolved: dict[str, list[JavaUnresolvedTopic]] = {}
     import re
+    exact_listener = bool(re.search(r"(?m)^\s*import\s+org\.springframework\.kafka\.annotation\.KafkaListener\s*;", source))
+    exact_template = bool(re.search(r"(?m)^\s*import\s+org\.springframework\.kafka\.core\.KafkaTemplate\s*;", source))
+    template_receivers = set()
+    if exact_template:
+        template_receivers = set(re.findall(r"\bKafkaTemplate\s*<[^;=(){}]+>\s+([A-Za-z_][\w]*)\s*(?:[;=,)])", source))
     wrapper_channels, ambiguous_wrappers = _eventuate_wrapper_channels(repo, source)
     receiver_types = {
         receiver: type_name.rsplit('.', 1)[-1]
@@ -1583,16 +4268,42 @@ def resolve_java_topic_edges(path: str, source: str, java_methods: list[ClassNod
         sid=ids.stable_java_node_claim_id(path, m.qualname, m.node_kind)
         node = _java_method_node_for(source, m)
         span = _node_text(source_bytes, node) if node is not None else ''
-        lm = re.search(r"@KafkaListener\s*\(\s*topics\s*=\s*\"([^\"]+)\"", span)
+        lm = re.search(r"@KafkaListener\s*\((.*?)\)\s*(?:public\s+|protected\s+|private\s+|static\s+|final\s+|synchronized\s+)*[\w.<>, ?\[\]]+\s+\w+\s*\(", span, re.DOTALL) if exact_listener else None
         if lm:
-            edges.append(JavaTopicEdge(sid, lm.group(1), 'subscribes_to', source_path=m.path, source_hash=m.class_hash, source_qualname=m.qualname))
+            annotation = lm.group(1)
+            topic_match = re.search(r"\btopics\s*=\s*\"([^\"]+)\"", annotation)
+            dynamic_topic = re.search(r"\btopics\s*=\s*([^,]+)", annotation)
+            if topic_match:
+                group_match = re.search(r"\bgroupId\s*=\s*\"([^\"]+)\"", annotation)
+                dynamic_group = re.search(r"\bgroupId\s*=\s*([^,]+)", annotation)
+                interface = java_method_interface(source, m)
+                params = interface.get("params", [])
+                payload_type = params[0].get("type") if len(params) == 1 else None
+                edges.append(JavaTopicEdge(sid, topic_match.group(1), 'subscribes_to', source_path=m.path, source_hash=m.class_hash, source_qualname=m.qualname, resolution="spring_kafka_listener_literal", group_id=group_match.group(1) if group_match else None, payload_type=payload_type))
+                if dynamic_group and not group_match:
+                    unresolved.setdefault(sid, []).append(JavaUnresolvedTopic(sid, dynamic_group.group(1).strip(), 'kafka_group_id_not_literal', 'subscribes_to'))
+            elif dynamic_topic:
+                unresolved.setdefault(sid, []).append(JavaUnresolvedTopic(sid, dynamic_topic.group(1).strip(), 'kafka_topic_not_literal', 'subscribes_to'))
         em = re.search(r"@EventuateDomainEventHandler\s*\([^)]*\bchannel\s*=\s*\"([^\"]+)\"", span, re.DOTALL)
         if em:
             edges.append(JavaTopicEdge(sid, em.group(1), 'subscribes_to', source_path=m.path, source_hash=m.class_hash, source_qualname=m.qualname, resolution='eventuate_literal_channel'))
-        for sm in re.finditer(r"\.send\s*\(\s*([^,\)]+)", span):
-            expr=sm.group(1).strip()
+        send_pattern = r"\b([A-Za-z_][\w]*)\.send\s*\(\s*([^,\)]+)\s*,\s*([^,\)]+)\s*\)"
+        for sm in re.finditer(send_pattern, span):
+            receiver, expr, payload_expr = (x.strip() for x in sm.groups())
+            if not exact_template or receiver not in template_receivers:
+                continue
             if len(expr) >= 2 and expr[0] == '"' and expr[-1] == '"':
-                edges.append(JavaTopicEdge(sid, expr[1:-1], 'publishes_to', source_path=m.path, source_hash=m.class_hash, source_qualname=m.qualname))
+                payload_type = None
+                if re.fullmatch(r'"(?:[^"\\]|\\.)*"', payload_expr):
+                    payload_type = "String"
+                elif re.fullmatch(r"-?\d+[lL]?", payload_expr):
+                    payload_type = "long" if payload_expr[-1:] in {"l", "L"} else "int"
+                else:
+                    for param in java_method_interface(source, m).get("params", []):
+                        if param.get("name") == payload_expr:
+                            payload_type = param.get("type")
+                            break
+                edges.append(JavaTopicEdge(sid, expr[1:-1], 'publishes_to', source_path=m.path, source_hash=m.class_hash, source_qualname=m.qualname, resolution="spring_kafka_template_literal_send", payload_type=payload_type))
             else:
                 unresolved.setdefault(sid, []).append(JavaUnresolvedTopic(sid, expr, 'kafka_topic_not_literal', 'publishes_to'))
         for pm in re.finditer(r"\b([a-zA-Z_][\w]*)\.(publish|publishById)\s*\(\s*([^,\)]+)", span):
@@ -1701,3 +4412,238 @@ def resolve_java_saga_definitions(path: str, source: str, java_classes: list[Cla
                 unresolved.setdefault(cid, []).append({"expr": step_text.strip(), "reason": "eventuate_saga_step_not_unique"})
         result[cid] = {"saga_definition": True, "resolution": "eventuate_simple_saga_literal_dsl", "steps": steps, "coverage": "partial"}
     return result, unresolved
+
+
+def resolve_java_persistence_declarations(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode], java_fields: list[DeclarationNode]) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, str]]]]:
+    """Conservative declaration-only JPA/Jakarta metadata on existing Java nodes."""
+    if not path.endswith('.java'): return {}, {}
+    imports = _java_explicit_imports(source)
+    names = {'Entity','Embeddable','MappedSuperclass','Id','EmbeddedId','IdClass','Table','Column','JoinColumn'}
+    exact = {n for n in names if imports.get(n) in {f'jakarta.persistence.{n}', f'javax.persistence.{n}'}}
+    if not exact: return {}, {}
+    by_line = {(n.line_start, n.qualname, n.declaration_kind if isinstance(n, DeclarationNode) else n.node_kind): n for n in [*java_classes,*java_methods,*java_fields]}
+    lines=source.splitlines(); metadata={}; unresolved={}; ids=__import__('tmf.ids',fromlist=['stable_java_node_claim_id'])
+    for (_line,q,kind), node in by_line.items():
+
+        start=max(0,node.line_start-1); tail=lines[start:min(len(lines),start+12)]
+        stop=next((i for i,line in enumerate(tail) if (kind in {'class','interface','record','enum'} and re.search(r'\b(?:class|interface|record|enum)\b',line)) or (kind in {'field','constant'} and ';' in line) or (kind in {'method','constructor'} and ('{' in line or ';' in line))),len(tail)-1)
+        snippet='\n'.join(tail[:stop+1]).split('{',1)[0]
+        anns={n: (list(re.finditer(r'@'+n+r'\s*\(([^)]*)\)|@'+n+r'\b',snippet,re.S))[-1] if re.search(r'@'+n+r'\b',snippet) else None) for n in names}
+        present={n:m for n,m in anns.items() if m is not None}
+        if not present: continue
+        bad=[{'annotation':n,'reason':'java_persistence_annotation_not_exact_explicit_import'} for n in present if n not in exact]
+        good={n:m for n,m in present.items() if n in exact}
+        out={'coverage':'partial','effect':'declaration_only','confidence':0.6,'annotations':sorted(good)}
+        marker=next((n for n in ('Entity','Embeddable','MappedSuperclass') if n in good),None)
+        if marker: out['persistence_kind']={'Entity':'entity','Embeddable':'embeddable','MappedSuperclass':'mapped_superclass'}[marker]
+        if 'Id' in good: out['identifier_kind']='id'
+        if 'EmbeddedId' in good: out['identifier_kind']='embedded_id'
+        for ann,prefix,attrs in (('Table','table',('name','schema','catalog')),('Column','column',('name','table')),('JoinColumn','join_column',('name','referencedColumnName','table'))):
+            if ann not in good: continue
+            args=good[ann].group(1) or ''
+            for attr in attrs:
+                m=re.search(rf'(?:^|,)\s*{attr}\s*=\s*([^,]+)\s*(?=,|$)',args)
+                if not m: continue
+                lit=re.fullmatch(r'"((?:\\.|[^"\\])*)"',m.group(1).strip())
+                if lit: out[f'{prefix}_'+re.sub(r'(?<!^)(?=[A-Z])','_',attr).lower()]=lit.group(1)
+                else: bad.append({'annotation':ann,'attribute':attr,'reason':'java_persistence_attribute_not_literal'})
+        if 'IdClass' in good:
+            m=re.fullmatch(r'\s*([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)\.class\s*',good['IdClass'].group(1) or '')
+            if m: out['id_class']=m.group(1)
+            else: bad.append({'annotation':'IdClass','reason':'java_persistence_class_not_literal'})
+        identity=None if isinstance(node,DeclarationNode) else node.identity_key
+        cid=ids.stable_java_node_claim_id(path,q,kind,identity)
+        if len(out)>4: metadata[cid]=out
+        if bad: unresolved[cid]=bad
+    return metadata, unresolved
+
+
+def resolve_java_repository_declarations(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode], repo=None) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """Spring Data repository declarations; query strings remain opaque metadata."""
+    if not path.endswith('.java'): return {}, {}
+    imports = _java_explicit_imports(source)
+    repository_fqns = {
+        'Repository':'org.springframework.data.repository.Repository',
+        'CrudRepository':'org.springframework.data.repository.CrudRepository',
+        'ListCrudRepository':'org.springframework.data.repository.ListCrudRepository',
+        'PagingAndSortingRepository':'org.springframework.data.repository.PagingAndSortingRepository',
+        'JpaRepository':'org.springframework.data.jpa.repository.JpaRepository',
+    }
+    exact = {n:f for n,f in repository_fqns.items() if imports.get(n)==f}
+    query_exact = imports.get('Query') == 'org.springframework.data.jpa.repository.Query'
+    ids=__import__('tmf.ids',fromlist=['stable_java_node_claim_id']); metadata={}; unresolved={}
+    source_types: dict[str,str] = {}
+    if repo is not None:
+        for candidate in sorted(repo.root.rglob('*.java')):
+            try: text=candidate.read_text(encoding='utf-8')
+            except (OSError,UnicodeError): continue
+            im=_java_explicit_imports(text)
+            if im.get('Entity') not in {'jakarta.persistence.Entity','javax.persistence.Entity'} or not re.search(r'@Entity\b',text): continue
+            pkg=_java_package(text)
+            for m in re.finditer(r'\b(?:class|record|enum)\s+([A-Za-z_$][\w$]*)\b',text):
+                fqn=f'{pkg}.{m.group(1)}' if pkg else m.group(1)
+                if m.group(1) in source_types and source_types[m.group(1)] != fqn: source_types[m.group(1)]=''
+                else: source_types[m.group(1)]=fqn
+    repo_classes: dict[str,dict[str,Any]]={}
+    for cls in java_classes:
+        if cls.node_kind != 'interface': continue
+        simple=cls.qualname.rsplit('.',1)[-1]
+        header=re.search(rf'\binterface\s+{re.escape(simple)}(?:\s*<([^{{>]*)>)?\s+extends\s+([^{{]+)\{{',source,re.S)
+        if not header: continue
+        cid=ids.stable_java_node_claim_id(path,cls.qualname,cls.node_kind,cls.identity_key)
+        inherited=[]; bad=[]
+        for item in re.split(r',(?![^<]*>)',header.group(2)):
+            m=re.fullmatch(r'\s*([A-Za-z_$][\w$]*)\s*<\s*([^,<>]+)\s*,\s*([^,<>]+)\s*>\s*',item)
+            if not m: continue
+            base,domain,id_type=m.groups()
+            if base not in exact: continue
+            if any(x.strip().startswith('?') for x in (domain,id_type)):
+                bad.append({'expr':item.strip(),'reason':'spring_data_repository_wildcard_generic'}); continue
+            typevars={x.strip().split()[0] for x in (header.group(1) or '').split(',') if x.strip()}
+            if domain.strip() in typevars or id_type.strip() in typevars:
+                bad.append({'expr':item.strip(),'reason':'spring_data_repository_type_variable_generic'}); continue
+            def resolve_type(t):
+                t=t.strip()
+                if t in {'Boolean','Byte','Character','Double','Float','Integer','Long','Short','String','Void'}: return f'java.lang.{t}'
+                return imports.get(t) or source_types.get(t) or (_java_source_type_fqn(source,t) if re.search(rf'\b(?:class|record|enum|interface)\s+{re.escape(t)}\b',source) else None)
+            df,ifqn=resolve_type(domain),resolve_type(id_type)
+            if not df or not ifqn:
+                bad.append({'expr':item.strip(),'reason':'spring_data_repository_unresolved_generic'}); continue
+            inherited.append({'repository_type':exact[base],'declaration':item.strip(),'domain_type':df,'id_type':ifqn,'domain_entity_source_proven':source_types.get(domain.strip())==df})
+        if inherited:
+            repo_classes[cid]={'coverage':'partial','effect':'declaration_only','confidence':0.6,'inherited_repository_types':inherited}
+            metadata[cid]=repo_classes[cid]
+        if bad: unresolved[cid]=bad
+    for method in java_methods:
+        if method.node_kind not in {'method'}: continue
+        owner=method.qualname.rsplit('.',1)[0]; owner_node=next((c for c in java_classes if c.qualname==owner),None)
+        if owner_node is None: continue
+        owner_id=ids.stable_java_node_claim_id(path,owner,owner_node.node_kind,owner_node.identity_key)
+        if owner_id not in repo_classes and owner_id not in unresolved: continue
+        cid=ids.stable_java_node_claim_id(path,method.qualname,method.node_kind,method.identity_key)
+        lines=source.splitlines(); snippet='\n'.join(lines[max(0,method.line_start-1):method.line_end])
+        decl=next((x.strip() for x in reversed(snippet.splitlines()) if re.search(rf'\b{re.escape(method.qualname.rsplit(".",1)[-1])}\s*\(',x)), '')
+        out={'coverage':'partial','effect':'declaration_only','confidence':0.6,'repository_method_declaration':decl,'derived_query_name':method.qualname.rsplit('.',1)[-1]}
+        qms=list(re.finditer(r'@Query\s*\((.*?)\)',snippet,re.S)); qm=qms[-1] if qms else None
+        if qm:
+            if not query_exact: unresolved.setdefault(cid,[]).append({'annotation':'Query','reason':'spring_data_query_annotation_not_exact_explicit_import'})
+            else:
+                args=qm.group(1); value=re.search(r'(?:^|,)\s*(?:value\s*=\s*)?("(?:\\.|[^"\\])*")',args)
+                native=re.search(r'(?:^|,)\s*nativeQuery\s*=\s*(true|false)\b',args)
+                if not value or ('nativeQuery' in args and not native): unresolved.setdefault(cid,[]).append({'annotation':'Query','reason':'spring_data_query_attribute_not_literal'})
+                else: out['query_declaration']={'text':bytes(value.group(1)[1:-1],'utf-8').decode('unicode_escape'),'native': native.group(1)=='true' if native else False,'language':'native_sql' if native and native.group(1)=='true' else 'jpql','effect':'opaque_declaration_only'}
+        metadata[cid]=out
+    return metadata, unresolved
+
+
+def resolve_java_mybatis_declarations(path: str, source: str, java_classes: list[ClassNode], java_methods: list[ClassNode]) -> tuple[dict[str, dict[str, Any]], dict[str, list[dict[str, Any]]]]:
+    """Exact-import, declaration-only MyBatis mapper annotation metadata.
+
+    SQL text is deliberately opaque.  In particular this function does not
+    parse statements or create database/runtime relationships.
+    """
+    if not path.endswith('.java'):
+        return {}, {}
+    imports = _java_explicit_imports(source)
+    ids = __import__('tmf.ids', fromlist=['stable_java_node_claim_id'])
+    sql_kinds = ('Select', 'Insert', 'Update', 'Delete')
+    provider_kinds = ('SelectProvider', 'InsertProvider', 'UpdateProvider', 'DeleteProvider')
+    exact_mapper = imports.get('Mapper') == 'org.apache.ibatis.annotations.Mapper'
+    exact_sql = {name for name in sql_kinds if imports.get(name) == f'org.apache.ibatis.annotations.{name}'}
+    lines = source.splitlines()
+    metadata: dict[str, dict[str, Any]] = {}
+    unresolved: dict[str, list[dict[str, Any]]] = {}
+
+    def cid(node: ClassNode) -> str:
+        return ids.stable_java_node_claim_id(path, node.qualname, node.node_kind, node.identity_key)
+
+    def declaration_snippet(node: ClassNode) -> str:
+        start = max(0, node.line_start - 1)
+        # Retain the contiguous annotation prefix, stopping at the preceding
+        # declaration/body boundary so metadata cannot leak between members.
+        while start > 0 and not re.search(r'[;{}]', lines[start - 1]):
+            start -= 1
+        return '\n'.join(lines[start:node.line_end])
+
+    mapper_owners: set[str] = set()
+    for node in java_classes:
+        if node.node_kind != 'interface':
+            continue
+        snippet = declaration_snippet(node).split('{', 1)[0]
+        if not re.search(r'@Mapper\b', snippet):
+            continue
+        node_id = cid(node)
+        if not exact_mapper:
+            unresolved[node_id] = [{'annotation': 'Mapper', 'reason': 'mybatis_mapper_annotation_not_exact_explicit_import'}]
+            continue
+        mapper_owners.add(node.qualname)
+        metadata[node_id] = {'coverage': 'partial', 'effect': 'declaration_only', 'confidence': 0.6,
+                             'declaration_kind': 'mybatis_mapper_interface',
+                             'annotation': 'org.apache.ibatis.annotations.Mapper'}
+
+    java_string = r'"(?:\\.|[^"\\])*"'
+    literal_value = re.compile(rf'\s*(?:value\s*=\s*)?(?P<value>{java_string}|\{{\s*{java_string}(?:\s*,\s*{java_string})*\s*\}})\s*', re.S)
+    def annotation_args(snippet: str, name: str) -> str | None:
+        match = re.search(rf'@{name}\s*\(', snippet)
+        if match is None:
+            return None
+        start = match.end(); depth = 1; quoted = False; escaped = False
+        for index in range(start, len(snippet)):
+            char = snippet[index]
+            if quoted:
+                if escaped: escaped = False
+                elif char == '\\': escaped = True
+                elif char == '"': quoted = False
+            elif char == '"': quoted = True
+            elif char == '(': depth += 1
+            elif char == ')':
+                depth -= 1
+                if depth == 0: return snippet[start:index]
+        return None
+    for method in java_methods:
+        if method.node_kind != 'method':
+            continue
+        snippet = declaration_snippet(method)
+        present = [name for name in (*sql_kinds, *provider_kinds) if re.search(rf'@{name}\b', snippet)]
+        if not present:
+            continue
+        node_id = cid(method)
+        bad: list[dict[str, Any]] = []
+        owner = method.qualname.rsplit('.', 1)[0]
+        if owner not in mapper_owners:
+            bad.append({'reason': 'mybatis_mapper_owner_not_exact', 'owner': owner})
+        for name in present:
+            if name in provider_kinds:
+                bad.append({'annotation': name, 'reason': 'mybatis_provider_annotation_deferred'})
+            elif name not in exact_sql:
+                bad.append({'annotation': name, 'reason': 'mybatis_sql_annotation_not_exact_explicit_import'})
+        supported = [name for name in present if name in exact_sql]
+        if len(supported) > 1:
+            bad.append({'annotations': supported, 'reason': 'mybatis_multiple_sql_annotations_deferred'})
+        if len(supported) == 1:
+            name = supported[0]
+            args = annotation_args(snippet, name)
+            args = args if args is not None else ''
+            parsed = literal_value.fullmatch(args)
+            if parsed is None:
+                bad.append({'annotation': name, 'reason': 'mybatis_sql_value_not_literal'})
+            else:
+                raw = parsed.group('value').strip()
+                tokens = re.findall(java_string, raw)
+                values = [bytes(token[1:-1], 'utf-8').decode('unicode_escape') for token in tokens]
+                lowered = '\n'.join(values).lower()
+                if '<script' in lowered:
+                    bad.append({'annotation': name, 'reason': 'mybatis_script_annotation_deferred'})
+                elif '<foreach' in lowered:
+                    bad.append({'annotation': name, 'reason': 'mybatis_foreach_annotation_deferred'})
+                else:
+                    if owner in mapper_owners:
+                        metadata[node_id] = {
+                            'coverage': 'partial', 'effect': 'declaration_only', 'confidence': 0.6,
+                            'declaration_kind': 'mybatis_mapper_method',
+                            'annotation_kind': f'org.apache.ibatis.annotations.{name}',
+                            'sql_declaration': {'strings': values, 'effect': 'opaque_declaration_only'},
+                        }
+        if bad:
+            unresolved[node_id] = bad
+    return metadata, unresolved

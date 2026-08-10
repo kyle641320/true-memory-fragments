@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "cron_zone": true,
+    "decoy_excluded": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "gradle_fixture": true,
+    "maven_fixture": true,
+    "opaque_numeric_tokens": true,
+    "three_literal_declarations": true,
+    "time_unit": true
+  },
+  "deterministic": true,
+  "format": "tmf.java-scheduling-qualification.v1",
+  "limitations": [
+    "source methods and exact explicit @Scheduled import only",
+    "literal declaration tokens retained opaquely",
+    "no execution, schedule calculation, timezone semantics, concurrency, proxy, EnableScheduling, inheritance, composition, placeholders, or SpEL inference"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

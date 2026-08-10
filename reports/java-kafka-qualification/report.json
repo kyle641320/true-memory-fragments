@@ -1,0 +1,18 @@
+{
+  "checks": {
+    "decoy_absent": true,
+    "deletion_reconciles": true,
+    "dynamic_unresolved": true,
+    "fresh": true,
+    "mutation_reconciles": true,
+    "mutation_stales": true,
+    "publisher": true,
+    "subscriber": true
+  },
+  "deterministic": true,
+  "format": "tmf.java-kafka-qualification.v1",
+  "limitations": [
+    "source-only exact imports and literal topics",
+    "no runtime delivery, broker, serializer, partition/key/header semantics"
+  ]
+}

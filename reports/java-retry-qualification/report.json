@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "decoy_excluded": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "gradle_fixture": true,
+    "maven_fixture": true,
+    "overload_safe": true,
+    "recover_metadata_only": true,
+    "three_direct_declarations": true
+  },
+  "format": "tmf.java-retry-qualification.v1",
+  "limitations": [
+    "direct exact-import source @Retryable/@Recover metadata only",
+    "literal/class-literal attributes retained opaquely",
+    "no runtime retry attempts/backoff, exception matching, recovery dispatch, proxy, calls, inheritance, composition, or external symbols"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

@@ -1,0 +1,25 @@
+{
+  "checks": {
+    "decoy_excluded": true,
+    "deletion_reconciles_declaration": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "empty_metadata_retained": true,
+    "gradle_fixture": true,
+    "literal_metadata": true,
+    "maven_fixture": true,
+    "mutation_changes_token_hash": true,
+    "overload_safe": true,
+    "precise_anchors": true,
+    "stable_ids_under_literal_mutation": true,
+    "three_direct_declarations": true
+  },
+  "format": "tmf.java-exception-handler-qualification.v1",
+  "limitations": [
+    "direct exact-import method annotation metadata only",
+    "class literals retained opaquely; empty metadata retained",
+    "no dispatch, matching, response mapping, advice scope, inheritance, aliases, calls, or runtime behavior"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

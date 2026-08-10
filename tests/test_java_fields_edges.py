@@ -16,6 +16,60 @@ from tests.test_java_inherit import init_repo
 
 @unittest.skipUnless(java_status().available, JAVA_DEGRADE_HINT)
 class JavaFieldReadWriteTests(unittest.TestCase):
+    def test_control_and_exception_constructs_classify_without_flow_edges(self):
+        source = """class Service {
+  int count; int seed; int closed;
+  R open(int x) { return null; }
+  void run(int p) {
+    int local = seed;
+    if (p > 0) count = local; else count += seed;
+    for (; p > 0; p--) { ++count; }
+    try (R resource = open(count)) { count++; throw new RuntimeException(); }
+    catch (RuntimeException error) { count = seed; error.toString(); }
+    finally { closed += count; }
+  }
+  interface R extends AutoCloseable {}
+}
+"""
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"Service.java": source})
+            warm_repo(repo)
+            store = Store(repo)
+            run_id = stable_java_node_claim_id("Service.java", "Service.run", "method")
+            ids = {n: stable_java_node_claim_id("Service.java", f"Service.{n}", "field") for n in ("count", "seed", "closed")}
+            graph = store.get_claim(run_id).body["graph"]
+            self.assertEqual({x["target_id"] for x in graph["reads"]}, set(ids.values()))
+            self.assertEqual({x["target_id"] for x in graph["writes"]}, {ids["count"], ids["closed"]})
+            self.assertFalse(any("throw" in key or "catch" in key for key in graph))
+            unresolved = {(u["expr"], u["reason"]) for u in graph["reads_unresolved"]}
+            self.assertIn(("p", "java_local_or_parameter_shadow"), unresolved)
+            self.assertIn(("resource", "java_local_or_parameter_shadow"), unresolved)
+
+    def test_nested_executable_boundaries_do_not_leak_field_access(self):
+        source = """class Service {
+  int outer; int deferred;
+  void run() {
+    outer++;
+    Runnable r = () -> deferred++;
+    Object o = new Object() { void nested() { deferred++; } };
+  }
+}
+"""
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"Service.java": source})
+            warm_repo(repo)
+            store = Store(repo)
+            run_id = stable_java_node_claim_id("Service.java", "Service.run", "method")
+            outer = stable_java_node_claim_id("Service.java", "Service.outer", "field")
+            deferred = stable_java_node_claim_id("Service.java", "Service.deferred", "field")
+            graph = store.get_claim(run_id).body["graph"]
+            self.assertEqual({x["target_id"] for x in graph["reads"]}, {outer})
+            self.assertEqual({x["target_id"] for x in graph["writes"]}, {outer})
+            self.assertFalse(any(x["target_id"] == deferred for k in ("reads", "writes") for x in graph[k]))
+            reasons = {u["reason"] for u in graph["reads_unresolved"]}
+            self.assertIn("java_lambda_deferred_context_not_modeled", reasons)
+            self.assertIn("java_anonymous_class_body_deferred_context_not_modeled", reasons)
+
     def test_this_field_reads_and_writes_resolve(self):
         source = """class Service {
   int count;

@@ -1,0 +1,24 @@
+{
+  "checks": {
+    "decoy_excluded": true,
+    "deletion_reconciles_declaration": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "gradle_fixture": true,
+    "literal_metadata": true,
+    "maven_fixture": true,
+    "mutation_changes_token_hash": true,
+    "overload_safe": true,
+    "precise_anchors": true,
+    "stable_ids_under_literal_mutation": true,
+    "two_direct_declarations": true
+  },
+  "format": "tmf.java-secured-qualification.v1",
+  "limitations": [
+    "direct exact-import source @Secured metadata only",
+    "literal role strings retained opaquely",
+    "no role hierarchy, authorization decisions, proxy/AOP, configuration, calls, inheritance, composition, aliases, meta-annotations, or runtime enforcement"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

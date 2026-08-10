@@ -1,0 +1,148 @@
+{
+  "determinism": {
+    "canonical_repeat_equal": true
+  },
+  "fixture_independence": "sources live only under fixtures/java-persistence-heldout and are not copied from unit tests",
+  "fixtures": [
+    {
+      "build": "Maven",
+      "checks": [
+        {
+          "name": "jakarta exact-import entity/table",
+          "pass": true
+        },
+        {
+          "name": "jakarta id/column",
+          "pass": true
+        },
+        {
+          "name": "Spring Data generic resolution",
+          "pass": true
+        },
+        {
+          "name": "JPQL opaque query",
+          "pass": true
+        },
+        {
+          "name": "native SQL remains opaque metadata",
+          "pass": true
+        },
+        {
+          "name": "derived query name only",
+          "pass": true
+        },
+        {
+          "name": "JPA decoy/dynamic unresolved",
+          "pass": true
+        },
+        {
+          "name": "stable IDs",
+          "pass": true
+        },
+        {
+          "name": "stable source anchors",
+          "pass": true
+        },
+        {
+          "name": "no fabricated SQL/table/read/write/runtime edges",
+          "pass": true
+        },
+        {
+          "name": "initial freshness",
+          "pass": true
+        },
+        {
+          "name": "mutation stales target",
+          "pass": true
+        },
+        {
+          "name": "mutation keeps ID and refreshes metadata",
+          "pass": true
+        },
+        {
+          "name": "deletion reconciles claims",
+          "pass": true
+        }
+      ],
+      "fixture": "maven"
+    },
+    {
+      "build": "Gradle",
+      "checks": [
+        {
+          "name": "javax exact-import entity/table",
+          "pass": true
+        },
+        {
+          "name": "javax embedded id",
+          "pass": true
+        },
+        {
+          "name": "exact Mapper owner",
+          "pass": true
+        },
+        {
+          "name": "four literal MyBatis annotations",
+          "pass": true
+        },
+        {
+          "name": "dynamic SQL unresolved",
+          "pass": true
+        },
+        {
+          "name": "provider unresolved",
+          "pass": true
+        },
+        {
+          "name": "MyBatis decoy unresolved",
+          "pass": true
+        },
+        {
+          "name": "stable IDs",
+          "pass": true
+        },
+        {
+          "name": "stable source anchors",
+          "pass": true
+        },
+        {
+          "name": "no fabricated SQL/table/read/write/runtime edges",
+          "pass": true
+        },
+        {
+          "name": "initial freshness",
+          "pass": true
+        },
+        {
+          "name": "mutation stales target",
+          "pass": true
+        },
+        {
+          "name": "mutation keeps ID and refreshes metadata",
+          "pass": true
+        },
+        {
+          "name": "deletion reconciles claims",
+          "pass": true
+        }
+      ],
+      "fixture": "gradle"
+    }
+  ],
+  "format": "tmf.java-persistence-qualification.v1",
+  "limitations": [
+    "JPA/Hibernate runtime semantics are not modeled",
+    "Spring Data query text is opaque metadata",
+    "MyBatis SQL is opaque metadata; XML linkage is deferred"
+  ],
+  "metrics": {
+    "expected": 28,
+    "false_negative": 0,
+    "false_positive": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "resolution_rate": 1.0,
+    "resolved_correctly": 28
+  },
+  "scope": "partial declaration metadata; Java annotations only; XML deferred"
+}

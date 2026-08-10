@@ -44,6 +44,7 @@ class ClassNode:
     language: str = "python"
     node_kind: str = "class"
     extraction_tier: ExtractionTier = "python-ast"
+    identity_key: str | None = None
 
 
 @dataclass(frozen=True)
@@ -80,6 +81,20 @@ class ApiNode:
     line_end: int
     api_hash: str
     keywords: list[str]
+    handler_node_id: str | None = None
+    route_path_source: str | None = None
+    route_qualname: str | None = None
+    route_line_start: int | None = None
+    route_line_end: int | None = None
+    route_hash: str | None = None
+    handler_path: str | None = None
+    handler_hash: str | None = None
+    service_name: str | None = None
+    service_url: str | None = None
+    adapter: str | None = None
+    service_name: str | None = None
+    service_url: str | None = None
+    adapter: str | None = None
 
 
 _SKIP_TOKEN_TYPES = {

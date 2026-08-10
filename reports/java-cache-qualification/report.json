@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "decoy_excluded": true,
+    "deterministic": true,
+    "gradle_fixture": true,
+    "literal_arrays": true,
+    "maven_fixture": true,
+    "opaque_spel": true,
+    "three_operations": true
+  },
+  "deterministic": true,
+  "format": "tmf.java-cache-qualification.v1",
+  "limitations": [
+    "declaration-only exact explicit Spring Cache imports and literal cache names",
+    "SpEL strings retained opaquely and never evaluated",
+    "no CacheManager calls or runtime cache semantics inferred"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

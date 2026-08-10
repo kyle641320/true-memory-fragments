@@ -17,7 +17,7 @@ def _node_new_id(claim: Claim, old_path: str, new_path: str) -> str:
         return stable_function_claim_id(new_path, q)
     if claim.scope == 'class':
         if body.get('language') == 'java':
-            return stable_java_node_claim_id(new_path, q, str(body.get('node_kind') or 'class'))
+            return stable_java_node_claim_id(new_path, q, str(body.get('node_kind') or 'class'), body.get('identity_key'))
         return stable_class_claim_id(new_path, q)
     if claim.scope == 'declaration':
         if body.get('language') == 'java':

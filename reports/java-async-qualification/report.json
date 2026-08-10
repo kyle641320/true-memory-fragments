@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "class_literal": true,
+    "decoy_excluded": true,
+    "deterministic": true,
+    "dynamic_unresolved": true,
+    "gradle_fixture": true,
+    "maven_fixture": true,
+    "overload_safe": true,
+    "three_direct_declarations": true
+  },
+  "format": "tmf.java-async-qualification.v1",
+  "limitations": [
+    "direct exact-import source @Async metadata only",
+    "literal executor qualifier retained opaquely",
+    "no runtime calls, executor resolution, threads, scheduling, proxy, exception, ordering, EnableAsync, inheritance, composition, or external symbols"
+  ],
+  "precision": 1.0,
+  "recall": 1.0
+}

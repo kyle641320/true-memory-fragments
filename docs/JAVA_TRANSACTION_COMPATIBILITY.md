@@ -1,0 +1,7 @@
+# Conservative Spring transaction declaration metadata
+
+Schema remains `tmf.schema.v2`; v0/v1 reads and all existing IDs remain compatible. TMF recognizes only the exact explicit import `org.springframework.transaction.annotation.Transactional` directly attached to source classes or uniquely identified methods. Additive stable `claim_transaction_decl_*` IDs use overload-safe owner identity. Exact annotation line anchors and Java token hashes provide normal mutation, freshness, deletion, and reconciliation behavior.
+
+Supported opaque source metadata is limited to literal `Propagation`/`Isolation` enum constants, boolean `readOnly`, integer `timeout`, literal `value`/`transactionManager` aliases, class literals for `rollbackFor`/`noRollbackFor`, and literal string arrays for their `*ClassName` forms. A method declaration records source-metadata precedence over a class declaration; this is not interpreted behavior.
+
+Aliases must agree. Constants, placeholders, expressions, wildcard/static imports, malformed or duplicate attributes, same-simple-name decoys, composed/inherited annotations, and ambiguous owners fail closed. TMF never infers transaction boundaries, database effects, rollback behavior, proxying, propagation execution, manager resolution, call graphs, or runtime semantics. Rollback needs no migration: remove this additive extractor/deriver, tests, fixture/verifier/report, and document; reconciliation removes stale claims.

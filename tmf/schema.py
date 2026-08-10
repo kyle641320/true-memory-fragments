@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field, asdict
 from typing import Any, Literal
 
-SCHEMA_VERSION = "tmf.schema.v1"
-SUPPORTED_SCHEMA_VERSIONS = {"tmf.schema.v0", SCHEMA_VERSION}
+SCHEMA_VERSION = "tmf.schema.v2"
+SUPPORTED_SCHEMA_VERSIONS = {"tmf.schema.v0", "tmf.schema.v1", SCHEMA_VERSION}
 ClaimKind = Literal["structure", "architecture", "intent", "convention", "gotcha"]
 ClaimScope = Literal["file", "function", "class", "module", "repo", "cross-repo", "declaration", "config", "api", "contract"]
 Evidence = Literal["observed", "inferred", "verified"]
@@ -17,6 +17,12 @@ class Binding:
     fn_hash: str | None
     commit: str | None
     qualname: str | None = None
+    # v2: a relationship may depend on independently mutable source locations.
+    # Missing fields mean the legacy, untyped binding; they are never inferred.
+    role: str | None = None
+    line_start: int | None = None
+    line_end: int | None = None
+    hash_kind: str | None = None
 
 
 @dataclass

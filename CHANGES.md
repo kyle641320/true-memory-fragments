@@ -1,5 +1,14 @@
 # TMF Changes
 
+## Versioned dual-binding API relationships + WebFlux functional routes (2026-08-09)
+
+- Advanced serialization to `tmf.schema.v2`; readers continue to accept v0/v1. Binding roles, anchors, and hash kinds are optional; absent fields retain legacy semantics.
+- New `claim_api_rel_*` IDs use route source + verb + URI + resolved handler ID. Existing `claim_api_*` IDs are unchanged and never reinterpreted.
+- Dual relationships independently bind/freshen/delete route declarations and handlers.
+- Exact-import functional WebFlux supports direct literal routes and flat literal builder chains only; rejected forms produce neither APIs nor runtime calls.
+
+Compatibility: v0/v1 read unchanged; legacy Flask/FastAPI/annotated-Spring IDs and single bindings remain; only new functional relationships use dual bindings/new IDs; no automatic cache rewrite.
+
 ## True LLM Agent A/B value-proof measurement (2026-06-10)
 
 ### Scope / preregistration
@@ -1419,3 +1428,108 @@ Validation so far:
 - Java offline verifier: `JAVA OFFLINE VERIFY: PASS`.
 - Heldout validation: PASS, precision/recall 1.0/1.0.
 - Self validation: sample-limit 3 PASS, precision/recall 1.0/1.0, fp/fn 0/0.
+## Versioned dual-binding API relationships + WebFlux functional routes (2026-08-09)
+
+- Advanced serialization to `tmf.schema.v2`; readers continue to accept v0/v1. Added optional binding role, exact line anchor, and hash-kind fields. Missing fields retain legacy semantics and are never inferred.
+- Added a new `claim_api_rel_*` identity namespace derived from route source + verb + literal URI + resolved handler node ID. Existing `claim_api_*` IDs are unchanged and are not silently reinterpreted or rewritten.
+- Dual API relationships carry independent `route_declaration` and `handler` bindings with separate hashes/freshness/deletion. Route-source reconciliation owns tombstones; handler changes/deletion force route re-derivation.
+- Added exact-import Spring WebFlux functional extraction for direct literal routes and flat literal builder chains. Unsupported/ambiguous forms emit no API relationship and no runtime call.
+
+Compatibility matrix: v0/v1 claims read unchanged; new ordinary/annotated Python and Java claims serialize as v2 but keep legacy ID and single-binding behavior; only new resolved functional relationships use dual bindings and the new ID namespace. No automatic persisted-cache migration is performed.
+
+### Java external semantic facts v1
+- Added a default-off provider-neutral compiler/JDT/SCIP ingestion contract with strict provenance, content/build/classpath fingerprints, deterministic overlay IDs, fail-closed reconciliation, and explicit degraded reasons.
+- Semantic evidence remains attributed and separate from syntax. True JDT end-to-end is unavailable locally; offline executable fixture verification is provided.
+
+## Unreleased — complete-Spring declaration foundation
+- Added bounded declaration-only metadata for exact explicitly imported profile, condition, scope, lazy, depends-on, primary, and transactional annotations.
+- Added literal `readOnly`, `Propagation`, and `Isolation` transaction attributes without runtime/proxy claims.
+- Exact-type source bean resolution may select `@Primary` only when exactly one candidate is primary; qualifiers retain precedence and all remaining ambiguity is unresolved.
+- Added explicit deferred reasons for decoys, classpath/meta/composed semantics, SpEL/dynamic values, and unsupported transaction attributes.
+
+- Added conservative Spring Data repository declaration metadata (exact repository inheritance/generic bindings, method declarations, and literal `@Query` opacity/native flag), with unresolved ambiguity and decoy handling.
+- Added bounded MyBatis declaration metadata for exact-import `@Mapper` interfaces and literal exact-import `@Select`/`@Insert`/`@Update`/`@Delete` methods. SQL remains opaque; dynamic/constant/concatenated values, providers, scripts, foreach, decoys, and composed annotations fail closed. No execution/database/mapping/transaction/call semantics are inferred, and XML linkage is explicitly deferred pending honest independent dual bindings and exact anchors.
+
+## Unreleased — persistence-adapter production qualification
+
+- Added independent held-out Maven and Gradle fixture repositories under `fixtures/java-persistence-heldout/`; fixture source is not copied from unit tests and includes exact imports, adversarial decoys, providers, and dynamic values.
+- Added `tools/verify_java_persistence_qualification.py`, an offline deterministic two-run verifier for JPA/Jakarta, Spring Data, and MyBatis annotation metadata. It gates expected resolution/unresolved reasons, precision, freshness, mutation, deletion, stable IDs/anchors, and absence of fabricated SQL/table/read/write/runtime semantics.
+- Added checked evidence under `reports/java-persistence-qualification/` and updated the persistence compatibility matrix and enterprise roadmap. Java relationship coverage remains partial; MyBatis XML and broad production qualification remain deferred.
+- Migration: none. Metadata is additive on existing Java node claims and keeps existing IDs/bindings.
+- Rollback: remove the held-out fixture/verifier/report/docs package. No cache migration or runtime setting requires reversal; existing declaration metadata behavior is unchanged.
+## Java Kafka bounded source-evidence phase
+
+- Added exact-import, source-only Spring Kafka topic edges for literal `@KafkaListener` topics/group IDs and exact two-argument `KafkaTemplate.send` literal topics. Retains payload type only when mechanically unambiguous, preserves existing IDs, and adds method anchors/hash freshness.
+- Added decoy, dynamic, overload, cross-file, mutation, and deletion coverage plus an explicit compatibility declaration. Runtime delivery, serializers, partitions/keys/headers, broker topology, classpath semantics, composed annotations, and dynamic expressions remain deferred.
+
+- Added a conservative Spring Cloud OpenFeign declaration adapter: exact explicit imports and literal service/url/path plus literal Spring HTTP method/path metadata only, represented with stable dual-binding API relationships and independent freshness/deletion. Dynamic, composed, inherited, ambiguous and unsupported forms fail closed; runtime RPC semantics remain out of scope.
+
+## Java Spring Cache bounded declaration phase
+
+- Added exact-import, literal-only `@Cacheable`, `@CachePut`, and `@CacheEvict` method metadata with stable IDs, precise annotation anchors/token hashes, opaque literal SpEL fields, overload-safe source identity, freshness/deletion reconciliation, explicit unresolved reasons, held-out Maven/Gradle fixture, offline qualification, and fail-closed negative tests.
+- No runtime call edge or CacheManager invocation is emitted; runtime cache effects remain explicitly out of scope.
+
+## Conservative Spring scheduling declaration metadata
+
+- Added exact-explicit-import, source-method-only `@Scheduled` metadata for literal `fixedRate`, `fixedDelay`, `initialDelay`, `cron`, `zone`, and `timeUnit` values.
+- Added overload-safe stable IDs, exact annotation anchors/token hashes, normal freshness/deletion reconciliation, and explicit fail-closed reasons for dynamic, conflicting, unsupported, ambiguous, and same-simple-name cases.
+- Added focused adversarial tests and an independent held-out Maven/Gradle fixture/offline verifier. No schedule calculation, invocation/runtime execution, timezone semantics, concurrency, proxying, `EnableScheduling`, inheritance/composition, placeholders, or SpEL is inferred.
+
+## 2026-08-09 — Conservative Spring transaction declaration metadata
+- Added exact-import, direct class/method `@Transactional` source metadata for mechanically parseable literal enum/boolean/int/string/class-literal attributes.
+- Added overload-safe stable IDs, exact annotation anchors/token hashes, unresolved fail-closed diagnostics, adversarial tests, independent Maven/Gradle fixture, offline verifier/report, and compatibility documentation.
+- Explicitly does not infer transaction boundaries, database/rollback effects, proxy/runtime propagation, manager resolution, or calls.
+
+## Spring Async declaration adapter (2026-08-09)
+- Added exact explicit-import, direct class/method `@Async` declaration claims with stable overload-safe owner IDs, annotation anchors/token hashes, and optional opaque literal executor qualifier metadata.
+- Added fail-closed handling for dynamic/constants/placeholders, wildcard/static/conflicting imports, aliases, decoys, malformed values, ambiguous owners, inheritance/composition and external symbols; no runtime async behavior is modeled.
+- Added focused adversarial tests and independent Maven/Gradle held-out fixture plus offline qualification verifier/report.
+
+## Spring Retry declaration adapter (2026-08-09)
+- Added exact-import direct source `@Retryable`/`@Recover` declaration claims with stable overload-safe IDs, exact anchors/token hashes, and opaque mechanically parseable literal/class-literal metadata.
+- Added fail-closed adversarial tests and independent Maven/Gradle fixture/offline qualification. No retry occurrence, runtime attempt/backoff evaluation, exception matching, recovery dispatch, proxy/AOP, call, inherited/composed, or external semantics are inferred.
+
+## Resilience4j CircuitBreaker declaration adapter (2026-08-09)
+- Added exact-import direct source `@CircuitBreaker` declaration claims with required literal `name`, optional opaque literal `fallbackMethod`, stable overload-safe IDs, and exact annotation anchors/token hashes.
+- Added fail-closed adversarial tests plus an independent Maven/Gradle held-out fixture and offline qualification report. No circuit state, failure/threshold evaluation, fallback resolution/dispatch, configuration activation, proxy/AOP, call, inherited/composed, expression/placeholder, or external semantics are inferred.
+
+## Resilience4j RateLimiter declaration adapter (2026-08-09)
+- Added exact-import direct-source `@RateLimiter` declaration claims with required literal `name`, optional opaque literal `fallbackMethod`, stable overload-safe IDs, exact annotation anchors/token hashes, fail-closed unresolved evidence, and independent Maven/Gradle held-out qualification.
+
+
+## Resilience4j Bulkhead declaration adapter (2026-08-09)
+- Added exact-import direct-source `@Bulkhead` declaration claims with required literal `name`, optional opaque literal `fallbackMethod`, stable overload-safe IDs, exact annotation anchors/token hashes, and fail-closed unresolved evidence.
+- Added adversarial mutation/deletion tests plus independent Maven/Gradle held-out fixtures and an offline qualification verifier/report. Runtime concurrency, queueing, isolation, fallback dispatch, configuration, proxy/AOP, calls, inheritance/composition, and external symbols remain deliberately unsupported.
+
+## Resilience4j TimeLimiter declaration adapter (2026-08-10)
+- Added exact-import direct-source class/method `@TimeLimiter` claims with required literal `name`, optional opaque literal `fallbackMethod`, stable overload-safe IDs, and exact annotation anchors/token hashes.
+- Added fail-closed adversarial coverage and an independent Maven/Gradle held-out fixture/offline qualification report. Timeout/cancellation, future/reactive, configuration, fallback dispatch, proxy/AOP, calls, inheritance/composition, and runtime semantics remain deliberately unsupported.
+
+
+## Resilience4j Retry declaration adapter (2026-08-10)
+- Added exact-import direct-source class/method `io.github.resilience4j.retry.annotation.Retry` claims with required literal `name`, optional opaque literal `fallbackMethod`, stable overload-safe IDs, exact annotation anchors/token hashes, freshness/reconciliation, adversarial tests, and Maven/Gradle held-out qualification.
+- Kept this namespace and deterministic declaration kind distinct from Spring Retry `Retryable`; no runtime retries/backoff, exception matching/configuration, fallback dispatch, proxy/AOP, calls, inheritance/composition, or external symbols are inferred.
+
+- Add a bounded Spring Security `@PreAuthorize` declaration adapter. Exact-import direct class/method annotations retain literal expression text opaquely; adversarial or dynamic forms fail closed and no authorization/runtime semantics are inferred.
+
+- Add a bounded Spring Security `@PostAuthorize` declaration adapter. Exact-import direct class/method annotations retain only literal expression text opaquely; dynamic or ambiguous forms fail closed and no authorization/runtime semantics are inferred.
+
+- Add a bounded Spring Security `@PreFilter` method declaration adapter. Exact-import direct methods retain literal `value` and optional literal `filterTarget` opaquely; invalid or ambiguous forms fail closed and no SpEL, filtering, authorization, or runtime semantics are inferred.
+
+- Add a bounded Spring Security `@PostFilter` method declaration adapter with exact-import/literal-only fail-closed handling, stable overload-safe identity, exact token anchors, held-out Maven/Gradle fixtures, and executable qualification evidence.
+
+## Spring Security Secured declaration adapter (2026-08-10)
+
+- Add a bounded `@Secured` declaration adapter with exact-import, literal-role-only fail-closed handling, overload-safe stable identity, exact token anchors, Maven/Gradle held-out fixtures, deletion reconciliation, and executable qualification evidence.
+
+## Jakarta/Javax RolesAllowed declaration adapter (2026-08-10)
+
+- Added bounded, namespace-auditable `@RolesAllowed` declaration metadata for direct exact imports from `jakarta.annotation.security` or `javax.annotation.security`, retaining only literal role strings with overload-safe IDs and exact annotation token anchors/hashes.
+- Added adversarial tests and Maven/Gradle held-out qualification. No authorization decision, role hierarchy, proxy/AOP, calls, inheritance/composition, or runtime enforcement is inferred.
+
+## 2026-08-10 — Java extractor structural consolidation
+
+- Removed 95 shadowed top-level definitions from `tmf/java_extract.py` (3,112 source lines). These were an accidentally duplicated earlier extractor block; Python executed only the later definitions, so removal preserves the effective implementation, claim schema, IDs, anchors, metadata, freshness, and reconciliation behavior.
+- Added an AST structural regression test that rejects duplicate top-level class/function names before another shadowed block can accumulate.
+- Qualification baseline after consolidation: 20/20 existing `tools/verify_java_*_qualification.py` programs passed; Java-targeted tests passed 204/204; full unittest passed 367/367 (the prior documented baseline was 366 before the new structural test); compileall and `git diff --check` passed.
+- Limitation: `tmf/java_extract.py` remains a large single-module registry/dispatch surface (4,649 lines after consolidation), and several annotation adapters still contain similar but not byte-identical parsing flows. They were not generalized in this pass because behavioral equivalence across their distinct fail-closed reason strings and accepted attributes was not proven. No new adapter or release was produced.

@@ -1,0 +1,29 @@
+{
+  "checks": {
+    "class_and_overload_safe_declarations": true,
+    "decoy_annotation_excluded": true,
+    "deletion_reconciliation": true,
+    "deterministic_repeat": true,
+    "dynamic_constant_placeholder_unresolved": true,
+    "exact_literal_metadata": true,
+    "import_ambiguity_excluded": true,
+    "independent_gradle_fixture": true,
+    "independent_maven_fixture": true,
+    "owner_token_hash_changes_on_annotation_mutation": true,
+    "precise_annotation_anchors": true,
+    "stable_ids_under_literal_mutation": true,
+    "token_hash_changes_on_literal_mutation": true
+  },
+  "checks_passed": 13,
+  "checks_total": 13,
+  "declarations": 3,
+  "format": "tmf.java-pre-authorize-qualification.v1",
+  "limitations": [
+    "Declaration-only: exact explicit Spring Security PreAuthorize imports and direct annotations are recognized.",
+    "Expression strings are retained as opaque literals; SpEL is never parsed or evaluated.",
+    "Constants, computed expressions, placeholders, wildcard/ambiguous imports, aliases, meta-annotations, and inheritance are unresolved or excluded.",
+    "No authorization outcome, security context, proxying, call graph, or runtime enforcement is inferred."
+  ],
+  "status": "PASS",
+  "unresolved": 5
+}

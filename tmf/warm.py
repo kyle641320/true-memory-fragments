@@ -26,6 +26,8 @@ EDGE_KINDS = {"calls", "reads", "writes", "inherits", "overrides", "uses_type", 
 
 
 def _claim_owner_path(claim: Claim) -> str | None:
+    if claim.scope == "api" and claim.body.get("api_binding_model") == "dual-v2":
+        return claim.body.get("route_source_path")
     edge_kind = claim.body.get("edge_kind")
     if edge_kind == "calls":
         return claim.body.get("caller_path")
@@ -453,6 +455,13 @@ def _dependent_force_derive_paths(store: Store, changed_paths: set[str], paths: 
     """
     force_derive: set[str] = set()
     for claim in store.iter_claims():
+        if claim.scope == "api" and claim.body.get("api_binding_model") == "dual-v2" and any(
+            binding.path in changed_paths for binding in claim.bindings
+        ):
+            owner = _claim_owner_path(claim)
+            if owner in paths:
+                force_derive.add(owner)
+            continue
         if claim.body.get("saga_dependency_paths") and any(
             binding.path in changed_paths for binding in claim.bindings[1:]
         ):

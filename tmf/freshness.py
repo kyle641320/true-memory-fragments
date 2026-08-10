@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .extract import extract_apis, extract_classes, extract_configs, extract_declarations, extract_functions
-from .java_extract import extract_java_classes, extract_java_fields, extract_java_methods
+from .java_extract import extract_java_classes, extract_java_fields, extract_java_methods, extract_java_functional_apis
 from .git import GitRepo
 from .schema import Claim
 
@@ -113,6 +113,23 @@ def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
         if binding.file_blob == current_blob:
             continue
         qualname = binding.qualname or (str(body_qualname) if body_qualname else None)
+        if claim.scope == "api" and claim.body.get("api_binding_model") == "dual-v2":
+            if binding.role == "route_declaration":
+                matches = [api for api in extract_java_functional_apis(repo, binding.path, repo.read_file(binding.path))
+                           if api.method == claim.body.get("method") and api.route_path == claim.body.get("route_path")
+                           and api.handler_node_id == claim.body.get("handler_node_id")]
+                if len(matches) != 1:
+                    stale.append(f"{binding.path}:{qualname}: route declaration missing")
+                elif binding.fn_hash != matches[0].route_hash:
+                    stale.append(f"{binding.path}:{qualname}: route_hash mismatch")
+                continue
+            if binding.role == "handler":
+                current_java_hash = _current_java_node_hash(repo, binding.path, qualname, "method")
+                if current_java_hash is None:
+                    stale.append(f"{binding.path}:{qualname}: handler missing")
+                elif binding.fn_hash != current_java_hash:
+                    stale.append(f"{binding.path}:{qualname}: handler_hash mismatch")
+                continue
         if claim.scope == "api":
             current_api_hash = _current_api_hash(
                 repo,
