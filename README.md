@@ -194,7 +194,7 @@ Trust notes for agents:
 
 ## Supported node types
 
-TMF 0.1.0rc2 supports a conservative subset:
+TMF 0.1.0rc3 supports a conservative subset:
 
 - **Python functions** — function claims bind to token-stream hashes. Comments and outer-scope boundary indentation are normalized; semantic tokens remain value-sensitive.
 - **Python declaration-read edges** — partial support for unambiguous `function -> module-level declaration` reads, using `body.edge_kind="reads"`. Same-file declarations and direct `from module import NAME` declarations are supported only when the name is not locally bound or shadowed. Reverse `read_by` coverage is partial.
@@ -247,10 +247,13 @@ Current unreleased worktree evidence:
 
 ```text
 python3 -m unittest discover -s tests -q
-# Ran 455 tests ... OK
+# Ran 477 tests ... OK
 
 python3 tools/run_java_qualifications.py
-# 41/41 qualifiers; 589/589 checks
+# 46/46 qualifiers; 731/731 checks (source analysis; build-file presence is not compilation)
+
+TMF_GRADLE=/root/.local/bin/gradle python3 tools/verify_java_gradle_integration.py
+# 7/7 current integration fixtures run clean build with real Gradle
 
 python3 tools/verify_java_source_only_smoke.py
 # source-only temporary export; no .git, uv.lock, generated state, caches, or reports
@@ -270,9 +273,20 @@ bash scripts/verify_java_offline.sh
 ```
 
 The Java aggregate is governed by `tools/java_qualification_manifest.json`; it is bounded,
-source-only qualification evidence, not runtime or enterprise-wide certification. This
-worktree baseline is unreleased and does not assert a commit, tag, package, or publication.
-The current full unittest baseline is **455/455 tests**.
+source-only qualification evidence, not runtime or enterprise-wide certification. In
+particular, its `gradle_heldout` checks validate fixture layout only and must never be
+reported as successful compilation. The separate opt-in
+`tools/verify_java_gradle_integration.py` gate invokes `gradle --no-daemon
+--max-workers=1 --console=plain clean build` for the manifest's bounded
+`gradle_integration_verifiers` set. It is intentionally excluded from every unit run to
+avoid network downloads and slow daemon startup. The current set covers the bounded
+`autowired`, `resource`, `inject`, `singleton`, `named`, `post_construct`, and
+`pre_destroy` fixtures. Missing dependencies in
+older historical Gradle fixtures remain explicit technical debt rather than being
+silently broadened into this gate.
+
+This worktree baseline is unreleased and does not assert a commit, tag, package, or publication.
+The current full unittest baseline is **477/477 tests**.
 
 Reproduce locally with:
 
@@ -287,7 +301,7 @@ tmf validate --repo . --self
 - Store directory: `.tmf/`
 - Ignore file: `.tmfignore`
 
-Both names are part of the 0.1.0rc2 public surface.
+Both names are part of the 0.1.0rc3 public surface.
 
 ## Window 4 robustness boundary status
 
@@ -320,6 +334,8 @@ Offline check: `python tools/verify_java_semantic_facts.py REPO FACTS_DIR path/t
 Exact explicit imports now expose declaration metadata for `@Profile`, `@Conditional*`, `@Scope`, `@Lazy`, `@DependsOn`, `@Primary`, and `@Transactional`. Only literal strings, booleans, and transaction enums are retained. These facts do **not** claim profile/condition activation, bean instantiation, lifecycle order, transaction interception, inheritance, or proxy behavior. SpEL/dynamic values, composed/meta annotations, classpath conditions, and unsupported transaction attributes remain explicitly unresolved. `@Primary` affects exact-type source-bean injection only when exactly one candidate is primary; literal qualifier precedence is unchanged and ambiguity fails closed.
 
 The same bounded declaration family includes direct exact-import bean/stereotype, MVC declaration, and lifecycle qualifiers. The manifest-key-to-capability matrix and common compatibility limits are in `docs/JAVA_SPRING_DECLARATION_COMPAT.md`; focused composed-web-stereotype limits are in `docs/JAVA_REST_CONTROLLER_COMPATIBILITY.md` and `docs/JAVA_REST_CONTROLLER_ADVICE_COMPATIBILITY.md`. All are source evidence only, not component scanning, dispatch, serialization, lifecycle, binding, or runtime certification.
+
+This family also includes metadata-free direct Spring `@Autowired` presence on constructors, methods, and single-declarator fields; metadata-free direct `jakarta.annotation.Resource` presence on classes, methods, and single-declarator fields; direct `jakarta.inject.Inject` presence on constructors, methods, and single-declarator fields; direct `jakarta.inject.Singleton` presence on classes; and metadata-free `jakarta.inject.Named` presence on classes, methods, and single-declarator fields. `Autowired` requires the exact `org.springframework.beans.factory.annotation.Autowired` import and deliberately rejects `required` metadata. For `Named`, metadata-free presence is legal because `value` defaults to the empty string, but TMF deliberately infers neither an explicit nor a default-derived name. Exact explicit imports and stable source-owner identity are mandatory; `javax`, unsupported metadata, ambiguous/multi-declarator fields, local/anonymous owners, decoys, unsupported targets, composition, and runtime injection/lookup/naming/scope semantics fail closed.
 
 ### Spring Data repository declarations
 TMF conservatively records source-proven repository interface generic bindings and declared methods for exact explicit Spring Data imports. Exact `@Query` literal values are opaque JPQL/native declaration metadata only; TMF does not infer SQL execution, tables, columns, or reads/writes, and derived method names are not semantically parsed.

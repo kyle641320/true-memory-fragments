@@ -128,9 +128,9 @@ class JavaQualificationRunnerTest(unittest.TestCase):
         self.assertEqual(manifest["output_contract"], runner.OUTPUT_CONTRACT)
         self.assertEqual(manifest["verifier_timeout_seconds"], runner.VERIFIER_TIMEOUT_SECONDS)
         self.assertEqual(manifest["release_status"], "unreleased")
-        self.assertEqual(manifest["expected_count"], 41)
-        self.assertEqual(manifest["expected_checks"], 589)
-        self.assertEqual(manifest["full_unittest_count"], 455)
+        self.assertEqual(manifest["expected_count"], 46)
+        self.assertEqual(manifest["expected_checks"], 731)
+        self.assertEqual(manifest["full_unittest_count"], 477)
         root = runner.ROOT
         qualifier_baseline = (
             f'{manifest["expected_count"]}/{manifest["expected_count"]} qualifiers'

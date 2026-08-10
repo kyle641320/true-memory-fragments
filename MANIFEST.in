@@ -1,0 +1,24 @@
+include CHANGES.md
+include RELEASE_*.md
+include RELEASE_MANIFEST.txt
+recursive-include config *.json
+recursive-include docs *.md
+recursive-include fixtures *.java *.json *.xml *.gradle
+recursive-include scripts *.py *.sh
+recursive-include tests *.py
+recursive-include tools *.py *.json
+recursive-include vendor/wheels *.whl
+
+global-exclude uv.lock
+global-exclude *.py[cod]
+global-exclude *.egg-info
+prune .git
+prune .gradle
+prune .pytest_cache
+prune .tmf
+prune .ts-venv
+prune .venv
+prune build
+prune dist
+prune reports
+prune target

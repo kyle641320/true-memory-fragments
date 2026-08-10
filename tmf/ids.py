@@ -268,6 +268,26 @@ def stable_post_construct_declaration_claim_id(owner_id: str) -> str:
     digest=hashlib.sha256(f"post_construct_declaration\0{owner_id}".encode()).hexdigest()[:16]
     return f"claim_post_construct_decl_{digest}"
 
+def stable_autowired_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"autowired_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_autowired_decl_{digest}"
+
+def stable_resource_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"resource_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_resource_decl_{digest}"
+
+def stable_singleton_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"singleton_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_singleton_decl_{digest}"
+
+def stable_inject_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"inject_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_inject_decl_{digest}"
+
+def stable_named_declaration_claim_id(owner_id: str) -> str:
+    digest=hashlib.sha256(f"named_declaration\0{owner_id}".encode()).hexdigest()[:16]
+    return f"claim_named_decl_{digest}"
+
 def stable_pre_destroy_declaration_claim_id(owner_id: str) -> str:
     digest=hashlib.sha256(f"pre_destroy_declaration\0{owner_id}".encode()).hexdigest()[:16]
     return f"claim_pre_destroy_decl_{digest}"

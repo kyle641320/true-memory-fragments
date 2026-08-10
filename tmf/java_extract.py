@@ -635,6 +635,96 @@ class JavaUnresolvedPostConstructDeclaration:
     reason: str
 
 @dataclass(frozen=True)
+class JavaAutowiredDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "spring-autowired-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedAutowiredDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaResourceDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "jakarta-annotation-resource-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedResourceDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaSingletonDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "jakarta-inject-singleton-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedSingletonDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaInjectDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "jakarta-inject-inject-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedInjectDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
+class JavaNamedDeclaration:
+    owner_id: str
+    owner_qualname: str
+    owner_kind: str
+    path: str
+    line_start: int
+    line_end: int
+    annotation_hash: str
+    owner_hash: str
+    resolution: str = "jakarta-inject-named-exact-import-presence"
+
+@dataclass(frozen=True)
+class JavaUnresolvedNamedDeclaration:
+    owner_id: str
+    expr: str
+    reason: str
+
+@dataclass(frozen=True)
 class JavaPreDestroyDeclaration:
     owner_id: str
     owner_qualname: str
@@ -1188,6 +1278,7 @@ def _resolve_java_presence_declarations(
     source: str,
     classes: list[ClassNode],
     methods: list[ClassNode],
+    fields: list[DeclarationNode] | None = None,
     *,
     annotation: str,
     expected_fqn: str,
@@ -1196,6 +1287,8 @@ def _resolve_java_presence_declarations(
     unresolved_type: type,
     reason_prefix: str,
     allow_nested_method_owner: bool = False,
+    reject_static_owner: bool = False,
+    reject_anonymous_owner: bool = False,
 ) -> tuple[list[Any], dict[str, list[Any]]]:
     """Shared fail-closed resolver for direct, metadata-free annotation presence."""
     if f"@{annotation}" not in source:
@@ -1205,15 +1298,16 @@ def _resolve_java_presence_declarations(
     data = source.encode()
     tree = parser.parse(data)
     candidates: dict[tuple[str, str], list[ClassNode]] = {}
-    for item in [*classes, *methods]:
-        candidates.setdefault((item.qualname, item.node_kind), []).append(item)
+    for item in [*classes, *methods, *(fields or [])]:
+        kind = item.declaration_kind if isinstance(item, DeclarationNode) else item.node_kind
+        candidates.setdefault((item.qualname, kind), []).append(item)
     found: list[Any] = []
     unresolved: dict[str, list[Any]] = {}
 
     def reject(owner: str, ann: Any, reason: str) -> None:
         unresolved.setdefault(owner, []).append(unresolved_type(owner, _node_text(data, ann), reason))
 
-    def walk(node: Any, stack: list[str], in_method: bool = False) -> None:
+    def walk(node: Any, stack: list[str], in_method: bool = False, in_anonymous_class: bool = False) -> None:
         next_stack = stack
         qualname = None
         kind = None
@@ -1222,15 +1316,29 @@ def _resolve_java_presence_declarations(
             next_stack = [*stack, name] if name else stack
             qualname = ".".join(next_stack)
             kind = "interface" if node.type == "interface_declaration" else ("record" if node.type == "record_declaration" else "class")
-        elif node.type == "method_declaration":
+        elif node.type in {"method_declaration", "constructor_declaration"}:
             qualname = _method_qualname(data, node, stack)
-            kind = "method"
-        if qualname and kind in owner_kinds and not in_method or (qualname and kind == "method" and kind in owner_kinds and allow_nested_method_owner):
+            kind = "method" if node.type == "method_declaration" else "constructor"
+        elif node.type in {"field_declaration", "constant_declaration"}:
+            field_qualnames = _field_qualnames(data, node, stack)
+            if len(field_qualnames) == 1:
+                qualname = field_qualnames[0]
+                simple = qualname.rsplit(".", 1)[-1]
+                kind = "constant" if node.type == "constant_declaration" or simple in set(_constants_from_field_declaration(data, node)) else "field"
+            elif any(_java_annotation_name(data, ann) == annotation for ann in _java_annotations(node)):
+                for ann in _java_annotations(node):
+                    if _java_annotation_name(data, ann) == annotation:
+                        reject(f"unresolved:{path}:{'.'.join(stack)}:field", ann, f"{reason_prefix}_multi_declarator_owner_unsupported")
+        anonymous_owner_unsupported = reject_anonymous_owner and in_anonymous_class
+        if qualname and kind in owner_kinds and not in_method and not anonymous_owner_unsupported or (qualname and kind == "method" and kind in owner_kinds and allow_nested_method_owner and not anonymous_owner_unsupported):
             annotations = [ann for ann in _java_annotations(node) if _java_annotation_name(data, ann) == annotation]
             pool = candidates.get((qualname, kind), [])
             if len(pool) > 1:
                 node_hash = java_hash_for_node(source, node)
-                pool = [item for item in pool if item.class_hash == node_hash]
+                pool = [
+                    item for item in pool
+                    if (item.declaration_hash if isinstance(item, DeclarationNode) else item.class_hash) == node_hash
+                ]
             owner = java_node_id(pool[0]) if len(pool) == 1 else f"unresolved:{path}:{qualname}:{kind}"
             for ann in annotations:
                 if not exact:
@@ -1239,13 +1347,22 @@ def _resolve_java_presence_declarations(
                     reject(owner, ann, f"{reason_prefix}_duplicate_annotation")
                 elif len(pool) != 1:
                     reject(owner, ann, f"{reason_prefix}_owner_ambiguous")
+                elif reject_static_owner and any(
+                    child.type == "static"
+                    for modifiers in _named_children(node)
+                    if modifiers.type == "modifiers"
+                    for child in modifiers.children
+                ):
+                    reject(owner, ann, f"{reason_prefix}_static_owner_unsupported")
                 elif _java_annotation_args(ann):
                     reject(owner, ann, f"{reason_prefix}_metadata_unsupported")
                 else:
-                    found.append(declaration_type(owner, qualname, kind, path, _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), pool[0].class_hash))
+                    owner_hash = pool[0].declaration_hash if isinstance(pool[0], DeclarationNode) else pool[0].class_hash
+                    found.append(declaration_type(owner, qualname, kind, path, _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), owner_hash))
         nested_method = in_method or node.type in {"method_declaration", "constructor_declaration"}
+        nested_anonymous_class = in_anonymous_class or node.type == "object_creation_expression"
         for child in _named_children(node):
-            walk(child, next_stack, nested_method)
+            walk(child, next_stack, nested_method, nested_anonymous_class)
 
     walk(tree.root_node, [])
     return sorted(found, key=lambda item: item.owner_id), unresolved
@@ -1313,6 +1430,21 @@ def resolve_java_lazy_declarations(path: str, source: str, classes: list[ClassNo
 
 def resolve_java_post_construct_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaPostConstructDeclaration], dict[str, list[JavaUnresolvedPostConstructDeclaration]]]:
     return _resolve_java_presence_declarations(path, source, [], methods, annotation="PostConstruct", expected_fqn="jakarta.annotation.PostConstruct", owner_kinds=frozenset({"method"}), declaration_type=JavaPostConstructDeclaration, unresolved_type=JavaUnresolvedPostConstructDeclaration, reason_prefix="post_construct")
+
+def resolve_java_autowired_declarations(path: str, source: str, methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaAutowiredDeclaration], dict[str, list[JavaUnresolvedAutowiredDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, fields, annotation="Autowired", expected_fqn="org.springframework.beans.factory.annotation.Autowired", owner_kinds=frozenset({"constructor", "method", "field"}), declaration_type=JavaAutowiredDeclaration, unresolved_type=JavaUnresolvedAutowiredDeclaration, reason_prefix="autowired", reject_static_owner=True, reject_anonymous_owner=True)
+
+def resolve_java_resource_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaResourceDeclaration], dict[str, list[JavaUnresolvedResourceDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, fields, annotation="Resource", expected_fqn="jakarta.annotation.Resource", owner_kinds=frozenset({"class", "method", "field"}), declaration_type=JavaResourceDeclaration, unresolved_type=JavaUnresolvedResourceDeclaration, reason_prefix="resource", reject_static_owner=True, reject_anonymous_owner=True)
+
+def resolve_java_singleton_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaSingletonDeclaration], dict[str, list[JavaUnresolvedSingletonDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Singleton", expected_fqn="jakarta.inject.Singleton", owner_kinds=frozenset({"class"}), declaration_type=JavaSingletonDeclaration, unresolved_type=JavaUnresolvedSingletonDeclaration, reason_prefix="singleton")
+
+def resolve_java_inject_declarations(path: str, source: str, methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaInjectDeclaration], dict[str, list[JavaUnresolvedInjectDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, [], methods, fields, annotation="Inject", expected_fqn="jakarta.inject.Inject", owner_kinds=frozenset({"constructor", "method", "field"}), declaration_type=JavaInjectDeclaration, unresolved_type=JavaUnresolvedInjectDeclaration, reason_prefix="inject", reject_static_owner=True, reject_anonymous_owner=True)
+
+def resolve_java_named_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaNamedDeclaration], dict[str, list[JavaUnresolvedNamedDeclaration]]]:
+    return _resolve_java_presence_declarations(path, source, classes, methods, fields, annotation="Named", expected_fqn="jakarta.inject.Named", owner_kinds=frozenset({"class", "method", "field"}), declaration_type=JavaNamedDeclaration, unresolved_type=JavaUnresolvedNamedDeclaration, reason_prefix="named", reject_anonymous_owner=True)
 
 def resolve_java_pre_destroy_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaPreDestroyDeclaration], dict[str, list[JavaUnresolvedPreDestroyDeclaration]]]:
     return _resolve_java_presence_declarations(path, source, [], methods, annotation="PreDestroy", expected_fqn="jakarta.annotation.PreDestroy", owner_kinds=frozenset({"method"}), declaration_type=JavaPreDestroyDeclaration, unresolved_type=JavaUnresolvedPreDestroyDeclaration, reason_prefix="pre_destroy")

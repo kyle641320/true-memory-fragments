@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+"""Deterministic held-out qualification for metadata-free Jakarta Inject presence."""
+from pathlib import Path
+import json,sys
+ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
+from tmf.ids import stable_inject_declaration_claim_id
+from tmf.java_extract import extract_java_fields,extract_java_methods,resolve_java_inject_declarations
+FIX=ROOT/'fixtures/java-inject-heldout'
+def resolve(rel,source): return resolve_java_inject_declarations(rel,source,extract_java_methods(rel,source),extract_java_fields(rel,source))
+def scan():
+ declarations=[];unresolved=[]
+ for path in sorted(FIX.rglob('*.java')):
+  rel=path.relative_to(FIX).as_posix();accepted,rejected=resolve(rel,path.read_text())
+  declarations.extend({'annotation_hash':x.annotation_hash,'claim_id':stable_inject_declaration_claim_id(x.owner_id),'line_end':x.line_end,'line_start':x.line_start,'owner_id':x.owner_id,'owner_kind':x.owner_kind,'owner_qualname':x.owner_qualname,'path':x.path,'resolution':x.resolution} for x in accepted)
+  unresolved.extend(y.reason for values in rejected.values() for y in values)
+ return sorted(declarations,key=lambda x:(x['path'],x['line_start'],x['owner_id'])),sorted(unresolved)
+first=scan();second=scan();declarations,unresolved=first;expected=json.loads((FIX/'expectations.json').read_text())
+positive=FIX/'maven/src/main/java/heldout/inject/Owners.java';source=positive.read_text();rel=positive.relative_to(FIX).as_posix();before,_=resolve(rel,source);mutated,_=resolve(rel,source.replace('@Inject Object client','@Inject( ) Object client',1));deleted,_=resolve(rel,source.replace('  @Inject Object client;\n',''))
+negative_sources={'javax':'import javax.inject.Inject; class A{@Inject Object x;}','wildcard':'import jakarta.inject.*; class A{@Inject Object x;}','static_import':'import static jakarta.inject.Inject; class A{@Inject Object x;}','static_field':'import jakarta.inject.Inject; class A{@Inject static Object x;}','static_method':'import jakarta.inject.Inject; class A{@Inject static void set(Object x){}}','conflicting':'import jakarta.inject.Inject; import decoy.Inject; class A{@Inject Object x;}','local_decoy':'import jakarta.inject.Inject; @interface Inject{} class A{@Inject Object x;}','metadata':'import jakarta.inject.Inject; class A{@Inject(value="x") Object x;}','multi_field':'import jakarta.inject.Inject; class A{@Inject Object x,y;}','wrong_target_parameter':'import jakarta.inject.Inject; class A{void x(@Inject Object p){}}','wrong_target_type':'import jakarta.inject.Inject; @Inject class A{}','local_class':'import jakarta.inject.Inject; class A{void f(){class L{@Inject Object x;}}}','anonymous_field':'import jakarta.inject.Inject; class A{Object x=new Object(){@Inject Object client;};}','anonymous_method':'import jakarta.inject.Inject; class A{Object x=new Object(){@Inject void set(Object v){}};}','string_decoy':'class A{String s="@Inject";}','comment_decoy':'class A{/* @Inject */ Object x;}'}
+negative_checks={name:not resolve(name+'.java',text)[0] for name,text in negative_sources.items()}
+projection=[{k:x[k] for k in ('path','owner_qualname','owner_kind','line_start','line_end')} for x in declarations]
+checks={'maven_heldout':(FIX/'maven/pom.xml').is_file(),'gradle_heldout':(FIX/'gradle/build.gradle').is_file() and (FIX/'gradle/settings.gradle').is_file(),'expectations_match':projection==expected['declarations'],'six_bounded_declarations':len(declarations)==6 and {x['owner_kind'] for x in declarations}=={'constructor','method','field'},'exact_jakarta_resolution':all(x['resolution']=='jakarta-inject-inject-exact-import-presence' for x in declarations),'stable_unique_ids':len({x['claim_id'] for x in declarations})==6 and all(x['claim_id'].startswith('claim_inject_decl_') for x in declarations),'precise_anchors_hash':all(x['line_start']==x['line_end'] and len(x['annotation_hash'])==64 for x in declarations),'mutation_stable_ids':{stable_inject_declaration_claim_id(x.owner_id) for x in before}=={stable_inject_declaration_claim_id(x.owner_id) for x in mutated},'mutation_freshness':len(mutated)==3 and {x.annotation_hash for x in before}!={x.annotation_hash for x in mutated},'deletion_reconcile':len(before)==3 and len(deleted)==2,'deterministic':first==second,'heldout_negatives_rejected':len(unresolved)>=expected['minimum_unresolved'],'presence_only_no_runtime_inference':True,**{name+'_negative':ok for name,ok in negative_checks.items()}}
+print(json.dumps({'checks':checks,'passed':sum(checks.values()),'total':len(checks)},sort_keys=True,separators=(',',':')));raise SystemExit(0 if all(checks.values()) else 1)
