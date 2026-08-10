@@ -27,7 +27,7 @@ tagged, uploaded to PyPI, or published as a GitHub Release.
 
 - Aggregate Java qualifications: 46/46 verifiers and 731/731 checks.
 - Real Gradle integration: 7/7 clean builds.
-- Full Python suite: 477 tests under `-Werror`.
+- Full Python suite: 478 tests under `-Werror`.
 - Source-only smoke: required source inputs exported without VCS/generated
   state, with qualifications, focused tests, and compileall passing (685 files
   in the audited local worktree; ignored caches are not part of the contract).

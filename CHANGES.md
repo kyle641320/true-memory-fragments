@@ -1,5 +1,11 @@
 # TMF Changes
 
+## Stale lexical read-through revalidation (2026-08-10)
+
+- An old lexical match may trigger source re-derivation, but it can no longer
+  transfer that match to unrelated current-file claims. Re-derived claims are
+  re-scored against the original query before they enter retrieval results.
+
 ## Versioned dual-binding API relationships + WebFlux functional routes (2026-08-09)
 
 - Advanced serialization to `tmf.schema.v2`; readers continue to accept v0/v1. Binding roles, anchors, and hash kinds are optional; absent fields retain legacy semantics.
@@ -1543,7 +1549,7 @@ Compatibility matrix: v0/v1 claims read unchanged; new ordinary/annotated Python
 - Added a bounded metadata-free `jakarta.inject.Named` presence adapter for direct classes, methods, and single-declarator fields. This subset is legal because `Named.value` has an empty-string default; explicit values are deliberately unresolved, and no explicit/default-derived name, injection, discovery, scope, container, or runtime behavior is inferred.
 - Added a manifest-governed aggregate gate covering **46/46 qualifiers and 731/731 checks**; every verifier owns independent Maven/Gradle source evidence unless an auditable manifest exception is declared.
 - Newly accumulated declaration qualifiers are explicitly traceable by manifest key: `autowired`, `bean`, `component`, `configuration`, `configuration_properties`, `controller`, `cross_origin`, `init_binder`, `inject`, `lazy`, `model_attribute`, `named`, `post_construct`, `pre_destroy`, `primary`, `repository_stereotype`, `resource`, `response_body`, `response_status`, `rest_controller_advice`, `rest_controller`, `scope`, `service`, `session_attributes`, and `singleton`. Their shared fail-closed compatibility boundary is documented in `docs/JAVA_SPRING_DECLARATION_COMPAT.md`; the two composed web stereotypes also retain focused compatibility documents.
-- Current full unittest baseline is **477/477 tests**. Compileall, `git diff --check`, and the index-free `python3 tools/verify_java_source_only_smoke.py` export gate pass. Aggregate verifier output is one strict JSON object; default output excludes nondeterministic durations and `--timings` is diagnostic-only.
+- Current full unittest baseline is **478/478 tests**. Compileall, `git diff --check`, and the index-free `python3 tools/verify_java_source_only_smoke.py` export gate pass. Aggregate verifier output is one strict JSON object; default output excludes nondeterministic durations and `--timings` is diagnostic-only.
 - The real-build integration baseline is **7/7 Gradle fixtures**: the prior Autowired/Resource/Inject/Singleton/Named set plus exact-import Jakarta `PostConstruct` and `PreDestroy`. Both lifecycle heldouts also pass `mvn clean verify`; no lifecycle invocation, ordering, container management, or runtime behavior is inferred.
 - README, release evidence, and this change record now identify the state as unreleased and make no commit, tag, package, publication, runtime, or enterprise-wide certification claim.
 - `tests/test_run_java_qualifications.py` binds the documentation baseline to `tools/java_qualification_manifest.json`, so qualifier/check/test counts and unreleased status cannot drift silently.

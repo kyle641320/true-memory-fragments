@@ -42,7 +42,7 @@ jobs:
         run: python tools/verify_java_gradle_integration.py
 
   python-suite:
-    name: Python -Werror suite (477 tests)
+    name: Python -Werror suite (478 tests)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           python -Werror -m unittest discover -s tests -v 2>&1 | tee /tmp/tmf-unittest.log
-          grep -Eq '^Ran 477 tests in ' /tmp/tmf-unittest.log
+          grep -Eq '^Ran 478 tests in ' /tmp/tmf-unittest.log
           grep -Fxq 'OK' /tmp/tmf-unittest.log
       - name: Compile Python sources
         run: python -m compileall -q tmf tests scripts tools

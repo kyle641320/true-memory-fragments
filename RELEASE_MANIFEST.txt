@@ -22,7 +22,7 @@ Verification evidence
 - python3 tools/run_java_qualifications.py: PASS; 46/46 qualifiers, 731/731 checks, empty stderr.
 - python3 tools/verify_java_gradle_integration.py: PASS with Gradle on PATH (or set TMF_GRADLE explicitly); 7/7 real Gradle clean builds.
 - fixtures/java-post-construct-heldout and fixtures/java-pre-destroy-heldout: both `mvn clean verify` and real Gradle clean build PASS.
-- python3 -Werror -m unittest discover -s tests -v: 477 tests OK.
+- python3 -Werror -m unittest discover -s tests -v: 478 tests OK.
 - python3 -m compileall -q tmf tests scripts tools: PASS.
 - git diff --check: PASS.
 

@@ -92,6 +92,22 @@ class TmfV0Tests(unittest.TestCase):
             self.assertTrue(data["claims"][0]["fresh"])
             self.assertTrue(data["claims"][0]["fresh"])
 
+    def test_retrieve_text_does_not_return_unrelated_current_claims_for_stale_old_match(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td))
+            (repo / "app.py").write_text("def obsolete_widget():\n    return 1\n", encoding="utf-8")
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+
+            # The old cached claims match the query, but the current source no
+            # longer does. Re-derivation may refresh the file; it must not let
+            # that stale match smuggle unrelated current claims into results.
+            (repo / "app.py").write_text("def current_service():\n    return 2\n", encoding="utf-8")
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "obsolete_widget", "--repo", str(repo)], ROOT)
+            data = json.loads(proc.stdout)
+
+            self.assertEqual(data["claims"], [])
+            self.assertNotIn("current_service", json.dumps(data["claims"]))
+
     def test_summary_does_not_store_source_lines(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))

@@ -247,7 +247,7 @@ Current unreleased worktree evidence:
 
 ```text
 python3 -m unittest discover -s tests -q
-# Ran 477 tests ... OK
+# Ran 478 tests ... OK
 
 python3 tools/run_java_qualifications.py
 # 46/46 qualifiers; 731/731 checks (source analysis; build-file presence is not compilation)
@@ -286,7 +286,7 @@ older historical Gradle fixtures remain explicit technical debt rather than bein
 silently broadened into this gate.
 
 This worktree baseline is unreleased and does not assert a commit, tag, package, or publication.
-The current full unittest baseline is **477/477 tests**.
+The current full unittest baseline is **478/478 tests**.
 
 Reproduce locally with:
 

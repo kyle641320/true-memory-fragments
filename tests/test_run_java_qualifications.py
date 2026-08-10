@@ -130,7 +130,7 @@ class JavaQualificationRunnerTest(unittest.TestCase):
         self.assertEqual(manifest["release_status"], "unreleased")
         self.assertEqual(manifest["expected_count"], 46)
         self.assertEqual(manifest["expected_checks"], 731)
-        self.assertEqual(manifest["full_unittest_count"], 477)
+        self.assertEqual(manifest["full_unittest_count"], 478)
         root = runner.ROOT
         qualifier_baseline = (
             f'{manifest["expected_count"]}/{manifest["expected_count"]} qualifiers'

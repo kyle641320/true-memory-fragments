@@ -86,10 +86,14 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
     repo = GitRepo(repo_root)
     store = Store(repo.root)
     terms = {t.lower() for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query)}
+
+    def lexical_score(claim: Claim) -> int:
+        hay = " ".join([claim.claim, str(claim.body.get("keywords", [])), claim.bindings[0].path if claim.bindings else ""]).lower()
+        return sum(1 for term in terms if term in hay)
+
     scored: list[tuple[int, Claim]] = []
     for claim in store.iter_claims():
-        hay = " ".join([claim.claim, str(claim.body.get("keywords", [])), claim.bindings[0].path if claim.bindings else ""]).lower()
-        score = sum(1 for term in terms if term in hay)
+        score = lexical_score(claim)
         if score:
             scored.append((score, claim))
     scored.sort(key=lambda item: item[0], reverse=True)
@@ -107,6 +111,14 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
                 with store.write_lock():
                     current_claims = derive_claims_for_path(repo, path, use_model=use_model)
                     _replace_path_claims(store, path, current_claims)
+                # A stale lexical hit is only permission to re-read its source.
+                # It must not confer the old claim's match onto unrelated facts
+                # derived from the current file. Re-score against current memory.
+                current_claims = sorted(
+                    (current for current in current_claims if lexical_score(current)),
+                    key=lexical_score,
+                    reverse=True,
+                )
         for current in current_claims:
             if current.id not in seen_ids:
                 seen_ids.add(current.id)

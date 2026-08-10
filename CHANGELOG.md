@@ -16,7 +16,7 @@
 
 ### Release status
 
-- The warning-clean full suite baseline is 477 tests; the source-only gate
+- The warning-clean full suite baseline is 478 tests; the source-only gate
   exports its declared required inputs without VCS/generated state; all 46
   qualifiers, 731 checks, and seven real Gradle builds pass locally.
 - `0.1.0rc3` is **UNRELEASED**. No tag, GitHub Release, or PyPI publication is

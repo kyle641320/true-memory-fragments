@@ -65,7 +65,7 @@ python3 tools/verify_java_gradle_integration.py  # Gradle on PATH; TMF_GRADLE is
 # PASS: 7/7 real Gradle clean builds; stderr empty
 
 python3 -Werror -m unittest discover -s tests -v
-# PASS: Ran 477 tests in 51.071s; OK
+# PASS: Ran 478 tests in 51.071s; OK
 
 python3 tools/verify_java_source_only_smoke.py
 # PASS: 685 files in this audited worktree; required-input export, 46/46 qualifiers, 731/731 checks, focused tests, and compileall passed
