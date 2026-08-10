@@ -68,7 +68,7 @@ python3 -Werror -m unittest discover -s tests -v
 # PASS: Ran 477 tests in 51.071s; OK
 
 python3 tools/verify_java_source_only_smoke.py
-# PASS: 685 exported files; 46/46 qualifiers; 731/731 checks; focused tests and compileall passed
+# PASS: 685 files in this audited worktree; required-input export, 46/46 qualifiers, 731/731 checks, focused tests, and compileall passed
 
 python3 -m compileall -q tmf tests scripts tools
 # PASS

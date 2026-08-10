@@ -16,9 +16,9 @@
 
 ### Release status
 
-- The warning-clean full suite baseline is 477 tests; the source-only export
-  baseline is 685 files; all 46 qualifiers, 731 checks, and seven real Gradle
-  builds pass locally.
+- The warning-clean full suite baseline is 477 tests; the source-only gate
+  exports its declared required inputs without VCS/generated state; all 46
+  qualifiers, 731 checks, and seven real Gradle builds pass locally.
 - `0.1.0rc3` is **UNRELEASED**. No tag, GitHub Release, or PyPI publication is
   claimed.
 - Java/Spring evidence remains bounded source analysis, not compiler,
