@@ -116,7 +116,7 @@ jobs:
           echo "PREFLIGHT_ROOT=$PREFLIGHT_ROOT" >> "$GITHUB_ENV"
           mkdir "$PREFLIGHT_ROOT/source" "$PREFLIGHT_ROOT/dist"
           git archive --format=tar HEAD | tar -xf - -C "$PREFLIGHT_ROOT/source"
-          python -m build --isolated --outdir "$PREFLIGHT_ROOT/dist" "$PREFLIGHT_ROOT/source"
+          python -m build --outdir "$PREFLIGHT_ROOT/dist" "$PREFLIGHT_ROOT/source"
 
       - name: Inspect archive metadata, contents, and exclusions
         shell: bash
