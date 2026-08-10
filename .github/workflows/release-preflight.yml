@@ -18,6 +18,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install package with Java parser support
+        run: python -m pip install -e ".[java]"
       - name: Run aggregate qualification gate
         run: python tools/run_java_qualifications.py
 
@@ -67,6 +69,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install package with Java parser support
+        run: python -m pip install -e ".[java]"
       - name: Verify an index-free source export
         shell: bash
         run: |
