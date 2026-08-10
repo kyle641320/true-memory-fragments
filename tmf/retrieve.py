@@ -152,7 +152,10 @@ def _claim_embedding_text(claim: Claim) -> str:
 
 
 def _add_router_seeds(repo: GitRepo, store: Store, query: str, claims: list[Claim], seen_ids: set[str], limit: int) -> None:
-    candidates = [claim for claim in store.iter_claims() if claim.id not in seen_ids and check_freshness(repo, claim).fresh]
+    candidates = [
+        claim for claim in store.iter_claims()
+        if claim.id not in seen_ids and not _is_unverified_foreign(claim) and check_freshness(repo, claim).fresh
+    ]
     by_id = {claim.id: claim for claim in candidates}
     for claim_id in route_claim_ids(query, candidates, limit - len(claims)):
         claim = by_id.get(claim_id)
@@ -165,7 +168,10 @@ def _add_router_seeds(repo: GitRepo, store: Store, query: str, claims: list[Clai
 
 
 def _add_embedding_seed_expansion(repo: GitRepo, store: Store, query: str, claims: list[Claim], seen_ids: set[str], limit: int) -> None:
-    candidates = [claim for claim in store.iter_claims() if claim.id not in seen_ids and check_freshness(repo, claim).fresh]
+    candidates = [
+        claim for claim in store.iter_claims()
+        if claim.id not in seen_ids and not _is_unverified_foreign(claim) and check_freshness(repo, claim).fresh
+    ]
     ranked = rank_by_embedding(query, [_claim_embedding_text(claim) for claim in candidates], max(limit * 2, limit))
     for item in ranked:
         seed = candidates[item.index]
