@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.1.0rc3 - UNRELEASED bounded Java/Spring handoff
+
+### Added
+
+- Conservative Java project, type, declaration, relationship, and bounded
+  Spring source-analysis adapters, backed by 46 independent held-out corpora
+  and 731 manifest-governed checks.
+- Seven-fixture real Gradle integration and an index-free source-only smoke
+  gate.
+- Optional pinned `java` parser dependencies and vendored Linux wheels for
+  offline verification.
+- GitHub Actions release preflight covering all critical local release gates,
+  isolated artifact construction and inspection, and installed-wheel smoke.
+
+### Release status
+
+- The warning-clean full suite baseline is 477 tests; the source-only export
+  baseline is 685 files; all 46 qualifiers, 731 checks, and seven real Gradle
+  builds pass locally.
+- `0.1.0rc3` is **UNRELEASED**. No tag, GitHub Release, or PyPI publication is
+  claimed.
+- Java/Spring evidence remains bounded source analysis, not compiler,
+  classpath, framework-runtime, or enterprise-ready certification.
+
 ## 0.1.0rc2 - cross-repository release candidate
 
 ### Added

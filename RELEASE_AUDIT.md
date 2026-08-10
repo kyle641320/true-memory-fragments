@@ -4,9 +4,9 @@ Audit date: 2026-08-10 (Asia/Shanghai)
 
 ## Verdict
 
-- **Version blocker: RESOLVED.** The current package/public-surface version is consistently `0.1.0rc3` in `pyproject.toml`, `tmf/__init__.py`, the current-support README text, and the manual publish workflow default. The published `0.1.0rc2` release notes and changelog remain historical and unchanged.
+- **Version blocker: RESOLVED.** The current package/public-surface version is consistently `0.1.0rc3` in `pyproject.toml`, `tmf/__init__.py`, the current-support README text, and the manual publish workflow default. The published `0.1.0rc2` release notes and changelog remain preserved as historical sections.
 - **Packaging and verification preflight: PASS.** The bounded Java/Spring handoff builds as an rc3 sdist and wheel; archive metadata, dependencies, contents/exclusions, installed-wheel behavior, and all requested verification baselines pass.
-- **Publication: NOT AUTHORIZED.** `0.1.0rc3` is **UNRELEASED**. This worktree remains dirty, uncommitted, untagged, and not uploaded or released. Publication still requires explicit authorization.
+- **Publication: NOT AUTHORIZED.** `0.1.0rc3` is **UNRELEASED**. It is untagged and has not been uploaded or released. Publication still requires separate explicit authorization.
 
 ## Protected worktree
 
@@ -20,7 +20,10 @@ Version/preflight edits made by this audit are limited to:
 - `.github/workflows/publish-pypi.yml`: manual publish input defaults to the new, unreleased tag `v0.1.0rc3` (the workflow was not run);
 - this rc3 preflight record.
 
-`RELEASE_NOTES.md` and `CHANGELOG.md` retain their published `0.1.0rc2` history. No rc3 release note claims publication.
+`RELEASE_NOTES.md` and `CHANGELOG.md` now place an explicitly **UNRELEASED**
+rc3 section before the preserved published `0.1.0rc2` history. No rc3 release
+note claims publication. `.github/workflows/release-preflight.yml` reproduces
+the critical local gates on GitHub Actions without repository-external paths.
 
 ## Packaging and artifact audit
 
@@ -58,7 +61,7 @@ No network/runtime framework behavior, Maven publication, PyPI upload, Git tag, 
 python3 tools/run_java_qualifications.py
 # PASS: 46/46 qualifiers; 731/731 checks; failed=0; stderr empty
 
-TMF_GRADLE=/root/.local/bin/gradle python3 tools/verify_java_gradle_integration.py
+python3 tools/verify_java_gradle_integration.py  # Gradle on PATH; TMF_GRADLE is also supported
 # PASS: 7/7 real Gradle clean builds; stderr empty
 
 python3 -Werror -m unittest discover -s tests -v
@@ -74,10 +77,13 @@ git diff --check
 # PASS
 ```
 
-Version/reference checks found only intentional rc2 history after the update: `RELEASE_NOTES.md` and `CHANGELOG.md`. `pyproject.toml`, `tmf/__init__.py`, current README public-surface text, build filenames, and built metadata are rc3.
+Version/reference checks retain intentional published rc2 history in
+`RELEASE_NOTES.md` and `CHANGELOG.md`; both documents identify rc3 separately
+as **UNRELEASED**. `pyproject.toml`, `tmf/__init__.py`, current README
+public-surface text, build filenames, and built metadata are rc3.
 
 ## Remaining limits / authorization boundary
 
-- **Publication still requires explicit authorization.** No commit, tag, push, upload, GitHub release, PyPI publication, or publish workflow run occurred.
+- **Publication still requires separate explicit authorization.** Release-readiness changes may be committed and pushed for CI, but no tag, upload, GitHub Release, PyPI publication, or publish workflow run is authorized by this audit.
 - Java/Spring evidence remains bounded source analysis. Compiler/JDT/SCIP classpath semantics, dynamic builds, full framework/runtime behavior, and enterprise-ready certification remain outside the verified scope.
 - Only the manifest-selected seven Gradle fixtures were compiled by the real-build gate. Older historical fixtures with incomplete Gradle dependencies were not broadened or claimed.

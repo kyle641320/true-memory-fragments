@@ -1,0 +1,221 @@
+name: Release preflight
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  java-qualifications:
+    name: Java qualifications (46 / 731)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run aggregate qualification gate
+        run: python tools/run_java_qualifications.py
+
+  java-gradle-integration:
+    name: Real Gradle integration (7 builds)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.14.3"
+      - name: Compile the bounded fixture set
+        run: python tools/verify_java_gradle_integration.py
+
+  python-suite:
+    name: Python -Werror suite (477 tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package with Java parser support
+        run: python -m pip install -e ".[java]"
+      - name: Run warning-clean full suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -Werror -m unittest discover -s tests -v 2>&1 | tee /tmp/tmf-unittest.log
+          grep -Eq '^Ran 477 tests in ' /tmp/tmf-unittest.log
+          grep -Fxq 'OK' /tmp/tmf-unittest.log
+      - name: Compile Python sources
+        run: python -m compileall -q tmf tests scripts tools
+
+  source-only-smoke:
+    name: Source-only smoke (685 files)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify an index-free source export
+        shell: bash
+        run: |
+          set -euo pipefail
+          python tools/verify_java_source_only_smoke.py | tee /tmp/tmf-source-smoke.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          result = json.loads(Path("/tmp/tmf-source-smoke.json").read_text())
+          assert result["source_only"] is True, result
+          assert result["exported_files"] == 685, result
+          assert result["qualifications"] == {
+              "checks_passed": 731,
+              "checks_total": 731,
+              "failed": 0,
+              "passed": 46,
+              "total": 46,
+          }, result
+          assert result["focused_tests"] == result["compileall"] == "passed", result
+          PY
+
+  package:
+    name: Isolated package and install smoke
+    needs: [java-qualifications, java-gradle-integration, python-suite, source-only-smoke]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build sdist and wheel from a sanitized source export
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade build
+          export PREFLIGHT_ROOT="$(mktemp -d)"
+          echo "PREFLIGHT_ROOT=$PREFLIGHT_ROOT" >> "$GITHUB_ENV"
+          mkdir "$PREFLIGHT_ROOT/source" "$PREFLIGHT_ROOT/dist"
+          git archive --format=tar HEAD | tar -xf - -C "$PREFLIGHT_ROOT/source"
+          python -m build --isolated --outdir "$PREFLIGHT_ROOT/dist" "$PREFLIGHT_ROOT/source"
+
+      - name: Inspect archive metadata, contents, and exclusions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - "$PREFLIGHT_ROOT/dist" <<'PY'
+          import email
+          import sys
+          import tarfile
+          import zipfile
+          from pathlib import Path
+
+          dist = Path(sys.argv[1])
+          sdists = list(dist.glob("*.tar.gz"))
+          wheels = list(dist.glob("*.whl"))
+          assert len(sdists) == len(wheels) == 1, (sdists, wheels)
+          sdist, wheel = sdists[0], wheels[0]
+          expected = "0.1.0rc3"
+          assert sdist.name == f"true_memory_fragments-{expected}.tar.gz", sdist
+          assert wheel.name == f"true_memory_fragments-{expected}-py3-none-any.whl", wheel
+
+          forbidden_parts = {
+              ".git", ".gradle", ".pytest_cache", ".tmf", ".ts-venv", ".venv",
+              "__pycache__", "build", "dist", "reports", "target",
+          }
+          forbidden_names = {"uv.lock"}
+
+          with zipfile.ZipFile(wheel) as archive:
+              wheel_names = archive.namelist()
+              metadata_name = next(name for name in wheel_names if name.endswith(".dist-info/METADATA"))
+              metadata = email.message_from_bytes(archive.read(metadata_name))
+          assert len(wheel_names) == 40, len(wheel_names)
+          assert all(name.startswith(("tmf/", f"true_memory_fragments-{expected}.dist-info/")) for name in wheel_names)
+          assert metadata["Name"] == "true-memory-fragments"
+          assert metadata["Version"] == expected
+          assert metadata.get_all("Provides-Extra") == ["java"]
+          requirements = metadata.get_all("Requires-Dist") or []
+          assert sorted(requirements) == sorted([
+              'tree_sitter==0.25.2; extra == "java"',
+              'tree_sitter_java==0.23.5; extra == "java"',
+          ]), requirements
+
+          with tarfile.open(sdist, "r:gz") as archive:
+              sdist_names = archive.getnames()
+              pkg_info_name = next(name for name in sdist_names if name.endswith("/PKG-INFO"))
+              pkg_info = email.message_from_bytes(archive.extractfile(pkg_info_name).read())
+          assert pkg_info["Name"] == "true-memory-fragments"
+          assert pkg_info["Version"] == expected
+          assert any(name.endswith("/RELEASE_AUDIT.md") for name in sdist_names)
+          assert any(name.endswith("/RELEASE_NOTES.md") for name in sdist_names)
+          assert any("/vendor/wheels/" in name for name in sdist_names)
+          for name in sdist_names + wheel_names:
+              parts = set(Path(name).parts)
+              assert not (parts & forbidden_parts), name
+              assert Path(name).name not in forbidden_names, name
+          print(f"verified {sdist.name} ({len(sdist_names)} entries) and {wheel.name} ({len(wheel_names)} entries)")
+          PY
+
+      - name: Install-smoke core wheel
+        shell: bash
+        run: |
+          set -euo pipefail
+          wheel=$(find "$PREFLIGHT_ROOT/dist" -maxdepth 1 -name '*.whl' -print -quit)
+          python -m venv "$PREFLIGHT_ROOT/core-venv"
+          "$PREFLIGHT_ROOT/core-venv/bin/python" -m pip install --no-deps "$wheel"
+          env -u PYTHONPATH "$PREFLIGHT_ROOT/core-venv/bin/python" - "$GITHUB_WORKSPACE" <<'PY'
+          import importlib.metadata
+          import os
+          import subprocess
+          import sys
+          import tempfile
+          from pathlib import Path
+
+          os.chdir(tempfile.mkdtemp(prefix="tmf-installed-core-"))
+          import tmf
+          import tmf.cli
+          import tmf.java_extract
+          assert "site-packages" in tmf.__file__, tmf.__file__
+          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc3"
+          status = tmf.java_extract.java_status()
+          assert not status.available and status.degrade_hint, status
+          subprocess.run([sys.executable, "-m", "tmf.cli", "--help"], check=True)
+          PY
+
+      - name: Install-smoke offline Java extra
+        shell: bash
+        run: |
+          set -euo pipefail
+          wheel=$(find "$PREFLIGHT_ROOT/dist" -maxdepth 1 -name '*.whl' -print -quit)
+          python -m venv "$PREFLIGHT_ROOT/java-venv"
+          "$PREFLIGHT_ROOT/java-venv/bin/python" -m pip install \
+            --no-index --find-links "$PREFLIGHT_ROOT/source/vendor/wheels" "$wheel[java]"
+          env -u PYTHONPATH "$PREFLIGHT_ROOT/java-venv/bin/python" - <<'PY'
+          import importlib.metadata
+          import os
+          import tempfile
+
+          os.chdir(tempfile.mkdtemp(prefix="tmf-installed-java-"))
+          import tmf
+          from tmf.java_extract import extract_java_methods, java_status
+          assert "site-packages" in tmf.__file__, tmf.__file__
+          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc3"
+          assert importlib.metadata.version("tree-sitter") == "0.25.2"
+          assert importlib.metadata.version("tree-sitter-java") == "0.23.5"
+          status = java_status()
+          assert status.available and status.degrade_hint is None, status
+          methods = extract_java_methods("App.java", "class App { void run() {} }")
+          assert any(method.qualname == "App.run" for method in methods), methods
+          PY

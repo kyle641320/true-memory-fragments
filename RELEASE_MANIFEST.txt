@@ -13,13 +13,14 @@ Current unreleased handoff inventory
 - New bounded adapter verifiers: tools/verify_java_{autowired,inject,named,resource,singleton}_qualification.py.
 - New focused tests: tests/test_java_{autowired,inject,named,resource,singleton}.py and tests/test_java_gradle_integration_verifier.py; tests/test_run_java_qualifications.py carries the cumulative baseline contract.
 - New held-out corpora: fixtures/java-{autowired,inject,named,resource,singleton}-heldout/; lifecycle real-build support updates the existing fixtures/java-{post-construct,pre-destroy}-heldout Maven/Gradle descriptors.
-- Handoff documentation: README.md, CHANGES.md, RELEASE_EVIDENCE.md, RELEASE_HANDOFF_JAVA_SPRING_CONFIGPROPS.md, docs/JAVA_ENTERPRISE_ROADMAP.md, docs/JAVA_SPRING_DECLARATION_COMPAT.md, RELEASE_MANIFEST.txt, and RELEASE_AUDIT.md.
+- Handoff documentation: README.md, CHANGELOG.md, CHANGES.md, RELEASE_NOTES.md, RELEASE_EVIDENCE.md, RELEASE_HANDOFF_JAVA_SPRING_CONFIGPROPS.md, docs/JAVA_ENTERPRISE_ROADMAP.md, docs/JAVA_SPRING_DECLARATION_COMPAT.md, RELEASE_MANIFEST.txt, and RELEASE_AUDIT.md.
+- Automated release gate: .github/workflows/release-preflight.yml reproduces the aggregate qualifications, real Gradle integration, warning-clean full suite, source-only smoke, isolated build/archive inspection, and installed core/offline-Java smoke on GitHub Actions.
 
 Verification evidence
 - python3 tools/verify_java_source_only_smoke.py: PASS; index-free temporary export, compileall, 46/46 qualification verifiers with 731/731 checks, and focused structure/configuration-properties/runner tests.
 - python3 -m unittest -v tests.test_java_extract_structure tests.test_run_java_qualifications: 24 tests OK.
 - python3 tools/run_java_qualifications.py: PASS; 46/46 qualifiers, 731/731 checks, empty stderr.
-- TMF_GRADLE=/root/.local/bin/gradle python3 tools/verify_java_gradle_integration.py: PASS; 7/7 real Gradle clean builds.
+- python3 tools/verify_java_gradle_integration.py: PASS with Gradle on PATH (or set TMF_GRADLE explicitly); 7/7 real Gradle clean builds.
 - fixtures/java-post-construct-heldout and fixtures/java-pre-destroy-heldout: both `mvn clean verify` and real Gradle clean build PASS.
 - python3 -Werror -m unittest discover -s tests -v: 477 tests OK.
 - python3 -m compileall -q tmf tests scripts tools: PASS.

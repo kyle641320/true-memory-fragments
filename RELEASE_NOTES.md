@@ -1,4 +1,46 @@
-# True Memory Fragments 0.1.0rc2
+# True Memory Fragments release notes
+
+## 0.1.0rc3 — UNRELEASED
+
+Status: **UNRELEASED**. The bounded Java/Spring source-analysis handoff is
+release-ready under the gates in `RELEASE_AUDIT.md`, but rc3 has not been
+tagged, uploaded to PyPI, or published as a GitHub Release.
+
+### Added
+
+- Conservative Java project, type, declaration, relationship, and framework
+  source evidence, including bounded Spring bean/injection, endpoint,
+  messaging, persistence, resilience, scheduling, security, transaction, and
+  configuration-properties adapters.
+- A manifest-governed aggregate qualification gate covering 46 independent
+  held-out corpora and 731 checks.
+- A bounded real-Gradle integration gate for seven selected fixtures and an
+  index-free source-only smoke gate.
+- The optional `java` extra, pinned to `tree_sitter==0.25.2` and
+  `tree_sitter_java==0.23.5`, with vendored Linux wheels for offline release
+  verification.
+- GitHub Actions release preflight for qualifications, real Gradle builds, the
+  warning-clean full Python suite, source-only smoke, isolated package builds,
+  archive inspection, and installed core/offline-Java smoke tests.
+
+### Verified preflight baseline
+
+- Aggregate Java qualifications: 46/46 verifiers and 731/731 checks.
+- Real Gradle integration: 7/7 clean builds.
+- Full Python suite: 477 tests under `-Werror`.
+- Source-only smoke: 685 exported files, with qualifications, focused tests,
+  and compileall passing.
+- Isolated rc3 sdist/wheel build, metadata and exclusion inspection, core
+  install smoke, and offline `java` extra install smoke.
+
+### Scope boundary
+
+Java/Spring support remains conservative source analysis. Compiler/JDT/SCIP
+classpath semantics, dynamic builds, broad framework runtime behavior, and
+enterprise-ready certification are not claimed. Publication remains a separate
+explicitly authorized operation.
+
+## 0.1.0rc2 — PUBLISHED
 
 Status: **GO** under policy `tmf-java-clean-build-2vcpu-4g-v1`.
 
