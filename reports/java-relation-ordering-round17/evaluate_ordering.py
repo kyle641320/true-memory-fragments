@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import hashlib, json, re, shutil, subprocess, sys, tempfile
+import hashlib, json, re, subprocess, sys
 from collections import Counter
+from contextlib import ExitStack
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[2]
@@ -9,6 +10,7 @@ V2=ROOT/'bench/agent_ab/java_real_v2'
 sys.path.insert(0,str(ROOT))
 from tmf.mcp_server import McpService
 from tmf.retrieve import retrieve_text
+from bench.agent_ab.java_real_v2.store_lock import disposable_repository, verify_lock
 
 BUDGETS=(3000,10000)
 FROZEN=('manifest.json','goldens/goldens.jsonl','REPORT.json')
@@ -72,25 +74,27 @@ def pack(base,relations,budget):
 
 def main():
     manifest=json.loads((V2/'manifest.json').read_text()); gold={x['id']:x for x in map(json.loads,(V2/'goldens/goldens.jsonl').read_text().splitlines())}
+    store_lock=json.loads((V2/'store-lock.json').read_text())
     frozen={f:hashlib.sha256((V2/f).read_bytes()).hexdigest() for f in FROZEN}
     repos={r['id']:r for r in manifest['repositories']}; services={}
-    temp_root=Path(tempfile.mkdtemp(prefix='tmf-round17-'))
-    for rid,r in repos.items():
-        actual=subprocess.check_output(['git','-C',r['path'],'rev-parse','HEAD'],text=True).strip()
-        if actual!=r['commit']:raise SystemExit(f'{rid} drift {actual}')
-        copy=temp_root/rid
-        shutil.copytree(r['path'],copy,symlinks=True)
-        services[rid]=McpService(copy)
-    # Stabilize read-through freshness only in disposable copies so evaluation is
-    # repeatable and never rewrites the pinned source repositories or stores.
-    for task in manifest['tasks']:
-      svc=services[task['repo']]
-      for budget in BUDGETS: svc._context_payload(task['prompt'],budget)
-    names=('baseline','overlap_hints','partition2_hints','partition3_hints','overlap_trusted_text','partition2_trusted_text','partition3_trusted_text')
-    results={n:{str(b):[] for b in BUDGETS} for n in names}
-    for task in manifest['tasks']:
-      svc=services[task['repo']]; required=gold[task['id']]['must_cite']
-      for budget in BUDGETS:
+    with ExitStack() as stack:
+      for rid,r in repos.items():
+          actual=subprocess.check_output(['git','-C',r['path'],'rev-parse','HEAD'],text=True).strip()
+          if actual!=r['commit']:raise SystemExit(f'{rid} commit drift {actual}')
+          try: verify_lock(rid,actual,Path(r['path'])/'.tmf',store_lock)
+          except ValueError as exc: raise SystemExit(str(exc)) from exc
+          copy=stack.enter_context(disposable_repository(Path(r['path'])))
+          services[rid]=McpService(copy)
+      # Stabilize read-through freshness only in disposable copies so evaluation is
+      # repeatable and never rewrites the pinned source repositories or stores.
+      for task in manifest['tasks']:
+        svc=services[task['repo']]
+        for budget in BUDGETS: svc._context_payload(task['prompt'],budget)
+      names=('baseline','overlap_hints','partition2_hints','partition3_hints','overlap_trusted_text','partition2_trusted_text','partition3_trusted_text')
+      results={n:{str(b):[] for b in BUDGETS} for n in names}
+      for task in manifest['tasks']:
+       svc=services[task['repo']]; required=gold[task['id']]['must_cite']
+       for budget in BUDGETS:
         limit=8 if budget<=3000 else 16
         retrieval=retrieve_text(svc.repo.root,task['prompt'],limit=limit)
         claims=[__import__('tmf.explain',fromlist=['thin_view']).thin_view(__import__('tmf.explain',fromlist=['explain_claim']).explain_claim(svc.repo,x.claim)) for x in retrieval.claims]
@@ -111,6 +115,5 @@ def main():
       for b,rows in byb.items():
         summary[name][b]={'chars':sum(r['chars'] for r in rows),'relations':sum(r['packed_relations'] for r in rows),'claims':sum(r['claims'] for r in rows),'full_claims':sum(r['full_claims'] for r in rows),'stub_claims':sum(r['stub_claims'] for r in rows),'required_hits':sum(r['required_hits'] for r in rows),'required_total':sum(r['required_total'] for r in rows),'actionable':all(r['actionable'] for r in rows)}
     out={'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'frozen_hashes':frozen,'strategies':list(names),'summary':summary,'per_query':results}
-    shutil.rmtree(temp_root)
     print(json.dumps(out,indent=2,sort_keys=True))
 if __name__=='__main__':main()
