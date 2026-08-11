@@ -1,0 +1,12 @@
+{
+  "result": {
+    "payloads": [
+      {
+        "mediaUrl": null,
+        "text": "{\"answer\":\"Old memory is stale: bookVisit now publishes VisitBooked before flushing owners.\",\"stale_rejected\":true,\"current_ordering\":[\"owners.findById\",\"managedOwner.addVisit\",\"eventPublisher.publishEvent\",\"owners.flush\"],\"citations\":[{\"file\":\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\",\"start\":44,\"end\":50}],\"files_read\":[\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\"],\"line_ranges_read\":[\"35-60\"],\"source_line_reads\":18,\"tool_calls\":2,\"local_reread_lines\":7,\"blockers\":[]}"
+      }
+    ]
+  },
+  "status": "ok",
+  "summary": "completed"
+}

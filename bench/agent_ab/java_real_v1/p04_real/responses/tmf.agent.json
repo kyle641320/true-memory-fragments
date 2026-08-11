@@ -1,0 +1,12 @@
+{
+  "result": {
+    "payloads": [
+      {
+        "mediaUrl": null,
+        "text": "{\"answer\":\"Old memory is stale and rejected. The mutation moved publishing before flush.\",\"tmf_freshness\":\"stale: java_hash mismatch\",\"stale_rejected\":true,\"current_ordering\":[\"managedOwner.addVisit(...)\",\"eventPublisher.publishEvent(new VisitBooked(...))\",\"owners.flush()\"],\"citations\":[{\"file\":\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\",\"start\":45,\"end\":50}],\"files_read\":[\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\"],\"line_ranges_read\":[\"44-50\"],\"source_line_reads\":7,\"tool_calls\":2,\"local_reread_lines\":7,\"blockers\":[]}"
+      }
+    ]
+  },
+  "status": "ok",
+  "summary": "completed"
+}

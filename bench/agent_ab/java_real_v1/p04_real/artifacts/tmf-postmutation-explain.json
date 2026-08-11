@@ -1,0 +1,263 @@
+{
+  "id": "claim_java_24facfea08ca808b",
+  "claim": "Java method VisitScheduler.bookVisit in src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+  "fresh": false,
+  "stale_reasons": [
+    "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:VisitScheduler.bookVisit: java_hash mismatch"
+  ],
+  "trust": {
+    "level": "observed",
+    "label": "源码观察",
+    "description": "从源码观察得到，但验证方式较粗"
+  },
+  "evidence": "observed",
+  "confidence": 0.35,
+  "raw_confidence": null,
+  "confidence_cap_applied": false,
+  "verification": null,
+  "kind": "structure",
+  "scope": "class",
+  "model": "tmf-v1-heuristic",
+  "last_verified": "2026-08-11T09:05:58+00:00",
+  "endorsed_by": null,
+  "qualname": "VisitScheduler.bookVisit",
+  "language": "java",
+  "node_kind": "method",
+  "extraction_tier": "java-treesitter-syntactic",
+  "anchors": [
+    {
+      "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+      "line_start": 44,
+      "line_end": 50,
+      "qualname": "VisitScheduler.bookVisit"
+    }
+  ],
+  "belief_provenance": [],
+  "freshness_bindings": [
+    {
+      "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+      "file_blob": "0df8c5f0866316d1a563b4256f3363a26cf2e849",
+      "fn_hash": "1a430631f77d7e6453cf5893dd60a9ee10909d5754b252d800475381067c291d",
+      "commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+      "qualname": "VisitScheduler.bookVisit",
+      "role": null,
+      "line_start": null,
+      "line_end": null,
+      "hash_kind": null
+    }
+  ],
+  "action_hint": "degrade_to_source_or_rederive",
+  "source_provenance": {
+    "origin": "locally_derived",
+    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+    "trust": "source_rederived"
+  },
+  "feedback_events": [],
+  "hunches": [],
+  "graph": {
+    "callees": [
+      {
+        "target_id": "claim_java_78b51a993679f806",
+        "target_qualname": "OwnerRepository.findById",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java",
+          "line_start": null,
+          "line_end": null,
+          "qualname": "OwnerRepository.findById"
+        },
+        "evidence": "observed",
+        "resolution": "java_project_typed_receiver_project_explicit_import"
+      },
+      {
+        "target_id": "claim_java_72a3f73c96837759",
+        "target_qualname": "Owner.getId",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+          "line_start": null,
+          "line_end": null,
+          "qualname": "Owner.getId"
+        },
+        "evidence": "observed",
+        "resolution": "java_project_typed_receiver_project_explicit_import"
+      },
+      {
+        "target_id": "claim_java_d12f6ea8d0b4089a",
+        "target_qualname": "Owner.addVisit",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+          "line_start": null,
+          "line_end": null,
+          "qualname": "Owner.addVisit"
+        },
+        "evidence": "observed",
+        "resolution": "java_project_typed_receiver_project_explicit_import"
+      },
+      {
+        "target_id": "claim_java_737170e0874344ba",
+        "target_qualname": "Visit.getId",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "line_start": null,
+          "line_end": null,
+          "qualname": "Visit.getId"
+        },
+        "evidence": "observed",
+        "resolution": "java_project_typed_receiver_project_explicit_import"
+      },
+      {
+        "target_id": "claim_java_1673e2620e72daa3",
+        "target_qualname": "Visit.getDate",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "line_start": null,
+          "line_end": null,
+          "qualname": "Visit.getDate"
+        },
+        "evidence": "observed",
+        "resolution": "java_project_typed_receiver_project_explicit_import"
+      }
+    ],
+    "callers": [],
+    "unresolved_calls": [
+      {
+        "expr": "owners.findById(owner.getId()).orElseThrow",
+        "reason": "java_method_not_found"
+      },
+      {
+        "expr": "owners.flush",
+        "reason": "java_method_not_found"
+      },
+      {
+        "expr": "eventPublisher.publishEvent",
+        "reason": "java_method_not_found"
+      },
+      {
+        "expr": "new VisitBooked",
+        "reason": "java_constructor_not_found"
+      }
+    ],
+    "calls_coverage": "partial",
+    "reads": [
+      {
+        "target_id": "claim_java_8fb7b81191418403",
+        "target_qualname": "VisitScheduler.owners",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "line_start": 35,
+          "line_end": 35,
+          "qualname": "VisitScheduler.owners"
+        },
+        "evidence": "observed",
+        "resolution": "java_same_class_static_or_field"
+      },
+      {
+        "target_id": "claim_java_e94a5c90d201960a",
+        "target_qualname": "VisitScheduler.eventPublisher",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "anchor": {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "line_start": 37,
+          "line_end": 37,
+          "qualname": "VisitScheduler.eventPublisher"
+        },
+        "evidence": "observed",
+        "resolution": "java_same_class_static_or_field"
+      }
+    ],
+    "reads_unresolved": [
+      {
+        "expr": "owner",
+        "reason": "java_local_or_parameter_shadow"
+      },
+      {
+        "expr": "managedOwner",
+        "reason": "java_local_or_parameter_shadow"
+      },
+      {
+        "expr": "petId",
+        "reason": "java_local_or_parameter_shadow"
+      },
+      {
+        "expr": "visit",
+        "reason": "java_local_or_parameter_shadow"
+      }
+    ],
+    "writes": [],
+    "writes_unresolved": [],
+    "field_access_coverage": "partial",
+    "overrides": [],
+    "overridden_by": [],
+    "overrides_unresolved": [],
+    "overrides_coverage": "partial",
+    "uses_type": [
+      {
+        "target_id": "claim_java_6534b7f41e84a5dc",
+        "target_qualname": "Owner",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "use_kind": "param_type",
+        "evidence": "observed",
+        "resolution": "java_project_explicit_import"
+      },
+      {
+        "target_id": "claim_java_c842c7e057294ea6",
+        "target_qualname": "Visit",
+        "target_path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "use_kind": "param_type",
+        "evidence": "observed",
+        "resolution": "java_project_explicit_import"
+      }
+    ],
+    "used_by_types": [],
+    "uses_type_unresolved": [
+      {
+        "type": "Integer",
+        "reason": "java_external_or_jdk_type_not_resolved",
+        "use_kind": "param_type"
+      },
+      {
+        "type": "Transactional",
+        "reason": "java_external_or_jdk_type_not_resolved",
+        "use_kind": "annotation_type"
+      }
+    ],
+    "uses_type_coverage": "partial",
+    "publishes_type": [
+      {
+        "edge_kind": "publishes_type",
+        "edge_id": "claim_event_type_edge_3ac4e3ac9fb02a3c",
+        "type_id": "claim_java_3377c8f1b1737ebe",
+        "type_qualname": "VisitBooked",
+        "type_path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "resolution": "java_source_observed_event_type",
+        "annotation_kind": null,
+        "metadata": null
+      }
+    ],
+    "listens_type": [],
+    "event_type_unresolved": [],
+    "event_type_coverage": "partial",
+    "spring_declaration": {
+      "coverage": "partial",
+      "effect": "declaration_only",
+      "confidence": 0.6,
+      "transactional": {
+        "boundary": "method"
+      }
+    },
+    "publishes_to": [],
+    "publishes_to_unresolved": [],
+    "subscribes_to": [],
+    "subscribes_to_unresolved": [],
+    "topic_coverage": "partial"
+  },
+  "graph_coverage": "partial",
+  "warnings": [
+    "STALE_BUT_STORED: this claim remains in storage but is not fresh for current worktree"
+  ]
+}

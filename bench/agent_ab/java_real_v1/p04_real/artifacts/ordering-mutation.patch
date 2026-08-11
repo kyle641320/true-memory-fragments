@@ -1,0 +1,14 @@
+diff --git a/src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java b/src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java
+index 0df8c5f..eec66e6 100644
+--- a/src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java
++++ b/src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java
+@@ -45,8 +45,8 @@ public class VisitScheduler {
+ 	public void bookVisit(Owner owner, Integer petId, Visit visit) {
+ 		Owner managedOwner = owners.findById(owner.getId()).orElseThrow();
+ 		managedOwner.addVisit(petId, visit);
+-		owners.flush();
+ 		eventPublisher.publishEvent(new VisitBooked(visit.getId(), petId, visit.getDate()));
++		owners.flush();
+ 	}
+ 
+ }

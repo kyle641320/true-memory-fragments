@@ -1,0 +1,27 @@
+{
+  "schema": "native_agent_pair_summary_v2",
+  "exclusions": [
+    "deterministic proxy rows in REPORT.json",
+    "initial P01 TMF_MAP run against wrong Zhihu store",
+    "failed ACP/acpx startups where no agent ran"
+  ],
+  "ordinary_pairs": [
+    {"task":"P01","type":"location","arm":"SOURCE_ONLY","correct":true,"source_files":8,"source_lines":396,"tool_calls":12},
+    {"task":"P01","type":"location","arm":"TMF_MAP","correct":true,"source_files":8,"source_lines":378,"tool_calls":5},
+    {"task":"P02","type":"impact_analysis","arm":"SOURCE_ONLY","correct":true,"source_files":6,"source_lines":316,"tool_calls":9},
+    {"task":"P02","type":"impact_analysis","arm":"TMF_MAP","correct":true,"source_files":6,"source_lines":332,"tool_calls":5},
+    {"task":"P03","type":"local_change_validation","arm":"SOURCE_ONLY","correct":true,"source_files":5,"source_lines":342,"tool_calls":8},
+    {"task":"P03","type":"local_change_validation","arm":"TMF_MAP","correct":true,"source_files":3,"source_lines":296,"tool_calls":3}
+  ],
+  "ordinary_aggregate": {
+    "SOURCE_ONLY":{"correct":3,"total":3,"source_files":19,"source_lines":1054,"tool_calls":29},
+    "TMF_MAP":{"correct":3,"total":3,"source_files":17,"source_lines":1006,"tool_calls":13},
+    "tmf_relative_change":{"source_files":-0.1053,"source_lines":-0.0455,"tool_calls":-0.5517}
+  },
+  "p04_reference":"P04_REAL.json",
+  "limitations":[
+    "three ordinary pairs and one stale-memory pair are pilot evidence, not statistical proof",
+    "source line counts are reconstructed from agent-declared read ranges",
+    "P04 harness bootstrap exceeded the frozen 12k token target"
+  ]
+}

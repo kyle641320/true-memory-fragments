@@ -1,0 +1,14 @@
+{
+  "claim_id": "claim_java_24facfea08ca808b",
+  "summary": "At fixed commit 58c3310e, VisitScheduler.bookVisit adds the visit, then calls owners.flush(), then publishes VisitBooked.",
+  "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+  "lines": [
+    44,
+    50
+  ],
+  "ordering": "flush-before-publish",
+  "binding": {
+    "file_blob": "0df8c5f0866316d1a563b4256f3363a26cf2e849",
+    "fn_hash": "1a430631f77d7e6453cf5893dd60a9ee10909d5754b252d800475381067c291d"
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "schema": "p04_real_pair_v1",
+  "execution_kind": "native_isolated_openclaw_agents",
+  "fixed_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+  "mutation": "swap adjacent owners.flush() and eventPublisher.publishEvent(...) calls, yielding publish-before-flush",
+  "mutation_patch_sha256": "52df648ef0ddc06f47754ff29999143fa960c713c118e31b261378ffe50aadad",
+  "old_claim_id": "claim_java_24facfea08ca808b",
+  "tmf_engine": "repo-pinned /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0 (unmodified)",
+  "golden_isolation": "golden read only by orchestrator/evaluator; agent prompts contain task+old memory only",
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY_WITH_STALE_MEMORY",
+      "valid": true,
+      "model": "aisz/gpt-5.6-sol",
+      "temperature": 0,
+      "task": "P04",
+      "task_correct": true,
+      "citation_correct": true,
+      "stale_trust_error": false,
+      "stale_blocked": true,
+      "answer": {
+        "answer": "Old memory is stale: bookVisit now publishes VisitBooked before flushing owners.",
+        "stale_rejected": true,
+        "current_ordering": [
+          "owners.findById",
+          "managedOwner.addVisit",
+          "eventPublisher.publishEvent",
+          "owners.flush"
+        ],
+        "citations": [
+          {
+            "file": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "start": 44,
+            "end": 50
+          }
+        ],
+        "files_read": [
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+        ],
+        "line_ranges_read": [
+          "35-60"
+        ],
+        "source_line_reads": 18,
+        "tool_calls": 2,
+        "local_reread_lines": 7,
+        "blockers": []
+      },
+      "source_file_reads": 1,
+      "source_line_reads": 18,
+      "local_reread_lines": 7,
+      "tool_calls": 2,
+      "wall_ms": 35782,
+      "agent_duration_ms": 23457,
+      "usage": {
+        "input": 95944,
+        "output": 381,
+        "reasoningTokens": 83,
+        "total": 32916
+      },
+      "agent_service_failure": null,
+      "session_file": "/root/.openclaw/agents/main/sessions/18bf77c7-1f41-40b6-8274-7b36fb2fab43.jsonl"
+    },
+    {
+      "arm": "TMF_FRESHNESS",
+      "valid": true,
+      "model": "aisz/gpt-5.6-sol",
+      "temperature": 0,
+      "task": "P04",
+      "task_correct": true,
+      "citation_correct": true,
+      "stale_trust_error": false,
+      "stale_blocked": true,
+      "answer": {
+        "answer": "Old memory is stale and rejected. The mutation moved publishing before flush.",
+        "tmf_freshness": "stale: java_hash mismatch",
+        "stale_rejected": true,
+        "current_ordering": [
+          "managedOwner.addVisit(...)",
+          "eventPublisher.publishEvent(new VisitBooked(...))",
+          "owners.flush()"
+        ],
+        "citations": [
+          {
+            "file": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "start": 45,
+            "end": 50
+          }
+        ],
+        "files_read": [
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+        ],
+        "line_ranges_read": [
+          "44-50"
+        ],
+        "source_line_reads": 7,
+        "tool_calls": 2,
+        "local_reread_lines": 7,
+        "blockers": []
+      },
+      "source_file_reads": 1,
+      "source_line_reads": 7,
+      "local_reread_lines": 7,
+      "tool_calls": 2,
+      "wall_ms": 27977,
+      "agent_duration_ms": 18935,
+      "usage": {
+        "input": 54316,
+        "output": 358,
+        "cacheRead": 42496,
+        "reasoningTokens": 30,
+        "total": 33195
+      },
+      "agent_service_failure": null,
+      "session_file": "/root/.openclaw/agents/main/sessions/1e80e078-0fef-4be8-ac52-fd63ab38163a.jsonl"
+    }
+  ],
+  "pair_summary": {
+    "valid_pairs": 1,
+    "accuracy": {
+      "SOURCE_ONLY_WITH_STALE_MEMORY": 1,
+      "TMF_FRESHNESS": 1
+    },
+    "stale_trust_error": {
+      "SOURCE_ONLY_WITH_STALE_MEMORY": 0,
+      "TMF_FRESHNESS": 0
+    },
+    "stale_blocked": {
+      "SOURCE_ONLY_WITH_STALE_MEMORY": 1,
+      "TMF_FRESHNESS": 1
+    },
+    "source_lines": {
+      "SOURCE_ONLY_WITH_STALE_MEMORY": 18,
+      "TMF_FRESHNESS": 7
+    },
+    "tool_calls": {
+      "SOURCE_ONLY_WITH_STALE_MEMORY": 2,
+      "TMF_FRESHNESS": 2
+    }
+  },
+  "limitations": [
+    "Agent harness system/bootstrap tokens exceed frozen 12k context budget despite task-level read/tool budgets; both arms used same model and harness, reported separately rather than hidden.",
+    "Earlier direct acpx attempts failed before agent execution (cwd option placement/model support/ACP doctor noise); excluded as invalid service/setup attempts and preserved in stderr."
+  ]
+}
