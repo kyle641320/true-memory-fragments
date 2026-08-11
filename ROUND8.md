@@ -18,7 +18,7 @@ Existing work already supplied default-off `tmf.java-semantic-facts.v1` director
 
 ## Slice and negatives
 
-- Producer: `tools/javac_semantic_facts.py` compiles/caches a tiny Java helper locally, invokes javac attribution, and emits v1 JSON.
+- Optional external producer adapter: `tools/javac_semantic_facts.py` compiles/caches a tiny Java helper locally, invokes javac attribution from caller-supplied source paths/classpath, and emits v1 JSON. TMF runtime neither imports nor automatically runs it.
 - Fixture: `fixtures/java-semantic-round8/src/p/Overload.java` includes interface implementation and overloads; emitted target is specifically `put(String)`.
 - Importer now requires attributable anchor and owner/descriptor identity and labels accepted claims `compiler-attributed`.
 - Tests cover real javac overload attribution end-to-end, deterministic coexistence with AST, ambiguous IDs/missing attributed identity, compile failure/missing classpath behavior, conflicting providers, and stale source facts.
@@ -32,4 +32,4 @@ Existing work already supplied default-off `tmf.java-semantic-facts.v1` director
 
 ## Remaining boundary
 
-This is one real compiler-attributed vertical fact, not complete compiler integration. Multi-file source paths, build-module discovery, generated sources, annotation processing, classpath canonicalization beyond the exact supplied string, override/implementation facts, and automatic warm/CLI provider execution remain future work. The current helper intentionally emits no document if *any* javac error diagnostic occurs.
+This is one real compiler-attributed vertical fact, not complete compiler integration. Generated sources, annotation processing, build-system dependency resolution, and automatic warm/CLI provider execution are permanently out of scope. Callers or their build tooling must supply source paths and classpath explicitly. The current helper intentionally emits no document if *any* javac error diagnostic occurs.

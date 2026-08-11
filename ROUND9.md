@@ -16,7 +16,7 @@ Fixed local checkouts were inspected before provider work:
 
 - `tools/javac_semantic_facts.py` accepts multiple source paths and optional repeated classpath entries.
 - Classpath entries are canonical absolute paths sorted deterministically; files and directory contents are SHA-256 hashed into a stable canonical identity. Missing entries fail closed. Build discovery hashes the selected build file and records wrapper/cache presence.
-- `--module ... --discover-only` is the only Maven/Gradle discovery path and is explicit/read-only.
+- `--module ... --discover-only` is the only build-file observation path and is explicit/read-only. It reports no inferred classpath and never executes a build tool or wrapper.
 - `TmfJavacFacts` batches sources in one `JavacTask`, with `-proc:none`, emits per-file attributed calls and cross-file `overrides` facts. The fixture proves `Impl.speak` overrides `Api.speak` and polymorphic `api.speak()` targets `p.Api`.
 - Batch freshness includes every participating source SHA-256, classpath fingerprint, and build identity. Ingestion rejects a batch when any participant changes. Provider regeneration changes identity when classpath contents or build file changes.
 - Annotation processing/generated sources are disabled; generated sources are not guessed.
@@ -28,6 +28,6 @@ Fixed local checkouts were inspected before provider work:
 - Full suite: 499 tests passed in 56.548s.
 - Real E2E probes: Petclinic and JHipster discovery succeeded as partial; attributed compilation intentionally not attempted because classpath completeness remained unknown. Output count: 0 facts for each, with the explicit failure reason above.
 
-## Remaining
+## Permanent boundary
 
-Safe future work requires a separately reviewed offline build-tool adapter capable of proving dependency/plugin cache completeness and exporting classpaths without running untrusted project build logic. Generated-source identity and annotation-processing policy also remain outside this slice.
+Build-system model evaluation, dependency/plugin resolution, cache inference, generated-source identity, and annotation processing are permanently out of scope for TMF. Callers or independent build tooling must provide an explicit classpath and may provide their own opaque identity; this adapter only validates and fingerprints those inputs.

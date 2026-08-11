@@ -14,6 +14,14 @@
 - GitHub Actions release preflight covering all critical local release gates,
   isolated artifact construction and inspection, and installed-wheel smoke.
 
+### Changed
+
+- Corrected the Java semantic-provider boundary: TMF retains the optional
+  javac adapter and provider-neutral ingestion, but build-system dependency
+  resolution is permanently out of scope. Callers must supply classpaths
+  explicitly; the experimental offline Maven resolver and its CLI surface
+  were removed.
+
 ### Release status
 
 - The warning-clean full suite baseline is 478 tests; the source-only gate

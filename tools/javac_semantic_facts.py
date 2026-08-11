@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Explicit, offline-only javac semantic provider; no wrapper/build execution."""
 import argparse, hashlib, json, os, pathlib, subprocess, sys
-from offline_maven_classpath import resolve as resolve_maven
 
 def sha_file(p):
  h=hashlib.sha256(); h.update(p.read_bytes()); return h.hexdigest()
@@ -31,11 +30,10 @@ def discover(root,module):
  # Deliberately conservative: build files cannot be safely evaluated without executing build logic.
  return {'status':'partial','reason':'offline_static_discovery_does_not_guess_dependency_graph','kind':kind,'module':str(module.relative_to(root)) or '.', 'build_file':str(build.relative_to(root)),'build_sha256':sha_file(build),'wrapper_present':bool(wrappers),'local_cache_present':cache.is_dir(),'annotation_processing':'disabled'}
 
-a=argparse.ArgumentParser(); a.add_argument('repo'); a.add_argument('paths',nargs='*'); a.add_argument('--classpath',action='append',default=[]); a.add_argument('--module'); a.add_argument('--discover-only',action='store_true'); a.add_argument('--resolve-offline',action='store_true'); a.add_argument('--maven-cache'); a.add_argument('-o','--output'); ns=a.parse_args(); root=pathlib.Path(ns.repo).resolve()
-meta=resolve_maven(root,pathlib.Path(ns.module or '.'),ns.maven_cache) if ns.resolve_offline else (discover(root,pathlib.Path(ns.module or '.')) if ns.module is not None else {'status':'explicit','kind':'none','module':'.','build_sha256':'none','annotation_processing':'disabled'})
-if ns.resolve_offline and meta.get('status') == 'complete':
- ns.classpath.extend(x['path'] for x in meta['classpath'])
-if ns.discover_only or ns.resolve_offline and not ns.paths:
+a=argparse.ArgumentParser(); a.add_argument('repo'); a.add_argument('paths',nargs='*'); a.add_argument('--classpath',action='append',default=[]); a.add_argument('--module'); a.add_argument('--discover-only',action='store_true'); a.add_argument('-o','--output'); ns=a.parse_args(); root=pathlib.Path(ns.repo).resolve()
+if ns.module is not None and not ns.discover_only: a.error('--module is only valid with --discover-only')
+meta=discover(root,pathlib.Path(ns.module or '.')) if ns.discover_only else {'status':'explicit','kind':'none','module':'.','build_sha256':'none','annotation_processing':'disabled'}
+if ns.discover_only:
  text=json.dumps(meta,sort_keys=True,indent=2)+'\n'; pathlib.Path(ns.output).write_text(text) if ns.output else sys.stdout.write(text); raise SystemExit(0)
 if not ns.paths: raise SystemExit('at least one source path is required')
 cp,cp_entries,cpid=canonical_cp(root,[e for group in ns.classpath for e in group.split(os.pathsep) if e])
