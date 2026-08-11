@@ -187,12 +187,29 @@ class McpService:
                 stale_skipped += 1
                 continue
             endpoints = {f: edge.body.get(f) for f in fields}
-            if any(not isinstance(v, str) or self.store.get_claim(v) is None for v in endpoints.values()):
+            endpoint_claims = {field: self.store.get_claim(value) if isinstance(value, str) else None for field, value in endpoints.items()}
+            if any(claim is None for claim in endpoint_claims.values()):
                 unresolved += 1
                 continue
+            if any(
+                not check_freshness(self.repo, claim).fresh
+                or claim.body.get("source_provenance", {}).get("trust") == "unverified_foreign"
+                for claim in endpoint_claims.values()
+            ):
+                stale_skipped += 1
+                continue
+            endpoint_hints = {
+                field: {
+                    "qualname": claim.body.get("qualname"),
+                    "path": claim.bindings[0].path if claim.bindings else None,
+                    "anchor": self._anchor_for_claim(claim),
+                }
+                for field, claim in endpoint_claims.items()
+            }
             related_seed = sorted(seed_ids.intersection(endpoints.values()))
             out.append({"for": related_seed[0] if related_seed else sorted(shared_event_types)[0], "kind": kind, "edge_id": edge.id,
-                        "endpoints": endpoints, "anchor": edge.body.get(fields[0].replace("_id", "_anchor")),
+                        "endpoints": endpoints, "endpoint_hints": endpoint_hints,
+                        "anchor": edge.body.get(fields[0].replace("_id", "_anchor")),
                         "coverage": "partial", "unresolved": 0,
                         "relation_semantics": "shared_source_observed_event_type_candidate" if shared_static_event_candidate else "one_hop_static_edge"})
             if len(out) >= edge_budget:
@@ -219,7 +236,7 @@ class McpService:
         payload["relations"] = []
         payload["claims"] = []
         for relation in full_relations:
-            compact = {k: relation[k] for k in ("for", "kind", "edge_id", "endpoints", "coverage", "unresolved") if k in relation}
+            compact = {k: relation[k] for k in ("for", "kind", "edge_id", "endpoints", "endpoint_hints", "coverage", "unresolved") if k in relation}
             trial_relation = dict(payload)
             trial_relation["relations"] = [*payload["relations"], compact]
             if size(trial_relation) <= budget:
