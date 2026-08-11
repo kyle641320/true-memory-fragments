@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import stat
 import shutil
 import tempfile
 from contextlib import contextmanager
@@ -46,7 +47,17 @@ def store_inventory(store: Path) -> dict[str, Any]:
     entries: list[tuple[str, str]] = []
     counts: dict[str, int] = {}
     for path in sorted(store.rglob("*")):
-        if not path.is_file() or path.name in _EXCLUDED_NAMES or ".tmp" in path.suffixes:
+        # A symlinked store entry could make the disposable copy retain a path
+        # back into the locked source store.  Fail closed instead of hashing
+        # the target and later preserving the link via copytree(symlinks=True).
+        if path.is_symlink():
+            raise ValueError(f"TMF store contains unsupported symlink: {path.relative_to(store).as_posix()}")
+        mode = path.stat().st_mode
+        if stat.S_ISDIR(mode):
+            continue
+        if not stat.S_ISREG(mode):
+            raise ValueError(f"TMF store contains unsupported file type: {path.relative_to(store).as_posix()}")
+        if path.name in _EXCLUDED_NAMES or ".tmp" in path.suffixes:
             continue
         rel = path.relative_to(store).as_posix()
         kind = rel.split("/", 1)[0] if "/" in rel else rel

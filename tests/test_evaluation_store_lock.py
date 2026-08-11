@@ -45,6 +45,16 @@ class EvaluationStoreLockTests(unittest.TestCase):
             self.assertNotIn(tmp, json.dumps(after))
             self.assertNotIn("secret", json.dumps(after))
 
+    def test_inventory_rejects_symlinked_store_entries(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = _store(root / "repo")
+            outside = root / "outside.json"
+            outside.write_text('{"id":"outside"}')
+            (store / "claims" / "linked.json").symlink_to(outside)
+            with self.assertRaisesRegex(ValueError, "unsupported symlink: claims/linked.json"):
+                store_inventory(store)
+
     def test_verify_lock_fails_explicitly_on_store_or_commit_drift(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             store = _store(Path(tmp) / "repo")
