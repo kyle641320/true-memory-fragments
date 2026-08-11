@@ -1,0 +1,21 @@
+{
+  "schema": "java_real_v1",
+  "frozen_at": "2026-08-11T16:20:00+08:00",
+  "seed": "java_real_v1:2026-08-11",
+  "model": {"id": "aisz/gpt-5.6-sol", "temperature": 0, "timeout_seconds": 120},
+  "budgets": {"tool_calls": 12, "source_files": 8, "source_lines": 800, "context_tokens": 12000},
+  "arms": ["SOURCE_ONLY", "TMF_MAP", "TMF_FRESHNESS"],
+  "repositories": [
+    {"id": "petclinic", "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith", "commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea"},
+    {"id": "jhipster", "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/jhipster-sample-app", "commit": "f8da577c944ecc4db46fc961a1ba022d5bbf8964"}
+  ],
+  "tasks": [
+    {"id":"P01","type":"location","repo":"petclinic","prompt":"Locate the complete Java path for booking a visit through publication and consumption. Cite file:line evidence.","golden":"goldens/P01.json"},
+    {"id":"P02","type":"impact_analysis","repo":"petclinic","prompt":"Analyze direct impact of changing VisitBooked fields and transaction/event ordering. Cite file:line evidence.","golden":"goldens/P02.json"},
+    {"id":"P03","type":"local_change_validation","repo":"petclinic","prompt":"Design the smallest validation change preventing booking with a null visit date; identify exact edit and targeted verification. Cite evidence.","golden":"goldens/P03.json"},
+    {"id":"P04","type":"stale_memory_conflict","repo":"petclinic","prompt":"Given old memory that bookVisit flushes before publishing, verify freshness after the supplied ordering mutation, reject stale facts, and report minimal reread scope.","golden":"goldens/P04.json","paired":true}
+  ],
+  "runner_golden_isolation": true,
+  "agent_task_order": ["P02","P04","P01","P03"],
+  "metrics": ["task_correct","citation_correct","source_file_reads","source_line_reads","context_tokens","wall_seconds","tool_calls","tmf_adoption","stale_error","stale_blocked","local_reread_lines"]
+}

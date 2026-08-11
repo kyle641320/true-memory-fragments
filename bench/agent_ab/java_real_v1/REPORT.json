@@ -1,0 +1,308 @@
+{
+  "execution_kind": "deterministic_proxy_not_llm",
+  "manifest_sha256": "d730c3910fa79e278fe348ef0768da5e2e0d260510ebff8f57151012b84fdffa",
+  "model_attempted": {
+    "id": "aisz/gpt-5.6-sol",
+    "temperature": 0,
+    "timeout_seconds": 120
+  },
+  "protocol_sha256": "90f66e057828d9760f6201844654fc06ecac87f9d44aa6ea87356c56c6fa6ff3",
+  "repo_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": false,
+      "context_tokens": 2346,
+      "id": "P02",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 255,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": false,
+      "tool_calls": 5,
+      "type": "impact_analysis",
+      "wall_seconds": 0.028013
+    },
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": true,
+      "context_tokens": 2007,
+      "id": "P02",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 218,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": true,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "impact_analysis",
+      "wall_seconds": 0.004418
+    },
+    {
+      "arm": "TMF_FRESHNESS",
+      "citation_correct": true,
+      "context_tokens": 2007,
+      "id": "P02",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 218,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": true,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "impact_analysis",
+      "wall_seconds": 0.002708
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": true,
+      "context_tokens": 2430,
+      "id": "P04",
+      "local_reread_lines": 52,
+      "paths": [
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 274,
+      "stale_blocked": false,
+      "stale_error": true,
+      "task_correct": false,
+      "tmf_adoption": false,
+      "tool_calls": 5,
+      "type": "stale_memory_conflict",
+      "wall_seconds": 0.002452
+    },
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": true,
+      "context_tokens": 2259,
+      "id": "P04",
+      "local_reread_lines": 52,
+      "paths": [
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 249,
+      "stale_blocked": false,
+      "stale_error": true,
+      "task_correct": false,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "stale_memory_conflict",
+      "wall_seconds": 0.002379
+    },
+    {
+      "arm": "TMF_FRESHNESS",
+      "citation_correct": true,
+      "context_tokens": 2259,
+      "id": "P04",
+      "local_reread_lines": 52,
+      "paths": [
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 249,
+      "stale_blocked": true,
+      "stale_error": false,
+      "task_correct": true,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "stale_memory_conflict",
+      "wall_seconds": 0.002405
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": false,
+      "context_tokens": 3011,
+      "id": "P01",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/Vet.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 488,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": false,
+      "tool_calls": 5,
+      "type": "location",
+      "wall_seconds": 0.002431
+    },
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": false,
+      "context_tokens": 2772,
+      "id": "P01",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 423,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "location",
+      "wall_seconds": 0.00239
+    },
+    {
+      "arm": "TMF_FRESHNESS",
+      "citation_correct": false,
+      "context_tokens": 2772,
+      "id": "P01",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 423,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "location",
+      "wall_seconds": 0.002397
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": false,
+      "context_tokens": 5537,
+      "id": "P03",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 670,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": false,
+      "tool_calls": 5,
+      "type": "local_change_validation",
+      "wall_seconds": 0.003335
+    },
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": false,
+      "context_tokens": 5521,
+      "id": "P03",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 635,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "local_change_validation",
+      "wall_seconds": 0.00339
+    },
+    {
+      "arm": "TMF_FRESHNESS",
+      "citation_correct": false,
+      "context_tokens": 5521,
+      "id": "P03",
+      "local_reread_lines": 0,
+      "paths": [
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+      ],
+      "source_file_reads": 4,
+      "source_line_reads": 635,
+      "stale_blocked": false,
+      "stale_error": false,
+      "task_correct": false,
+      "tmf_adoption": true,
+      "tool_calls": 7,
+      "type": "local_change_validation",
+      "wall_seconds": 0.003408
+    }
+  ],
+  "schema": "java_real_v1-report",
+  "summary": {
+    "SOURCE_ONLY": {
+      "accuracy": 0.0,
+      "citation_accuracy": 0.25,
+      "mean_files": 4.0,
+      "mean_lines": 421.75,
+      "mean_tool_calls": 5.0,
+      "n": 4,
+      "stale_block_rate": 0.0
+    },
+    "TMF_FRESHNESS": {
+      "accuracy": 0.5,
+      "citation_accuracy": 0.5,
+      "mean_files": 4.0,
+      "mean_lines": 381.25,
+      "mean_tool_calls": 7.0,
+      "n": 4,
+      "stale_block_rate": 1.0
+    },
+    "TMF_MAP": {
+      "accuracy": 0.25,
+      "citation_accuracy": 0.5,
+      "mean_files": 4.0,
+      "mean_lines": 381.25,
+      "mean_tool_calls": 7.0,
+      "n": 4,
+      "stale_block_rate": 0.0
+    }
+  },
+  "workspace_status": "?? .tmf/"
+}

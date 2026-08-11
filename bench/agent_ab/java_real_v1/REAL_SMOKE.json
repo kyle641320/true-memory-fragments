@@ -1,0 +1,11 @@
+{
+  "schema": "java_real_v1-real-smoke-v1",
+  "recorded_at": "2026-08-11T16:31:00+08:00",
+  "samples": [
+    {"arm":"SOURCE_ONLY","status":"valid","task_correct":true,"source_files":8,"source_lines":396,"tool_calls":12},
+    {"arm":"TMF_MAP","status":"valid","task_correct":true,"source_files":8,"source_lines":724,"tool_calls":4,"routing":"repo-pinned-petclinic"},
+    {"arm":"TMF_MAP","status":"void","exclude_from_all_metrics":true,"reason":"first attempt used globally registered Zhihu store, not frozen Petclinic repository","allowed_use":"routing-failure evidence only"}
+  ],
+  "comparison":{"tool_call_delta":-8,"source_line_delta":328,"correctness_delta":0},
+  "guardrails":["observational smoke only","do not aggregate void sample","no frozen inputs or TMF implementation changed"]
+}

@@ -1,0 +1,1314 @@
+{
+  "status": {
+    "repo": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith",
+    "claims": 1071,
+    "freshness_sample": {
+      "checked": 20,
+      "fresh": 20,
+      "stale": 0
+    },
+    "warm_complete": true,
+    "edge_counts": {
+      "declares_autowired_presence": 17,
+      "declares_bean_presence": 4,
+      "declares_cache_metadata": 2,
+      "declares_component_presence": 2,
+      "declares_configuration_presence": 2,
+      "declares_controller_presence": 6,
+      "calls": 159,
+      "declares_init_binder_presence": 2,
+      "reads": 174,
+      "declares_response_body_presence": 1,
+      "declares_service_presence": 2,
+      "declares_transaction_metadata": 10,
+      "uses_type": 85,
+      "writes": 29
+    }
+  },
+  "claims": {
+    "VisitScheduler": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_contract_42a38ec2f6e97ca1",
+          "qualname": "VisitScheduler.bookVisit",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "line_start": 44,
+            "line_end": 50,
+            "qualname": "VisitScheduler.bookVisit"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_0aed1404b61e371c",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_5219baaa1ca5f33d",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_614d27394b86f4c1",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_c0e2cd4078cf471e",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_ec0b70a1f7668f30",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_file_7defad99c857fee6",
+          "qualname": null,
+          "scope": "file",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "line_start": 1,
+            "line_end": 40
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_1324e5d1aee1879d",
+          "qualname": "VisitController.visitScheduler",
+          "scope": "declaration",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 48,
+            "line_end": 48,
+            "qualname": "VisitController.visitScheduler"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_24facfea08ca808b",
+          "qualname": "VisitScheduler.bookVisit",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "line_start": 44,
+            "line_end": 50,
+            "qualname": "VisitScheduler.bookVisit"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_3b7d5f45d87453ce",
+          "qualname": "VisitScheduler.VisitScheduler",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "line_start": 39,
+            "line_end": 42,
+            "qualname": "VisitScheduler.VisitScheduler"
+          },
+          "freshness": null
+        }
+      ]
+    },
+    "bookVisit": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_contract_42a38ec2f6e97ca1",
+          "qualname": "VisitScheduler.bookVisit",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "line_start": 44,
+            "line_end": 50,
+            "qualname": "VisitScheduler.bookVisit"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_24facfea08ca808b",
+          "qualname": "VisitScheduler.bookVisit",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "line_start": 44,
+            "line_end": 50,
+            "qualname": "VisitScheduler.bookVisit"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_f4e9b4ac792962c5",
+          "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "line_start": 48,
+            "line_end": 61,
+            "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_76d7fa0e3f9d5f77",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_java_9e67e1991aa71f09",
+          "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent",
+          "scope": "class",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "line_start": 48,
+            "line_end": 61,
+            "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_transaction_decl_d852fe4963109905",
+          "qualname": null,
+          "scope": "declaration",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_api_0d938ac0a4960cf5",
+          "qualname": "VisitController.processNewVisitForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 96,
+            "line_end": 106
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_14cf4b074b08f081",
+          "qualname": "OwnerController.initFindForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 91,
+            "line_end": 94
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_1acfc1b04a9f7475",
+          "qualname": "OwnerController.showOwner",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 168,
+            "line_end": 176
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_373de146cea90b2c",
+          "qualname": "PetController.processCreationForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+            "line_start": 105,
+            "line_end": 125
+          },
+          "freshness": null
+        }
+      ]
+    },
+    "VisitBooked": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_file_118d2a548327b604",
+          "qualname": null,
+          "scope": "file",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "line_start": 1,
+            "line_end": 26
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_3377c8f1b1737ebe",
+          "qualname": "VisitBooked",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "line_start": 25,
+            "line_end": 26,
+            "qualname": "VisitBooked"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_74d101ebd97166a0",
+          "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+            "line_start": 34,
+            "line_end": 49,
+            "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_f4e9b4ac792962c5",
+          "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "line_start": 48,
+            "line_end": 61,
+            "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_9cb7c5015dffa661",
+          "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment",
+          "scope": "class",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+            "line_start": 34,
+            "line_end": 49,
+            "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_9e67e1991aa71f09",
+          "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent",
+          "scope": "class",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "line_start": 48,
+            "line_end": 61,
+            "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_type_use_edge_13a4e386e2c73734",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_type_use_edge_fd3e0709c177a700",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_api_0d938ac0a4960cf5",
+          "qualname": "VisitController.processNewVisitForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 96,
+            "line_end": 106
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_14cf4b074b08f081",
+          "qualname": "OwnerController.initFindForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 91,
+            "line_end": 94
+          },
+          "freshness": null
+        }
+      ]
+    },
+    "VetEventListener": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_component_decl_26201935f43e603f",
+          "qualname": null,
+          "scope": "declaration",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_ef6a6616cb34da54",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_f2ed54935b96a6df",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_file_703bb2905a060b03",
+          "qualname": null,
+          "scope": "file",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "line_start": 1,
+            "line_end": 40
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_5a8998da35096b7a",
+          "qualname": "VetEventListener.on",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "line_start": 46,
+            "line_end": 49,
+            "qualname": "VetEventListener.on"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_65ee4de009dad17d",
+          "qualname": "VetEventListener.vetRoster",
+          "scope": "declaration",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "line_start": 35,
+            "line_end": 35,
+            "qualname": "VetEventListener.vetRoster"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_7cba189c3bc1facc",
+          "qualname": "VetEventListener.VetEventListener",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "line_start": 37,
+            "line_end": 39,
+            "qualname": "VetEventListener.VetEventListener"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_a869f404efc38d1d",
+          "qualname": "VetEventListener.on",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "line_start": 41,
+            "line_end": 44,
+            "qualname": "VetEventListener.on"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_e21d349e2d9ba7fa",
+          "qualname": "VetEventListener",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "line_start": 32,
+            "line_end": 51,
+            "qualname": "VetEventListener"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_read_edge_49ebe5cb71e6c01c",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        }
+      ]
+    },
+    "on VisitBooked": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_file_118d2a548327b604",
+          "qualname": null,
+          "scope": "file",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "line_start": 1,
+            "line_end": 26
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_3377c8f1b1737ebe",
+          "qualname": "VisitBooked",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "line_start": 25,
+            "line_end": 26,
+            "qualname": "VisitBooked"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_74d101ebd97166a0",
+          "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+            "line_start": 34,
+            "line_end": 49,
+            "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_f4e9b4ac792962c5",
+          "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "line_start": 48,
+            "line_end": 61,
+            "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_9cb7c5015dffa661",
+          "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment",
+          "scope": "class",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+            "line_start": 34,
+            "line_end": 49,
+            "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_9e67e1991aa71f09",
+          "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent",
+          "scope": "class",
+          "anchor": {
+            "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "line_start": 48,
+            "line_end": 61,
+            "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_type_use_edge_13a4e386e2c73734",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_type_use_edge_fd3e0709c177a700",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_api_0d938ac0a4960cf5",
+          "qualname": "VisitController.processNewVisitForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 96,
+            "line_end": 106
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_14cf4b074b08f081",
+          "qualname": "OwnerController.initFindForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 91,
+            "line_end": 94
+          },
+          "freshness": null
+        }
+      ]
+    },
+    "VetRoster": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_contract_85975728e190ca01",
+          "qualname": "VetRoster.cleanupPastAssignments",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "line_start": 81,
+            "line_end": 87,
+            "qualname": "VetRoster.cleanupPastAssignments"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_ed7a738edc2f5072",
+          "qualname": "VetRoster.assignVet",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "line_start": 61,
+            "line_end": 74,
+            "qualname": "VetRoster.assignVet"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_1c825c63b978bc3a",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_70f31629c0ded2d0",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_9a8d8b5730de31ca",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_9be4e72e87d26eba",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_d4a9b5cab3fccf5a",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_e6ef2505af391cb7",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_file_a4aeecaff50e7afc",
+          "qualname": null,
+          "scope": "file",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "line_start": 1,
+            "line_end": 40
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_0bcdedb34df9cc4d",
+          "qualname": "VetRoster.assignVet",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "line_start": 61,
+            "line_end": 74,
+            "qualname": "VetRoster.assignVet"
+          },
+          "freshness": null
+        }
+      ]
+    },
+    "assignVet": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_contract_ed7a738edc2f5072",
+          "qualname": "VetRoster.assignVet",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "line_start": 61,
+            "line_end": 74,
+            "qualname": "VetRoster.assignVet"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_0bcdedb34df9cc4d",
+          "qualname": "VetRoster.assignVet",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "line_start": 61,
+            "line_end": 74,
+            "qualname": "VetRoster.assignVet"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_f2ed54935b96a6df",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_transaction_decl_c6a6e016fea87d53",
+          "qualname": null,
+          "scope": "declaration",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_api_0d938ac0a4960cf5",
+          "qualname": "VisitController.processNewVisitForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 96,
+            "line_end": 106
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_14cf4b074b08f081",
+          "qualname": "OwnerController.initFindForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 91,
+            "line_end": 94
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_1acfc1b04a9f7475",
+          "qualname": "OwnerController.showOwner",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 168,
+            "line_end": 176
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_373de146cea90b2c",
+          "qualname": "PetController.processCreationForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+            "line_start": 105,
+            "line_end": 125
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_412da9ce4b2eab09",
+          "qualname": "PetController.initCreationForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+            "line_start": 98,
+            "line_end": 103
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_api_4a360f1817ad8fb2",
+          "qualname": "OwnerController.initCreationForm",
+          "scope": "api",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+            "line_start": 74,
+            "line_end": 77
+          },
+          "freshness": null
+        }
+      ]
+    },
+    "VisitController": {
+      "coverage": "complete",
+      "hits": [
+        {
+          "id": "claim_contract_796628d6998372bc",
+          "qualname": "VisitController.processNewVisitForm",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 96,
+            "line_end": 106,
+            "qualname": "VisitController.processNewVisitForm"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_contract_cbbc145dc5c035b8",
+          "qualname": "VisitController.loadPetWithVisit",
+          "scope": "contract",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 67,
+            "line_end": 85,
+            "qualname": "VisitController.loadPetWithVisit"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_controller_decl_bda056d5df929f56",
+          "qualname": null,
+          "scope": "declaration",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_edge_76d7fa0e3f9d5f77",
+          "qualname": null,
+          "scope": "cross-repo",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_file_f37bb16cb9e32df5",
+          "qualname": null,
+          "scope": "file",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 1,
+            "line_end": 40
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_init_binder_decl_5566e06afa04712e",
+          "qualname": null,
+          "scope": "declaration",
+          "anchor": null,
+          "freshness": null
+        },
+        {
+          "id": "claim_java_101f2e28c0cb1ed5",
+          "qualname": "VisitController",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 43,
+            "line_end": 108,
+            "qualname": "VisitController"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_1324e5d1aee1879d",
+          "qualname": "VisitController.visitScheduler",
+          "scope": "declaration",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 48,
+            "line_end": 48,
+            "qualname": "VisitController.visitScheduler"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_2affca4cbc65b991",
+          "qualname": "VisitController.processNewVisitForm",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 96,
+            "line_end": 106,
+            "qualname": "VisitController.processNewVisitForm"
+          },
+          "freshness": null
+        },
+        {
+          "id": "claim_java_429347020f535ac7",
+          "qualname": "VisitController.loadPetWithVisit",
+          "scope": "class",
+          "anchor": {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "line_start": 67,
+            "line_end": 85,
+            "qualname": "VisitController.loadPetWithVisit"
+          },
+          "freshness": null
+        }
+      ]
+    }
+  },
+  "ablation": {
+    "P01": [
+      {
+        "mode": "context_3000",
+        "query": "Locate the complete Java path for booking a visit through publication and consumption.",
+        "top_k": 4,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          null
+        ],
+        "mrr": 0.0,
+        "first_key_anchor": null,
+        "truncated": true,
+        "relations": 0
+      },
+      {
+        "mode": "composed_1",
+        "query": "booking visit Java entry point call path event publication consumer listener downstream assignment",
+        "top_k": 20,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          null
+        ],
+        "mrr": 0.0,
+        "first_key_anchor": null,
+        "truncated": false,
+        "relations": 0
+      },
+      {
+        "mode": "composed_2",
+        "query": "visit booking producer event consumer complete workflow",
+        "top_k": 20,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          null
+        ],
+        "mrr": 0.0,
+        "first_key_anchor": null,
+        "truncated": false,
+        "relations": 0
+      }
+    ],
+    "P02": [
+      {
+        "mode": "context_3000",
+        "query": "Analyze direct impact of changing VisitBooked fields and transaction/event ordering.",
+        "top_k": 3,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+          null,
+          null
+        ],
+        "must_ranks": [
+          1,
+          null,
+          null
+        ],
+        "mrr": 0.3333333333333333,
+        "first_key_anchor": 1,
+        "truncated": true,
+        "relations": 0
+      },
+      {
+        "mode": "composed_1",
+        "query": "event fields schema producer consumer transaction ordering direct impact",
+        "top_k": 20,
+        "paths": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          null,
+          null
+        ],
+        "mrr": 0.0,
+        "first_key_anchor": null,
+        "truncated": false,
+        "relations": 0
+      },
+      {
+        "mode": "composed_2",
+        "query": "changing booking event payload publication ordering consumers tests",
+        "top_k": 20,
+        "paths": [
+          "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java",
+          "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java",
+          "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          null,
+          null
+        ],
+        "mrr": 0.0,
+        "first_key_anchor": null,
+        "truncated": false,
+        "relations": 0
+      }
+    ],
+    "P03": [
+      {
+        "mode": "context_3000",
+        "query": "Design the smallest validation change preventing booking with a null visit date; identify exact edit and targeted verification.",
+        "top_k": 4,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          1
+        ],
+        "mrr": 0.5,
+        "first_key_anchor": 1,
+        "truncated": true,
+        "relations": 0
+      },
+      {
+        "mode": "composed_1",
+        "query": "null visit date validation booking boundary targeted test",
+        "top_k": 20,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          null,
+          null,
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          null,
+          1
+        ],
+        "mrr": 0.5,
+        "first_key_anchor": 1,
+        "truncated": false,
+        "relations": 0
+      },
+      {
+        "mode": "composed_2",
+        "query": "prevent booking null date exact validation edit verification",
+        "top_k": 20,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java"
+        ],
+        "must_ranks": [
+          null,
+          1
+        ],
+        "mrr": 0.5,
+        "first_key_anchor": 1,
+        "truncated": false,
+        "relations": 0
+      }
+    ],
+    "P04": [
+      {
+        "mode": "context_3000",
+        "query": "Given old memory that bookVisit flushes before publishing, verify freshness after the supplied ordering mutation, reject stale facts, and report minimal reread scope.",
+        "top_k": 3,
+        "paths": [
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          null,
+          null
+        ],
+        "must_ranks": [
+          1
+        ],
+        "mrr": 1.0,
+        "first_key_anchor": 1,
+        "truncated": true,
+        "relations": 0
+      },
+      {
+        "mode": "composed_1",
+        "query": "flush publish ordering mutation freshness stale claim changed method minimal reread",
+        "top_k": 20,
+        "paths": [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetTypeFormatterTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetTypeFormatterTests.java",
+          "src/test/java/org/springframework/samples/petclinic/MysqlTestApplication.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetTypeFormatter.java",
+          "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java",
+          "src/main/java/org/springframework/samples/petclinic/system/internal/SystemRuntimeHints.java"
+        ],
+        "must_ranks": [
+          null
+        ],
+        "mrr": 0.0,
+        "first_key_anchor": null,
+        "truncated": false,
+        "relations": 0
+      },
+      {
+        "mode": "composed_2",
+        "query": "verify current transaction event ordering after mutation reject stale memory",
+        "top_k": 20,
+        "paths": [
+          null,
+          "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java",
+          "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+          null,
+          null,
+          "src/test/java/org/springframework/samples/petclinic/ModularityTests.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          null,
+          null,
+          null
+        ],
+        "must_ranks": [
+          17
+        ],
+        "mrr": 0.058823529411764705,
+        "first_key_anchor": 17,
+        "truncated": false,
+        "relations": 0
+      }
+    ]
+  },
+  "edges": {
+    "bookVisit": {
+      "status": "not_found",
+      "addressing": {
+        "mode": "qualname",
+        "qualname": "bookVisit",
+        "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "status": "not_found",
+        "candidates": []
+      },
+      "candidates": [],
+      "action_hint": "Ambiguous or missing static target; pick a candidate by path/claim_id before continuing. Do not guess."
+    },
+    "on": {
+      "status": "not_found",
+      "addressing": {
+        "mode": "qualname",
+        "qualname": "on",
+        "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "status": "not_found",
+        "candidates": []
+      },
+      "candidates": [],
+      "action_hint": "Ambiguous or missing static target; pick a candidate by path/claim_id before continuing. Do not guess."
+    },
+    "assignVet": {
+      "status": "not_found",
+      "addressing": {
+        "mode": "qualname",
+        "qualname": "assignVet",
+        "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+        "status": "not_found",
+        "candidates": []
+      },
+      "candidates": [],
+      "action_hint": "Ambiguous or missing static target; pick a candidate by path/claim_id before continuing. Do not guess."
+    }
+  },
+  "schema": "java_real_v1-retrieval-diagnosis-v1",
+  "method": {
+    "read_only": true,
+    "frozen_prompts_used": true,
+    "composed_queries": "provider-neutral expansions from prompt vocabulary and generic workflow facets; no golden paths/symbols used as task input",
+    "golden_use": "scoring only"
+  },
+  "classification": {
+    "missing_graph": "partial: store has 1071 claims and 159 call edges; key symbols are retrievable, but reverse caller addressing did not resolve these Java function claims and event publication/consumption is not represented as a traversable end-to-end edge",
+    "query_ranking": "primary: P01 natural question returns no required anchor; lexical structural Visit.java claims dominate",
+    "thin_context_budget_dedup": "contributing: 3000-char packing leaves only 3-4 claims, drops relations on truncation, and repeated same-file claims consume slots",
+    "entrypoint_design": "contributing: context is single-shot lexical retrieval; no staged producer/event/consumer expansion",
+    "agent_usage": "contributing but not root: agent should compose retrieval then source-read; natural-question-only use cannot expose full chain"
+  },
+  "recommendations": [
+    {
+      "priority": 1,
+      "change": "experiment wrapper only: run context(prompt), then 2-3 provider-neutral facet queries generated from prompt terms (entry/call path; publish/event; consume/listener/downstream), merge by claim id/path, preserve provenance; no seeded symbols/paths"
+    },
+    {
+      "priority": 2,
+      "change": "presentation wrapper: diversity cap per path/qualname and reserve budget for relations/fallback paths; show first distinct workflow anchors before duplicate declarations"
+    },
+    {
+      "priority": 3,
+      "change": "tool orchestration: expand returned function claim_ids via explain/callers where resolvable, then source fallback; stop on static uncertainty"
+    },
+    {
+      "priority": 4,
+      "change": "do not add Java semantics yet; first A/B wrapper versus current context on frozen prompts and report Recall@k/MRR, source lines and calls"
+    }
+  ]
+}
