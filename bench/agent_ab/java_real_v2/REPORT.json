@@ -1,0 +1,690 @@
+{
+  "schema": "java-real-v2-report",
+  "execution_kind": "native_isolated_openclaw_agents",
+  "rows": [
+    {
+      "task_id": "V2P01",
+      "repo": "petclinic",
+      "type": "location",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/ui/VisitController.java": true,
+        "owner/application/VisitScheduler.java": true,
+        "vet/internal/VetEventListener.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+      ],
+      "source_lines": 584,
+      "tool_calls": 6,
+      "wall_seconds": 102.38686990737915,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 584,
+      "response_sha256": "3ef62527591b2c6ee48dce164da168c38988cc79cc57e23a27987eb58ee1a1d2"
+    },
+    {
+      "task_id": "V2P01",
+      "repo": "petclinic",
+      "type": "location",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/ui/VisitController.java": true,
+        "owner/application/VisitScheduler.java": true,
+        "vet/internal/VetEventListener.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+      ],
+      "source_lines": 730,
+      "tool_calls": 6,
+      "wall_seconds": 106.48225498199463,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 730,
+      "response_sha256": "8e5e5c47c8cf597bd947bcb56389c201ed7103309e5fffb3cc000018013df109"
+    },
+    {
+      "task_id": "V2P02",
+      "repo": "petclinic",
+      "type": "impact",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/VisitBooked.java": true,
+        "owner/application/VisitScheduler.java": true,
+        "vet/internal/VetEventListener.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java"
+      ],
+      "source_lines": 455,
+      "tool_calls": 4,
+      "wall_seconds": 99.07167792320251,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 455,
+      "response_sha256": "d58ec120720690e37e1345c50c31011cb3076610a3d09f65dfc1abbd4e696049"
+    },
+    {
+      "task_id": "V2P02",
+      "repo": "petclinic",
+      "type": "impact",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/VisitBooked.java": true,
+        "owner/application/VisitScheduler.java": true,
+        "vet/internal/VetEventListener.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java"
+      ],
+      "source_lines": 505,
+      "tool_calls": 6,
+      "wall_seconds": 106.46574378013611,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 505,
+      "response_sha256": "4e80461f97fe478d853b509883e60551efa1237c57b2e1231a4da7fdfb336c6c"
+    },
+    {
+      "task_id": "V2P03",
+      "repo": "petclinic",
+      "type": "local_change",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/application/VisitScheduler.java": true,
+        "owner/domain/Visit.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/resources/templates/pets/createOrUpdateVisitForm.html"
+      ],
+      "source_lines": 499,
+      "tool_calls": 9,
+      "wall_seconds": 127.0580313205719,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 0,
+      "response_sha256": "d12ccaf173b54d79eca8f6bdb8b20ae8f7809ce1e7e41b6b9e08548110a2a7dd"
+    },
+    {
+      "task_id": "V2P03",
+      "repo": "petclinic",
+      "type": "local_change",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/application/VisitScheduler.java": true,
+        "owner/domain/Visit.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java",
+        "pom.xml"
+      ],
+      "source_lines": 375,
+      "tool_calls": 6,
+      "wall_seconds": 127.28420567512512,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 310,
+      "response_sha256": "fc837adce984646f8464893ec1cfc3174bbc3ec32fe5a01e9b874a39cb6a0e74"
+    },
+    {
+      "task_id": "V2J01",
+      "repo": "jhipster",
+      "type": "location",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/OperationResource.java": true,
+        "repository/OperationRepository.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepository.java",
+        "src/main/java/io/github/jhipster/sample/domain/Operation.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/errors/BadRequestAlertException.java"
+      ],
+      "source_lines": 381,
+      "tool_calls": 4,
+      "wall_seconds": 75.01,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 381,
+      "response_sha256": "c7b13b3fb425d534aa4d74f5276220886faa9b396b02703c07c39c57a50bbccd"
+    },
+    {
+      "task_id": "V2J01",
+      "repo": "jhipster",
+      "type": "location",
+      "arm": "TMF_MAP",
+      "valid": false,
+      "correct": false,
+      "citation_correct": false,
+      "citation_hits": {
+        "web/rest/OperationResource.java": false,
+        "repository/OperationRepository.java": false
+      },
+      "source_files": [],
+      "source_lines": null,
+      "tool_calls": null,
+      "wall_seconds": null,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": null,
+      "response_sha256": null
+    },
+    {
+      "task_id": "V2J02",
+      "repo": "jhipster",
+      "type": "impact",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "repository/OperationRepositoryWithBagRelationships.java": true,
+        "repository/OperationRepositoryWithBagRelationshipsImpl.java": true,
+        "repository/OperationRepository.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepository.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepositoryWithBagRelationships.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepositoryWithBagRelationshipsImpl.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java",
+        "src/main/java/io/github/jhipster/sample/domain/Operation.java",
+        "src/main/java/io/github/jhipster/sample/domain/Label.java",
+        "src/test/java/io/github/jhipster/sample/web/rest/OperationResourceIT.java"
+      ],
+      "source_lines": 418,
+      "tool_calls": 5,
+      "wall_seconds": 97.63909196853638,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 0,
+      "response_sha256": "e45e705d3aa36eff3f47d8edd8828f2692fa8023615fbbec289a559803c02900"
+    },
+    {
+      "task_id": "V2J02",
+      "repo": "jhipster",
+      "type": "impact",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": false,
+      "citation_correct": true,
+      "citation_hits": {
+        "repository/OperationRepositoryWithBagRelationships.java": true,
+        "repository/OperationRepositoryWithBagRelationshipsImpl.java": true,
+        "repository/OperationRepository.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/domain/Operation.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepository.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepositoryWithBagRelationships.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepositoryWithBagRelationshipsImpl.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java",
+        "src/test/java/io/github/jhipster/sample/web/rest/OperationResourceIT.java"
+      ],
+      "source_lines": 292,
+      "tool_calls": 8,
+      "wall_seconds": 141.26192164421082,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 292,
+      "response_sha256": "be99ff7baf2258dca9691a586f37b663270375432813d54e2574432905762a51"
+    },
+    {
+      "task_id": "V2J03",
+      "repo": "jhipster",
+      "type": "local_change",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/OperationResource.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java",
+        "src/test/java/io/github/jhipster/sample/web/rest/OperationResourceIT.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/LabelResource.java",
+        "src/main/java/io/github/jhipster/sample/repository/OperationRepository.java"
+      ],
+      "source_lines": 581,
+      "tool_calls": 7,
+      "wall_seconds": 170.24687433242798,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 0,
+      "response_sha256": "47bb161e6ec4f6811b301795103d3cea92e0c7fe5f9d29a79b25875d688cfb37"
+    },
+    {
+      "task_id": "V2J03",
+      "repo": "jhipster",
+      "type": "local_change",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/OperationResource.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java",
+        "src/test/java/io/github/jhipster/sample/web/rest/OperationResourceIT.java"
+      ],
+      "source_lines": 539,
+      "tool_calls": 11,
+      "wall_seconds": 156.38815546035767,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 539,
+      "response_sha256": "ca27b92d96dcb159da0b59b747da1facadd5c5a67bb2d730657572552def56d4"
+    },
+    {
+      "task_id": "V2J04",
+      "repo": "jhipster",
+      "type": "impact",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/UserResource.java": true,
+        "service/UserService.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/UserResource.java",
+        "src/main/java/io/github/jhipster/sample/service/UserService.java",
+        "src/main/java/io/github/jhipster/sample/repository/UserRepository.java",
+        "src/main/java/io/github/jhipster/sample/service/MailService.java",
+        "src/main/java/io/github/jhipster/sample/domain/User.java",
+        "src/main/java/io/github/jhipster/sample/service/dto/AdminUserDTO.java"
+      ],
+      "source_lines": 643,
+      "tool_calls": 5,
+      "wall_seconds": 96.53262710571289,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 0,
+      "response_sha256": "bbbe8706c00dd99cef460603a87193bebcfce93a53280465f10407bc7793bf9a"
+    },
+    {
+      "task_id": "V2J04",
+      "repo": "jhipster",
+      "type": "impact",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/UserResource.java": true,
+        "service/UserService.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/UserResource.java",
+        "src/main/java/io/github/jhipster/sample/service/UserService.java",
+        "src/main/java/io/github/jhipster/sample/service/MailService.java",
+        "src/main/java/io/github/jhipster/sample/repository/UserRepository.java"
+      ],
+      "source_lines": 487,
+      "tool_calls": 6,
+      "wall_seconds": 92.0220992565155,
+      "stale_trusted": false,
+      "stale_blocked": false,
+      "local_reread_lines": 487,
+      "response_sha256": "238f86a1d24d105cd2b95738985f5ceab47a2c997291d811c6037c813d20b05f"
+    },
+    {
+      "task_id": "V2F01",
+      "repo": "jhipster",
+      "type": "freshness_rebind",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/OperationResource.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/LabelResource.java",
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+      ],
+      "source_lines": 90,
+      "tool_calls": 5,
+      "wall_seconds": 72.97458267211914,
+      "stale_trusted": false,
+      "stale_blocked": true,
+      "local_reread_lines": 90,
+      "response_sha256": "8c77015e8e588336e34e92239334ebe726124150f9b6e826e420b819c5ed6e62"
+    },
+    {
+      "task_id": "V2F01",
+      "repo": "jhipster",
+      "type": "freshness_rebind",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": true,
+      "citation_correct": true,
+      "citation_hits": {
+        "web/rest/OperationResource.java": true
+      },
+      "source_files": [
+        "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+      ],
+      "source_lines": 101,
+      "tool_calls": 7,
+      "wall_seconds": 107.49410080909729,
+      "stale_trusted": false,
+      "stale_blocked": true,
+      "local_reread_lines": 101,
+      "response_sha256": "2e183ba25f69a0fdb0d95455b61baaaaec5fec1c1afccbb16f45f5634632d7b3"
+    },
+    {
+      "task_id": "V2F02",
+      "repo": "petclinic",
+      "type": "freshness_event_type_change",
+      "arm": "SOURCE_ONLY",
+      "valid": true,
+      "correct": false,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/application/VisitScheduler.java": true,
+        "owner/VisitScheduled.java": true,
+        "vet/internal/VetEventListener.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+      ],
+      "source_lines": 218,
+      "tool_calls": 3,
+      "wall_seconds": 74.13892102241516,
+      "stale_trusted": false,
+      "stale_blocked": true,
+      "local_reread_lines": 218,
+      "response_sha256": "d214cb880ab5dba8014cabe516ac62f28c267fb077a658c9456be5edb3bcef91"
+    },
+    {
+      "task_id": "V2F02",
+      "repo": "petclinic",
+      "type": "freshness_event_type_change",
+      "arm": "TMF_MAP",
+      "valid": true,
+      "correct": false,
+      "citation_correct": true,
+      "citation_hits": {
+        "owner/application/VisitScheduler.java": true,
+        "owner/VisitScheduled.java": true,
+        "vet/internal/VetEventListener.java": true
+      },
+      "source_files": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+      ],
+      "source_lines": 92,
+      "tool_calls": 8,
+      "wall_seconds": 70.8612585067749,
+      "stale_trusted": false,
+      "stale_blocked": true,
+      "local_reread_lines": 92,
+      "response_sha256": "3842b846d99516e772ed0781be3acad9b8d9cb6aeb46ae0ba5462beb7c446f08"
+    }
+  ],
+  "pairs": [
+    {
+      "task_id": "V2P01",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 102.38686990737915
+        },
+        "TMF_MAP": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 106.48225498199463
+        }
+      }
+    },
+    {
+      "task_id": "V2P02",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 99.07167792320251
+        },
+        "TMF_MAP": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 106.46574378013611
+        }
+      }
+    },
+    {
+      "task_id": "V2P03",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 127.0580313205719
+        },
+        "TMF_MAP": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 127.28420567512512
+        }
+      }
+    },
+    {
+      "task_id": "V2J01",
+      "valid_pair": false,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 75.01
+        },
+        "TMF_MAP": {
+          "correct": false,
+          "citation_correct": false,
+          "wall_seconds": null
+        }
+      }
+    },
+    {
+      "task_id": "V2J02",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 97.63909196853638
+        },
+        "TMF_MAP": {
+          "correct": false,
+          "citation_correct": true,
+          "wall_seconds": 141.26192164421082
+        }
+      }
+    },
+    {
+      "task_id": "V2J03",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 170.24687433242798
+        },
+        "TMF_MAP": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 156.38815546035767
+        }
+      }
+    },
+    {
+      "task_id": "V2J04",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 96.53262710571289
+        },
+        "TMF_MAP": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 92.0220992565155
+        }
+      }
+    },
+    {
+      "task_id": "V2F01",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 72.97458267211914
+        },
+        "TMF_MAP": {
+          "correct": true,
+          "citation_correct": true,
+          "wall_seconds": 107.49410080909729
+        }
+      }
+    },
+    {
+      "task_id": "V2F02",
+      "valid_pair": true,
+      "arms": {
+        "SOURCE_ONLY": {
+          "correct": false,
+          "citation_correct": true,
+          "wall_seconds": 74.13892102241516
+        },
+        "TMF_MAP": {
+          "correct": false,
+          "citation_correct": true,
+          "wall_seconds": 70.8612585067749
+        }
+      }
+    }
+  ],
+  "summary": {
+    "SOURCE_ONLY": {
+      "n_valid": 9,
+      "accuracy": 0.8888888888888888,
+      "citation_accuracy": 1.0,
+      "mean_wall_seconds": 101.67318625026279,
+      "stale_block_rate": 1.0
+    },
+    "TMF_MAP": {
+      "n_valid": 8,
+      "accuracy": 0.75,
+      "citation_accuracy": 1.0,
+      "mean_wall_seconds": 113.5324675142765,
+      "stale_block_rate": 1.0
+    }
+  },
+  "ordinary_valid_pairs": 6,
+  "freshness_valid_pairs": 2,
+  "pollution_test": {
+    "schema": "java-real-v2-pollution-test",
+    "rows": [
+      {
+        "query_file": "pollution-q1-jhipster.json",
+        "expected_repo": "jhipster",
+        "router_repo": "jhipster",
+        "forbidden_marker_present": false,
+        "pass": true
+      },
+      {
+        "query_file": "pollution-q2-petclinic.json",
+        "expected_repo": "petclinic",
+        "router_repo": "petclinic",
+        "forbidden_marker_present": false,
+        "pass": true
+      },
+      {
+        "query_file": "pollution-q3-jhipster.json",
+        "expected_repo": "jhipster",
+        "router_repo": "jhipster",
+        "forbidden_marker_present": false,
+        "pass": true
+      }
+    ],
+    "pass": true
+  },
+  "manifest_sha256": "e6357ffaf4a41f544c4d3a76ed4b7027573cdd0a9a50dfc060bb9529d18b08d2",
+  "protocol_sha256": "29171ca547f6a90490cf34e5bcf0d561fd9c0490825fcd2f3bb6b20d20c6f8f1"
+}

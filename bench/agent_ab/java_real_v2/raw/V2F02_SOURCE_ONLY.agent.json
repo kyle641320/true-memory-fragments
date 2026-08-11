@@ -1,0 +1,29 @@
+{
+  "status": "ok",
+  "summary": "completed",
+  "result": {
+    "payloads": [
+      {
+        "text": "The old memory is **stale and was blocked**, not trusted: booking now publishes `VisitScheduled`, not `VisitBooked` (`VisitScheduler.java:44-50`; event definition at `VisitScheduled.java:20-26`).\n\nThe veterinary listener consumes `VisitScheduled` and delegates assignment (`VetEventListener.java:41-44`). The roster reads `event.date()`, chooses the least-loaded veterinarian, and persists the assignment (`VetRoster.java:61-73`). Thus, the remembered behavior remains broadly valid, but its event-type claim is outdated.\n\nMETRICS_JSON={\"source_files\":[\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\",\"src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java\"],\"source_lines\":218,\"tool_calls\":3,\"stale_trusted\":false,\"stale_blocked\":true,\"local_reread_lines\":218}",
+        "mediaUrl": null
+      },
+      {
+        "text": "⚠️ 🛠️ `search \"!**/.tmf/**\" in . (agent)` failed",
+        "mediaUrl": null
+      }
+    ]
+  },
+  "benchmark_meta": {
+    "duration_ms": 56006,
+    "provider": "aisz",
+    "model": "gpt-5.6-sol",
+    "usage": {
+      "input": 61501,
+      "output": 937,
+      "cacheRead": 80640,
+      "reasoningTokens": 210,
+      "total": 35460
+    },
+    "aborted": false
+  }
+}

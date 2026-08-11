@@ -1,0 +1,129 @@
+{
+  "schema": "java_real_v2",
+  "frozen_at": "2026-08-11T17:55:00+08:00",
+  "seed": "java_real_v2:2026-08-11",
+  "model": {
+    "id": "aisz/gpt-5.6-sol",
+    "thinking": "off",
+    "timeout_seconds": 240
+  },
+  "budgets": {
+    "tool_calls": 14,
+    "source_files": 8,
+    "source_lines": 900,
+    "wall_seconds": 240
+  },
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_MAP"
+  ],
+  "repositories": [
+    {
+      "id": "petclinic",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith",
+      "commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea"
+    },
+    {
+      "id": "jhipster",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/jhipster-sample-app",
+      "commit": "f8da577c944ecc4db46fc961a1ba022d5bbf8964"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "V2P01",
+      "repo": "petclinic",
+      "type": "location",
+      "prompt": "Trace the request path that creates a new visit, from the web boundary through persistence and any cross-module reaction. Cite exact file:line ranges and distinguish direct calls from event delivery.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2P02",
+      "repo": "petclinic",
+      "type": "impact",
+      "prompt": "If the data carried when a visit is booked gains a required veterinarian identifier, identify the smallest direct producer/consumer impact surface and transaction-ordering risks. Cite exact file:line ranges.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2P03",
+      "repo": "petclinic",
+      "type": "local_change",
+      "prompt": "Design the smallest change that rejects a missing visit date at the application boundary before state is mutated. Name focused tests and an offline verification command; cite exact file:line ranges.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2J01",
+      "repo": "jhipster",
+      "type": "location",
+      "prompt": "Trace creation of an operation from its HTTP entry point to persistence and the created response URI. Cite exact file:line ranges and validation/id guards.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2J02",
+      "repo": "jhipster",
+      "type": "impact",
+      "prompt": "Analyze the direct impact of changing the operation-label relationship loading contract, including single-item, list, and paged reads. Cite exact file:line ranges; do not speculate beyond direct source evidence.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2J03",
+      "repo": "jhipster",
+      "type": "local_change",
+      "prompt": "Design the smallest safe change so partial operation updates reject a missing request identifier consistently before repository access. Name focused tests and an offline verification command; cite exact file:line ranges.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2J04",
+      "repo": "jhipster",
+      "type": "impact",
+      "prompt": "Trace administrator user creation through duplicate checks, persistence, cache handling, email, and response construction. Identify the transaction/side-effect boundary risk with exact file:line citations.",
+      "paired": true,
+      "freshness": false
+    },
+    {
+      "id": "V2F01",
+      "repo": "jhipster",
+      "type": "freshness_rebind",
+      "prompt": "You have old memory saying the partial-update helper invokes setters only for non-null values. After the supplied mutation, first test whether that memory is stale, then answer from a minimal local reread. State whether stale memory was trusted or blocked and cite exact file:line ranges.",
+      "paired": true,
+      "freshness": true
+    },
+    {
+      "id": "V2F02",
+      "repo": "petclinic",
+      "type": "freshness_event_type_change",
+      "prompt": "You have old memory saying visit booking publishes an event whose date is consumed by the veterinary module. After the supplied event-type mutation, first test whether that memory is stale, then answer from a minimal local reread. State whether stale memory was trusted or blocked and cite exact file:line ranges.",
+      "paired": true,
+      "freshness": true
+    }
+  ],
+  "agent_task_order": [
+    "V2J02",
+    "V2F01",
+    "V2P03",
+    "V2P02",
+    "V2J03",
+    "V2J01",
+    "V2J04",
+    "V2F02",
+    "V2P01"
+  ],
+  "runner_golden_isolation": true,
+  "metrics": [
+    "correct",
+    "citation_correct",
+    "source_files",
+    "source_lines",
+    "tool_calls",
+    "wall_seconds",
+    "stale_trusted",
+    "stale_blocked",
+    "local_reread_lines"
+  ]
+}

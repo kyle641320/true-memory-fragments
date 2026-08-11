@@ -1,0 +1,26 @@
+diff --git a/src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java b/src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java
+index 8c3b506..7112f58 100644
+--- a/src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java
++++ b/src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java
+@@ -129,9 +129,9 @@ public class OperationResource {
+         Optional<Operation> result = operationRepository
+             .findById(operation.getId())
+             .map(existingOperation -> {
+-                updateIfPresent(existingOperation::setDate, operation.getDate());
+-                updateIfPresent(existingOperation::setDescription, operation.getDescription());
+-                updateIfPresent(existingOperation::setAmount, operation.getAmount());
++                applyIfProvided(existingOperation::setDate, operation.getDate());
++                applyIfProvided(existingOperation::setDescription, operation.getDescription());
++                applyIfProvided(existingOperation::setAmount, operation.getAmount());
+ 
+                 return existingOperation;
+             })
+@@ -194,7 +194,7 @@ public class OperationResource {
+             .build();
+     }
+ 
+-    private <T> void updateIfPresent(Consumer<T> setter, T value) {
++    private <T> void applyIfProvided(Consumer<T> setter, T value) {
+         if (value != null) {
+             setter.accept(value);
+         }

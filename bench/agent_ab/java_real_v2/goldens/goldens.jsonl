@@ -1,0 +1,9 @@
+{"id": "V2P01", "must_cite": ["owner/ui/VisitController.java", "owner/application/VisitScheduler.java", "vet/internal/VetEventListener.java"], "facts": ["controller delegates booking", "scheduler adds and flushes before publish", "listener assigns vet"]}
+{"id": "V2P02", "must_cite": ["owner/VisitBooked.java", "owner/application/VisitScheduler.java", "vet/internal/VetEventListener.java"], "facts": ["event record is contract", "producer constructs event", "consumer reads event date"]}
+{"id": "V2P03", "must_cite": ["owner/application/VisitScheduler.java", "owner/domain/Visit.java"], "facts": ["validate before addVisit", "focused owner/application test"]}
+{"id": "V2J01", "must_cite": ["web/rest/OperationResource.java", "repository/OperationRepository.java"], "facts": ["POST guard rejects existing id", "save then URI uses generated id"]}
+{"id": "V2J02", "must_cite": ["repository/OperationRepositoryWithBagRelationships.java", "repository/OperationRepositoryWithBagRelationshipsImpl.java", "repository/OperationRepository.java"], "facts": ["three overloads", "all delegate label fetch", "list restores input order"]}
+{"id": "V2J03", "must_cite": ["web/rest/OperationResource.java"], "facts": ["body id null guard precedes existsById", "resource integration test target"]}
+{"id": "V2J04", "must_cite": ["web/rest/UserResource.java", "service/UserService.java"], "facts": ["resource duplicate checks", "service persists and clears caches", "mail occurs after service return outside service transaction proxy"]}
+{"id": "V2F01", "must_cite": ["web/rest/OperationResource.java"], "facts": ["old helper binding stale after rename", "local reread sees new helper and call sites", "must block stale"]}
+{"id": "V2F02", "must_cite": ["owner/application/VisitScheduler.java", "owner/VisitScheduled.java", "vet/internal/VetEventListener.java"], "facts": ["old event type claim stale", "producer and consumer use renamed type", "must block stale"]}

@@ -1,0 +1,5 @@
+You are one isolated benchmark coding-investigation agent. Repository: /root/.openclaw/workspace/experiments/tmf-java-real-v2/jhipster-rebind. Arm: SOURCE_ONLY. Budget: at most 14 tool calls, 8 source files, 900 source lines. No edits.
+Old claim snapshot (injected identically into both arms): the partial update method calls a private helper named updateIfPresent, which invokes setters only for non-null values.
+Do not invoke or read TMF or .tmf. Determine staleness by comparing the supplied old claim with current source.
+Task: You have old memory saying the partial-update helper invokes setters only for non-null values. After the supplied mutation, first test whether that memory is stale, then answer from a minimal local reread. State whether stale memory was trusted or blocked and cite exact file:line ranges.
+Return a concise answer with exact file:line citations, then final line exactly METRICS_JSON={"source_files": [...], "source_lines": integer, "tool_calls": integer, "stale_trusted": boolean, "stale_blocked": boolean, "local_reread_lines": integer}.

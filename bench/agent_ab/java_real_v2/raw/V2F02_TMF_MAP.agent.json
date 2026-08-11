@@ -1,0 +1,25 @@
+{
+  "status": "ok",
+  "summary": "completed",
+  "result": {
+    "payloads": [
+      {
+        "text": "Freshness check could not run because repo-local `tmf` was unavailable (`ModuleNotFoundError`). Therefore the old `VisitBooked` memory was **blocked, not trusted**, and current source was reread.\n\nCurrent behavior: booking publishes `VisitScheduled` with visit ID, pet ID, and date (`VisitScheduler.java:44-50`; `VisitScheduled.java:20-26`). The veterinary listener consumes `VisitScheduled` and delegates to vet assignment (`VetEventListener.java:28-44`), which uses `event.date()` to select and persist the veterinarian assignment (`VetRoster.java:54-70`). Thus the old `VisitBooked` event-type claim is stale.\n\nMETRICS_JSON={\"source_files\":[\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\",\"src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java\"],\"source_lines\":92,\"tool_calls\":8,\"stale_trusted\":false,\"stale_blocked\":true,\"local_reread_lines\":92}",
+        "mediaUrl": null
+      }
+    ]
+  },
+  "benchmark_meta": {
+    "duration_ms": 60145,
+    "provider": "aisz",
+    "model": "gpt-5.6-sol",
+    "usage": {
+      "input": 144123,
+      "output": 1252,
+      "cacheRead": 68608,
+      "reasoningTokens": 238,
+      "total": 33740
+    },
+    "aborted": false
+  }
+}

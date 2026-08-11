@@ -1,0 +1,3 @@
+[state-migrations] Legacy state migration warnings:
+- Left plugin install index in place because shared SQLite state has conflicting plugin install metadata for: acpx, ddingtalk, feishu, qqbot, wecom
+- Left migrated task registry sidecar in place because archive already exists: /root/.openclaw/tasks/runs.sqlite.migrated
