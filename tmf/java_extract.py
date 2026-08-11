@@ -15,15 +15,17 @@ JAVA_DEGRADE_HINT = (
 )
 
 
-def _java_exact_simple_annotation_import(source: str, simple_name: str, expected_fqn: str) -> bool:
+def _java_exact_simple_annotation_import(source: str, simple_name: str, expected_fqn: str | frozenset[str]) -> bool:
     """Accept one exact non-static import and reject local/simple-name shadowing."""
     imports = re.findall(r"(?m)^\s*import\s+(?!static\b)([A-Za-z_][\w.]*)\s*;", source)
     raw = re.findall(rf"\bimport\s+(?:static\s+)?([^;]*{re.escape(simple_name)}[^;]*)\s*;", source)
     declarations = rf"(?:@interface|class|interface|record|enum)\s+{re.escape(simple_name)}\b"
+    expected = frozenset({expected_fqn}) if isinstance(expected_fqn, str) else expected_fqn
+    matching = [value for value in imports if value in expected]
     return (
-        imports.count(expected_fqn) == 1
-        and [value for value in imports if value.rsplit('.', 1)[-1] == simple_name] == [expected_fqn]
-        and raw == [expected_fqn]
+        len(matching) == 1
+        and [value for value in imports if value.rsplit('.', 1)[-1] == simple_name] == matching
+        and raw == matching
         and re.search(declarations, source) is None
     )
 
@@ -1281,7 +1283,7 @@ def _resolve_java_presence_declarations(
     fields: list[DeclarationNode] | None = None,
     *,
     annotation: str,
-    expected_fqn: str,
+    expected_fqn: str | frozenset[str],
     owner_kinds: frozenset[str],
     declaration_type: type,
     unresolved_type: type,
@@ -1289,6 +1291,7 @@ def _resolve_java_presence_declarations(
     allow_nested_method_owner: bool = False,
     reject_static_owner: bool = False,
     reject_anonymous_owner: bool = False,
+    resolution_by_fqn: dict[str, str] | None = None,
 ) -> tuple[list[Any], dict[str, list[Any]]]:
     """Shared fail-closed resolver for direct, metadata-free annotation presence."""
     if f"@{annotation}" not in source:
@@ -1358,7 +1361,12 @@ def _resolve_java_presence_declarations(
                     reject(owner, ann, f"{reason_prefix}_metadata_unsupported")
                 else:
                     owner_hash = pool[0].declaration_hash if isinstance(pool[0], DeclarationNode) else pool[0].class_hash
-                    found.append(declaration_type(owner, qualname, kind, path, _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), owner_hash))
+                    args = (owner, qualname, kind, path, _line_start(ann), _line_end(ann), java_hash_for_node(source, ann), owner_hash)
+                    if resolution_by_fqn is None:
+                        found.append(declaration_type(*args))
+                    else:
+                        imported = _java_explicit_imports(source).get(annotation)
+                        found.append(declaration_type(*args, resolution_by_fqn[imported]))
         nested_method = in_method or node.type in {"method_declaration", "constructor_declaration"}
         nested_anonymous_class = in_anonymous_class or node.type == "object_creation_expression"
         for child in _named_children(node):
@@ -1435,16 +1443,16 @@ def resolve_java_autowired_declarations(path: str, source: str, methods: list[Cl
     return _resolve_java_presence_declarations(path, source, [], methods, fields, annotation="Autowired", expected_fqn="org.springframework.beans.factory.annotation.Autowired", owner_kinds=frozenset({"constructor", "method", "field"}), declaration_type=JavaAutowiredDeclaration, unresolved_type=JavaUnresolvedAutowiredDeclaration, reason_prefix="autowired", reject_static_owner=True, reject_anonymous_owner=True)
 
 def resolve_java_resource_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaResourceDeclaration], dict[str, list[JavaUnresolvedResourceDeclaration]]]:
-    return _resolve_java_presence_declarations(path, source, classes, methods, fields, annotation="Resource", expected_fqn="jakarta.annotation.Resource", owner_kinds=frozenset({"class", "method", "field"}), declaration_type=JavaResourceDeclaration, unresolved_type=JavaUnresolvedResourceDeclaration, reason_prefix="resource", reject_static_owner=True, reject_anonymous_owner=True)
+    return _resolve_java_presence_declarations(path, source, classes, methods, fields, annotation="Resource", expected_fqn=frozenset({"jakarta.annotation.Resource", "javax.annotation.Resource"}), owner_kinds=frozenset({"class", "method", "field"}), declaration_type=JavaResourceDeclaration, unresolved_type=JavaUnresolvedResourceDeclaration, reason_prefix="resource", reject_static_owner=True, reject_anonymous_owner=True, resolution_by_fqn={"jakarta.annotation.Resource":"jakarta-annotation-resource-exact-import-presence","javax.annotation.Resource":"javax-annotation-resource-exact-import-presence"})
 
 def resolve_java_singleton_declarations(path: str, source: str, classes: list[ClassNode]) -> tuple[list[JavaSingletonDeclaration], dict[str, list[JavaUnresolvedSingletonDeclaration]]]:
-    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Singleton", expected_fqn="jakarta.inject.Singleton", owner_kinds=frozenset({"class"}), declaration_type=JavaSingletonDeclaration, unresolved_type=JavaUnresolvedSingletonDeclaration, reason_prefix="singleton")
+    return _resolve_java_presence_declarations(path, source, classes, [], annotation="Singleton", expected_fqn=frozenset({"jakarta.inject.Singleton", "javax.inject.Singleton"}), owner_kinds=frozenset({"class"}), declaration_type=JavaSingletonDeclaration, unresolved_type=JavaUnresolvedSingletonDeclaration, reason_prefix="singleton", resolution_by_fqn={"jakarta.inject.Singleton":"jakarta-inject-singleton-exact-import-presence","javax.inject.Singleton":"javax-inject-singleton-exact-import-presence"})
 
 def resolve_java_inject_declarations(path: str, source: str, methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaInjectDeclaration], dict[str, list[JavaUnresolvedInjectDeclaration]]]:
-    return _resolve_java_presence_declarations(path, source, [], methods, fields, annotation="Inject", expected_fqn="jakarta.inject.Inject", owner_kinds=frozenset({"constructor", "method", "field"}), declaration_type=JavaInjectDeclaration, unresolved_type=JavaUnresolvedInjectDeclaration, reason_prefix="inject", reject_static_owner=True, reject_anonymous_owner=True)
+    return _resolve_java_presence_declarations(path, source, [], methods, fields, annotation="Inject", expected_fqn=frozenset({"jakarta.inject.Inject", "javax.inject.Inject"}), owner_kinds=frozenset({"constructor", "method", "field"}), declaration_type=JavaInjectDeclaration, unresolved_type=JavaUnresolvedInjectDeclaration, reason_prefix="inject", reject_static_owner=True, reject_anonymous_owner=True, resolution_by_fqn={"jakarta.inject.Inject":"jakarta-inject-inject-exact-import-presence","javax.inject.Inject":"javax-inject-inject-exact-import-presence"})
 
 def resolve_java_named_declarations(path: str, source: str, classes: list[ClassNode], methods: list[ClassNode], fields: list[DeclarationNode]) -> tuple[list[JavaNamedDeclaration], dict[str, list[JavaUnresolvedNamedDeclaration]]]:
-    return _resolve_java_presence_declarations(path, source, classes, methods, fields, annotation="Named", expected_fqn="jakarta.inject.Named", owner_kinds=frozenset({"class", "method", "field"}), declaration_type=JavaNamedDeclaration, unresolved_type=JavaUnresolvedNamedDeclaration, reason_prefix="named", reject_anonymous_owner=True)
+    return _resolve_java_presence_declarations(path, source, classes, methods, fields, annotation="Named", expected_fqn=frozenset({"jakarta.inject.Named", "javax.inject.Named"}), owner_kinds=frozenset({"class", "method", "field"}), declaration_type=JavaNamedDeclaration, unresolved_type=JavaUnresolvedNamedDeclaration, reason_prefix="named", reject_anonymous_owner=True, resolution_by_fqn={"jakarta.inject.Named":"jakarta-inject-named-exact-import-presence","javax.inject.Named":"javax-inject-named-exact-import-presence"})
 
 def resolve_java_pre_destroy_declarations(path: str, source: str, methods: list[ClassNode]) -> tuple[list[JavaPreDestroyDeclaration], dict[str, list[JavaUnresolvedPreDestroyDeclaration]]]:
     return _resolve_java_presence_declarations(path, source, [], methods, annotation="PreDestroy", expected_fqn="jakarta.annotation.PreDestroy", owner_kinds=frozenset({"method"}), declaration_type=JavaPreDestroyDeclaration, unresolved_type=JavaUnresolvedPreDestroyDeclaration, reason_prefix="pre_destroy")
@@ -3950,6 +3958,10 @@ class JavaUnresolvedInject:
     reason: str
     inject_kind: str
     candidates: list[str] | None = None
+    expr: str | None = None
+    annotation: str | None = None
+    qualname: str | None = None
+    bucket: str | None = None
 
 
 @dataclass(frozen=True)
@@ -3975,6 +3987,9 @@ class JavaUnresolvedTopic:
     expr: str
     reason: str
     edge_kind: str
+    annotation: str | None = None
+    qualname: str | None = None
+    bucket: str | None = None
 
 
 @dataclass(frozen=True)
@@ -4266,6 +4281,29 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
     edges: list[JavaInjectEdge] = []
     unresolved: dict[str, list[JavaUnresolvedInject]] = {}
     seen: set[tuple[str,str,str]] = set()
+    # Narrow trust-model guard: field annotations with injection-role vocabulary
+    # are unknown unless they are one of the exact supported FQNs. Arbitrary
+    # annotations remain true negatives.
+    role_names = re.compile(r"(?:Inject|Autowired|Resource)$")
+    exact_injection_names = {name for name in ("Autowired", "Inject") if genuine(name)}
+    resource_import = imports.get("Resource")
+    if resource_import in {"javax.annotation.Resource", "jakarta.annotation.Resource"}:
+        exact_injection_names.add("Resource")
+    explicitly_imported = _java_explicit_imports(source)
+    for field in java_fields:
+        owner = field.qualname.rsplit('.', 1)[0] if '.' in field.qualname else ''
+        cls = class_by_simple.get(owner)
+        if cls is None or not (0 < field.line_start <= len(lines)):
+            continue
+        line = lines[field.line_start - 1]
+        for annotation in re.findall(r"@([A-Za-z_$][\w$]*)\b", line):
+            imported = explicitly_imported.get(annotation)
+            if role_names.search(annotation) and annotation not in exact_injection_names:
+                injector_id = ids.stable_java_node_claim_id(path, cls.qualname, cls.node_kind)
+                unresolved.setdefault(injector_id, []).append(JavaUnresolvedInject(
+                    injector_id, field.qualname.rsplit('.', 1)[-1], "injection_annotation_not_recognized", "field", [],
+                    expr=line.strip(), annotation=annotation, qualname=field.qualname, bucket="dependency_injection",
+                ))
     for owner, fields in fields_by_owner.items():
         cls = class_by_simple.get(owner)
         if cls is None:
@@ -5105,22 +5143,24 @@ def _eventuate_wrapper_channels(repo: Any, source: str) -> tuple[dict[str, tuple
 def resolve_java_topic_edges(path: str, source: str, java_methods: list[ClassNode], repo: Any | None = None) -> tuple[list[JavaTopicEdge], dict[str, list[JavaUnresolvedTopic]]]:
     if not path.endswith('.java'):
         return [], {}
-    # Avoid an O(files²) repository scan for ordinary Java files.  The only
-    # cross-file topic lookup currently supported is an Eventuate publisher
-    # wrapper, so unrelated sources must return before building that index.
-    if not any(marker in source for marker in ("KafkaTemplate", "@KafkaListener", "DomainEventPublisher", "EventPublisher", "@EventuateDomainEventHandler")):
+    import re
+    # Keep expensive cross-file wrapper discovery gated, but always scan method
+    # annotations: role-shaped listener annotations must become explicit unknowns
+    # rather than indistinguishable true negatives.
+    topic_markers = ("KafkaTemplate", "@KafkaListener", "DomainEventPublisher", "EventPublisher", "@EventuateDomainEventHandler")
+    role_annotation_present = bool(re.search(r"@[A-Za-z_$][\w$]*(?:Listener|Consumer|Receiver|Receive)\b", source))
+    if not any(marker in source for marker in topic_markers) and not role_annotation_present:
         return [], {}
     ids = __import__('tmf.ids', fromlist=['stable_java_node_claim_id'])
     source_bytes = source.encode('utf-8')
     edges: list[JavaTopicEdge] = []
     unresolved: dict[str, list[JavaUnresolvedTopic]] = {}
-    import re
     exact_listener = bool(re.search(r"(?m)^\s*import\s+org\.springframework\.kafka\.annotation\.KafkaListener\s*;", source))
     exact_template = bool(re.search(r"(?m)^\s*import\s+org\.springframework\.kafka\.core\.KafkaTemplate\s*;", source))
     template_receivers = set()
     if exact_template:
         template_receivers = set(re.findall(r"\bKafkaTemplate\s*<[^;=(){}]+>\s+([A-Za-z_][\w]*)\s*(?:[;=,)])", source))
-    wrapper_channels, ambiguous_wrappers = _eventuate_wrapper_channels(repo, source)
+    wrapper_channels, ambiguous_wrappers = _eventuate_wrapper_channels(repo, source) if any(marker in source for marker in ("DomainEventPublisher", "EventPublisher")) else ({}, set())
     receiver_types = {
         receiver: type_name.rsplit('.', 1)[-1]
         for type_name, receiver in re.findall(
@@ -5134,6 +5174,21 @@ def resolve_java_topic_edges(path: str, source: str, java_methods: list[ClassNod
         sid=ids.stable_java_node_claim_id(path, m.qualname, m.node_kind)
         node = _java_method_node_for(source, m)
         span = _node_text(source_bytes, node) if node is not None else ''
+        if node is not None:
+            for ann in _java_annotations(node):
+                ann_name = _java_annotation_name(source_bytes, ann)
+                if ann_name and ann_name != "KafkaListener" and re.fullmatch(r"[A-Za-z_$][\w$]*(?:Listener|Consumer|Receiver|Receive)", ann_name):
+                    unresolved.setdefault(sid, []).append(JavaUnresolvedTopic(
+                        sid, _node_text(source_bytes, ann), "topic_annotation_not_recognized",
+                        "subscribes_to", ann_name, m.qualname, "topic_subscription",
+                    ))
+            kafka_annotations = [ann for ann in _java_annotations(node) if _java_annotation_name(source_bytes, ann) == "KafkaListener"]
+            if kafka_annotations and not exact_listener:
+                for ann in kafka_annotations:
+                    unresolved.setdefault(sid, []).append(JavaUnresolvedTopic(
+                        sid, _node_text(source_bytes, ann), "topic_annotation_not_recognized",
+                        "subscribes_to", "KafkaListener", m.qualname, "topic_subscription",
+                    ))
         lm = re.search(r"@KafkaListener\s*\((.*?)\)\s*(?:public\s+|protected\s+|private\s+|static\s+|final\s+|synchronized\s+)*[\w.<>, ?\[\]]+\s+\w+\s*\(", span, re.DOTALL) if exact_listener else None
         if lm:
             annotation = lm.group(1)

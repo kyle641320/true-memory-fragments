@@ -41,7 +41,8 @@ import fake.Autowired;
 class App { @Autowired Engine engine; }
 ''', "App")
         self.assertEqual([], claim.body["graph"]["injects"])
-        self.assertEqual([], claim.body["graph"]["injects_unresolved"])
+        self.assertEqual("injection_annotation_not_recognized", claim.body["graph"]["injects_unresolved"][0]["reason"])
+        self.assertEqual("Autowired", claim.body["graph"]["injects_unresolved"][0]["annotation"])
 
     def test_external_exact_import_is_unresolved_not_a_runtime_call(self):
         source = '''
