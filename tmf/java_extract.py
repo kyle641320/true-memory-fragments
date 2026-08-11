@@ -3978,6 +3978,32 @@ class JavaUnresolvedTopic:
 
 
 @dataclass(frozen=True)
+class JavaEventTypeEdge:
+    source_id: str
+    type_id: str
+    type_qualname: str
+    edge_kind: str
+    source_path: str
+    source_hash: str
+    source_qualname: str
+    type_path: str
+    type_hash: str
+    type_node_kind: str
+    anchor_hash: str
+    annotation_kind: str | None = None
+    metadata: dict[str, Any] | None = None
+    resolution: str = "java_source_observed_event_type"
+
+
+@dataclass(frozen=True)
+class JavaUnresolvedEventType:
+    source_id: str
+    expr: str
+    reason: str
+    edge_kind: str
+
+
+@dataclass(frozen=True)
 class JavaConfigurationPropertiesBinding:
     source_id: str
     prefix: str
@@ -4959,6 +4985,82 @@ def _java_source_type_fqn(source: str, type_name: str) -> str | None:
         return imported
     package = _java_package(source)
     return f"{package}.{simple}" if package else simple
+
+
+def resolve_java_event_type_edges(path: str, source: str, java_methods: list[ClassNode], repo: Any | None = None) -> tuple[list[JavaEventTypeEdge], dict[str, list[JavaUnresolvedEventType]]]:
+    """Source-observed event type rendezvous, never runtime registration/delivery."""
+    if repo is None or not path.endswith(".java") or not any(x in source for x in ("publishEvent", "@EventListener", "@TransactionalEventListener", "@ApplicationModuleListener")):
+        return [], {}
+    imports = _java_explicit_imports(source)
+    exact_annotations = {
+        "EventListener": imports.get("EventListener") == "org.springframework.context.event.EventListener",
+        "TransactionalEventListener": imports.get("TransactionalEventListener") == "org.springframework.transaction.event.TransactionalEventListener",
+        "ApplicationModuleListener": imports.get("ApplicationModuleListener") == "org.springframework.modulith.events.ApplicationModuleListener",
+    }
+    exact_publisher = imports.get("ApplicationEventPublisher") == "org.springframework.context.ApplicationEventPublisher"
+    publisher_receivers = set(re.findall(r"\bApplicationEventPublisher\s+([A-Za-z_][\w]*)\s*(?:[;,)])", source)) if exact_publisher else set()
+    type_index: dict[str, list[tuple[str, ClassNode]]] = {}
+    for candidate in sorted(repo.root.rglob("*.java")):
+        if ".git" in candidate.parts or ".tmf" in candidate.parts:
+            continue
+        rel = candidate.relative_to(repo.root).as_posix()
+        text = candidate.read_text(encoding="utf-8", errors="ignore")
+        for node in extract_java_classes(rel, text):
+            fqn = _java_source_type_fqn(text, node.qualname.rsplit(".", 1)[-1])
+            if fqn:
+                type_index.setdefault(fqn, []).append((rel, node))
+    edges: list[JavaEventTypeEdge] = []
+    unresolved: dict[str, list[JavaUnresolvedEventType]] = {}
+    data = source.encode("utf-8")
+    ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
+
+    def add(method: ClassNode, type_expr: str, edge_kind: str, anchor: Any, annotation_kind: str | None = None, metadata: dict[str, Any] | None = None) -> None:
+        sid = java_node_id(method)
+        if any(c in type_expr for c in "<>?[]") or not re.fullmatch(r"[A-Za-z_][\w.]*", type_expr):
+            unresolved.setdefault(sid, []).append(JavaUnresolvedEventType(sid, type_expr, "event_type_generic_or_unknown", edge_kind)); return
+        fqn = _java_source_type_fqn(source, type_expr)
+        candidates = type_index.get(fqn or "", [])
+        if len(candidates) != 1:
+            unresolved.setdefault(sid, []).append(JavaUnresolvedEventType(sid, type_expr, "event_type_not_unique_or_external", edge_kind)); return
+        type_path, node = candidates[0]
+        tid = ids.stable_java_node_claim_id(type_path, node.qualname, node.node_kind)
+        edges.append(JavaEventTypeEdge(sid, tid, node.qualname, edge_kind, path, method.class_hash, method.qualname, type_path, node.class_hash, node.node_kind, java_hash_for_node(source, anchor), annotation_kind, metadata))
+
+    for method in java_methods:
+        if method.node_kind != "method":
+            continue
+        node = _java_method_node_for(source, method)
+        if node is None:
+            continue
+        span = _node_text(data, node)
+        sid = java_node_id(method)
+        for match in re.finditer(r"\b([A-Za-z_][\w]*)\.publishEvent\s*\(\s*new\s+([A-Za-z_][\w.]*)\s*\(", span):
+            receiver, event_type = match.groups()
+            if receiver in publisher_receivers:
+                add(method, event_type, "publishes_type", node)
+            else:
+                unresolved.setdefault(sid, []).append(JavaUnresolvedEventType(sid, match.group(0), "publish_event_receiver_not_exact_application_event_publisher", "publishes_type"))
+        interface = java_method_interface(source, method)
+        for ann in _java_annotations(node):
+            name = _java_annotation_name(data, ann)
+            if name not in exact_annotations:
+                continue
+            if not exact_annotations[name]:
+                unresolved.setdefault(sid, []).append(JavaUnresolvedEventType(sid, f"@{name}", "event_listener_annotation_not_exact_explicit_import", "listens_type")); continue
+            params = interface.get("params", [])
+            args = _java_annotation_args(ann)
+            if name in {"EventListener", "TransactionalEventListener"} and args and any("classes" in _node_text(data, a) or "value" in _node_text(data, a) for a in args):
+                unresolved.setdefault(sid, []).append(JavaUnresolvedEventType(sid, _node_text(data, ann), "event_listener_classes_attribute_unsupported", "listens_type")); continue
+            if len(params) != 1 or not params[0].get("type"):
+                unresolved.setdefault(sid, []).append(JavaUnresolvedEventType(sid, method.qualname, "event_listener_requires_one_known_parameter_type", "listens_type")); continue
+            metadata = None
+            if name == "TransactionalEventListener":
+                raw = _node_text(data, ann)
+                phase = re.search(r"\bphase\s*=\s*([A-Za-z_][\w.]*)", raw)
+                fallback = re.search(r"\bfallbackExecution\s*=\s*(true|false)", raw)
+                metadata = {"phase": phase.group(1) if phase else None, "fallback_execution": fallback.group(1) == "true" if fallback else None, "handling": "declaration-only-never-evaluated"}
+            add(method, params[0]["type"], "listens_type", ann, name, metadata)
+    return edges, unresolved
 
 
 def _eventuate_wrapper_channels(repo: Any, source: str) -> tuple[dict[str, tuple[str, str, str]], set[str]]:

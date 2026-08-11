@@ -165,14 +165,22 @@ class McpService:
             "calls": ("caller_id", "callee_id"), "reads": ("reader_id", "declaration_id"),
             "writes": ("writer_id", "declaration_id"), "uses_type": ("user_id", "type_id"),
             "inherits": ("child_id", "parent_id"), "overrides": ("method_id", "overridden_id"),
+            "publishes_type": ("source_id", "type_id"), "listens_type": ("source_id", "type_id"),
         }
         out: list[dict[str, Any]] = []
         stale_skipped = 0
         unresolved = 0
-        for edge in sorted(self.store.iter_claims(), key=lambda c: c.id):
+        all_edges = sorted(self.store.iter_claims(), key=lambda c: c.id)
+        shared_event_types = {
+            str(edge.body.get("type_id")) for edge in all_edges
+            if edge.body.get("edge_kind") in {"publishes_type", "listens_type"}
+            and seed_ids.intersection({str(edge.body.get("source_id")), str(edge.body.get("type_id"))})
+        }
+        for edge in sorted(all_edges, key=lambda e: (0 if e.body.get("edge_kind") in {"publishes_type", "listens_type"} else 1, e.id)):
             kind = edge.body.get("edge_kind")
             fields = endpoint_fields.get(kind)
-            if fields is None or not seed_ids.intersection(str(edge.body.get(f)) for f in fields):
+            shared_static_event_candidate = kind in {"publishes_type", "listens_type"} and str(edge.body.get("type_id")) in shared_event_types
+            if fields is None or (not shared_static_event_candidate and not seed_ids.intersection(str(edge.body.get(f)) for f in fields)):
                 continue
             freshness = check_freshness(self.repo, edge)
             if not freshness.fresh or edge.body.get("source_provenance", {}).get("trust") == "unverified_foreign":
@@ -182,9 +190,11 @@ class McpService:
             if any(not isinstance(v, str) or self.store.get_claim(v) is None for v in endpoints.values()):
                 unresolved += 1
                 continue
-            out.append({"for": sorted(seed_ids.intersection(endpoints.values()))[0], "kind": kind, "edge_id": edge.id,
+            related_seed = sorted(seed_ids.intersection(endpoints.values()))
+            out.append({"for": related_seed[0] if related_seed else sorted(shared_event_types)[0], "kind": kind, "edge_id": edge.id,
                         "endpoints": endpoints, "anchor": edge.body.get(fields[0].replace("_id", "_anchor")),
-                        "coverage": "partial", "unresolved": 0})
+                        "coverage": "partial", "unresolved": 0,
+                        "relation_semantics": "shared_source_observed_event_type_candidate" if shared_static_event_candidate else "one_hop_static_edge"})
             if len(out) >= edge_budget:
                 break
         if (stale_skipped or unresolved) and out:

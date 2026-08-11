@@ -23,7 +23,7 @@ COMPLETE_NOTE = "Known callers from fully warmed files; complete for the current
 PARTIAL_NOTE = "Known callers from already-derived files only; not a complete blast radius."
 WARM_FILE_TIMEOUT_SECONDS = int(os.environ.get("TMF_WARM_FILE_TIMEOUT_SECONDS", "30"))
 
-EDGE_KINDS = {"calls", "reads", "writes", "inherits", "overrides", "uses_type", "reads_env", "reads_config_key", "injects", "publishes_to", "subscribes_to"}
+EDGE_KINDS = {"calls", "reads", "writes", "inherits", "overrides", "uses_type", "reads_env", "reads_config_key", "injects", "publishes_to", "subscribes_to", "publishes_type", "listens_type"}
 
 JAVA_ENDPOINT_KIND_FIELDS = {
     "calls": ("caller_node_kind", "callee_node_kind"),
@@ -33,6 +33,8 @@ JAVA_ENDPOINT_KIND_FIELDS = {
     "inherits": ("child_node_kind", "parent_node_kind"),
     "overrides": ("method_node_kind", "overridden_node_kind"),
     "injects": ("injector_node_kind", "bean_node_kind"),
+    "publishes_type": ("source_node_kind", "type_node_kind"),
+    "listens_type": ("source_node_kind", "type_node_kind"),
 }
 
 
@@ -57,6 +59,8 @@ def _claim_owner_path(claim: Claim) -> str | None:
     if edge_kind == "injects":
         return claim.body.get("injector_path")
     if edge_kind in {"publishes_to", "subscribes_to"}:
+        return claim.body.get("source_path")
+    if edge_kind in {"publishes_type", "listens_type"}:
         return claim.body.get("source_path")
     if len(claim.bindings) == 1:
         return claim.bindings[0].path

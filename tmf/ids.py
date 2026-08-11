@@ -91,6 +91,11 @@ def stable_type_use_edge_claim_id(user_id: str, type_id: str, use_kind: str) -> 
     return f"claim_type_use_edge_{digest}"
 
 
+def stable_event_type_edge_claim_id(source_id: str, type_id: str, edge_kind: str) -> str:
+    digest = hashlib.sha256(f"event_type\0{edge_kind}\0{source_id}\0{type_id}".encode("utf-8")).hexdigest()[:16]
+    return f"claim_event_type_edge_{digest}"
+
+
 def stable_env_claim_id(env_name: str) -> str:
     digest = hashlib.sha256(f"env\0{env_name}".encode("utf-8")).hexdigest()[:16]
     return f"claim_env_{digest}"
