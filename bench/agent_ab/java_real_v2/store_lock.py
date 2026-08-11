@@ -8,10 +8,11 @@ import stat
 import shutil
 import tempfile
 from contextlib import contextmanager
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any, Iterator
 
 LOCK_SCHEMA = "tmf-evaluation-store-lock-v1"
+ARCHIVE_SCHEMA = "tmf-evaluation-store-archive-v1"
 # Only ephemeral synchronization/temporary files are excluded. Identity,
 # provenance, trust markers, and verification metadata can affect evaluation
 # behavior and therefore remain part of the locked input.
@@ -87,6 +88,112 @@ def verify_lock(repo_id: str, commit: str, store: Path, lock: dict[str, Any]) ->
         if actual[field] != expected.get(field):
             raise ValueError(f"store drift for {repo_id}: {field} expected {expected.get(field)!r}, got {actual[field]!r}")
     return actual
+
+
+def _safe_archive_path(value: object) -> str:
+    if not isinstance(value, str) or not value or "\\" in value:
+        raise ValueError(f"unsafe archive path: {value!r}")
+    path = PurePosixPath(value)
+    if path.is_absolute() or any(part in ("", ".", "..") for part in path.parts):
+        raise ValueError(f"unsafe archive path: {value!r}")
+    return path.as_posix()
+
+
+def create_store_archive(store: Path, archive_root: Path) -> dict[str, Any]:
+    """Materialize an immutable, content-addressed archive of a locked store."""
+    store = store.resolve()
+    inventory = store_inventory(store)  # also rejects links and special files
+    files: list[dict[str, str]] = []
+    payloads: dict[str, bytes] = {}
+    for path in sorted(store.rglob("*")):
+        if path.is_dir() or path.name in _EXCLUDED_NAMES or ".tmp" in path.suffixes:
+            continue
+        # Re-check at the byte-read boundary rather than trusting the inventory pass.
+        if path.is_symlink() or not stat.S_ISREG(path.stat().st_mode):
+            raise ValueError(f"TMF store contains unsupported archive entry: {path.relative_to(store).as_posix()}")
+        rel = _safe_archive_path(path.relative_to(store).as_posix())
+        data = path.read_bytes()
+        blob = hashlib.sha256(data).hexdigest()
+        payloads.setdefault(blob, data)
+        files.append({"path": rel, "blob": blob})
+    manifest = {"schema": ARCHIVE_SCHEMA, "inventory": inventory, "files": files}
+    encoded = json.dumps(manifest, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    archive_id = hashlib.sha256(encoded).hexdigest()
+    root = archive_root / archive_id
+    if root.exists():
+        verify_store_archive(root, archive_id)
+        return {"archive_id": archive_id, **inventory}
+    archive_root.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=f".{archive_id}.tmp-", dir=archive_root))
+    try:
+        (staging / "blobs").mkdir()
+        for digest, data in sorted(payloads.items()):
+            (staging / "blobs" / digest).write_bytes(data)
+        (staging / "manifest.json").write_bytes(encoded)
+        for path in staging.rglob("*"):
+            path.chmod(0o555 if path.is_dir() else 0o444)
+        staging.chmod(0o555)
+        staging.rename(root)
+    except Exception:
+        shutil.rmtree(staging, ignore_errors=True)
+        raise
+    return {"archive_id": archive_id, **inventory}
+
+
+def verify_store_archive(archive: Path, expected_id: str | None = None) -> dict[str, Any]:
+    """Fail closed unless an archive manifest and every referenced blob are intact."""
+    if archive.is_symlink() or not archive.is_dir():
+        raise ValueError("archive must be a regular directory")
+    manifest_path = archive / "manifest.json"
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise ValueError("archive manifest missing or unsupported")
+    blobs_dir = archive / "blobs"
+    if blobs_dir.is_symlink() or not blobs_dir.is_dir():
+        raise ValueError("archive blobs directory missing or unsupported")
+    encoded = manifest_path.read_bytes()
+    archive_id = hashlib.sha256(encoded).hexdigest()
+    if expected_id is not None and archive_id != expected_id:
+        raise ValueError(f"archive id mismatch: expected {expected_id}, got {archive_id}")
+    try:
+        manifest = json.loads(encoded)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("invalid archive manifest") from exc
+    if manifest.get("schema") != ARCHIVE_SCHEMA or not isinstance(manifest.get("files"), list):
+        raise ValueError("unsupported archive manifest")
+    seen: set[str] = set()
+    for entry in manifest["files"]:
+        if not isinstance(entry, dict):
+            raise ValueError("invalid archive file entry")
+        rel = _safe_archive_path(entry.get("path"))
+        blob = entry.get("blob")
+        if rel in seen or not isinstance(blob, str) or len(blob) != 64 or any(c not in "0123456789abcdef" for c in blob):
+            raise ValueError(f"invalid archive file entry: {rel}")
+        seen.add(rel)
+        blob_path = archive / "blobs" / blob
+        if blob_path.is_symlink() or not blob_path.is_file() or hashlib.sha256(blob_path.read_bytes()).hexdigest() != blob:
+            raise ValueError(f"archive blob mismatch: {blob}")
+    return {"archive_id": archive_id, **manifest["inventory"]}
+
+
+def reconstruct_store_archive(archive: Path, destination: Path, expected_id: str | None = None) -> dict[str, Any]:
+    """Reconstruct an archive into a new store and verify semantic fidelity."""
+    verified = verify_store_archive(archive, expected_id)
+    if destination.exists():
+        raise ValueError(f"archive destination already exists: {destination}")
+    manifest = json.loads((archive / "manifest.json").read_bytes())
+    destination.mkdir(parents=True)
+    try:
+        for entry in manifest["files"]:
+            target = destination / _safe_archive_path(entry["path"])
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes((archive / "blobs" / entry["blob"]).read_bytes())
+        actual = store_inventory(destination)
+        if actual != manifest["inventory"]:
+            raise ValueError(f"reconstructed store inventory mismatch: expected {manifest['inventory']!r}, got {actual!r}")
+    except Exception:
+        shutil.rmtree(destination, ignore_errors=True)
+        raise
+    return verified
 
 
 @contextmanager

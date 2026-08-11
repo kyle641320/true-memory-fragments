@@ -1,11 +1,21 @@
 from __future__ import annotations
 
 import json
+import os
+import stat
 import tempfile
 import unittest
 from pathlib import Path
 
-from bench.agent_ab.java_real_v2.store_lock import LOCK_SCHEMA, disposable_repository, store_inventory, verify_lock
+from bench.agent_ab.java_real_v2.store_lock import (
+    LOCK_SCHEMA,
+    create_store_archive,
+    disposable_repository,
+    reconstruct_store_archive,
+    store_inventory,
+    verify_lock,
+    verify_store_archive,
+)
 
 
 def _store(root: Path, claim: dict | None = None) -> Path:
@@ -77,6 +87,63 @@ class EvaluationStoreLockTests(unittest.TestCase):
                 (copy / "source.txt").write_text("copy only")
             self.assertEqual(store_inventory(store), source_before)
             self.assertFalse((repo / "source.txt").exists())
+
+    def test_archive_is_deterministic_idempotent_and_reconstructs_exact_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = _store(root / "repo")
+            archive_root = root / "archives"
+            first = create_store_archive(store, archive_root)
+            second = create_store_archive(store, archive_root)
+            self.assertEqual(first, second)
+            archive = archive_root / first["archive_id"]
+            self.assertEqual(verify_store_archive(archive, first["archive_id"]), first)
+            restored = root / "restored"
+            reconstruct_store_archive(archive, restored, first["archive_id"])
+            self.assertEqual(store_inventory(restored), store_inventory(store))
+            for source in store.rglob("*"):
+                if source.is_file() and source.name != ".lock":
+                    self.assertEqual((restored / source.relative_to(store)).read_bytes(), source.read_bytes())
+            self.assertFalse(os.stat(archive / "manifest.json").st_mode & stat.S_IWUSR)
+            self.assertFalse(os.stat(archive).st_mode & stat.S_IWUSR)
+
+    def test_archive_rejects_tampering_and_id_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = create_store_archive(_store(root / "repo"), root / "archives")
+            archive = root / "archives" / result["archive_id"]
+            with self.assertRaisesRegex(ValueError, "archive id mismatch"):
+                verify_store_archive(archive, "0" * 64)
+            manifest = json.loads((archive / "manifest.json").read_text())
+            blob = archive / "blobs" / manifest["files"][0]["blob"]
+            blob.chmod(0o644)
+            blob.write_bytes(b"tampered")
+            with self.assertRaisesRegex(ValueError, "archive blob mismatch"):
+                reconstruct_store_archive(archive, root / "restored", result["archive_id"])
+
+    def test_archive_rejects_unsafe_paths_symlinks_and_special_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = create_store_archive(_store(root / "repo"), root / "archives")
+            archive = root / "archives" / result["archive_id"]
+            manifest_path = archive / "manifest.json"
+            manifest = json.loads(manifest_path.read_text())
+            manifest["files"][0]["path"] = "../escape"
+            manifest_path.chmod(0o644)
+            manifest_path.write_text(json.dumps(manifest, sort_keys=True, separators=(",", ":")))
+            with self.assertRaisesRegex(ValueError, "unsafe archive path"):
+                verify_store_archive(archive)
+
+            symlink_store = _store(root / "symlink-repo")
+            (symlink_store / "claims" / "link").symlink_to(root / "outside")
+            with self.assertRaisesRegex(ValueError, "unsupported symlink"):
+                create_store_archive(symlink_store, root / "other-archives")
+
+            if hasattr(os, "mkfifo"):
+                special_store = _store(root / "special-repo")
+                os.mkfifo(special_store / "claims" / "pipe")
+                with self.assertRaisesRegex(ValueError, "unsupported file type"):
+                    create_store_archive(special_store, root / "special-archives")
 
 
 if __name__ == "__main__":
