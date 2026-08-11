@@ -153,26 +153,44 @@ class McpService:
             limit = 16
         result = retrieve_text(self.repo.root, str(question), limit=limit)
         claims = [thin_view(explain_claim(self.repo, item.claim)) for item in result.claims]
-        relations: list[dict[str, Any]] = []
-        for item in result.claims:
-            claim = item.claim
-            if claim.scope == "function":
-                callers = reverse_callers(self.repo.root, claim.id).get("callers", [])
-                if callers:
-                    relations.append({"for": claim.id, "kind": "callers", "items": callers[:5], "coverage": "partial"})
-            elif claim.scope == "declaration":
-                readers = reverse_readers(self.repo.root, claim.id).get("readers", [])
-                writers = reverse_writers(self.repo.root, claim.id).get("writers", [])
-                if readers:
-                    relations.append({"for": claim.id, "kind": "readers", "items": readers[:5], "coverage": "partial"})
-                if writers:
-                    relations.append({"for": claim.id, "kind": "writers", "items": writers[:5], "coverage": "partial"})
-            elif claim.scope == "class":
-                subs = reverse_subtypes(self.repo.root, claim.id).get("subtypes", [])
-                if subs:
-                    relations.append({"for": claim.id, "kind": "subtypes", "items": subs[:5], "coverage": "partial"})
+        relation_budget = 3 if max_chars <= 3000 else 8
+        relations = self._bounded_relations([item.claim for item in result.claims], edge_budget=relation_budget)
         relations.sort(key=lambda r: (str(r.get("for")), str(r.get("kind"))))
         return {"question": str(question), "view": "thin_context", "coverage": "complete" if warm_is_complete(self.repo.root) else "partial", "truncated": False, "max_chars": max_chars, "claims": claims, "relations": relations, "source_fallback_paths": sorted(result.source_fallback)}
+
+    def _bounded_relations(self, seeds: list[Any], edge_budget: int) -> list[dict[str, Any]]:
+        """Expose only existing fresh one-hop edges; never infer a chain."""
+        seed_ids = {c.id for c in seeds}
+        endpoint_fields = {
+            "calls": ("caller_id", "callee_id"), "reads": ("reader_id", "declaration_id"),
+            "writes": ("writer_id", "declaration_id"), "uses_type": ("user_id", "type_id"),
+            "inherits": ("child_id", "parent_id"), "overrides": ("method_id", "overridden_id"),
+        }
+        out: list[dict[str, Any]] = []
+        stale_skipped = 0
+        unresolved = 0
+        for edge in sorted(self.store.iter_claims(), key=lambda c: c.id):
+            kind = edge.body.get("edge_kind")
+            fields = endpoint_fields.get(kind)
+            if fields is None or not seed_ids.intersection(str(edge.body.get(f)) for f in fields):
+                continue
+            freshness = check_freshness(self.repo, edge)
+            if not freshness.fresh or edge.body.get("source_provenance", {}).get("trust") == "unverified_foreign":
+                stale_skipped += 1
+                continue
+            endpoints = {f: edge.body.get(f) for f in fields}
+            if any(not isinstance(v, str) or self.store.get_claim(v) is None for v in endpoints.values()):
+                unresolved += 1
+                continue
+            out.append({"for": sorted(seed_ids.intersection(endpoints.values()))[0], "kind": kind, "edge_id": edge.id,
+                        "endpoints": endpoints, "anchor": edge.body.get(fields[0].replace("_id", "_anchor")),
+                        "coverage": "partial", "unresolved": 0})
+            if len(out) >= edge_budget:
+                break
+        if (stale_skipped or unresolved) and out:
+            out[0]["stale_skipped"] = stale_skipped
+            out[0]["unresolved"] = unresolved
+        return out
 
     def tmf_context(self, question: str, max_chars: int | None = None) -> dict[str, Any]:
         budget = max(180, int(max_chars)) if max_chars is not None else 3000
@@ -184,10 +202,20 @@ class McpService:
         payload = dict(payload)
         payload["truncated"] = True
         full_claims = list(payload.get("claims", []))
-        # Linear, deterministic packing: relations are optional; preserve as many
-        # claims as possible. First try each claim as full, then as an addressable
+        # Linear, deterministic packing. Preserve a compact relation before claim
+        # stubs so graph evidence does not disappear precisely at small budgets.
         # stub. Stop before exceeding budget instead of O(n^2) re-serializing.
+        full_relations = list(payload.get("relations", []))
         payload["relations"] = []
+        payload["claims"] = []
+        for relation in full_relations:
+            compact = {k: relation[k] for k in ("for", "kind", "edge_id", "endpoints", "coverage", "unresolved") if k in relation}
+            trial_relation = dict(payload)
+            trial_relation["relations"] = [*payload["relations"], compact]
+            if size(trial_relation) <= budget:
+                payload = trial_relation
+            else:
+                break
         packed: list[dict[str, Any]] = []
         trial = dict(payload)
         trial["claims"] = packed

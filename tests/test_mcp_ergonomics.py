@@ -82,6 +82,29 @@ class McpErgonomicsTests(unittest.TestCase):
             self.assertTrue(tiny["truncated"])
             self.assertLessEqual(len(json.dumps(tiny, sort_keys=True)), 220)
 
+    def test_context_expands_only_fresh_one_hop_relations_with_budget(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            _init_repo(repo)
+            svc = McpService(repo)
+            svc.tmf_warm()
+            payload = svc.tmf_context("helper caller", max_chars=5000)
+            self.assertLessEqual(len(payload["relations"]), 8)
+            self.assertTrue(any(r["kind"] == "calls" for r in payload["relations"]))
+            self.assertTrue(all(r["coverage"] == "partial" and r["unresolved"] >= 0 for r in payload["relations"]))
+            self.assertTrue(all(set(r["endpoints"]) == {"caller_id", "callee_id"} for r in payload["relations"] if r["kind"] == "calls"))
+
+    def test_context_ambiguity_does_not_guess_relation_chain(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = Path(td)
+            _init_repo(repo)
+            svc = McpService(repo)
+            svc.tmf_warm()
+            ambiguous = svc.tmf_callers(qualname="helper")
+            self.assertEqual(ambiguous["status"], "ambiguous")
+            context = svc.tmf_context("helper", max_chars=5000)
+            self.assertFalse(any("chain" in r or "runtime" in r for r in context["relations"]))
+
 
 if __name__ == "__main__":
     unittest.main()

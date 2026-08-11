@@ -1,0 +1,100 @@
+{
+  "method": "Frozen P01-P04 prompts; no seed symbols/paths; retrieval completed before evaluator reads unchanged goldens.",
+  "baseline_from": "RETRIEVAL_DIAGNOSIS.json current context@3000",
+  "rows": [
+    {
+      "id": "P01",
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignmentRepository.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+      ],
+      "claims": 3,
+      "relations": 3,
+      "chars": 2706,
+      "ranks": [
+        2,
+        null
+      ],
+      "mrr": 0.25,
+      "first_key_anchor": 2,
+      "path_diversity": 8
+    },
+    {
+      "id": "P02",
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java"
+      ],
+      "claims": 1,
+      "relations": 3,
+      "chars": 2957,
+      "ranks": [
+        1,
+        5,
+        2
+      ],
+      "mrr": 0.5666666666666667,
+      "first_key_anchor": 1,
+      "path_diversity": 8
+    },
+    {
+      "id": "P03",
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignmentRepository.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetControllerTests.java"
+      ],
+      "claims": 3,
+      "relations": 3,
+      "chars": 2732,
+      "ranks": [
+        null,
+        1
+      ],
+      "mrr": 0.5,
+      "first_key_anchor": 1,
+      "path_diversity": 8
+    },
+    {
+      "id": "P04",
+      "paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/PetType.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/PetTypeFormatter.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java"
+      ],
+      "claims": 2,
+      "relations": 0,
+      "chars": 2769,
+      "ranks": [
+        1
+      ],
+      "mrr": 1.0,
+      "first_key_anchor": 1,
+      "path_diversity": 8
+    }
+  ],
+  "mean_mrr": 0.5791666666666666,
+  "mean_path_diversity": 8.0
+}

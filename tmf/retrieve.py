@@ -114,11 +114,16 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
         score = lexical_score(claim)
         if score:
             scored.append((score, claim))
-    scored.sort(key=lambda item: item[0], reverse=True)
+    scored.sort(key=lambda item: (-item[0], _claim_path(item[1]), item[1].id))
 
     claims: list[Claim] = []
     seen_ids: set[str] = set()
-    for _, claim in scored[:limit]:
+    # Score a wider pool, then interleave paths.  A source file commonly emits a
+    # file, class, method and contract claim with the same vocabulary; allowing
+    # that one path to consume the retrieval window hides equally relevant
+    # workflow/impact anchors elsewhere in the repository.
+    ranked = _diversify_paths(scored, limit)
+    for claim in ranked:
         current_claims = [claim]
         freshness = check_freshness(repo, claim)
         if _is_unverified_foreign(claim):
@@ -158,6 +163,38 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
             if binding.path not in source and Path(repo.root / binding.path).exists():
                 source[binding.path] = repo.read_file(binding.path)
     return RetrieveResult(query=query, claims=retrieved, source_fallback=source)
+
+
+def _claim_path(claim: Claim) -> str:
+    return claim.bindings[0].path if claim.bindings else ""
+
+
+def _diversify_paths(scored: list[tuple[int, Claim]], limit: int) -> list[Claim]:
+    """Deterministic, language-neutral path round-robin over a bounded pool."""
+    pool = scored[:max(limit * 6, limit)]
+    by_path: dict[str, list[Claim]] = {}
+    order: list[str] = []
+    for _, claim in pool:
+        path = _claim_path(claim) or f"@{claim.id}"
+        if path not in by_path:
+            by_path[path] = []
+            order.append(path)
+        by_path[path].append(claim)
+    out: list[Claim] = []
+    depth = 0
+    while len(out) < limit:
+        added = False
+        for path in order:
+            bucket = by_path[path]
+            if depth < len(bucket):
+                out.append(bucket[depth])
+                added = True
+                if len(out) >= limit:
+                    break
+        if not added:
+            break
+        depth += 1
+    return out
 
 
 def _claim_embedding_text(claim: Claim) -> str:

@@ -23,6 +23,18 @@ class JavaRetrievalRankingTests(unittest.TestCase):
             self.assertTrue(declares.claims[0].claim.bindings[0].path.endswith("domain/Owner.java"))
             self.assertTrue(persists.claims[0].claim.bindings[0].path.endswith("repo/OwnerRepository.java"))
 
+    def test_first_screen_round_robins_relevant_paths_without_language_rules(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "model/Visit.java": "package model; public class Visit { int visitCode; void visitCopy() {} }\n",
+                "flow/VisitScheduler.java": "package flow; public class VisitScheduler { void visitBooking() {} }\n",
+                "downstream/VisitListener.java": "package downstream; public class VisitListener { void visitBooked() {} }\n",
+            })
+            warm_repo(repo)
+            result = retrieve_text(repo, "visit booking flow impact", limit=3)
+            paths = [item.claim.bindings[0].path for item in result.claims]
+            self.assertEqual(len(set(paths)), 3)
+
 
 if __name__ == "__main__":
     unittest.main()
