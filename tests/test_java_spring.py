@@ -182,6 +182,22 @@ class App { @Autowired App(@Qualifier("fast") Engine e) {} }''' }
           "src/main/java/app/App.java": "package app;\nimport engine.Engine;\nimport org.springframework.beans.factory.annotation.Autowired;\nclass App { @Autowired Engine engine; }"})
         self.assertEqual([], graph["injects"]); self.assertEqual("spring_injection_type_not_resolved", graph["injects_unresolved"][0]["reason"])
 
+    def test_cross_file_interface_has_one_source_proven_component_implementation(self):
+        graph=self._graph({
+          "src/main/java/api/Engine.java": "package api;\npublic interface Engine {}",
+          "src/main/java/impl/FastEngine.java": "package impl;\nimport api.Engine;\nimport org.springframework.stereotype.Service;\n@Service public class FastEngine implements Engine {}",
+          "src/main/java/app/App.java": "package app;\nimport api.Engine;\nimport org.springframework.beans.factory.annotation.Autowired;\nclass App { @Autowired Engine engine; }"})
+        self.assertEqual([stable_java_node_claim_id("src/main/java/impl/FastEngine.java", "FastEngine", "class")], [x["target_id"] for x in graph["injects"]])
+
+    def test_cross_file_interface_multiple_components_is_unknown(self):
+        graph=self._graph({
+          "src/main/java/api/Engine.java": "package api;\npublic interface Engine {}",
+          "src/main/java/impl/FastEngine.java": "package impl;\nimport api.Engine;\nimport org.springframework.stereotype.Service;\n@Service public class FastEngine implements Engine {}",
+          "src/main/java/impl/SlowEngine.java": "package impl;\nimport api.Engine;\nimport org.springframework.stereotype.Service;\n@Service public class SlowEngine implements Engine {}",
+          "src/main/java/app/App.java": "package app;\nimport api.Engine;\nimport org.springframework.beans.factory.annotation.Autowired;\nclass App { @Autowired Engine engine; }"})
+        self.assertEqual([], graph["injects"])
+        self.assertEqual("spring_injection_multiple_beans", graph["injects_unresolved"][0]["reason"])
+
 @unittest.skipUnless(java_status().available, JAVA_DEGRADE_HINT)
 class JavaSpringFoundationMetadataTests(unittest.TestCase):
     def _nodes(self, source):

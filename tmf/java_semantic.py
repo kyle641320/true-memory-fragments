@@ -87,16 +87,19 @@ class JavaSemanticFactsBackend(SemanticExtractorBackend):
                 doc = json.loads(file.read_text(encoding="utf-8"))
             except (OSError, json.JSONDecodeError):
                 reasons.append("malformed_document"); continue
-            if doc.get("format") != FORMAT:
-                reasons.append("unsupported_format"); continue
-            if _safe_path(doc.get("path")) != safe:
-                continue
-            required = ("provider", "provider_version", "tool", "tool_version", "classpath_fingerprint", "build_fingerprint", "content_sha256", "facts")
-            if any(not doc.get(k) for k in required) or not isinstance(doc.get("facts"), list):
-                reasons.append("missing_provenance"); continue
-            if doc["content_sha256"] != content_sha256(source):
-                reasons.append("stale_content_hash"); continue
-            docs.append(doc)
+            candidates = doc.get("documents", []) if doc.get("format") == "tmf.java-semantic-facts-batch.v1" else [doc]
+            for candidate in candidates:
+                if candidate.get("format") != FORMAT:
+                    reasons.append("unsupported_format"); continue
+                if _safe_path(candidate.get("path")) != safe: continue
+                required = ("provider", "provider_version", "tool", "tool_version", "classpath_fingerprint", "build_fingerprint", "content_sha256", "facts")
+                if any(not candidate.get(k) for k in required) or not isinstance(candidate.get("facts"), list): reasons.append("missing_provenance"); continue
+                hashes=candidate.get("source_hashes")
+                if hashes is not None:
+                    if not isinstance(hashes,dict) or any(_safe_path(p) is None or not isinstance(h,str) or len(h)!=64 for p,h in hashes.items()): reasons.append("malformed_source_hashes"); continue
+                    if any(not (repo.root / p).is_file() or content_sha256((repo.root / p).read_text(encoding="utf-8")) != h for p,h in hashes.items()): reasons.append("stale_participating_source"); continue
+                if candidate["content_sha256"] != content_sha256(source): reasons.append("stale_content_hash"); continue
+                docs.append(candidate)
         # Multiple providers may disagree. Never choose or merge confidence.
         signatures = {json.dumps(d["facts"], sort_keys=True, separators=(",", ":")) for d in docs}
         if len(signatures) > 1:
@@ -116,14 +119,30 @@ class JavaSemanticFactsBackend(SemanticExtractorBackend):
             rng = _range(fact.get("range"), source)
             if source_symbol is None or rng is None or (fact.get("kind") != "declaration" and target_symbol is None):
                 reasons.append("ambiguous_symbol_id" if source_symbol is None or (fact.get("kind") != "declaration" and target_symbol is None) else "malformed_range"); continue
+            # v1 attributed facts must be independently auditable: the source
+            # range is the human anchor; offsets and erased JVM descriptors
+            # make overload identity explicit rather than provider-implied.
+            anchor = fact.get("anchor")
+            owner_fields = (fact.get("source_owner"), fact.get("source_descriptor"))
+            target_fields = (fact.get("target_owner"), fact.get("target_descriptor"))
+            attributed_identity_ok = (
+                isinstance(anchor, dict)
+                and isinstance(anchor.get("start_offset"), int)
+                and isinstance(anchor.get("end_offset"), int)
+                and 0 <= anchor["start_offset"] < anchor["end_offset"] <= len(source)
+                and all(isinstance(x, str) and x for x in owner_fields)
+                and (fact.get("kind") == "declaration" or all(isinstance(x, str) and x for x in target_fields))
+            )
+            if not attributed_identity_ok:
+                reasons.append("missing_attributed_identity"); continue
             key = (fact["kind"], source_symbol, target_symbol or "", rng)
             if key in seen_keys:
                 continue
             seen_keys.add(key)
             digest = hashlib.sha256((FORMAT + "\0" + safe + "\0" + "\0".join(map(str, key))).encode()).hexdigest()[:24]
-            body = {"extraction_tier": "semantic-resolved", "tier": "semantic-resolved", "semantic_fact_kind": fact["kind"], "source_symbol": source_symbol, "source_path": safe, "source_range": {k: v for k, v in zip(("start_line", "start_column", "end_line", "end_column"), rng)}, "content_sha256": doc["content_sha256"], "trust": "external-untrusted-attributed", "provider": doc["provider"], "provider_version": doc["provider_version"], "tool": doc["tool"], "tool_version": doc["tool_version"], "classpath_fingerprint": doc["classpath_fingerprint"], "build_fingerprint": doc["build_fingerprint"]}
+            body = {"extraction_tier": "compiler-attributed", "tier": "compiler-attributed", "semantic_fact_kind": fact["kind"], "source_symbol": source_symbol, "source_path": safe, "source_range": {k: v for k, v in zip(("start_line", "start_column", "end_line", "end_column"), rng)}, "anchor": dict(anchor), "source_owner": owner_fields[0], "source_descriptor": owner_fields[1], "content_sha256": doc["content_sha256"], "trust": "external-untrusted-attributed", "provider": doc["provider"], "provider_version": doc["provider_version"], "tool": doc["tool"], "tool_version": doc["tool_version"], "classpath_fingerprint": doc["classpath_fingerprint"], "build_fingerprint": doc["build_fingerprint"]}
             if target_symbol:
-                body.update({"target_symbol": target_symbol, "edge_kind": EDGE_MAP[fact["kind"]]})
+                body.update({"target_symbol": target_symbol, "target_owner": target_fields[0], "target_descriptor": target_fields[1], "edge_kind": EDGE_MAP[fact["kind"]]})
             claims.append(Claim(id=f"claim_java_semantic_{digest}", claim=f"external Java semantic {fact['kind']}", kind="structure", scope="cross-repo" if target_symbol else "declaration", bindings=[Binding(path=safe, file_blob=repo.blob_sha(safe), fn_hash=doc["content_sha256"], commit=repo.head(), role="semantic_source", line_start=rng[0] + 1, line_end=rng[2] + 1, hash_kind="sha256")], provenance=f"external:{doc['provider']}", evidence="inferred", confidence=0.6, endorsed_by=None, last_verified=now_utc(), model=f"{doc['tool']}@{doc['tool_version']}", body=body))
         self.last_status = {"reason": "accepted" if claims else (reasons[-1] if reasons else "no_valid_facts"), "accepted": len(claims), "reasons": sorted(set(reasons))}
         return sorted(claims, key=lambda c: c.id)

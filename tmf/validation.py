@@ -358,10 +358,10 @@ def _embedding_router_checks(repo_path: Path) -> dict[str, Any]:
             caller = stable_function_claim_id("a.py", "main")
             callee = stable_function_claim_id("b.py", "helper")
             expected = [
+                callee,
                 stable_call_edge_claim_id(caller, callee),
                 stable_file_claim_id("b.py"),
                 stable_file_claim_id("a.py"),
-                callee,
             ]
         check = {"name": "embed_router_off_matches_lexical_baseline", "pass": expected is None or actual == expected, "expected": expected, "actual": actual}
         return {"checks": [check], "failures": [] if check["pass"] else [check]}

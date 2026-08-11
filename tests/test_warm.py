@@ -10,10 +10,11 @@ from pathlib import Path
 from unittest import mock
 
 from tmf.git import GitRepo
+from tmf.freshness import check_freshness
 from tmf.ids import stable_function_claim_id
 from tmf.retrieve import reverse_callers
 from tmf.store import Store
-from tmf.warm import warm_repo, warm_is_complete, load_complete_reverse_index, _refresh_claim_cache_for_replaced_path
+from tmf.warm import warm_repo, warm_is_complete, load_complete_reverse_index, _claim_inventory, _refresh_claim_cache_for_replaced_path
 from tmf.schema import Binding, Claim
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -118,6 +119,64 @@ class WarmReverseIndexTests(unittest.TestCase):
             self.assertEqual(third["skipped"], 2)
             helper_id = stable_function_claim_id("b.py", "helper")
             self.assertEqual(reverse_callers(repo, helper_id)["coverage"], "complete")
+
+    def test_java_derivation_version_change_rederives_only_java_slice(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "A.java": "class A { int value() { return 1; } }\n",
+                "b.py": "def spare():\n    return 2\n",
+            })
+            first = warm_repo(repo)
+            self.assertEqual(first["derived"], 2)
+            self.assertEqual(warm_repo(repo)["derived"], 0)
+
+            with mock.patch("tmf.derivation_versions.JAVA_DERIVATION_VERSION", "java.derive.future"):
+                upgraded = warm_repo(repo)
+                self.assertEqual(upgraded["derived"], 1)
+                self.assertEqual(upgraded["skipped"], 1)
+                self.assertEqual(warm_repo(repo)["derived"], 0)
+
+    def test_java_claim_is_stale_when_derivation_version_changes_without_source_change(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"A.java": "class A { int value() { return 1; } }\n"})
+            warm_repo(repo)
+            claim = next(c for c in Store(repo).iter_claims() if c.body.get("language") == "java")
+            self.assertTrue(check_freshness(GitRepo(repo), claim).fresh)
+            with mock.patch("tmf.derivation_versions.JAVA_DERIVATION_VERSION", "java.derive.future"):
+                freshness = check_freshness(GitRepo(repo), claim)
+                self.assertFalse(freshness.fresh)
+                self.assertTrue(any("derivation version mismatch" in reason for reason in freshness.stale_bindings))
+
+    def test_legacy_java_edge_metadata_rewarms_only_owner_and_is_idempotent(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "A.java": "class A { int x; void setX(int value) { x = value; } }\n",
+                "B.java": "class B { int untouched() { return 2; } }\n",
+                "c.py": "def spare():\n    return 3\n",
+            })
+            warm_repo(repo)
+            store = Store(repo)
+            old = next(c for c in store.iter_claims() if c.body.get("edge_kind") == "writes")
+            self.assertEqual("method", old.body.pop("writer_node_kind"))
+            store.put_claim(old)
+            manifest_path = repo / ".tmf" / "warm_manifest.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["claim_inventory"] = _claim_inventory(store)
+            manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+            migrated = warm_repo(repo)
+            self.assertEqual(1, migrated["derived"])
+            self.assertEqual(2, migrated["skipped"])
+            self.assertEqual(1, migrated["migrated_legacy_java_claims"])
+            self.assertEqual(1, migrated["migrated_legacy_java_paths"])
+            replacement = store.get_claim(old.id)
+            self.assertIsNotNone(replacement)
+            self.assertEqual("method", replacement.body.get("writer_node_kind"))
+            self.assertTrue(check_freshness(GitRepo(repo), replacement).fresh)
+
+            rerun = warm_repo(repo)
+            self.assertEqual(0, rerun["derived"])
+            self.assertEqual(0, rerun["migrated_legacy_java_claims"])
 
     def test_pristine_clean_warm_streams_without_reconciliation_or_claim_cache(self):
         with tempfile.TemporaryDirectory() as td:

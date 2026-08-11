@@ -61,6 +61,34 @@ class C {
         with td:
             self.assertEqual({(c.body["method"], c.body["route_path"]) for c in claims}, {("POST","/p"),("PUT","/u"),("DELETE","/d"),("PATCH","/x")})
 
+    def test_exact_spring_wildcard_import_composes_class_and_method_routes(self):
+        source = '''import org.springframework.web.bind.annotation.*;
+@RestController
+@RequestMapping(path={"/api", "/internal"})
+class Resource {
+ @PostMapping("") String create(){return "";}
+ @GetMapping(value={"/items", "/things"}) String list(){return "";}
+ @PutMapping({"/items", "/items/{id}"}) String update(){return "";}
+}'''
+        td, _repo, claims = self.claims({"Resource.java": source})
+        with td:
+            self.assertEqual(
+                {(c.body["method"], c.body["route_path"]) for c in claims},
+                {(verb, prefix + suffix)
+                 for prefix in ("/api", "/internal")
+                 for verb, suffix in (("POST", ""), ("GET", "/items"), ("GET", "/things"),
+                                      ("PUT", "/items"), ("PUT", "/items/{id}"))},
+            )
+
+    def test_unrelated_wildcard_and_dynamic_class_prefix_remain_unresolved(self):
+        sources = {
+            "Decoy.java": 'import fake.*; @RestController @RequestMapping("/api") class Decoy { @GetMapping("/x") String x(){return "";} }',
+            "DynamicPrefix.java": 'import org.springframework.web.bind.annotation.*; @RestController @RequestMapping(PREFIX) class DynamicPrefix { static final String PREFIX="/api"; @GetMapping("/x") String x(){return "";} }',
+        }
+        td, _repo, claims = self.claims(sources)
+        with td:
+            self.assertEqual([], claims)
+
     def test_cross_file_stability_freshness_and_delete(self):
         source = IMPORTS + '@RestController class C { @GetMapping("/x") String h(){return "ok";} }'
         td, repo, claims = self.claims({"C.java": source, "Other.java": "class Other { int n=1; }"})

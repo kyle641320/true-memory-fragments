@@ -1,0 +1,2157 @@
+{
+  "schema": "tmf-java-realworld-independent-v1",
+  "tmf_head": "4431bc220383e80d3ee7401c43b586e89c29a7f8",
+  "environment": {
+    "python": "3.12.3 (main, Mar  3 2026, 12:15:18) [GCC 13.3.0]",
+    "platform": "Linux-6.8.0-71-generic-x86_64-with-glibc2.39"
+  },
+  "projects": {
+    "petclinic": {
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith",
+      "sha": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+      "java_files": 57,
+      "claims": 1071,
+      "warm_result": {
+        "coverage": "complete",
+        "derived": 0,
+        "skipped": 58,
+        "files": 58,
+        "failed_files": {},
+        "index_callees": 76,
+        "renamed_claims": 0,
+        "deleted_missing_claims": 0,
+        "migrated_legacy_java_claims": 0,
+        "migrated_legacy_java_paths": 0
+      },
+      "claim_kinds": {
+        "api": 17,
+        "declares_autowired_presence": 17,
+        "declares_bean_presence": 4,
+        "declares_cache_metadata": 2,
+        "declares_component_presence": 2,
+        "config": 14,
+        "declares_configuration_presence": 2,
+        "method": 322,
+        "constructor": 12,
+        "declares_controller_presence": 6,
+        "calls": 159,
+        "file": 58,
+        "declares_init_binder_presence": 2,
+        "constant": 14,
+        "class": 50,
+        "field": 85,
+        "interface": 4,
+        "reads": 174,
+        "declares_response_body_presence": 1,
+        "declares_service_presence": 2,
+        "declares_transaction_metadata": 10,
+        "uses_type": 85,
+        "writes": 29
+      }
+    },
+    "jhipster": {
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/jhipster-sample-app",
+      "sha": "f8da577c944ecc4db46fc961a1ba022d5bbf8964",
+      "java_files": 136,
+      "claims": 5768,
+      "warm_result": {
+        "coverage": "complete",
+        "derived": 0,
+        "skipped": 169,
+        "files": 169,
+        "failed_files": {},
+        "index_callees": 313,
+        "renamed_claims": 0,
+        "deleted_missing_claims": 0,
+        "migrated_legacy_java_claims": 0,
+        "migrated_legacy_java_paths": 0
+      },
+      "claim_kinds": {
+        "api": 48,
+        "declares_async_metadata": 5,
+        "declares_autowired_presence": 54,
+        "declares_bean_presence": 13,
+        "declares_component_presence": 1,
+        "config": 854,
+        "declares_configuration_presence": 10,
+        "constructor": 63,
+        "method": 1152,
+        "declares_controller_advice_presence": 1,
+        "calls": 1175,
+        "file": 169,
+        "inherits": 8,
+        "class": 118,
+        "field": 282,
+        "constant": 117,
+        "interface": 13,
+        "overrides": 6,
+        "declares_post_construct_presence": 1,
+        "declares_pre_authorize_metadata": 4,
+        "reads": 1083,
+        "declares_repository_presence": 4,
+        "declares_rest_controller_presence": 1,
+        "declares_scheduling_metadata": 1,
+        "declares_service_presence": 4,
+        "declares_transaction_metadata": 122,
+        "uses_type": 325,
+        "writes": 134
+      }
+    }
+  },
+  "assertions": [
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "PetClinicApplication.java:PetClinicApplication",
+      "pass": true,
+      "hits": [
+        "claim_java_acbe68d369b524ff"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Owner.java:Owner",
+      "pass": true,
+      "hits": [
+        "claim_java_6534b7f41e84a5dc"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Pet.java:Pet",
+      "pass": true,
+      "hits": [
+        "claim_java_8b47be7dadffe87a"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Visit.java:Visit",
+      "pass": true,
+      "hits": [
+        "claim_java_c842c7e057294ea6"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "PetType.java:PetType",
+      "pass": true,
+      "hits": [
+        "claim_java_b561a57d197d7d5f"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Vet.java:Vet",
+      "pass": true,
+      "hits": [
+        "claim_java_2e058a0b387f4183"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Specialty.java:Specialty",
+      "pass": true,
+      "hits": [
+        "claim_java_be3069ccfce4a970"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Vets.java:Vets",
+      "pass": true,
+      "hits": [
+        "claim_java_bf9e5e1800cd21e4"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "OwnerController.java:OwnerController",
+      "pass": true,
+      "hits": [
+        "claim_java_d0f9d32d4fce7feb"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "PetController.java:PetController",
+      "pass": true,
+      "hits": [
+        "claim_java_51711d8762f1d959"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "VisitController.java:VisitController",
+      "pass": true,
+      "hits": [
+        "claim_java_101f2e28c0cb1ed5"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "VetController.java:VetController",
+      "pass": true,
+      "hits": [
+        "claim_java_f8d2a8c6183f2d2b"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "OwnerRepository.java:OwnerRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_99d3e4fc9bc9ddad"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "PetTypeRepository.java:PetTypeRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_1695884435712aef"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "VetRepository.java:VetRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_0db56b6d84c91a0a"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "Owner.java:getPets",
+      "pass": true,
+      "hits": [
+        "claim_java_40f5e8758f49a9fa"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "Owner.java:addPet",
+      "pass": true,
+      "hits": [
+        "claim_contract_e20dda182aea4c59",
+        "claim_java_6cf085a89156fe61"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "Pet.java:getVisits",
+      "pass": true,
+      "hits": [
+        "claim_java_d138149c67d087fe"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "Pet.java:addVisit",
+      "pass": true,
+      "hits": [
+        "claim_java_dfb1c98378f87eb3"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "Vet.java:getSpecialties",
+      "pass": true,
+      "hits": [
+        "claim_contract_15ffc289344bf682",
+        "claim_contract_edf150913c8d6bed",
+        "claim_java_879b1f2bd24477a7"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "OwnerController.java:showOwner",
+      "pass": true,
+      "hits": [
+        "claim_contract_edd8e29a7c95feae",
+        "claim_java_e76eb09e869393da"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "OwnerController.java:processCreationForm",
+      "pass": true,
+      "hits": [
+        "claim_contract_2092d407f8007584",
+        "claim_java_b979b3427e84f942"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "PetController.java:processCreationForm",
+      "pass": true,
+      "hits": [
+        "claim_contract_ca952f6ea22e5417",
+        "claim_java_69dd153bf0034dc1"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "VisitController.java:processNewVisitForm",
+      "pass": true,
+      "hits": [
+        "claim_contract_796628d6998372bc",
+        "claim_java_2affca4cbc65b991"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "VetController.java:showResourcesVetList",
+      "pass": true,
+      "hits": [
+        "claim_contract_1e8b3cd4902aee2c",
+        "claim_java_1f3751526da6edf1"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "Owner.java:pets",
+      "pass": true,
+      "hits": [
+        "claim_java_545f135e0e88e4cb"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "Pet.java:visits",
+      "pass": true,
+      "hits": [
+        "claim_java_f160e2977c5d5a3e"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "Vet.java:specialties",
+      "pass": true,
+      "hits": [
+        "claim_java_165c35517280f515"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "UserService.java:UserService",
+      "pass": true,
+      "hits": [
+        "claim_java_cdfbb44b38fe29bd"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "MailService.java:MailService",
+      "pass": true,
+      "hits": [
+        "claim_java_2e38fb9a9294f415"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "ApplicationProperties.java:ApplicationProperties",
+      "pass": true,
+      "hits": [
+        "claim_java_7f32b4327989eebb",
+        "claim_java_d8480e4360f27d60"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "BankAccountResource.java:BankAccountResource",
+      "pass": true,
+      "hits": [
+        "claim_java_9b1bb6b16d5a2122"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "LabelResource.java:LabelResource",
+      "pass": true,
+      "hits": [
+        "claim_java_9a696a3f17769c63"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "OperationResource.java:OperationResource",
+      "pass": true,
+      "hits": [
+        "claim_java_2bc87f0a5608a3ff"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "BankAccount.java:BankAccount",
+      "pass": true,
+      "hits": [
+        "claim_java_aee224cb87763e8e"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Label.java:Label",
+      "pass": true,
+      "hits": [
+        "claim_java_26e9971b9389b7d6"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "Operation.java:Operation",
+      "pass": true,
+      "hits": [
+        "claim_java_16ab05d0b4056f4c"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "User.java:User",
+      "pass": true,
+      "hits": [
+        "claim_java_0d539b5cf6ef32d3",
+        "claim_java_5238a43007b00a12"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_class",
+      "expected": true,
+      "source_anchor": "ExceptionTranslator.java:ExceptionTranslator",
+      "pass": true,
+      "hits": [
+        "claim_java_77e5ab5a663a32a0"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "BankAccountRepository.java:BankAccountRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_cfc3c4d8b45bdf86"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "LabelRepository.java:LabelRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_79e8ab3c403da5a1"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "OperationRepository.java:OperationRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_df0317f64a159d77"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_interface",
+      "expected": true,
+      "source_anchor": "UserRepository.java:UserRepository",
+      "pass": true,
+      "hits": [
+        "claim_java_9df6a8e125b593d8"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "UserService.java:createUser",
+      "pass": true,
+      "hits": [
+        "claim_contract_73a06359e1ac306d",
+        "claim_java_d90739afda9593a5"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "UserService.java:registerUser",
+      "pass": true,
+      "hits": [
+        "claim_contract_5d0c82e104ae7a30",
+        "claim_java_7dc7df78329650e6"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "MailService.java:sendEmail",
+      "pass": true,
+      "hits": [
+        "claim_contract_4bc698580c63245a",
+        "claim_contract_95dbac46c12f5a65",
+        "claim_java_21ca415333a21a73"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "BankAccountResource.java:createBankAccount",
+      "pass": true,
+      "hits": [
+        "claim_contract_046fe86bc0b9fea8",
+        "claim_java_1af29100ad0b02ef"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "BankAccountResource.java:getAllBankAccounts",
+      "pass": true,
+      "hits": [
+        "claim_contract_56f1d7206d7522f7",
+        "claim_java_241457d981a06273"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "LabelResource.java:createLabel",
+      "pass": true,
+      "hits": [
+        "claim_contract_8f509846093e3657",
+        "claim_java_d912aa34fb9766a6"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "OperationResource.java:createOperation",
+      "pass": true,
+      "hits": [
+        "claim_contract_68b49c8d2b425ab5",
+        "claim_java_666926478b89c8f6"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_method",
+      "expected": true,
+      "source_anchor": "ExceptionTranslator.java:handleExceptionInternal",
+      "pass": true,
+      "hits": [
+        "claim_contract_a34b7a175146a47a",
+        "claim_java_52943b5c259ef81a"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "BankAccount.java:balance",
+      "pass": true,
+      "hits": [
+        "claim_java_aefcc3974c060e38"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "BankAccount.java:operations",
+      "pass": true,
+      "hits": [
+        "claim_java_86847143c2760ebb"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "Operation.java:amount",
+      "pass": true,
+      "hits": [
+        "claim_java_3b35bd2f217550d7"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "Operation.java:labels",
+      "pass": true,
+      "hits": [
+        "claim_java_bd16f0a4641462fb"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "declaration_field",
+      "expected": true,
+      "source_anchor": "ApplicationProperties.java:liquibase",
+      "pass": true,
+      "hits": [
+        "claim_java_20422f02e7f529ea"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "OwnerController.java:/owners/{ownerId}",
+      "pass": true,
+      "hits": [
+        "claim_api_1acfc1b04a9f7475",
+        "claim_api_754b1a14b631ac22",
+        "claim_api_883894a27d7976dc"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "PetController.java:/owners/{ownerId}/pets/new",
+      "pass": true,
+      "hits": [
+        "claim_api_373de146cea90b2c",
+        "claim_api_412da9ce4b2eab09"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "VisitController.java:/owners/{ownerId}/pets/{petId}/visits/new",
+      "pass": true,
+      "hits": [
+        "claim_api_0d938ac0a4960cf5",
+        "claim_api_4c8e9906a56c0266"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "VetController.java:/vets",
+      "pass": true,
+      "hits": [
+        "claim_api_c6686bf7ab5e2717",
+        "claim_api_def6f7b71a4bb496"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "BankAccountResource.java:/api/bank-accounts",
+      "pass": true,
+      "hits": [
+        "claim_api_079ccbca332dc142",
+        "claim_api_9aea85d95027bcdb",
+        "claim_api_9d0d7cf07bc2ac8f"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "LabelResource.java:/api/labels",
+      "pass": true,
+      "hits": [
+        "claim_api_10eccc728af5fc24",
+        "claim_api_4e559a29047e07ad",
+        "claim_api_6c96e81f0fc4ad4a"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "OperationResource.java:/api/operations",
+      "pass": true,
+      "hits": [
+        "claim_api_0c5d762a760e2245",
+        "claim_api_4518aab2d90ac218",
+        "claim_api_cb8bbfa2cc9330a8"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "AccountResource.java:/api/account",
+      "pass": true,
+      "hits": [
+        "claim_api_3024cd08be1ecbd4",
+        "claim_api_aff79c70a71a8466",
+        "claim_api_b63576c86f255b91"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_route",
+      "expected": true,
+      "source_anchor": "UserResource.java:/api/admin/users",
+      "pass": true,
+      "hits": [
+        "claim_api_222bc2c753290223",
+        "claim_api_2ae23c3727ea4660",
+        "claim_api_3e176dc01784efc6"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "negative_class",
+      "expected": false,
+      "source_anchor": "repository-wide absence:OwnerManager",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "petclinic",
+      "category": "negative_method",
+      "expected": false,
+      "source_anchor": "repository-wide absence:Owner.deleteAllPets",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "petclinic",
+      "category": "negative_field",
+      "expected": false,
+      "source_anchor": "repository-wide absence:Owner.socialSecurityNumber",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "petclinic",
+      "category": "negative_api",
+      "expected": false,
+      "source_anchor": "repository-wide absence:/owners/purge-all",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "petclinic",
+      "category": "negative_interface",
+      "expected": false,
+      "source_anchor": "repository-wide absence:VisitRepository",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "petclinic",
+      "category": "negative_method",
+      "expected": false,
+      "source_anchor": "repository-wide absence:Vet.fire",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "jhipster",
+      "category": "negative_class",
+      "expected": false,
+      "source_anchor": "repository-wide absence:BankAccountController",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "jhipster",
+      "category": "negative_method",
+      "expected": false,
+      "source_anchor": "repository-wide absence:BankAccount.withdrawAtomically",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "jhipster",
+      "category": "negative_field",
+      "expected": false,
+      "source_anchor": "repository-wide absence:BankAccount.routingNumber",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "jhipster",
+      "category": "negative_api",
+      "expected": false,
+      "source_anchor": "repository-wide absence:/api/bank-accounts/purge",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "jhipster",
+      "category": "negative_interface",
+      "expected": false,
+      "source_anchor": "repository-wide absence:PaymentRepository",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "jhipster",
+      "category": "negative_method",
+      "expected": false,
+      "source_anchor": "repository-wide absence:UserService.resetEveryPassword",
+      "pass": true,
+      "hits": []
+    },
+    {
+      "project": "petclinic",
+      "category": "edge_calls",
+      "expected": true,
+      "source_anchor": "OwnerController.java -> Owner.getId",
+      "source_locations": [
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+          "line": 88,
+          "literal": "owner.getId()"
+        },
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+          "line": 116,
+          "literal": "owner.getId()"
+        },
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+          "line": 151,
+          "literal": "owner.getId()"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_edge_10752a380923844d",
+        "claim_edge_26f55d770bec4b99",
+        "claim_edge_43cc85bcc3155fb5"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "edge_calls",
+      "expected": true,
+      "source_anchor": "Owner.java -> Pet.getName",
+      "source_locations": [
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+          "line": 152,
+          "literal": "pet.getName()"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_edge_b26c6409c0beed3b"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "edge_calls",
+      "expected": true,
+      "source_anchor": "Pet.java -> Pet.getVisits",
+      "source_locations": [
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+          "line": 94,
+          "literal": "getVisits().add(visit)"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_edge_26904b4dd5be25ef",
+        "claim_edge_8d5385630a8baa4f",
+        "claim_edge_e8d24327c531e60f"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "edge_calls",
+      "expected": true,
+      "source_anchor": "BankAccountResource.java -> BankAccount.getId",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 54,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 58,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 59,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 79,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 82,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 92,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 113,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 116,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 125,
+          "literal": "bankAccount.getId()"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java",
+          "line": 136,
+          "literal": "bankAccount.getId()"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_edge_4c3e631821a05634",
+        "claim_edge_abd59e9e6530361d",
+        "claim_edge_cc4526dfd00ad7b0"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "edge_calls",
+      "expected": true,
+      "source_anchor": "UserService.java -> UserRepository.findOneByLogin",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/service/UserService.java",
+          "line": 95,
+          "literal": "userRepository.findOneByLogin("
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/service/UserService.java",
+          "line": 216,
+          "literal": "userRepository.findOneByLogin("
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_edge_1ee141ae8d04b028",
+        "claim_edge_89759990b5c40e88"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "edge_calls",
+      "expected": true,
+      "source_anchor": "MailService.java -> sendEmailSync",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/service/MailService.java",
+          "line": 56,
+          "literal": "sendEmailSync(to, subject, content"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_edge_3e4e6546f6f4f900",
+        "claim_edge_92544993c1c1c938"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "edge_uses_type",
+      "expected": true,
+      "source_anchor": "BankAccount.java -> Operation",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/domain/BankAccount.java",
+          "line": 46,
+          "literal": "Set<Operation> operations"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/domain/BankAccount.java",
+          "line": 106,
+          "literal": "Set<Operation> operations"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/domain/BankAccount.java",
+          "line": 116,
+          "literal": "Set<Operation> operations"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_type_use_edge_15272993c7610233",
+        "claim_type_use_edge_208c02e44585bac1",
+        "claim_type_use_edge_38eff97a2402348d"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "edge_uses_type",
+      "expected": true,
+      "source_anchor": "Operation.java -> Label",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/domain/Operation.java",
+          "line": 56,
+          "literal": "Set<Label> labels"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/domain/Operation.java",
+          "line": 129,
+          "literal": "Set<Label> labels"
+        },
+        {
+          "path": "src/main/java/io/github/jhipster/sample/domain/Operation.java",
+          "line": 133,
+          "literal": "Set<Label> labels"
+        }
+      ],
+      "human_evidence": "Direct invocation/type declaration reviewed in pinned source checkout.",
+      "pass": true,
+      "hits": [
+        "claim_type_use_edge_0861122a60892b25",
+        "claim_type_use_edge_162134421defe33c",
+        "claim_type_use_edge_16caa8c30568a766"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "spring_data_repository_entity",
+      "expected": true,
+      "source_anchor": "OwnerRepository.java -> Owner",
+      "source_locations": [
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java",
+          "line": 36,
+          "literal": "JpaRepository<Owner, Integer>"
+        }
+      ],
+      "human_evidence": "Direct repository generic and exact source @Entity declaration reviewed. Runtime proxy/query semantics excluded.",
+      "pass": true,
+      "hits": [
+        "claim_java_99d3e4fc9bc9ddad"
+      ]
+    },
+    {
+      "project": "petclinic",
+      "category": "spring_data_repository_entity",
+      "expected": true,
+      "source_anchor": "PetTypeRepository.java -> PetType",
+      "source_locations": [
+        {
+          "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/PetTypeRepository.java",
+          "line": 30,
+          "literal": "JpaRepository<PetType, Integer>"
+        }
+      ],
+      "human_evidence": "Direct repository generic and exact source @Entity declaration reviewed. Runtime proxy/query semantics excluded.",
+      "pass": true,
+      "hits": [
+        "claim_java_1695884435712aef"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_data_repository_entity",
+      "expected": true,
+      "source_anchor": "BankAccountRepository.java -> BankAccount",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java",
+          "line": 16,
+          "literal": "JpaRepository<BankAccount, Long>"
+        }
+      ],
+      "human_evidence": "Direct repository generic and exact source @Entity declaration reviewed. Runtime proxy/query semantics excluded.",
+      "pass": true,
+      "hits": [
+        "claim_java_cfc3c4d8b45bdf86"
+      ]
+    },
+    {
+      "project": "jhipster",
+      "category": "spring_data_repository_entity",
+      "expected": true,
+      "source_anchor": "LabelRepository.java -> Label",
+      "source_locations": [
+        {
+          "path": "src/main/java/io/github/jhipster/sample/repository/LabelRepository.java",
+          "line": 12,
+          "literal": "JpaRepository<Label, Long>"
+        }
+      ],
+      "human_evidence": "Direct repository generic and exact source @Entity declaration reviewed. Runtime proxy/query semantics excluded.",
+      "pass": true,
+      "hits": [
+        "claim_java_79e8ab3c403da5a1"
+      ]
+    }
+  ],
+  "retrieval": [
+    {
+      "project": "petclinic",
+      "question": "Which source declares Owner?",
+      "gold_path_suffix": "Owner.java",
+      "rank": 1,
+      "top_ids": [
+        "claim_contract_1ec21061c1d247f8",
+        "claim_contract_8d72e1ec6dc0842d",
+        "claim_contract_e20dda182aea4c59",
+        "claim_contract_ecdd1f739876450a",
+        "claim_java_20ba7ac0dc363deb",
+        "claim_java_235828723348bae2",
+        "claim_java_2b456d8bb95a4302",
+        "claim_java_35a6a42b9d498b7b",
+        "claim_java_40efd2b7d0c54f26",
+        "claim_java_40f5e8758f49a9fa"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Where are pets exposed on Owner?",
+      "gold_path_suffix": "Owner.java",
+      "rank": 1,
+      "top_ids": [
+        "claim_java_545f135e0e88e4cb",
+        "claim_java_40f5e8758f49a9fa",
+        "claim_contract_1ec21061c1d247f8",
+        "claim_contract_8d72e1ec6dc0842d",
+        "claim_contract_e20dda182aea4c59",
+        "claim_contract_ecdd1f739876450a",
+        "claim_java_20ba7ac0dc363deb",
+        "claim_java_235828723348bae2",
+        "claim_java_2b456d8bb95a4302",
+        "claim_java_35a6a42b9d498b7b"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Which controller handles new visits?",
+      "gold_path_suffix": "VisitController.java",
+      "rank": 4,
+      "top_ids": [
+        "claim_java_f160e2977c5d5a3e",
+        "claim_contract_1a6e884dd5de267b",
+        "claim_contract_771e6c93553f54b6",
+        "claim_contract_796628d6998372bc",
+        "claim_contract_b266662212be3fbd",
+        "claim_java_1324e5d1aee1879d",
+        "claim_java_2affca4cbc65b991",
+        "claim_java_4f344b58bd559fe1",
+        "claim_java_51d0bbaf8012af14",
+        "claim_java_79bd5560790f4f75"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Where is owner creation processed?",
+      "gold_path_suffix": "OwnerController.java",
+      "rank": null,
+      "top_ids": [
+        "claim_contract_1ec21061c1d247f8",
+        "claim_contract_8d72e1ec6dc0842d",
+        "claim_contract_e20dda182aea4c59",
+        "claim_contract_ecdd1f739876450a",
+        "claim_java_20ba7ac0dc363deb",
+        "claim_java_235828723348bae2",
+        "claim_java_2b456d8bb95a4302",
+        "claim_java_35a6a42b9d498b7b",
+        "claim_java_40efd2b7d0c54f26",
+        "claim_java_40f5e8758f49a9fa"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Which repository persists owners?",
+      "gold_path_suffix": "OwnerRepository.java",
+      "rank": 10,
+      "top_ids": [
+        "claim_java_1bc478c887facd8b",
+        "claim_java_47275286c0989bca",
+        "claim_java_68e140e827764384",
+        "claim_java_6969e28e2599dbe9",
+        "claim_java_716b392b852bc1eb",
+        "claim_java_8f3d1db7846e7ed4",
+        "claim_java_8fb7b81191418403",
+        "claim_java_9fd3fa47ed383bf7",
+        "claim_java_fb0e49d18c3f7227",
+        "claim_java_0ac3e1b824a6a1c9"
+      ],
+      "top_paths": [
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/PetController.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Where is the vets HTTP endpoint?",
+      "gold_path_suffix": "VetController.java",
+      "rank": null,
+      "top_ids": [
+        "claim_contract_b46f71287a13a3cd",
+        "claim_java_2b81b10c51d641cc",
+        "claim_java_63ef9d67abb2d5fb",
+        "claim_java_9c17f471c9bdbafd",
+        "claim_java_b02796d0fd7aa3f1",
+        "claim_java_bf9e5e1800cd21e4",
+        "claim_java_c5cb4db179c75e87",
+        "claim_java_ce4e9c34b318a9bf",
+        "claim_java_e97e4ed0dc66aca3",
+        "claim_java_f4292898a691d53e"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/Vets.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/MySqlIntegrationTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/PostgresIntegrationTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/vet/internal/VetControllerTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/Vets.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/Vets.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/vet/internal/VetRepositoryTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/Vets.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/PetClinicIntegrationTests.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Which domain type stores visits?",
+      "gold_path_suffix": "Pet.java",
+      "rank": 1,
+      "top_ids": [
+        "claim_java_c2dd0f4659a04121",
+        "claim_java_f160e2977c5d5a3e",
+        "claim_contract_3a71db3b7e0111bb",
+        "claim_contract_ae79d1bf7dd079a3",
+        "claim_contract_e47dd3e77ea5ca70",
+        "claim_java_0701fa10f4692616",
+        "claim_java_125b6550bf2e6190",
+        "claim_java_1695884435712aef",
+        "claim_java_1e420a00525f5ea0",
+        "claim_java_498ca0a97e45063d"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/PetType.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/PetType.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/PetType.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/PetTypeRepository.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/PetTypeRepository.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/PetType.java"
+        ]
+      ]
+    },
+    {
+      "project": "petclinic",
+      "question": "Where is pet creation processed?",
+      "gold_path_suffix": "PetController.java",
+      "rank": null,
+      "top_ids": [
+        "claim_contract_4055d84fa491a290",
+        "claim_java_2c326d535d2afa2e",
+        "claim_java_369555977068d821",
+        "claim_java_6726e0f192e44cac",
+        "claim_java_6ca189651c05dfdc",
+        "claim_java_75245a63e48b1745",
+        "claim_java_7c7b419acc24b40d",
+        "claim_java_8b2c54f1051f367e",
+        "claim_java_8b47be7dadffe87a",
+        "claim_java_b39fec80458f6a95"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ],
+        [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Which source declares BankAccount?",
+      "gold_path_suffix": "BankAccount.java",
+      "rank": 2,
+      "top_ids": [
+        "claim_java_e901a79b536d8dcc",
+        "claim_contract_413e095199e39169",
+        "claim_contract_48613cd5ff34f984",
+        "claim_contract_7b3b42a374ccf76a",
+        "claim_contract_bbc74784eb6b1e9d",
+        "claim_contract_c012aadd2871d9b9",
+        "claim_contract_c18ecf3f7359db46",
+        "claim_java_00bb735a3e44551c",
+        "claim_java_04db49f41c791146",
+        "claim_java_0926853d7067aa7c"
+      ],
+      "top_paths": [
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/BankAccountResourceIT.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Where is createBankAccount handled?",
+      "gold_path_suffix": "BankAccountResource.java",
+      "rank": 1,
+      "top_ids": [
+        "claim_contract_046fe86bc0b9fea8",
+        "claim_contract_0e9fd331a1d9de50",
+        "claim_java_1ad994616f24babf",
+        "claim_java_1af29100ad0b02ef",
+        "claim_api_abd353c897e27f65",
+        "claim_contract_307eb9c8ea2f267c",
+        "claim_java_e0f9d96f9a10fd96",
+        "claim_contract_025ad27e8c44e4f6",
+        "claim_contract_027c34107e3c8473",
+        "claim_contract_031d5dde54b6d598"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/BankAccountResourceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/BankAccountResourceIT.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/BankAccountResource.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/BankAccountResourceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/BankAccountResourceIT.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/management/SecurityMetersService.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/UserResourceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/UserServiceIT.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Which repository persists bank accounts?",
+      "gold_path_suffix": "BankAccountRepository.java",
+      "rank": 1,
+      "top_ids": [
+        "claim_contract_b975d7afa9757568",
+        "claim_java_0313659d30b9661d",
+        "claim_java_31e50647cd16df87",
+        "claim_java_46273de588e25c66",
+        "claim_java_66dd262cb702a024",
+        "claim_java_82851772ce46416b",
+        "claim_java_8752a3b6bdae7595",
+        "claim_java_ac24f71e4d00719d",
+        "claim_java_cfc3c4d8b45bdf86",
+        "claim_contract_b892d2b8b8d991cd"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/BankAccountRepository.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/repository/OperationRepository.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Where are application liquibase properties?",
+      "gold_path_suffix": "ApplicationProperties.java",
+      "rank": 1,
+      "top_ids": [
+        "claim_java_20422f02e7f529ea",
+        "claim_java_7f32b4327989eebb",
+        "claim_contract_e3bb25b78533d4d2",
+        "claim_java_97649658aa3b8453",
+        "claim_config_52ede26a0346ae27",
+        "claim_config_b56092e5f1ab2c12",
+        "claim_java_00d45e20310f5067",
+        "claim_java_0287a4f10106bf5c",
+        "claim_java_6f4a8730f7303138",
+        "claim_java_e02e490597bae209"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/io/github/jhipster/sample/config/ApplicationProperties.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/ApplicationProperties.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/LiquibaseConfiguration.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/LiquibaseConfiguration.java"
+        ],
+        [
+          "src/main/webapp/i18n/en/configuration.json"
+        ],
+        [
+          "src/main/webapp/i18n/en/health.json"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/ApplicationProperties.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/ApplicationProperties.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/ApplicationProperties.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/ApplicationProperties.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Which service registers users?",
+      "gold_path_suffix": "UserService.java",
+      "rank": 7,
+      "top_ids": [
+        "claim_java_7ce9a76325c9e789",
+        "claim_java_89dcd66493d407c8",
+        "claim_java_d2c2609634e7ebdc",
+        "claim_config_2969db51177de255",
+        "claim_contract_031d5dde54b6d598",
+        "claim_contract_0b76c8a758351632",
+        "claim_contract_0c30ec7c92ceadd6",
+        "claim_contract_1c4ec7cb537ee3e0",
+        "claim_contract_1c6e19efc9f3b104",
+        "claim_contract_34421ee57d02157a"
+      ],
+      "top_paths": [
+        [
+          "src/test/java/gatling/simulations/BankAccountGatlingTest.java"
+        ],
+        [
+          "src/test/java/gatling/simulations/OperationGatlingTest.java"
+        ],
+        [
+          "src/test/java/gatling/simulations/LabelGatlingTest.java"
+        ],
+        [
+          "src/main/webapp/i18n/en/health.json"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/UserServiceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/UserServiceIT.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/service/UserService.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/mapper/UserMapperTest.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/UserServiceIT.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/service/UserService.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Where is email sent?",
+      "gold_path_suffix": "MailService.java",
+      "rank": 9,
+      "top_ids": [
+        "claim_java_97ebba678bf1f293",
+        "claim_java_a35743178b9a04dc",
+        "claim_config_44c2ddf7fbe31333",
+        "claim_config_71ce238650ef6f6f",
+        "claim_contract_0821cf094fa804e4",
+        "claim_contract_1815ad2a6e45dee7",
+        "claim_contract_19f872df76f2d1c6",
+        "claim_contract_22a44c6c9a07caf2",
+        "claim_contract_24f2a4756e79dfd6",
+        "claim_contract_37da28edbcab0bf8"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/io/github/jhipster/sample/domain/User.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/service/dto/AdminUserDTO.java"
+        ],
+        [
+          "src/main/webapp/i18n/en/user-management.json"
+        ],
+        [
+          "src/main/webapp/i18n/en/global.json"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/AccountResourceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/AccountResourceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/AccountResourceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/MailServiceIT.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/service/MailService.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/web/rest/UserResourceIT.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Which handler translates exceptions?",
+      "gold_path_suffix": "ExceptionTranslator.java",
+      "rank": null,
+      "top_ids": [
+        "claim_contract_72ee793c40d2ebb7",
+        "claim_contract_e516265b6bdd7cf8",
+        "claim_contract_ec0f97f313e88e6c",
+        "claim_java_113d498d61c1d79d",
+        "claim_java_250580727093e5fe",
+        "claim_java_4f33f353057ab18b",
+        "claim_java_5b6e82e881b4d6ff",
+        "claim_java_97c83a1f96143b2a",
+        "claim_java_a723bb94d59e8ca6",
+        "claim_java_e0b8b19934570993"
+      ],
+      "top_paths": [
+        [
+          "src/test/java/io/github/jhipster/sample/config/StaticResourcesWebConfigurerTest.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/StaticResourcesWebConfiguration.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/config/StaticResourcesWebConfigurerTest.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/StaticResourcesWebConfiguration.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/StaticResourcesWebConfiguration.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/config/StaticResourcesWebConfigurerTest.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/service/UserServiceIT.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/config/StaticResourcesWebConfigurerTest.java"
+        ],
+        [
+          "src/test/java/io/github/jhipster/sample/config/StaticResourcesWebConfigurerTest.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/config/AsyncConfiguration.java"
+        ]
+      ]
+    },
+    {
+      "project": "jhipster",
+      "question": "Where is /api/operations handled?",
+      "gold_path_suffix": "OperationResource.java",
+      "rank": 5,
+      "top_ids": [
+        "claim_java_0fb9c8e6b1f192b1",
+        "claim_java_72fd3091405ed50a",
+        "claim_java_86847143c2760ebb",
+        "claim_java_ea0ce0fd76b8d2ae",
+        "claim_api_0c5d762a760e2245",
+        "claim_api_4518aab2d90ac218",
+        "claim_api_cb8bbfa2cc9330a8",
+        "claim_api_eaf44779b54f5cca",
+        "claim_api_f65086adfa35aff6",
+        "claim_api_facab3e05cfea28c"
+      ],
+      "top_paths": [
+        [
+          "src/main/java/io/github/jhipster/sample/domain/Label.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/Label.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/domain/BankAccount.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+        ],
+        [
+          "src/main/java/io/github/jhipster/sample/web/rest/OperationResource.java"
+        ]
+      ]
+    }
+  ],
+  "capability_contract": {
+    "source_observed": [
+      "Java files/classes/interfaces/methods/constructors/fields/constants",
+      "literal Spring HTTP routes",
+      "selected syntactically resolvable calls/reads/writes/uses_type"
+    ],
+    "partial": [
+      "cross-file call resolution",
+      "inheritance/override edges",
+      "DI/config/transaction/persistence annotations and framework conventions",
+      "generic/overload/dispatch resolution"
+    ],
+    "semantic_overlay": [
+      "tmf.java-semantic-facts.v1 external attributed overlay only; no JDT/javac/SCIP provider bundled E2E"
+    ],
+    "unsupported": [
+      "compiler-equivalent typing/binding",
+      "runtime Spring bean graph/AOP proxy behavior",
+      "transaction boundaries/effectiveness",
+      "JPA query/runtime persistence behavior",
+      "reflection/generated/Lombok semantics"
+    ]
+  },
+  "mutation": {
+    "target": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+    "semantic_oracle": "independent pre/post Java declaration facts and token hashes; comment-only controls expect no semantic invalidation",
+    "freshness_dimensions": {
+      "file": "file blob identity; a comment edit changes this dimension",
+      "semantic": "independently extracted Java declaration identities and token hashes; comments outside declarations do not change this dimension"
+    },
+    "changed_source_facts": [],
+    "file_expected": 1,
+    "semantic_expected": 0,
+    "semantic_actual_stale": 0,
+    "semantic_stale_tp": 0,
+    "semantic_stale_fn": 0,
+    "semantic_stale_fp": 0,
+    "semantic_stale_precision": null,
+    "semantic_stale_recall": null,
+    "stale_details_before_rewarm": [
+      {
+        "claim_id": "claim_file_62809736d8fae777",
+        "scope": "file",
+        "edge_kind": null,
+        "classification": "file_blob",
+        "stale_reasons": [
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java: blob mismatch"
+        ],
+        "source_anchors": [],
+        "bindings": [
+          {
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+            "qualname": null,
+            "role": null,
+            "file_blob": "b8b86cd66085398062b6a5d7aefbb6159a0f4534",
+            "fn_hash": null
+          }
+        ]
+      }
+    ],
+    "owned_claims_before": 110,
+    "stale_owned_before_rewarm": 1,
+    "unrelated_claims_before": 961,
+    "stale_unrelated_before_rewarm": 0,
+    "changed_file_claim_invalidation_ratio": 0.00909090909090909,
+    "changed_file_claim_invalidation_ratio_note": "Diagnostic only; semantic TP/FN/FP above are authoritative.",
+    "over_invalidation_rate": 0.0,
+    "warm_result": {
+      "coverage": "complete",
+      "derived": 8,
+      "skipped": 50,
+      "files": 58,
+      "failed_files": {},
+      "index_callees": 76,
+      "renamed_claims": 0,
+      "deleted_missing_claims": 0,
+      "migrated_legacy_java_claims": 0,
+      "migrated_legacy_java_paths": 0
+    },
+    "stale_after_rewarm": 0
+  },
+  "metrics": {
+    "assertions": 89,
+    "tp": 77,
+    "fn": 0,
+    "tn": 12,
+    "fp": 0,
+    "positive_recall": 1.0,
+    "negative_precision": 1.0,
+    "overall_accuracy": 1.0,
+    "by_category": {
+      "declaration_class": {
+        "n": 23,
+        "pass": 23,
+        "rate": 1.0
+      },
+      "declaration_field": {
+        "n": 8,
+        "pass": 8,
+        "rate": 1.0
+      },
+      "declaration_interface": {
+        "n": 7,
+        "pass": 7,
+        "rate": 1.0
+      },
+      "declaration_method": {
+        "n": 18,
+        "pass": 18,
+        "rate": 1.0
+      },
+      "edge_calls": {
+        "n": 6,
+        "pass": 6,
+        "rate": 1.0
+      },
+      "edge_uses_type": {
+        "n": 2,
+        "pass": 2,
+        "rate": 1.0
+      },
+      "negative_api": {
+        "n": 2,
+        "pass": 2,
+        "rate": 1.0
+      },
+      "negative_class": {
+        "n": 2,
+        "pass": 2,
+        "rate": 1.0
+      },
+      "negative_field": {
+        "n": 2,
+        "pass": 2,
+        "rate": 1.0
+      },
+      "negative_interface": {
+        "n": 2,
+        "pass": 2,
+        "rate": 1.0
+      },
+      "negative_method": {
+        "n": 4,
+        "pass": 4,
+        "rate": 1.0
+      },
+      "spring_data_repository_entity": {
+        "n": 4,
+        "pass": 4,
+        "rate": 1.0
+      },
+      "spring_route": {
+        "n": 9,
+        "pass": 9,
+        "rate": 1.0
+      }
+    }
+  },
+  "retrieval_metrics": {
+    "questions": 16,
+    "MRR": 0.45649801587301586,
+    "Recall@10": 0.75
+  },
+  "failures": []
+}

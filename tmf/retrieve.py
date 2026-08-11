@@ -87,9 +87,27 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
     store = Store(repo.root)
     terms = {t.lower() for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query)}
 
+    declaration_intent = bool(terms & {"declare", "declares", "declared", "source", "where", "which"})
+    repository_intent = bool(terms & {"repository", "repositories", "persists", "persistence"})
+
     def lexical_score(claim: Claim) -> int:
-        hay = " ".join([claim.claim, str(claim.body.get("keywords", [])), claim.bindings[0].path if claim.bindings else ""]).lower()
-        return sum(1 for term in terms if term in hay)
+        body = claim.body
+        path = claim.bindings[0].path if claim.bindings else ""
+        basename = Path(path).stem.lower()
+        qualname = str(body.get("qualname", "")).lower()
+        name = str(body.get("name", "")).lower()
+        hay = " ".join([claim.claim, str(body.get("keywords", [])), path, qualname, name]).lower()
+        score = sum(10 for term in terms if term in hay)
+        # Prefer the governing declaration over incidental route/edge mentions.
+        # These are deterministic source-shape signals, not inferred semantics.
+        score += sum(35 for term in terms if term in {basename, name, qualname.rsplit(".", 1)[-1]})
+        if declaration_intent and body.get("node_kind") in {"class", "interface", "method", "field", "constructor"}:
+            score += 12
+        if repository_intent and (basename.endswith("repository") or name.endswith("repository")):
+            score += 30
+        if claim.scope == "api" and not (terms & {"http", "endpoint", "route", "api"}):
+            score -= 8
+        return score
 
     scored: list[tuple[int, Claim]] = []
     for claim in store.iter_claims():

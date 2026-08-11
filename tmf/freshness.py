@@ -6,6 +6,7 @@ from .extract import extract_apis, extract_classes, extract_configs, extract_dec
 from .java_extract import extract_java_classes, extract_java_fields, extract_java_methods, extract_java_functional_apis
 from .git import GitRepo
 from .schema import Claim
+from .derivation_versions import versions_for_path
 
 
 @dataclass(frozen=True)
@@ -90,16 +91,45 @@ def _current_java_node_hash(repo: GitRepo, path: str, qualname: str | None, node
         nodes = [*extract_java_classes(path, source), *extract_java_methods(path, source), *extract_java_fields(path, source)]
     except Exception:
         return None
+    matches: list[str] = []
     for node in nodes:
         kind = getattr(node, "declaration_kind", getattr(node, "node_kind", ""))
         node_hash = getattr(node, "declaration_hash", getattr(node, "class_hash", None))
         if node.qualname == qualname and kind == node_kind:
-            return node_hash
-    return None
+            if node_hash:
+                matches.append(node_hash)
+    # Java permits overloads with the same display qualname.  A binding is
+    # fresh when its exact stored declaration token hash is still present;
+    # callers compare this result to the stored binding hash below.
+    return matches[0] if len(matches) == 1 else None
+
+
+def _current_java_node_hashes(repo: GitRepo, path: str, qualname: str | None, node_kind: str | None) -> set[str]:
+    if not qualname or not node_kind:
+        return set()
+    try:
+        source = repo.read_file(path)
+        nodes = [*extract_java_classes(path, source), *extract_java_methods(path, source), *extract_java_fields(path, source)]
+    except Exception:
+        return set()
+    return {
+        node_hash for node in nodes
+        if node.qualname == qualname
+        and getattr(node, "declaration_kind", getattr(node, "node_kind", "")) == node_kind
+        and (node_hash := getattr(node, "declaration_hash", getattr(node, "class_hash", None)))
+    }
 
 
 def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
     stale: list[str] = []
+    expected_versions: dict[str, str] = {}
+    for binding in claim.bindings:
+        expected_versions.update(versions_for_path(binding.path))
+    stored_versions = claim.body.get("derivation_versions", {}) if isinstance(claim.body, dict) else {}
+    for pipeline, expected in sorted(expected_versions.items()):
+        actual = stored_versions.get(pipeline) if isinstance(stored_versions, dict) else None
+        if actual != expected:
+            stale.append(f"derivation version mismatch: {pipeline} stored={actual!r} current={expected!r}")
     body_qualname = claim.body.get("qualname") if isinstance(claim.body, dict) else None
     for binding in claim.bindings:
         current_blob = repo.blob_sha(binding.path)
@@ -144,10 +174,42 @@ def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
                 stale.append(f"{binding.path}:{qualname}: api_hash mismatch")
             continue
         if claim.body.get("language") == "java":
-            current_java_hash = _current_java_node_hash(repo, binding.path, qualname, str(claim.body.get("node_kind") or ""))
-            if current_java_hash is None:
+            # Relationship claims have two independently bound Java endpoints.
+            # Do not fall back to an empty node kind: that made *every* edge to
+            # an edited Java file stale, including unrelated declarations.
+            edge_kind = claim.body.get("edge_kind")
+            if binding.role == "repository_domain_entity":
+                dependencies = [x.get("domain_entity_dependency") for x in claim.body.get("graph", {}).get("repository_declaration", {}).get("inherited_repository_types", [])]
+                dependency = next((x for x in dependencies if x and x.get("path") == binding.path and x.get("qualname") == qualname), None)
+                if dependency is None:
+                    stale.append(f"{binding.path}:{qualname}: repository entity dependency metadata missing")
+                    continue
+                node_kind = dependency.get("node_kind")
+                current_java_hashes = _current_java_node_hashes(repo, binding.path, qualname, str(node_kind or ""))
+                if binding.fn_hash not in current_java_hashes:
+                    stale.append(f"{binding.path}:{qualname}: java_hash mismatch or node missing")
+                continue
+            endpoint_fields = {
+                "calls": {"caller": "caller_node_kind", "callee": "callee_node_kind"},
+                "reads": {"reader": "reader_node_kind", "declaration": "declaration_node_kind"},
+                "writes": {"writer": "writer_node_kind", "declaration": "declaration_node_kind"},
+                "uses_type": {"user": "user_node_kind", "type": "type_node_kind"},
+                "inherits": {"child": "child_node_kind", "parent": "parent_node_kind"},
+                "overrides": {"method": "method_node_kind", "overridden": "overridden_node_kind"},
+                "injects": {"injector": "injector_node_kind", "bean": "bean_node_kind"},
+            }
+            if edge_kind in endpoint_fields:
+                field = endpoint_fields[edge_kind].get(binding.role or "")
+                if field is None:
+                    stale.append(f"{binding.path}:{qualname}: unknown java binding role {binding.role!r} for {edge_kind}")
+                    continue
+                node_kind = claim.body.get(field)
+            else:
+                node_kind = claim.body.get("node_kind")
+            current_java_hashes = _current_java_node_hashes(repo, binding.path, qualname, str(node_kind or ""))
+            if not current_java_hashes:
                 stale.append(f"{binding.path}:{qualname}: java node missing")
-            elif binding.fn_hash != current_java_hash:
+            elif binding.fn_hash not in current_java_hashes:
                 stale.append(f"{binding.path}:{qualname}: java_hash mismatch")
             continue
         if claim.scope == "class":

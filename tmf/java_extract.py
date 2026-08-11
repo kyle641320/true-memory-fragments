@@ -1868,13 +1868,23 @@ def extract_java_apis(path: str, source: str) -> list[ApiNode]:
     tree = parser.parse(source_bytes)
     imports = _java_explicit_imports(source)
     mapping_fqn = "org.springframework.web.bind.annotation."
+    # A Spring web wildcard import is still an exact package-level binding for
+    # these framework annotations (and is what generated JHipster resources
+    # use).  Do not generalise this to arbitrary wildcard imports.
+    spring_web_wildcard = bool(re.search(
+        r"(?m)^\s*import\s+org\.springframework\.web\.bind\.annotation\.\*\s*;",
+        source,
+    ))
     allowed_mappings = {"RequestMapping", "GetMapping", "PostMapping", "PutMapping", "DeleteMapping", "PatchMapping"}
-    exact_mappings = {name for name in allowed_mappings if imports.get(name) == mapping_fqn + name}
+    exact_mappings = {
+        name for name in allowed_mappings
+        if imports.get(name) == mapping_fqn + name or spring_web_wildcard
+    }
     exact_controllers = {
         name for name, fqn in {
             "Controller": "org.springframework.stereotype.Controller",
             "RestController": mapping_fqn + "RestController",
-        }.items() if imports.get(name) == fqn
+        }.items() if imports.get(name) == fqn or (name == "RestController" and spring_web_wildcard)
     }
     methods_by_qualname: dict[str, list[ClassNode]] = {}
     for method_node in extract_java_methods(path, source):
@@ -2293,6 +2303,7 @@ class JavaCallEdge:
     caller_fn_hash: str | None = None
     callee_fn_hash: str | None = None
     caller_qualname: str | None = None
+    caller_node_kind: str | None = "method"
     callee_node_kind: str | None = "method"
     language: str = "java"
 
@@ -2670,6 +2681,14 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                             name = _child_by_field(child, "name")
                             if name is not None:
                                 types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+            # The loop variable is a statically typed local just like a method
+            # parameter.  Missing it made ordinary domain traversals such as
+            # `for (Pet pet : pets) pet.getName()` look like unknown receivers.
+            elif cur.type == "enhanced_for_statement":
+                name = _child_by_field(cur, "name")
+                typ = _child_by_field(cur, "type")
+                if name is not None and typ is not None:
+                    types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
             for child in _named_children(cur):
                 walk(child)
         body = _child_by_field(method_node, "body")
@@ -2765,6 +2784,39 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         methods = [m for m in extract_java_methods(symbol.path, target_source) if m.qualname.startswith(symbol.simple_name + ".")]
         return methods, f"java_project_typed_receiver_{resolution}"
 
+    def declared_return_type(method: ClassNode) -> str | None:
+        """Read only an explicit source return type; constructors/var/inference stay unknown."""
+        if method.node_kind != "method" or repo is None:
+            return None
+        try:
+            target_source = source if method.path == path else repo.read_file(method.path)
+        except Exception:
+            return None
+        _lang, target_parser = _language_and_parser()
+        data = target_source.encode("utf-8")
+        target_tree = target_parser.parse(data)
+        matches: list[str] = []
+        def scan(cur: Any, stack: list[str]) -> None:
+            next_stack = stack
+            if cur.type in _CLASS_TYPES:
+                n = _identifier_from_node(data, cur)
+                if n:
+                    next_stack = [*stack, n]
+            elif cur.type == "method_declaration" and _method_qualname(data, cur, stack) == method.qualname:
+                typ = _child_by_field(cur, "type")
+                if typ is not None and _line_start(cur) == method.line_start:
+                    matches.append(_node_text(data, typ).strip())
+            for child in _named_children(cur):
+                scan(child, next_stack)
+        scan(target_tree.root_node, [])
+        if len(matches) != 1 or matches[0] in {"void", "var"}:
+            return None
+        declared = matches[0]
+        # Preserve the declaring source's exact import context before resolving
+        # the return type from the caller's file.
+        imported = _java_explicit_imports(target_source).get(declared)
+        return imported or declared
+
     def visit(node: Any, stack: list[str]) -> None:
         next_stack = stack
         current_method: ClassNode | None = None
@@ -2848,6 +2900,31 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                                 add_edge(current_method, callee, resolution)
                             else:
                                 add_unresolved(current_method, f"{receiver}.{name}", why or resolution)
+                        elif (obj := _child_by_field(cur, "object")) is not None and obj.type == "method_invocation":
+                            # Conservative one-step chain propagation: resolve the
+                            # inner project call exactly, then use only its explicit
+                            # declared return type. Generic/JDK continuation (for
+                            # example Optional.map/Stream.map) remains unresolved.
+                            inner = _call_expr_name(source_bytes, obj)
+                            inner_callee = None
+                            if inner is not None:
+                                inner_name, inner_receiver = inner
+                                inner_args = _call_argument_types(source_bytes, obj, types_by_name)
+                                if inner_receiver is None:
+                                    inner_callee, _ = unique_method(local_methods, inner_name, _call_arg_count(obj), inner_args)
+                                elif inner_receiver in types_by_name:
+                                    pool, _ = typed_receiver_methods(types_by_name[inner_receiver], inner_name)
+                                    inner_callee, _ = unique_method(pool, inner_name, _call_arg_count(obj), inner_args)
+                            return_type = declared_return_type(inner_callee) if inner_callee is not None else None
+                            if return_type is not None:
+                                methods, resolution = typed_receiver_methods(return_type, name)
+                                callee, why = unique_method(methods, name, argc, argument_types)
+                                if callee is not None:
+                                    add_edge(current_method, callee, "java_chained_declared_return_" + resolution)
+                                else:
+                                    add_unresolved(current_method, f"{receiver}.{name}", why or resolution)
+                            else:
+                                add_unresolved(current_method, f"{receiver}.{name}", "java_chained_return_type_unresolved")
                         else:
                             add_unresolved(current_method, f"{receiver}.{name}", "java_variable_or_unknown_receiver")
                 elif cur.type == "object_creation_expression":
@@ -3862,6 +3939,7 @@ class JavaInjectEdge:
     injector_hash: str | None = None
     bean_hash: str | None = None
     injector_qualname: str | None = None
+    injector_node_kind: str | None = "class"
     bean_node_kind: str | None = "class"
 
 
@@ -4083,6 +4161,7 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
     # Project-wide, tracked-source bean registry. This is not package scanning:
     # only declarations carrying exact explicitly imported annotations enter it.
     bean_candidates: list[tuple[str, ClassNode, str | None]] = []
+    bean_assignable_types: dict[tuple[str, str, str], set[str]] = {}
     primary_candidate_keys: set[tuple[str, str, str]] = set()
     project_sources = [(path, source, java_classes, java_methods or [])]
     if repo is not None:
@@ -4103,7 +4182,22 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
         candidate_by_simple = {c.qualname.rsplit('.', 1)[-1]: c for c in candidate_classes if c.node_kind in {'class','interface'}}
         for simple, node in candidate_by_simple.items():
             if any(a in candidate_anns.get(simple, set()) and candidate_genuine(a) for a in bean_ann):
-                bean_candidates.append((f'{candidate_package}.{simple}' if candidate_package else simple, node, simple[:1].lower()+simple[1:]))
+                candidate_fqn = f'{candidate_package}.{simple}' if candidate_package else simple
+                bean_candidates.append((candidate_fqn, node, simple[:1].lower()+simple[1:]))
+                assignable = {candidate_fqn}
+                for iface in _java_implements_regex(candidate_source).get(simple, []):
+                    if repo is None:
+                        assignable.add(iface)
+                    else:
+                        from .java_index import java_project_index
+                        imported_iface = candidate_imports.get(iface)
+                        if imported_iface:
+                            assignable.add(imported_iface)
+                        else:
+                            symbol, _ = java_project_index(repo).resolve(iface, package=candidate_package, imports=candidate_imports)
+                            if symbol is not None:
+                                assignable.add(symbol.fqn)
+                bean_assignable_types[(node.path, node.qualname, node.node_kind)] = assignable
                 if candidate_genuine('Primary') and 'Primary' in candidate_anns.get(simple, set()): primary_candidate_keys.add((node.path, node.qualname, node.node_kind))
         candidate_lines = candidate_source.splitlines()
         for method in candidate_methods:
@@ -4161,7 +4255,9 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
                 continue
             typ = fm.group(1)
             resolved_type = injection_fqn(typ)
-            typed = [(node, name) for candidate_type, node, name in bean_candidates if resolved_type is not None and candidate_type == resolved_type]
+            typed = [(node, name) for candidate_type, node, name in bean_candidates
+                     if resolved_type is not None and resolved_type in bean_assignable_types.get(
+                         (node.path, node.qualname, node.node_kind), {candidate_type})]
             target = typed[0][0] if len(typed) == 1 else None
             qualifier = re.search(r'@Qualifier\(\s*"([^"]+)"\s*\)', line) if genuine('Qualifier') else None
             if qualifier:
@@ -4221,7 +4317,9 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
                 continue
             typ = mparam.group(1)
             resolved_type = injection_fqn(typ)
-            typed = [(node, name) for candidate_type, node, name in bean_candidates if resolved_type is not None and candidate_type == resolved_type]
+            typed = [(node, name) for candidate_type, node, name in bean_candidates
+                     if resolved_type is not None and resolved_type in bean_assignable_types.get(
+                         (node.path, node.qualname, node.node_kind), {candidate_type})]
             selected = [node for node, name in typed if q and name == q.group(1)] if q else [node for node, _ in typed]
             if not q and len(selected) > 1:
                 primary = primary_only(selected)
@@ -5135,21 +5233,31 @@ def resolve_java_repository_declarations(path: str, source: str, java_classes: l
         'PagingAndSortingRepository':'org.springframework.data.repository.PagingAndSortingRepository',
         'JpaRepository':'org.springframework.data.jpa.repository.JpaRepository',
     }
-    exact = {n:f for n,f in repository_fqns.items() if imports.get(n)==f}
-    query_exact = imports.get('Query') == 'org.springframework.data.jpa.repository.Query'
+    jpa_wildcard = bool(re.search(r'(?m)^\s*import\s+org\.springframework\.data\.jpa\.repository\.\*\s*;', source))
+    exact = {n:f for n,f in repository_fqns.items() if imports.get(n)==f or (jpa_wildcard and n=='JpaRepository')}
+    query_exact = imports.get('Query') == 'org.springframework.data.jpa.repository.Query' or jpa_wildcard
     ids=__import__('tmf.ids',fromlist=['stable_java_node_claim_id']); metadata={}; unresolved={}
     source_types: dict[str,str] = {}
+    source_type_dependencies: dict[str,dict[str,Any]] = {}
     if repo is not None:
         for candidate in sorted(repo.root.rglob('*.java')):
             try: text=candidate.read_text(encoding='utf-8')
             except (OSError,UnicodeError): continue
             im=_java_explicit_imports(text)
-            if im.get('Entity') not in {'jakarta.persistence.Entity','javax.persistence.Entity'} or not re.search(r'@Entity\b',text): continue
+            persistence_wildcard = bool(re.search(r'(?m)^\s*import\s+(?:jakarta|javax)\.persistence\.\*\s*;', text))
+            if not (im.get('Entity') in {'jakarta.persistence.Entity','javax.persistence.Entity'} or persistence_wildcard) or not re.search(r'@Entity\b',text): continue
             pkg=_java_package(text)
+            entity_classes = extract_java_classes(str(candidate.relative_to(repo.root)), text)
             for m in re.finditer(r'\b(?:class|record|enum)\s+([A-Za-z_$][\w$]*)\b',text):
                 fqn=f'{pkg}.{m.group(1)}' if pkg else m.group(1)
-                if m.group(1) in source_types and source_types[m.group(1)] != fqn: source_types[m.group(1)]=''
-                else: source_types[m.group(1)]=fqn
+                node = next((n for n in entity_classes if n.qualname.rsplit('.',1)[-1] == m.group(1)), None)
+                if m.group(1) in source_types and source_types[m.group(1)] != fqn:
+                    source_types[m.group(1)]=''; source_type_dependencies.pop(m.group(1), None)
+                else:
+                    source_types[m.group(1)]=fqn
+                    if node is not None:
+                        source_type_dependencies[m.group(1)] = {'path': node.path, 'qualname': node.qualname,
+                            'node_kind': node.node_kind, 'declaration_hash': node.class_hash, 'fqn': fqn}
     repo_classes: dict[str,dict[str,Any]]={}
     for cls in java_classes:
         if cls.node_kind != 'interface': continue
@@ -5175,7 +5283,8 @@ def resolve_java_repository_declarations(path: str, source: str, java_classes: l
             df,ifqn=resolve_type(domain),resolve_type(id_type)
             if not df or not ifqn:
                 bad.append({'expr':item.strip(),'reason':'spring_data_repository_unresolved_generic'}); continue
-            inherited.append({'repository_type':exact[base],'declaration':item.strip(),'domain_type':df,'id_type':ifqn,'domain_entity_source_proven':source_types.get(domain.strip())==df})
+            inherited.append({'repository_type':exact[base],'declaration':item.strip(),'domain_type':df,'id_type':ifqn,'domain_entity_source_proven':source_types.get(domain.strip())==df,
+                              'domain_entity_dependency': source_type_dependencies.get(domain.strip()) if source_types.get(domain.strip())==df else None})
         if inherited:
             repo_classes[cid]={'coverage':'partial','effect':'declaration_only','confidence':0.6,'inherited_repository_types':inherited}
             metadata[cid]=repo_classes[cid]

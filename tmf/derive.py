@@ -15,6 +15,7 @@ from .git import GitRepo
 from .ids import now_utc, stable_api_claim_id, stable_api_relationship_claim_id, stable_call_edge_claim_id, stable_class_claim_id, stable_config_claim_id, stable_declaration_claim_id, stable_file_claim_id, stable_function_claim_id, stable_java_node_claim_id, stable_read_edge_claim_id, stable_write_edge_claim_id, stable_inherit_edge_claim_id, stable_override_edge_claim_id, stable_contract_claim_id, stable_type_use_edge_claim_id, stable_env_claim_id, stable_env_read_edge_claim_id, stable_config_read_edge_claim_id, stable_inject_edge_claim_id, stable_configuration_properties_edge_claim_id, stable_topic_claim_id, stable_topic_pub_edge_claim_id, stable_topic_sub_edge_claim_id, stable_cache_declaration_claim_id, stable_scheduling_declaration_claim_id, stable_transaction_declaration_claim_id, stable_async_declaration_claim_id, stable_retry_declaration_claim_id, stable_circuit_breaker_declaration_claim_id, stable_rate_limiter_declaration_claim_id, stable_bulkhead_declaration_claim_id, stable_time_limiter_declaration_claim_id, stable_resilience4j_retry_declaration_claim_id, stable_pre_authorize_declaration_claim_id, stable_roles_allowed_declaration_claim_id, stable_secured_declaration_claim_id, stable_post_authorize_declaration_claim_id, stable_exception_handler_declaration_claim_id, stable_controller_advice_declaration_claim_id, stable_rest_controller_advice_declaration_claim_id, stable_init_binder_declaration_claim_id, stable_model_attribute_declaration_claim_id, stable_response_status_declaration_claim_id, stable_session_attributes_declaration_claim_id, stable_cross_origin_declaration_claim_id, stable_rest_controller_declaration_claim_id, stable_controller_declaration_claim_id, stable_service_declaration_claim_id, stable_component_declaration_claim_id, stable_repository_declaration_claim_id, stable_configuration_declaration_claim_id, stable_bean_declaration_claim_id, stable_primary_declaration_claim_id, stable_lazy_declaration_claim_id, stable_post_construct_declaration_claim_id, stable_autowired_declaration_claim_id, stable_resource_declaration_claim_id, stable_singleton_declaration_claim_id, stable_inject_declaration_claim_id, stable_named_declaration_claim_id, stable_pre_destroy_declaration_claim_id, stable_scope_declaration_claim_id, stable_response_body_declaration_claim_id, stable_pre_filter_declaration_claim_id, stable_post_filter_declaration_claim_id
 from .schema import Binding, Claim
 from .verify import verify_observed_claim
+from .derivation_versions import versions_for_path
 
 MODEL = "tmf-v1-heuristic"
 
@@ -671,8 +672,8 @@ def derive_call_edge_claim(repo: GitRepo, edge, anchor_by_id: dict[str, dict] | 
         kind="structure",
         scope="cross-repo",
         bindings=[
-            Binding(path=edge.caller_path, file_blob=caller_blob, fn_hash=edge.caller_fn_hash, commit=head, qualname=edge.caller_qualname),
-            Binding(path=edge.callee_path, file_blob=callee_blob, fn_hash=edge.callee_fn_hash, commit=head, qualname=edge.callee_qualname),
+            Binding(path=edge.caller_path, file_blob=caller_blob, fn_hash=edge.caller_fn_hash, commit=head, qualname=edge.caller_qualname, role="caller"),
+            Binding(path=edge.callee_path, file_blob=callee_blob, fn_hash=edge.callee_fn_hash, commit=head, qualname=edge.callee_qualname, role="callee"),
         ],
         provenance="git",
         evidence="observed",
@@ -687,6 +688,8 @@ def derive_call_edge_claim(repo: GitRepo, edge, anchor_by_id: dict[str, dict] | 
             "caller_path": edge.caller_path,
             "callee_path": edge.callee_path,
             "callee_qualname": edge.callee_qualname,
+            "caller_node_kind": getattr(edge, "caller_node_kind", "method"),
+            "callee_node_kind": getattr(edge, "callee_node_kind", "method"),
             "resolution": edge.resolution,
             "language": language,
             "caller_anchor": caller_anchor,
@@ -710,8 +713,8 @@ def derive_override_edge_claim(repo: GitRepo, edge) -> Claim | None:
         kind="structure",
         scope="cross-repo",
         bindings=[
-            Binding(path=edge.method_path, file_blob=method_blob, fn_hash=edge.method_hash, commit=head, qualname=edge.method_qualname),
-            Binding(path=edge.overridden_path, file_blob=overridden_blob, fn_hash=edge.overridden_hash, commit=head, qualname=edge.overridden_qualname),
+            Binding(path=edge.method_path, file_blob=method_blob, fn_hash=edge.method_hash, commit=head, qualname=edge.method_qualname, role="method"),
+            Binding(path=edge.overridden_path, file_blob=overridden_blob, fn_hash=edge.overridden_hash, commit=head, qualname=edge.overridden_qualname, role="overridden"),
         ],
         provenance="git",
         evidence="inferred",
@@ -727,6 +730,8 @@ def derive_override_edge_claim(repo: GitRepo, edge) -> Claim | None:
             "method_path": edge.method_path,
             "overridden_path": edge.overridden_path,
             "overridden_qualname": edge.overridden_qualname,
+            "method_node_kind": "method",
+            "overridden_node_kind": "method",
             "resolution": edge.resolution,
             "method_anchor": _java_node_anchor_for(repo, edge.method_path, edge.method_qualname, "method"),
             "overridden_anchor": _java_node_anchor_for(repo, edge.overridden_path, edge.overridden_qualname, "method"),
@@ -749,8 +754,8 @@ def derive_type_use_edge_claim(repo: GitRepo, edge) -> Claim | None:
         kind="structure",
         scope="cross-repo",
         bindings=[
-            Binding(path=edge.user_path, file_blob=user_blob, fn_hash=edge.user_hash, commit=head, qualname=edge.user_qualname),
-            Binding(path=edge.type_path, file_blob=type_blob, fn_hash=edge.type_hash, commit=head, qualname=edge.type_qualname),
+            Binding(path=edge.user_path, file_blob=user_blob, fn_hash=edge.user_hash, commit=head, qualname=edge.user_qualname, role="user"),
+            Binding(path=edge.type_path, file_blob=type_blob, fn_hash=edge.type_hash, commit=head, qualname=edge.type_qualname, role="type"),
         ],
         provenance="git",
         evidence="observed",
@@ -768,6 +773,8 @@ def derive_type_use_edge_claim(repo: GitRepo, edge) -> Claim | None:
             "user_path": edge.user_path,
             "type_path": edge.type_path,
             "user_qualname": edge.user_qualname,
+            "user_node_kind": edge.user_node_kind or "method",
+            "type_node_kind": edge.type_node_kind or "class",
             "resolution": edge.resolution,
             "user_anchor": _java_node_anchor_for(repo, edge.user_path, edge.user_qualname, edge.user_node_kind or "method"),
             "type_anchor": _java_node_anchor_for(repo, edge.type_path, edge.type_qualname, edge.type_node_kind or "class"),
@@ -794,9 +801,9 @@ def derive_inject_edge_claim(repo: GitRepo, edge) -> Claim | None:
     return Claim(
         id=stable_inject_edge_claim_id(edge.injector_id, edge.bean_id, edge.inject_kind),
         claim=f"{edge.injector_id} is attributed to inject Spring bean {edge.bean_qualname}.", kind="structure", scope="cross-repo",
-        bindings=[Binding(path=edge.injector_path, file_blob=repo.blob_sha(edge.injector_path), fn_hash=edge.injector_hash, commit=head, qualname=edge.injector_qualname), Binding(path=edge.bean_path, file_blob=repo.blob_sha(edge.bean_path), fn_hash=edge.bean_hash, commit=head, qualname=edge.bean_qualname)],
+        bindings=[Binding(path=edge.injector_path, file_blob=repo.blob_sha(edge.injector_path), fn_hash=edge.injector_hash, commit=head, qualname=edge.injector_qualname, role="injector"), Binding(path=edge.bean_path, file_blob=repo.blob_sha(edge.bean_path), fn_hash=edge.bean_hash, commit=head, qualname=edge.bean_qualname, role="bean")],
         provenance="git", evidence="attributed", confidence=min(float(getattr(edge, "confidence", 0.55)), 0.6), endorsed_by=None, last_verified=now_utc(), model=MODEL,
-        body={"edge_kind": "injects", "injector_id": edge.injector_id, "bean_id": edge.bean_id, "bean_qualname": edge.bean_qualname, "inject_kind": edge.inject_kind, "injector_path": edge.injector_path, "bean_path": edge.bean_path, "injector_qualname": edge.injector_qualname, "resolution": edge.resolution, "coverage": "partial", "tier": "attributed", "notes": ["Spring DI edge is framework-attributed, not syntactically observed; confidence capped at 0.6."]},
+        body={"edge_kind": "injects", "injector_id": edge.injector_id, "bean_id": edge.bean_id, "bean_qualname": edge.bean_qualname, "inject_kind": edge.inject_kind, "injector_path": edge.injector_path, "bean_path": edge.bean_path, "injector_qualname": edge.injector_qualname, "injector_node_kind": getattr(edge, "injector_node_kind", "class"), "bean_node_kind": edge.bean_node_kind or "class", "resolution": edge.resolution, "coverage": "partial", "tier": "attributed", "notes": ["Spring DI edge is framework-attributed, not syntactically observed; confidence capped at 0.6."]},
     )
 
 
@@ -912,8 +919,8 @@ def derive_read_edge_claim(repo: GitRepo, edge, function_anchor_by_id: dict[str,
         kind="structure",
         scope="cross-repo",
         bindings=[
-            Binding(path=edge.reader_path, file_blob=reader_blob, fn_hash=edge.reader_fn_hash, commit=head, qualname=edge.reader_qualname),
-            Binding(path=edge.declaration_path, file_blob=declaration_blob, fn_hash=edge.declaration_hash, commit=head, qualname=edge.declaration_qualname),
+            Binding(path=edge.reader_path, file_blob=reader_blob, fn_hash=edge.reader_fn_hash, commit=head, qualname=edge.reader_qualname, role="reader"),
+            Binding(path=edge.declaration_path, file_blob=declaration_blob, fn_hash=edge.declaration_hash, commit=head, qualname=edge.declaration_qualname, role="declaration"),
         ],
         provenance="git",
         evidence="observed",
@@ -928,6 +935,8 @@ def derive_read_edge_claim(repo: GitRepo, edge, function_anchor_by_id: dict[str,
             "reader_path": edge.reader_path,
             "declaration_path": edge.declaration_path,
             "declaration_qualname": edge.declaration_qualname,
+            "reader_node_kind": getattr(edge, "reader_node_kind", "method"),
+            "declaration_node_kind": getattr(edge, "declaration_kind", "field"),
             "resolution": edge.resolution,
             "language": language,
             "coverage": "partial",
@@ -952,8 +961,8 @@ def derive_write_edge_claim(repo: GitRepo, edge) -> Claim | None:
         kind="structure",
         scope="cross-repo",
         bindings=[
-            Binding(path=edge.writer_path, file_blob=writer_blob, fn_hash=edge.writer_fn_hash, commit=head, qualname=edge.writer_qualname),
-            Binding(path=edge.declaration_path, file_blob=declaration_blob, fn_hash=edge.declaration_hash, commit=head, qualname=edge.declaration_qualname),
+            Binding(path=edge.writer_path, file_blob=writer_blob, fn_hash=edge.writer_fn_hash, commit=head, qualname=edge.writer_qualname, role="writer"),
+            Binding(path=edge.declaration_path, file_blob=declaration_blob, fn_hash=edge.declaration_hash, commit=head, qualname=edge.declaration_qualname, role="declaration"),
         ],
         provenance="git",
         evidence="observed",
@@ -968,6 +977,8 @@ def derive_write_edge_claim(repo: GitRepo, edge) -> Claim | None:
             "writer_path": edge.writer_path,
             "declaration_path": edge.declaration_path,
             "declaration_qualname": edge.declaration_qualname,
+            "writer_node_kind": getattr(edge, "writer_node_kind", "method"),
+            "declaration_node_kind": getattr(edge, "declaration_kind", "field"),
             "resolution": edge.resolution,
             "language": getattr(edge, "language", "python"),
             "coverage": "partial",
@@ -1005,8 +1016,8 @@ def derive_inherit_edge_claim(repo: GitRepo, edge) -> Claim | None:
         kind="structure",
         scope="cross-repo",
         bindings=[
-            Binding(path=edge.child_path, file_blob=child_blob, fn_hash=edge.child_hash, commit=head, qualname=edge.child_qualname),
-            Binding(path=edge.parent_path, file_blob=parent_blob, fn_hash=edge.parent_hash, commit=head, qualname=edge.parent_qualname),
+            Binding(path=edge.child_path, file_blob=child_blob, fn_hash=edge.child_hash, commit=head, qualname=edge.child_qualname, role="child"),
+            Binding(path=edge.parent_path, file_blob=parent_blob, fn_hash=edge.parent_hash, commit=head, qualname=edge.parent_qualname, role="parent"),
         ],
         provenance="git",
         evidence="observed",
@@ -1047,13 +1058,14 @@ def _sanitize_semantic_claim(claim: Claim, existing_ids: set[str]) -> Claim | No
     if claim.id in existing_ids:
         return None
     body = dict(claim.body or {})
-    if body.get("extraction_tier") != "semantic-resolved" and body.get("tier") != "semantic-resolved":
+    if body.get("extraction_tier") not in {"semantic-resolved", "compiler-attributed"} and body.get("tier") not in {"semantic-resolved", "compiler-attributed"}:
         return None
     edge_kind = body.get("edge_kind")
     if edge_kind is not None and edge_kind not in SEMANTIC_CLAIM_EDGE_KINDS:
         return None
-    body["extraction_tier"] = "semantic-resolved"
-    body["tier"] = "semantic-resolved"
+    tier = "compiler-attributed" if "compiler-attributed" in {body.get("extraction_tier"), body.get("tier")} else "semantic-resolved"
+    body["extraction_tier"] = tier
+    body["tier"] = tier
     claim.evidence = "attributed"
     claim.confidence = min(float(claim.confidence), 0.6)
     claim.body = body
@@ -1340,6 +1352,10 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
                 graph["persistence_declaration_unresolved"] = unresolved_java_persistence_declarations[claim.id]
             if claim.id in java_repository_declarations:
                 graph["repository_declaration"] = java_repository_declarations[claim.id]
+                for inherited in graph["repository_declaration"].get("inherited_repository_types", []):
+                    dep = inherited.get("domain_entity_dependency")
+                    if dep and not any(b.role == "repository_domain_entity" and b.path == dep["path"] for b in claim.bindings):
+                        claim.bindings.append(Binding(path=dep["path"], file_blob=repo.blob_sha(dep["path"]), fn_hash=dep["declaration_hash"], commit=repo.head(), qualname=dep["qualname"], role="repository_domain_entity", hash_kind="java_token_sha256"))
             if claim.id in unresolved_java_repository_declarations:
                 graph["repository_declaration_unresolved"] = unresolved_java_repository_declarations[claim.id]
             if claim.id in java_mybatis_declarations:
@@ -1386,6 +1402,10 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
                 graph["persistence_declaration_unresolved"] = unresolved_java_persistence_declarations[claim.id]
             if claim.id in java_repository_declarations:
                 graph["repository_declaration"] = java_repository_declarations[claim.id]
+                for inherited in graph["repository_declaration"].get("inherited_repository_types", []):
+                    dep = inherited.get("domain_entity_dependency")
+                    if dep and not any(b.role == "repository_domain_entity" and b.path == dep["path"] for b in claim.bindings):
+                        claim.bindings.append(Binding(path=dep["path"], file_blob=repo.blob_sha(dep["path"]), fn_hash=dep["declaration_hash"], commit=repo.head(), qualname=dep["qualname"], role="repository_domain_entity", hash_kind="java_token_sha256"))
             if claim.id in unresolved_java_repository_declarations:
                 graph["repository_declaration_unresolved"] = unresolved_java_repository_declarations[claim.id]
             if claim.id in java_mybatis_declarations:
@@ -1691,4 +1711,9 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
         semantic = claims[0].body.setdefault("semantic_extraction", {})
         semantic["accepted_claims"] = accepted
         semantic["rejected_claims"] = rejected
+    versions = versions_for_path(path)
+    if versions:
+        for claim in claims:
+            claim.body = dict(claim.body or {})
+            claim.body["derivation_versions"] = dict(versions)
     return claims

@@ -16,6 +16,29 @@ from tests.test_java_inherit import init_repo
 
 @unittest.skipUnless(java_status().available, JAVA_DEGRADE_HINT)
 class JavaCallEdgeTests(unittest.TestCase):
+    def test_chain_propagates_only_explicit_unique_project_return_type(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "app/Worker.java": "package app; public class Worker { public void work() {} }\n",
+                "app/Factory.java": "package app; public class Factory { public Worker make() { return null; } }\n",
+                "app/App.java": "package app; class App { Factory factory; void run() { factory.make().work(); } }\n",
+            })
+            warm_repo(repo)
+            graph = Store(repo).get_claim(stable_java_node_claim_id("app/App.java", "App.run", "method")).body["graph"]
+            target = stable_java_node_claim_id("app/Worker.java", "Worker.work", "method")
+            self.assertIn(target, {item["target_id"] for item in graph["callees"]})
+
+    def test_chain_unknown_or_generic_container_stays_unresolved(self):
+        source = '''import java.util.Optional;
+class Service { Optional<String> maybe(){return Optional.empty();} void run(){ maybe().map(String::trim); unknown().work(); } }
+'''
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"Service.java": source}); warm_repo(repo)
+            graph = Store(repo).get_claim(stable_java_node_claim_id("Service.java", "Service.run", "method")).body["graph"]
+            unresolved = {(item["expr"], item["reason"]) for item in graph["unresolved_calls"]}
+            self.assertTrue(any("maybe().map" in expr for expr, _ in unresolved), unresolved)
+            self.assertTrue(any("unknown().work" in expr for expr, _ in unresolved), unresolved)
+
     def test_lambda_bodies_are_not_calls_of_enclosing_method(self):
         source = '''class Service {
   void run() {
@@ -146,6 +169,21 @@ class Util { void f() {} }
             work_id = stable_java_node_claim_id("pkg/Worker.java", "Worker.work", "method")
             graph = store.get_claim(run_id).body["graph"]
             self.assertEqual(2, len([item for item in graph["callees"] if item["target_id"] == work_id]))
+
+    def test_enhanced_for_variable_receiver_resolves_from_declared_type(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "domain/Pet.java": "package domain; public class Pet { public String getName() { return \"\"; } }\n",
+                "app/Owner.java": "package app; import domain.Pet; import java.util.List; class Owner { void inspect(List<Pet> pets) { for (Pet pet : pets) pet.getName(); } }\n",
+            })
+            warm_repo(repo)
+            inspect_id = stable_java_node_claim_id("app/Owner.java", "Owner.inspect", "method")
+            get_name_id = stable_java_node_claim_id("domain/Pet.java", "Pet.getName", "method")
+            graph = Store(repo).get_claim(inspect_id).body["graph"]
+            self.assertIn(
+                (get_name_id, "java_project_typed_receiver_project_explicit_import"),
+                {(item["target_id"], item["resolution"]) for item in graph["callees"]},
+            )
 
     def test_direct_parent_and_super_calls_resolve_without_runtime_dispatch_guessing(self):
         with tempfile.TemporaryDirectory() as td:
