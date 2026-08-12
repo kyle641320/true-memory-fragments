@@ -32,6 +32,29 @@ class GitRepo:
         except GitError:
             return None
 
+    def list_files(self) -> list[str]:
+        """List working-tree files while honoring Git and TMF ignore rules."""
+        try:
+            candidates = set(self.run("ls-files", "-co", "--exclude-standard").splitlines())
+            ignored = set(self.run("ls-files", "-ci", "--exclude-standard").splitlines())
+        except GitError:
+            return sorted(
+                path.relative_to(self.root).as_posix()
+                for path in self.root.rglob("*")
+                if path.is_file()
+                and not path.relative_to(self.root).as_posix().startswith((".git/", ".tmf/"))
+            )
+        tmfignore = self.root / ".tmfignore"
+        if tmfignore.is_file():
+            exclude = f"--exclude-from={tmfignore}"
+            candidates.update(self.run("ls-files", "-o", exclude).splitlines())
+            ignored.update(self.run("ls-files", "-ci", exclude).splitlines())
+            ignored.update(self.run("ls-files", "-oi", exclude).splitlines())
+        return sorted(
+            path for path in candidates - ignored
+            if not path.startswith((".git/", ".tmf/")) and (self.root / path).is_file()
+        )
+
     def head_blob_sha(self, path: str) -> str | None:
         """Return the committed HEAD blob for provenance/debugging only."""
         try:

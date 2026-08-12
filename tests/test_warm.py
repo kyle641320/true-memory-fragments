@@ -10,7 +10,7 @@ from pathlib import Path
 from tmf.ids import stable_function_claim_id
 from tmf.retrieve import reverse_callers
 from tmf.store import Store
-from tmf.warm import warm_repo
+from tmf.warm import warm_is_complete, warm_repo
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -35,6 +35,33 @@ def init_repo(tmp_path: Path, files: dict[str, str]) -> Path:
 
 
 class WarmReverseIndexTests(unittest.TestCase):
+    def test_warm_and_complete_check_share_git_and_tmf_ignore_scope(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            repo = init_repo(root, {
+                "src/keep.py": "x = 1\n",
+                "outputs/tracked.py": "x = 2\n",
+                "reports/tracked.json": "{}\n",
+                "ignored.toml": "x = 3\n",
+            })
+            (repo / ".tmfignore").write_text("outputs/\nreports/\n", encoding="utf-8")
+            (repo / ".gitignore").write_text("ignored.toml\n", encoding="utf-8")
+            subprocess.run(["git", "add", ".tmfignore", ".gitignore"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "ignores"], cwd=repo, check=True, stdout=subprocess.PIPE)
+
+            result = warm_repo(repo)
+            self.assertEqual(result["files"], 1)
+            self.assertTrue(warm_is_complete(repo))
+
+            for rel in ("outputs/new.py", "reports/new.json", "ignored.toml"):
+                path = repo / rel
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("changed\n", encoding="utf-8")
+            self.assertTrue(warm_is_complete(repo))
+
+            (repo / "src/keep.py").write_text("x = 4\n", encoding="utf-8")
+            self.assertFalse(warm_is_complete(repo))
+
     def test_warm_makes_reverse_callers_complete_and_matches_lazy(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {

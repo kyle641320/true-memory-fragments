@@ -43,18 +43,7 @@ _WARMABLE_SUFFIXES = {".py", ".json", ".toml"}
 
 
 def _warmable_paths(repo: GitRepo) -> list[str]:
-    out: list[str] = []
-    seen: set[str] = set()
-    for path in sorted(repo.root.rglob("*")):
-        if path.suffix not in _WARMABLE_SUFFIXES or not path.is_file():
-            continue
-        rel = path.relative_to(repo.root).as_posix()
-        if rel.startswith(".git/") or rel.startswith(".tmf/"):
-            continue
-        if rel not in seen:
-            seen.add(rel)
-            out.append(rel)
-    return sorted(out)
+    return [path for path in repo.list_files() if Path(path).suffix in _WARMABLE_SUFFIXES]
 
 
 def _put_claims(store: Store, claims: list[Claim]) -> None:
