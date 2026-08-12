@@ -11,7 +11,7 @@ This is deliberately a library primitive rather than a checked-in multi-megabyte
 Covered:
 
 - corruption or substitution of a manifest or referenced blob;
-- absolute, parent-traversal, dot-component, backslash, duplicate, or malformed archive paths;
+- absolute, parent-traversal, empty/dot-component, backslash, NUL, duplicate, or malformed archive paths;
 - source-store symlinks and special files (the Round 19 fail-closed boundary remains in force);
 - accidental overwrite of an existing reconstruction destination;
 - divergence between reconstructed exact bytes and the semantic store lock inventory;

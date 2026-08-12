@@ -42,6 +42,8 @@ def _content_digest(path: Path) -> str:
 
 def store_inventory(store: Path) -> dict[str, Any]:
     """Return a path-private, order-independent semantic inventory."""
+    if store.is_symlink():
+        raise ValueError(f"TMF store contains unsupported root symlink: {store}")
     store = store.resolve()
     if not store.is_dir():
         raise ValueError(f"TMF store missing: {store}")
@@ -91,18 +93,20 @@ def verify_lock(repo_id: str, commit: str, store: Path, lock: dict[str, Any]) ->
 
 
 def _safe_archive_path(value: object) -> str:
-    if not isinstance(value, str) or not value or "\\" in value:
+    if not isinstance(value, str) or not value or "\\" in value or "\0" in value:
+        raise ValueError(f"unsafe archive path: {value!r}")
+    if any(part in ("", ".", "..") for part in value.split("/")):
         raise ValueError(f"unsafe archive path: {value!r}")
     path = PurePosixPath(value)
-    if path.is_absolute() or any(part in ("", ".", "..") for part in path.parts):
+    if path.is_absolute():
         raise ValueError(f"unsafe archive path: {value!r}")
     return path.as_posix()
 
 
 def create_store_archive(store: Path, archive_root: Path) -> dict[str, Any]:
     """Materialize an immutable, content-addressed archive of a locked store."""
-    store = store.resolve()
     inventory = store_inventory(store)  # also rejects links and special files
+    store = store.resolve()
     files: list[dict[str, str]] = []
     payloads: dict[str, bytes] = {}
     for path in sorted(store.rglob("*")):

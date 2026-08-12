@@ -65,6 +65,15 @@ class EvaluationStoreLockTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "unsupported symlink: claims/linked.json"):
                 store_inventory(store)
 
+    def test_inventory_rejects_symlinked_store_root(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            store = _store(root / "repo")
+            linked_store = root / "linked-store"
+            linked_store.symlink_to(store, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "unsupported root symlink"):
+                store_inventory(linked_store)
+
     def test_verify_lock_fails_explicitly_on_store_or_commit_drift(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             store = _store(Path(tmp) / "repo")
@@ -127,17 +136,24 @@ class EvaluationStoreLockTests(unittest.TestCase):
             result = create_store_archive(_store(root / "repo"), root / "archives")
             archive = root / "archives" / result["archive_id"]
             manifest_path = archive / "manifest.json"
-            manifest = json.loads(manifest_path.read_text())
-            manifest["files"][0]["path"] = "../escape"
+            original_manifest = json.loads(manifest_path.read_text())
             manifest_path.chmod(0o644)
-            manifest_path.write_text(json.dumps(manifest, sort_keys=True, separators=(",", ":")))
-            with self.assertRaisesRegex(ValueError, "unsafe archive path"):
-                verify_store_archive(archive)
+            for unsafe_path in ("../escape", "claims/./claim.json", "claims//claim.json", "claims/claim.json/", "claims\\claim.json", "claims/\0claim.json"):
+                manifest = json.loads(json.dumps(original_manifest))
+                manifest["files"][0]["path"] = unsafe_path
+                manifest_path.write_text(json.dumps(manifest, sort_keys=True, separators=(",", ":")))
+                with self.subTest(path=unsafe_path), self.assertRaisesRegex(ValueError, "unsafe archive path"):
+                    verify_store_archive(archive)
 
             symlink_store = _store(root / "symlink-repo")
             (symlink_store / "claims" / "link").symlink_to(root / "outside")
             with self.assertRaisesRegex(ValueError, "unsupported symlink"):
                 create_store_archive(symlink_store, root / "other-archives")
+
+            linked_store = root / "linked-store"
+            linked_store.symlink_to(_store(root / "linked-repo"), target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "unsupported root symlink"):
+                create_store_archive(linked_store, root / "linked-archives")
 
             if hasattr(os, "mkfifo"):
                 special_store = _store(root / "special-repo")

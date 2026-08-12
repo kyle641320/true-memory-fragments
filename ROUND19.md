@@ -2,17 +2,17 @@
 
 ## Decision
 
-The Round 18 evaluation lock now rejects symlinks and non-regular filesystem
-entries anywhere in `.tmf`.  Round 18 copied repositories with symlinks
-preserved; a symlinked store entry could therefore point outside the disposable
-copy and invalidate the no-source-write boundary.  Rejecting such stores is the
+The Round 18 evaluation lock now rejects a symlinked `.tmf` root, symlinked
+entries, and non-regular filesystem entries anywhere in `.tmf`. Round 18 copied
+repositories with symlinks preserved; a symlinked store entry could therefore
+point outside the disposable copy and invalidate the no-source-write boundary.  Rejecting such stores is the
 smallest conservative fix: it neither changes TMF semantics nor silently
 rewrites store topology.
 
 ## Verification
 
-- The regression test constructs a claim symlink to an external file and
-  verifies inventory generation fails closed with its store-relative path.
+- Regression tests cover both a symlinked store root and a claim symlink to an
+  external file, verifying inventory generation fails closed.
 - Existing pinned Petclinic and JHipster stores contain no rejected entries and
   continue to match `store-lock.json`.
 - Production retrieval/ranking and frozen Java real-v2 evidence are unchanged.
