@@ -84,6 +84,11 @@ class McpService:
             payload.pop(key, None)
         return payload
 
+    @staticmethod
+    def _fallback_summary(paths: Any, limit: int = 5) -> tuple[list[str], int]:
+        ordered = sorted(str(path) for path in paths)
+        return ordered[:limit], len(ordered)
+
     def _resolve_claim_id(
         self,
         *,
@@ -121,12 +126,14 @@ class McpService:
         requested = max(1, min(int(limit), 50))
         result = retrieve_text(self.repo.root, str(query), limit=50, read_only=True)
         nodes = [item for item in result.claims if item.claim.body.get("edge_kind") not in {"calls", "reads", "writes", "inherits"}][:requested]
+        fallback_paths, fallback_count = self._fallback_summary(result.source_fallback)
         return {
             "query": result.query,
             "view": "thin",
             "coverage": "complete" if self._warm_complete() else "partial",
             "claims": [self._locator_view(explain_claim(self.repo, item.claim, read_only=True)) for item in nodes],
-            "source_fallback_paths": sorted(result.source_fallback),
+            "source_fallback_paths": fallback_paths,
+            "source_fallback_count": fallback_count,
         }
 
     def tmf_explain(self, claim_id: str, full: bool = False) -> dict[str, Any]:
@@ -196,7 +203,8 @@ class McpService:
                     if items:
                         relations.append({"for": claim.id, "kind": kind, "items": items[:5], "coverage": "partial"})
         relations.sort(key=lambda relation: (str(relation.get("for")), str(relation.get("kind"))))
-        return {"question": str(question), "view": "thin_context", "coverage": "complete" if self._warm_complete() else "partial", "truncated": False, "max_chars": max_chars, "claims": claims, "relations": relations, "source_fallback_paths": sorted(result.source_fallback)}
+        fallback_paths, fallback_count = self._fallback_summary(result.source_fallback)
+        return {"question": str(question), "view": "thin_context", "coverage": "complete" if self._warm_complete() else "partial", "truncated": False, "max_chars": max_chars, "claims": claims, "relations": relations, "source_fallback_paths": fallback_paths, "source_fallback_count": fallback_count}
 
     def tmf_context(self, question: str, max_chars: int | None = None) -> dict[str, Any]:
         budget = max(180, int(max_chars)) if max_chars is not None else 3000
@@ -249,6 +257,28 @@ class McpService:
             bundle["addressing"] = addressing
             if resolved:
                 bundle["selected_claim"] = self.tmf_explain(resolved, full=False)["claim"]
+        if path:
+            bundle = dict(bundle)
+            direct_claims = [
+                claim for claim in bundle.get("claims", [])
+                if isinstance(claim, dict) and any(
+                    isinstance(anchor, dict) and anchor.get("path") == path
+                    for anchor in (claim.get("anchors") or ([claim.get("anchor")] if claim.get("anchor") else []))
+                )
+            ]
+            selected = bundle.get("selected_claim")
+            selected_matches = isinstance(selected, dict) and any(
+                isinstance(anchor, dict) and anchor.get("path") == path
+                for anchor in (selected.get("anchors") or ([selected.get("anchor")] if selected.get("anchor") else []))
+            )
+            bundle["claims"] = direct_claims
+            bundle["relations"] = [
+                relation for relation in bundle.get("relations", [])
+                if isinstance(relation, dict) and any(claim.get("id") == relation.get("for") for claim in direct_claims)
+            ]
+            bundle["target_coverage"] = "covered" if direct_claims or selected_matches else "not_covered"
+            if not selected_matches:
+                bundle.pop("selected_claim", None)
         return {"origin": "tmf_deterministic", "bundle": bundle}
 
     @staticmethod

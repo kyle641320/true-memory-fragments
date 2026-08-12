@@ -174,6 +174,40 @@ class AssistTests(unittest.TestCase):
             self.assertIn("source_fallback_paths", bundle)
             self.assertEqual(result["status"], "ok")
 
+    def test_explicit_uncovered_path_drops_unrelated_claims(self):
+        with tempfile.TemporaryDirectory() as temp:
+            response = self.valid_response()
+            response["evidence"] = []
+            response["suggested_source_reads"] = []
+            provider = FakeProvider(response)
+            _, _, _, service = self.make_service(Path(temp), provider)
+            result = service.tmf_assist("What does the missing module do?", path="missing.py")
+            bundle = provider.requests[0]["evidence_bundle_untrusted_data"]["bundle"]
+            self.assertEqual(bundle["target_coverage"], "not_covered")
+            self.assertEqual(bundle["claims"], [])
+            self.assertNotIn("selected_claim", bundle)
+            self.assertEqual(result["status"], "ok")
+
+    def test_explicit_covered_path_keeps_direct_claim_anchors(self):
+        with tempfile.TemporaryDirectory() as temp:
+            provider = FakeProvider(self.valid_response())
+            _, _, _, service = self.make_service(Path(temp), provider)
+            result = service.tmf_assist("What does target do?", path="sample.py")
+            bundle = provider.requests[0]["evidence_bundle_untrusted_data"]["bundle"]
+            self.assertEqual(bundle["target_coverage"], "covered")
+            self.assertTrue(bundle["claims"])
+            self.assertTrue(service._allowed_anchors(provider.requests[0]["evidence_bundle_untrusted_data"]))
+            self.assertEqual(result["status"], "ok")
+
+    def test_fallback_paths_are_bounded_but_total_is_preserved(self):
+        with tempfile.TemporaryDirectory() as temp:
+            _, _, _, service = self.make_service(Path(temp), None)
+            fake_result = type("Result", (), {"claims": [], "source_fallback": {f"p{i}.py": object() for i in range(9)}})()
+            with patch("tmf.mcp_server.retrieve_text", return_value=fake_result):
+                payload = service.tmf_context("question", 3000)
+            self.assertEqual(payload["source_fallback_paths"], [f"p{i}.py" for i in range(5)])
+            self.assertEqual(payload["source_fallback_count"], 9)
+
     def test_command_provider_uses_argv_and_rejects_nonstandard_json(self):
         good = [sys.executable, "-c", "import sys,json; json.dump({'x':1},sys.stdout)"]
         with patch.dict(os.environ, {"TMF_ASSIST_COMMAND_JSON": json.dumps(good)}, clear=False):
