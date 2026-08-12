@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,6 +29,23 @@ def init_repo(tmp_path: Path, content: str) -> Path:
 
 
 class TmfModelDeriveTests(unittest.TestCase):
+    def test_default_model_command_uses_json_argv(self):
+        from tmf.llm import CommandJsonModel, default_model
+
+        command = [sys.executable, "-c", "import json,sys; json.dump({'candidates': []}, sys.stdout)"]
+        with patch.dict(os.environ, {"TMF_MODEL_COMMAND_JSON": json.dumps(command)}, clear=False):
+            model = default_model()
+        self.assertIsInstance(model, CommandJsonModel)
+        self.assertEqual(model.command, command)
+        self.assertEqual(model.derive(path="app.py", source_text="", anchors=[]), [])
+
+    def test_default_model_rejects_legacy_string_command(self):
+        from tmf.llm import default_model
+
+        with patch.dict(os.environ, {"TMF_MODEL_COMMAND_JSON": "echo unsafe"}, clear=False):
+            with self.assertRaises(ValueError):
+                default_model()
+
     def test_model_derive_default_candidate_is_source_observed(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), "def add(a, b):\n    return a + b\n")
@@ -222,4 +241,3 @@ class TmfExternalProvenanceTests(unittest.TestCase):
             self.assertEqual(claim.body["model_candidate"]["verification"], "attributed_external_provenance")
             self.assertLessEqual(claim.confidence, 0.6)
             self.assertNotEqual(claim.evidence, "verified")
-

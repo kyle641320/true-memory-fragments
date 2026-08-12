@@ -103,6 +103,17 @@ export TMF_ASSIST_COMMAND_JSON='["python3","/path/to/provider.py"]'
 
 The command reads one JSON request from stdin and writes one JSON object to stdout. `TMF_ASSIST_TIMEOUT_SECONDS` sets the timeout (0.1–120 seconds). The former free-form `TMF_ASSIST_COMMAND` setting is intentionally unsupported; migrate it to a JSON string array. No API key, vendor SDK, or hosted provider is built in.
 
+For OpenClaw-managed credentials, use the bundled adapter as the command:
+
+```bash
+export TMF_ASSIST_COMMAND_JSON='["python3","-m","tmf.assist_openclaw"]'
+export TMF_ASSIST_OPENCLAW_MODEL='aisz/gpt-5.5'
+```
+
+The adapter calls `openclaw infer model run --json` with a shell-free argv list,
+so OpenClaw keeps provider credentials and TMF only translates the request and
+validates the provider JSON.
+
 Input requires a 1–2000 character `question` and may select evidence with `claim_id`, repository-contained `path`, or `qualname`. Caller-supplied context bundles are not accepted, so only TMF-derived claims establish allowed anchors, trust, and freshness. `max_context_chars` (500–12000) hard-limits the complete serialized provider request, including policy, question, addressing, selected claim, and evidence. Requests that cannot fit are rejected deterministically.
 
 Provider response fields are exactly `answer`, `inferences`, finite `confidence`, `evidence`, `assumptions`, `unresolved`, and `suggested_source_reads`. Evidence and suggested reads must use valid line ranges fully contained in supplied TMF anchors. Invalid JSON/constants, schema violations, trust-field injection, citations outside anchors, timeouts, provider exits, and absent configuration return distinct degraded errors; none masquerade as `unresolved`. Source changes expire the inference through supporting claims' existing freshness bindings.

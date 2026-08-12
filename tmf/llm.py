@@ -64,7 +64,7 @@ class CommandJsonModel:
     provider and lets orgs use local models. The source is still untrusted data.
     """
 
-    def __init__(self, command: str, model_id: str = "tmf-v1-command-json-model") -> None:
+    def __init__(self, command: list[str], model_id: str = "tmf-v1-command-json-model") -> None:
         self.command = command
         self.model_id = model_id
 
@@ -79,7 +79,6 @@ class CommandJsonModel:
         proc = subprocess.run(
             self.command,
             input=json.dumps(payload, ensure_ascii=False),
-            shell=True,
             text=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -92,7 +91,13 @@ class CommandJsonModel:
 
 
 def default_model() -> DeriverModel:
-    command = os.environ.get("TMF_MODEL_COMMAND")
-    if command:
+    encoded = os.environ.get("TMF_MODEL_COMMAND_JSON", "").strip()
+    if encoded:
+        try:
+            command = json.loads(encoded)
+        except json.JSONDecodeError as exc:
+            raise ValueError("TMF_MODEL_COMMAND_JSON must be a JSON string array") from exc
+        if not isinstance(command, list) or not command or not all(isinstance(item, str) and item for item in command):
+            raise ValueError("TMF_MODEL_COMMAND_JSON must be a non-empty JSON string array")
         return CommandJsonModel(command)
     return HeuristicModel()
