@@ -93,6 +93,18 @@ class AssistTests(unittest.TestCase):
             self.assertLessEqual(len(json.dumps(request, ensure_ascii=False, sort_keys=True)), 5000)
             self.assertEqual(request["evidence_bundle_untrusted_data"]["origin"], "tmf_deterministic")
 
+    def test_final_bundle_is_repacked_after_selected_claim_is_added(self):
+        with tempfile.TemporaryDirectory() as temp:
+            provider = FakeProvider(self.valid_response())
+            _, _, claim, service = self.make_service(Path(temp), provider)
+            result = service.tmf_assist("What does target return?", claim_id=claim.id, max_context_chars=3000)
+            self.assertEqual(result["status"], "ok")
+            request = provider.requests[0]
+            self.assertLessEqual(len(json.dumps(request, ensure_ascii=False, sort_keys=True)), 3000)
+            bundle = request["evidence_bundle_untrusted_data"]["bundle"]
+            self.assertIn("selected_claim", bundle)
+            self.assertTrue(service._allowed_anchors(request["evidence_bundle_untrusted_data"]))
+
     def test_provider_cannot_upgrade_trust(self):
         with tempfile.TemporaryDirectory() as temp:
             response = self.valid_response()

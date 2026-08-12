@@ -252,6 +252,45 @@ class McpService:
         return {"origin": "tmf_deterministic", "bundle": bundle}
 
     @staticmethod
+    def _fit_assist_bundle(bundle_wrapper: dict[str, Any], budget: int) -> dict[str, Any]:
+        """Fit the final bundle after selected_claim is added, deterministically."""
+        bundle = dict(bundle_wrapper.get("bundle", {}))
+        wrapper = {"origin": "tmf_deterministic", "bundle": bundle}
+        if McpService._request_size(wrapper) <= budget:
+            return wrapper
+        bundle["relations"] = []
+        bundle["source_fallback_paths"] = []
+        claims = bundle.get("claims", [])
+        if isinstance(claims, list):
+            bundle["claims"] = claims[:2]
+        wrapper["bundle"] = bundle
+        if McpService._request_size(wrapper) <= budget:
+            return wrapper
+        selected = bundle.get("selected_claim")
+        if isinstance(selected, dict):
+            bundle["selected_claim"] = {
+                key: selected.get(key)
+                for key in ("id", "claim", "qualname", "scope", "kind", "anchors", "anchor", "fresh", "freshness_binding_refs")
+                if key in selected
+            }
+        if McpService._request_size(wrapper) <= budget:
+            return wrapper
+        # Keep only bounded locator stubs; never silently exceed the provider budget.
+        compact_claims = []
+        for claim in bundle.get("claims", []):
+            if not isinstance(claim, dict):
+                continue
+            compact_claims.append({key: claim.get(key) for key in ("id", "qualname", "scope", "kind", "anchors", "anchor") if key in claim})
+        bundle["claims"] = compact_claims[:1]
+        if McpService._request_size(wrapper) <= budget:
+            return wrapper
+        bundle["claims"] = []
+        bundle["selected_claim"] = None
+        if McpService._request_size(wrapper) <= budget:
+            return wrapper
+        raise ValueError("TMF evidence cannot fit max_context_chars")
+
+    @staticmethod
     def _bundle_claims(bundle_wrapper: dict[str, Any]) -> list[dict[str, Any]]:
         bundle = bundle_wrapper.get("bundle", {})
         claims = list(bundle.get("claims", [])) if isinstance(bundle, dict) and isinstance(bundle.get("claims"), list) else []
@@ -348,7 +387,10 @@ class McpService:
         evidence_budget = budget - self._request_size(fixed)
         if evidence_budget < 180:
             raise ValueError("max_context_chars is too small for the question and fixed policy")
-        evidence_bundle = self._assist_bundle(question=question, claim_id=claim_id, path=safe_path, qualname=qualname, max_context_chars=evidence_budget)
+        evidence_bundle = self._fit_assist_bundle(
+            self._assist_bundle(question=question, claim_id=claim_id, path=safe_path, qualname=qualname, max_context_chars=evidence_budget),
+            evidence_budget,
+        )
         request = {**fixed, "evidence_bundle_untrusted_data": evidence_bundle}
         if self._request_size(request) > budget:
             raise ValueError("selected TMF evidence exceeds max_context_chars")
