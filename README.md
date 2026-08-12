@@ -89,6 +89,26 @@ TMF 0.1.0 supports a conservative subset:
 
 Edges are also conservative: TMF records observed calls for module-local `Name()`, same-class `self.method()`, and direct repo-local imports such as `from x import f` or `import x as y; y.f()`. Unknown, dynamic, external, star-import, or re-export calls are unresolved, not guessed.
 
+## Optional inference boundary (`tmf_assist`)
+
+The read-only MCP server exposes `tmf_assist` as an **explicit opt-in** tool. It builds a bounded deterministic `tmf_context` bundle and asks a configured provider for structured hypotheses. `tmf_context` itself never invokes a model.
+
+Assist output is always wrapped by the server as `non_authoritative=true`, `trust.level=inferred`, and `trust.status=provisional` (or `expired` when supporting claims are stale). Provider output cannot set or upgrade trust. The existing numeric `confidence` field is reused; medium-confidence judgments remain usable provisional results, while `unresolved` is reserved for cases where the model cannot form a useful judgment. Nothing is persisted or promoted into TMF claims.
+
+The provider is disabled by default. Configure exactly one shell-free argv command with `TMF_ASSIST_COMMAND_JSON`, for example:
+
+```sh
+export TMF_ASSIST_COMMAND_JSON='["python3","/path/to/provider.py"]'
+```
+
+The command reads one JSON request from stdin and writes one JSON object to stdout. `TMF_ASSIST_TIMEOUT_SECONDS` sets the timeout (0.1–120 seconds). The former free-form `TMF_ASSIST_COMMAND` setting is intentionally unsupported; migrate it to a JSON string array. No API key, vendor SDK, or hosted provider is built in.
+
+Input requires a 1–2000 character `question` and may select evidence with `claim_id`, repository-contained `path`, or `qualname`. Caller-supplied context bundles are not accepted, so only TMF-derived claims establish allowed anchors, trust, and freshness. `max_context_chars` (500–12000) hard-limits the complete serialized provider request, including policy, question, addressing, selected claim, and evidence. Requests that cannot fit are rejected deterministically.
+
+Provider response fields are exactly `answer`, `inferences`, finite `confidence`, `evidence`, `assumptions`, `unresolved`, and `suggested_source_reads`. Evidence and suggested reads must use valid line ranges fully contained in supplied TMF anchors. Invalid JSON/constants, schema violations, trust-field injection, citations outside anchors, timeouts, provider exits, and absent configuration return distinct degraded errors; none masquerade as `unresolved`. Source changes expire the inference through supporting claims' existing freshness bindings.
+
+The fixed policy treats the question, source, comments, docstrings, and evidence as untrusted data. Provider prose remains an explicitly unverified inference payload; source is authoritative.
+
 ## Honest limitations
 
 - Only Python source is parsed for code nodes and call edges.

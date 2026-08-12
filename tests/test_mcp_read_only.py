@@ -44,7 +44,7 @@ class McpReadOnlyTests(unittest.TestCase):
 
     def test_surface_excludes_warm(self):
         names = {tool["name"] for tool in tools_list()}
-        self.assertEqual(names, {"tmf_context", "tmf_retrieve", "tmf_explain", "tmf_callers", "tmf_readers", "tmf_writers", "tmf_subtypes", "tmf_status"})
+        self.assertEqual(names, {"tmf_context", "tmf_assist", "tmf_retrieve", "tmf_explain", "tmf_callers", "tmf_readers", "tmf_writers", "tmf_subtypes", "tmf_status"})
 
     def test_uninitialized_store_fails_without_creating_files(self):
         with tempfile.TemporaryDirectory() as temp:

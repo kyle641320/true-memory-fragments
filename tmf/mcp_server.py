@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable
 
+from .assist import ASSIST_SYSTEM_POLICY, AssistProvider, AssistProviderError, default_assist_provider
 from .explain import explain_claim, full_view, thin_view
 from .freshness import check_freshness
 from .git import GitRepo
@@ -20,13 +23,21 @@ def _json_text(payload: Any) -> dict[str, Any]:
 
 
 class McpService:
-    def __init__(self, repo_root: str | Path, state_root: str | Path | None = None) -> None:
+    def __init__(
+        self,
+        repo_root: str | Path,
+        state_root: str | Path | None = None,
+        *,
+        assist_provider: AssistProvider | None = None,
+        load_assist_provider: bool = True,
+    ) -> None:
         self.repo = GitRepo(repo_root)
         self.state_root = Path(state_root).expanduser().resolve() if state_root is not None else None
         configure_state_root(self.state_root)
         self.store = Store(self.repo.root, self.state_root, read_only=True)
         self.store.require_initialized()
         self._warm_complete_cache: bool | None = None
+        self.assist_provider = assist_provider if assist_provider is not None else (default_assist_provider() if load_assist_provider else None)
 
     def _inside_repo_path(self, path: str | None) -> str | None:
         if path is None:
@@ -214,6 +225,158 @@ class McpService:
             payload["question"] = payload["question"][:-10]
         return payload
 
+    @staticmethod
+    def _assist_error(code: str, message: str) -> dict[str, str]:
+        return {"code": code, "message": message}
+
+    def _assist_bundle(
+        self,
+        *,
+        question: str,
+        claim_id: str | None,
+        path: str | None,
+        qualname: str | None,
+        max_context_chars: int,
+    ) -> dict[str, Any]:
+        selector = " ".join(value for value in (claim_id, qualname, path) if value)
+        bundle = self.tmf_context(f"{question} {selector}".strip(), max_context_chars)
+        if claim_id:
+            bundle = dict(bundle)
+            bundle["selected_claim"] = self.tmf_explain(claim_id, full=False)["claim"]
+        elif qualname:
+            resolved, addressing = self._resolve_claim_id(claim_id=None, qualname=qualname, path=path)
+            bundle = dict(bundle)
+            bundle["addressing"] = addressing
+            if resolved:
+                bundle["selected_claim"] = self.tmf_explain(resolved, full=False)["claim"]
+        return {"origin": "tmf_deterministic", "bundle": bundle}
+
+    @staticmethod
+    def _bundle_claims(bundle_wrapper: dict[str, Any]) -> list[dict[str, Any]]:
+        bundle = bundle_wrapper.get("bundle", {})
+        claims = list(bundle.get("claims", [])) if isinstance(bundle, dict) and isinstance(bundle.get("claims"), list) else []
+        selected = bundle.get("selected_claim") if isinstance(bundle, dict) else None
+        if isinstance(selected, dict):
+            claims.append(selected)
+        return [claim for claim in claims if isinstance(claim, dict)]
+
+    @classmethod
+    def _allowed_anchors(cls, bundle_wrapper: dict[str, Any]) -> list[dict[str, Any]]:
+        anchors: list[dict[str, Any]] = []
+        for claim in cls._bundle_claims(bundle_wrapper):
+            candidates = claim.get("anchors") or ([claim.get("anchor")] if claim.get("anchor") else [])
+            for anchor in candidates:
+                if not isinstance(anchor, dict) or not isinstance(anchor.get("path"), str):
+                    continue
+                start = anchor.get("line_start", anchor.get("line"))
+                end = anchor.get("line_end", start)
+                if isinstance(start, int) and isinstance(end, int) and 1 <= start <= end:
+                    normalized = {"path": anchor["path"], "line_start": start, "line_end": end}
+                    if normalized not in anchors:
+                        anchors.append(normalized)
+        return anchors
+
+    @classmethod
+    def _assist_trust(cls, bundle_wrapper: dict[str, Any]) -> dict[str, Any]:
+        refs: list[dict[str, Any]] = []
+        stale_reasons: list[str] = []
+        for claim in cls._bundle_claims(bundle_wrapper):
+            for ref in claim.get("freshness_binding_refs", claim.get("freshness_bindings", [])):
+                if isinstance(ref, dict) and ref not in refs:
+                    refs.append(ref)
+            for reason in claim.get("stale_reasons", []):
+                if isinstance(reason, str) and reason not in stale_reasons:
+                    stale_reasons.append(reason)
+            if claim.get("fresh") is False and not stale_reasons:
+                stale_reasons.append("supporting TMF claim is stale")
+        trust: dict[str, Any] = {"level": "inferred", "status": "expired" if stale_reasons else "provisional", "freshness_binding_refs": refs}
+        if stale_reasons:
+            trust["stale_reasons"] = stale_reasons
+        return trust
+
+    @staticmethod
+    def _contained_anchor(item: Any, allowed: list[dict[str, Any]]) -> bool:
+        if not isinstance(item, dict):
+            return False
+        path, start, end = item.get("path"), item.get("line_start"), item.get("line_end")
+        if not isinstance(start, int) or isinstance(start, bool) or not isinstance(end, int) or isinstance(end, bool) or not 1 <= start <= end:
+            return False
+        return any(path == anchor["path"] and anchor["line_start"] <= start <= end <= anchor["line_end"] for anchor in allowed)
+
+    @classmethod
+    def _validate_assist_response(cls, value: Any, allowed: list[dict[str, Any]]) -> dict[str, Any]:
+        if not isinstance(value, dict):
+            raise ValueError("response must be a JSON object")
+        required = {"answer", "inferences", "confidence", "evidence", "assumptions", "unresolved", "suggested_source_reads"}
+        if set(value) != required:
+            raise ValueError(f"response keys must be exactly: {', '.join(sorted(required))}")
+        if not isinstance(value["answer"], str):
+            raise ValueError("answer must be a string")
+        for key in ("inferences", "evidence", "assumptions", "unresolved", "suggested_source_reads"):
+            if not isinstance(value[key], list):
+                raise ValueError(f"{key} must be an array")
+        confidence = value["confidence"]
+        if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not math.isfinite(float(confidence)) or not 0 <= float(confidence) <= 1:
+            raise ValueError("confidence must be a finite number between 0 and 1")
+        for key in ("inferences", "assumptions", "unresolved"):
+            if not all(isinstance(item, str) for item in value[key]):
+                raise ValueError(f"{key} items must be strings")
+        for key in ("evidence", "suggested_source_reads"):
+            if not all(cls._contained_anchor(item, allowed) for item in value[key]):
+                raise ValueError(f"{key} items must stay within supplied anchors and use valid line ranges")
+        return {**value, "confidence": float(confidence)}
+
+    @staticmethod
+    def _request_size(value: Any) -> int:
+        return len(json.dumps(value, ensure_ascii=False, sort_keys=True, allow_nan=False))
+
+    def tmf_assist(
+        self,
+        question: str,
+        claim_id: str | None = None,
+        path: str | None = None,
+        qualname: str | None = None,
+        max_context_chars: int = 6000,
+    ) -> dict[str, Any]:
+        question = str(question)
+        if not question or len(question) > 2000:
+            raise ValueError("question must contain 1..2000 characters")
+        budget = max(500, min(int(max_context_chars), 12000))
+        safe_path = self._inside_repo_path(path) if path else None
+        # Reserve fixed request overhead and question before asking tmf_context to pack evidence.
+        fixed = {"system_policy": ASSIST_SYSTEM_POLICY, "task": "Produce unverified provisional inference from TMF evidence.", "question_untrusted_data": question, "evidence_bundle_untrusted_data": {}}
+        evidence_budget = budget - self._request_size(fixed)
+        if evidence_budget < 180:
+            raise ValueError("max_context_chars is too small for the question and fixed policy")
+        evidence_bundle = self._assist_bundle(question=question, claim_id=claim_id, path=safe_path, qualname=qualname, max_context_chars=evidence_budget)
+        request = {**fixed, "evidence_bundle_untrusted_data": evidence_bundle}
+        if self._request_size(request) > budget:
+            raise ValueError("selected TMF evidence exceeds max_context_chars")
+        trust = self._assist_trust(evidence_bundle)
+        base: dict[str, Any] = {
+            "status": "degraded", "non_authoritative": True,
+            "verification": "Unverified LLM inference; source is authoritative.",
+            "trust": trust, "read_only": True, "persisted": False,
+            "provider": getattr(self.assist_provider, "provider_id", None),
+            "evidence_bundle": evidence_bundle, "result": None,
+        }
+        if self.assist_provider is None:
+            base["error"] = self._assist_error("provider_not_configured", "tmf_assist is disabled until an explicit provider is configured")
+            return base
+        try:
+            raw = self.assist_provider.infer(request=request)
+            base["result"] = self._validate_assist_response(raw, self._allowed_anchors(evidence_bundle))
+            base["status"] = "ok" if trust["status"] == "provisional" else "stale"
+        except (TimeoutError, subprocess.TimeoutExpired) as exc:
+            base["error"] = self._assist_error("provider_timeout", str(exc))
+        except AssistProviderError as exc:
+            base["error"] = self._assist_error("provider_error", str(exc))
+        except (TypeError, ValueError) as exc:
+            base["error"] = self._assist_error("invalid_provider_response", str(exc))
+        except Exception as exc:
+            base["error"] = self._assist_error("provider_error", str(exc))
+        return base
+
     def tmf_status(self) -> dict[str, Any]:
         claims = list(self.store.iter_claims())
         edge_counts: dict[str, int] = {}
@@ -231,7 +394,7 @@ class McpService:
         return self._warm_complete_cache
 
     def call_tool(self, name: str, arguments: dict[str, Any] | None) -> dict[str, Any]:
-        mapping = {"tmf_retrieve": self.tmf_retrieve, "tmf_explain": self.tmf_explain, "tmf_callers": self.tmf_callers, "tmf_readers": self.tmf_readers, "tmf_writers": self.tmf_writers, "tmf_subtypes": self.tmf_subtypes, "tmf_context": self.tmf_context, "tmf_status": self.tmf_status}
+        mapping = {"tmf_retrieve": self.tmf_retrieve, "tmf_explain": self.tmf_explain, "tmf_callers": self.tmf_callers, "tmf_readers": self.tmf_readers, "tmf_writers": self.tmf_writers, "tmf_subtypes": self.tmf_subtypes, "tmf_context": self.tmf_context, "tmf_assist": self.tmf_assist, "tmf_status": self.tmf_status}
         if name not in mapping:
             raise ValueError(f"unknown tool: {name}")
         return _json_text(mapping[name](**(arguments or {})))
@@ -242,7 +405,8 @@ def tools_list() -> list[dict[str, Any]]:
     trust = " Partial coverage; fresh != correct; source is authoritative; stale claims are reported and never re-derived. Strictly read-only."
     reverse_props = {"claim_id": {"type": "string"}, "qualname": {"type": "string"}, "path": {"type": "string"}}
     return [
-        {"name": "tmf_context", "description": "Return one deterministic thin context bundle with anchors and key fresh graph relations." + trust, "inputSchema": schema({"question": {"type": "string"}, "max_chars": {"type": "integer", "minimum": 180}}, ["question"])},
+        {"name": "tmf_context", "description": "Return one deterministic thin context bundle with anchors and key fresh graph relations." + trust, "inputSchema": schema({"question": {"type": "string", "minLength": 1, "maxLength": 2000}, "max_chars": {"type": "integer", "minimum": 180}}, ["question"])},
+        {"name": "tmf_assist", "description": "Explicit opt-in LLM inference over a bounded deterministic TMF evidence bundle. Output is inferred/unverified and never persisted; disabled unless a provider is configured." + trust, "inputSchema": schema({"question": {"type": "string", "minLength": 1, "maxLength": 2000}, "claim_id": {"type": "string"}, "path": {"type": "string"}, "qualname": {"type": "string"}, "max_context_chars": {"type": "integer", "minimum": 500, "maximum": 12000}}, ["question"])},
         {"name": "tmf_retrieve", "description": "Retrieve thin TMF claims for a lexical query." + trust, "inputSchema": schema({"query": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 50}}, ["query"])},
         {"name": "tmf_explain", "description": "Explain one stored claim; full=true includes thick details." + trust, "inputSchema": schema({"claim_id": {"type": "string"}, "full": {"type": "boolean"}}, ["claim_id"])},
         {"name": "tmf_callers", "description": "List known fresh callers by claim_id or qualname plus optional path." + trust, "inputSchema": schema(reverse_props)},
