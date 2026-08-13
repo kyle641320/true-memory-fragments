@@ -1,0 +1,90 @@
+{
+  "schema": "path-injection-v2",
+  "seed": 20260814,
+  "model": {
+    "id": "gpt-5.6-sol",
+    "timeout_seconds": 120
+  },
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_TOOL",
+    "TMF_INJECT_ONLY"
+  ],
+  "phases": [
+    "first_visit",
+    "fresh_revisit",
+    "unknown_region",
+    "semantic_mutation",
+    "unrelated_mutation"
+  ],
+  "budget": {
+    "max_agent_calls": 4,
+    "max_source_lines": 30,
+    "max_source_bytes": 2000,
+    "injection_top_k": 3,
+    "injection_max_tokens": 1200,
+    "format_repairs": 1
+  },
+  "sequences": [
+    {
+      "id": "V31",
+      "identity": "lab.PulseWindow#span(int)",
+      "symbol": "PulseWindow.span",
+      "region_path": "lab/PulseWindow.java",
+      "unknown_identity": "lab.DormantLatch#armed()",
+      "unknown_symbol": "DormantLatch.armed",
+      "unknown_path": "lab/DormantLatch.java",
+      "input": 11,
+      "base_value": 27,
+      "mutated_value": 33,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does PulseWindow.span return when input is 11?",
+        "fresh_revisit": "On an unchanged revisit, what integer does PulseWindow.span return for 11?",
+        "unknown_region": "Does DormantLatch declare a zero-argument method named armed?",
+        "semantic_mutation": "After the working-tree change, what integer does PulseWindow.span return for 11?",
+        "unrelated_mutation": "After an unrelated working-tree change, what integer does PulseWindow.span return for 11?"
+      }
+    },
+    {
+      "id": "V32",
+      "identity": "lab.BatchCompass#bearing(int)",
+      "symbol": "BatchCompass.bearing",
+      "region_path": "lab/BatchCompass.java",
+      "unknown_identity": "lab.UnusedValve#flowing()",
+      "unknown_symbol": "UnusedValve.flowing",
+      "unknown_path": "lab/UnusedValve.java",
+      "input": 4,
+      "base_value": 61,
+      "mutated_value": 44,
+      "unknown_exists": false,
+      "tasks": {
+        "first_visit": "What integer does BatchCompass.bearing return when input is 4?",
+        "fresh_revisit": "On an unchanged revisit, what integer does BatchCompass.bearing return for 4?",
+        "unknown_region": "Does UnusedValve declare a zero-argument method named flowing?",
+        "semantic_mutation": "After the working-tree change, what integer does BatchCompass.bearing return for 4?",
+        "unrelated_mutation": "After an unrelated working-tree change, what integer does BatchCompass.bearing return for 4?"
+      }
+    },
+    {
+      "id": "V33",
+      "identity": "lab.LeaseGauge#units(int)",
+      "symbol": "LeaseGauge.units",
+      "region_path": "lab/LeaseGauge.java",
+      "unknown_identity": "lab.OldBeacon#lit()",
+      "unknown_symbol": "OldBeacon.lit",
+      "unknown_path": "lab/OldBeacon.java",
+      "input": 23,
+      "base_value": 17,
+      "mutated_value": 25,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does LeaseGauge.units return when input is 23?",
+        "fresh_revisit": "On an unchanged revisit, what integer does LeaseGauge.units return for 23?",
+        "unknown_region": "Does OldBeacon declare a zero-argument method named lit?",
+        "semantic_mutation": "After the working-tree change, what integer does LeaseGauge.units return for 23?",
+        "unrelated_mutation": "After an unrelated working-tree change, what integer does LeaseGauge.units return for 23?"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1625 @@
+{
+  "mode": "smoke",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY",
+      "arm_order": [
+        "SOURCE_ONLY",
+        "TMF_TOOL",
+        "TMF_INJECT_ONLY"
+      ],
+      "memory_store": {
+        "lab.PulseWindow#span(int)": {
+          "anchor": {
+            "line": 4,
+            "path": "lab/PulseWindow.java"
+          },
+          "claim": "PulseWindow.span returns integer 27 for input 11",
+          "freshness": "fresh",
+          "identity": "lab.PulseWindow#span(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "lab/PulseWindow.java",
+          "provenance": {
+            "file_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+            "kind": "first_visit_source_read",
+            "memory_id": "7982dd41-fdd4-4603-b172-66d8a5136452"
+          },
+          "source_authoritative": true
+        }
+      },
+      "prior_navigation_state": {
+        "event_id": "e2",
+        "last_edited_path": null,
+        "last_read_path": "lab/PulseWindow.java",
+        "memory_id": "7982dd41-fdd4-4603-b172-66d8a5136452",
+        "origin": "prior_tool_trace",
+        "path": "lab/PulseWindow.java",
+        "region": "line:4",
+        "repo_id": "V31",
+        "source_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+        "symbol": "lab.PulseWindow#span(int)",
+        "timestamp": 1786595948
+      },
+      "sequence": "V31",
+      "sessions": [
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 90,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 9.765893978998065,
+          "navigation_state_written": {
+            "event_id": "e2",
+            "last_edited_path": null,
+            "last_read_path": "lab/PulseWindow.java",
+            "memory_id": "7982dd41-fdd4-4603-b172-66d8a5136452",
+            "origin": "prior_tool_trace",
+            "path": "lab/PulseWindow.java",
+            "region": "line:4",
+            "repo_id": "V31",
+            "source_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+            "symbol": "lab.PulseWindow#span(int)",
+            "timestamp": 1786595948
+          },
+          "phase": "first_visit",
+          "prompt_tokens": 590,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 680,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow.span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 121,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 11.778719939291477,
+          "navigation_state_written": null,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 599,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 720,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow.span unchanged revisit 11"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/DormantLatch.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 87,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.605009661987424,
+          "navigation_state_written": null,
+          "phase": "unknown_region",
+          "prompt_tokens": 581,
+          "read_calls": 1,
+          "source_bytes": 92,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 668,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "DormantLatch armed"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/DormantLatch.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/DormantLatch.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 33,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 115,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 9.767741722986102,
+          "navigation_state_written": null,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 601,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 716,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 33,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 120,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 10.16152366437018,
+          "navigation_state_written": null,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 605,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 725,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_TOOL",
+      "arm_order": [
+        "SOURCE_ONLY",
+        "TMF_TOOL",
+        "TMF_INJECT_ONLY"
+      ],
+      "memory_store": {
+        "lab.PulseWindow#span(int)": {
+          "anchor": {
+            "line": 4,
+            "path": "lab/PulseWindow.java"
+          },
+          "claim": "PulseWindow.span returns integer 27 for input 11",
+          "freshness": "fresh",
+          "identity": "lab.PulseWindow#span(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "lab/PulseWindow.java",
+          "provenance": {
+            "file_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+            "kind": "first_visit_source_read",
+            "memory_id": "9fc0cf8d-2c50-4729-80e4-1ac51828e5c7"
+          },
+          "source_authoritative": true
+        }
+      },
+      "prior_navigation_state": {
+        "event_id": "e2",
+        "last_edited_path": null,
+        "last_read_path": "lab/PulseWindow.java",
+        "memory_id": "9fc0cf8d-2c50-4729-80e4-1ac51828e5c7",
+        "origin": "prior_tool_trace",
+        "path": "lab/PulseWindow.java",
+        "region": "line:4",
+        "repo_id": "V31",
+        "source_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+        "symbol": "lab.PulseWindow#span(int)",
+        "timestamp": 1786595993
+      },
+      "sequence": "V31",
+      "sessions": [
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 84,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.721764555200934,
+          "navigation_state_written": {
+            "event_id": "e2",
+            "last_edited_path": null,
+            "last_read_path": "lab/PulseWindow.java",
+            "memory_id": "9fc0cf8d-2c50-4729-80e4-1ac51828e5c7",
+            "origin": "prior_tool_trace",
+            "path": "lab/PulseWindow.java",
+            "region": "line:4",
+            "repo_id": "V31",
+            "source_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+            "symbol": "lab.PulseWindow#span(int)",
+            "timestamp": 1786595993
+          },
+          "phase": "first_visit",
+          "prompt_tokens": 605,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 689,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow.span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 108,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 7.153823968023062,
+          "navigation_state_written": null,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 614,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 722,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow.span unchanged revisit 11"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/DormantLatch.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 86,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.088372386991978,
+          "navigation_state_written": null,
+          "phase": "unknown_region",
+          "prompt_tokens": 596,
+          "read_calls": 1,
+          "source_bytes": 92,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 682,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "DormantLatch"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/DormantLatch.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/DormantLatch.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "The `span(int input)` method in `lab.PulseWindow` always returns `33`, regardless of the input."
+          },
+          "citation_ok": false,
+          "completion_tokens": 180,
+          "correct": false,
+          "format_repair_used": true,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [
+            "fields",
+            "answer_type",
+            "citations",
+            "wrong_answer",
+            "wrong_citation"
+          ],
+          "latency_seconds": 17.611332911998034,
+          "navigation_state_written": null,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 1263,
+          "read_calls": 2,
+          "source_bytes": 186,
+          "source_files": 1,
+          "source_lines": 10,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 1,
+          "total_tokens": 1443,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "tmf_lookup",
+                "identity_or_path": "lab/PulseWindow.java"
+              },
+              "step": 2
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 3
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "repair",
+              "format_repair": true,
+              "injection": null,
+              "model_action": {
+                "answer": "The `span(int input)` method in `lab.PulseWindow` always returns `33`, regardless of the input."
+              }
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": false
+        },
+        {
+          "answer": {
+            "answer": 27
+          },
+          "citation_ok": false,
+          "completion_tokens": 183,
+          "correct": false,
+          "format_repair_used": true,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [
+            "fields",
+            "citations",
+            "wrong_answer",
+            "wrong_citation"
+          ],
+          "latency_seconds": 11.784567676484585,
+          "navigation_state_written": null,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 1669,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": true,
+          "tmf_calls": 2,
+          "total_tokens": 1852,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "tmf_lookup",
+                "identity_or_path": "lab/PulseWindow.java"
+              },
+              "step": 2
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "tmf_lookup",
+                "identity_or_path": "lab.PulseWindow#span(int)"
+              },
+              "step": 3
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "call_kind": "repair",
+              "format_repair": true,
+              "injection": null,
+              "model_action": {
+                "answer": 27
+              }
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": false
+        }
+      ]
+    },
+    {
+      "arm": "TMF_INJECT_ONLY",
+      "arm_order": [
+        "SOURCE_ONLY",
+        "TMF_TOOL",
+        "TMF_INJECT_ONLY"
+      ],
+      "memory_store": {
+        "lab.PulseWindow#span(int)": {
+          "anchor": {
+            "line": 4,
+            "path": "lab/PulseWindow.java"
+          },
+          "claim": "PulseWindow.span returns integer 27 for input 11",
+          "freshness": "fresh",
+          "identity": "lab.PulseWindow#span(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "lab/PulseWindow.java",
+          "provenance": {
+            "file_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+            "kind": "first_visit_source_read",
+            "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1"
+          },
+          "source_authoritative": true
+        }
+      },
+      "prior_navigation_state": {
+        "event_id": "e2",
+        "last_edited_path": null,
+        "last_read_path": "lab/PulseWindow.java",
+        "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+        "origin": "prior_tool_trace",
+        "path": "lab/PulseWindow.java",
+        "region": "line:4",
+        "repo_id": "V31",
+        "source_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+        "symbol": "lab.PulseWindow#span(int)",
+        "timestamp": 1786596042
+      },
+      "sequence": "V31",
+      "sessions": [
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 89,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 7.685085108503699,
+          "navigation_state_written": {
+            "event_id": "e2",
+            "last_edited_path": null,
+            "last_read_path": "lab/PulseWindow.java",
+            "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+            "origin": "prior_tool_trace",
+            "path": "lab/PulseWindow.java",
+            "region": "line:4",
+            "repo_id": "V31",
+            "source_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+            "symbol": "lab.PulseWindow#span(int)",
+            "timestamp": 1786596042
+          },
+          "phase": "first_visit",
+          "prompt_tokens": 590,
+          "read_calls": 1,
+          "source_bytes": 93,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 679,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow.span"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": null,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 30,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": true,
+          "injection_before_first_read": true,
+          "injection_fired": true,
+          "injection_hit": true,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 160,
+          "issues": [],
+          "latency_seconds": 2.157130567356944,
+          "navigation_state_written": null,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 543,
+          "read_calls": 0,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 573,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": {
+                "items": [
+                  {
+                    "anchor": {
+                      "line": 4,
+                      "path": "lab/PulseWindow.java"
+                    },
+                    "claim": "PulseWindow.span returns integer 27 for input 11",
+                    "freshness": "fresh",
+                    "identity": "lab.PulseWindow#span(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "lab/PulseWindow.java",
+                    "provenance": {
+                      "file_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+                      "kind": "first_visit_source_read",
+                      "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1"
+                    },
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_PREAMBLE",
+                "trigger": {
+                  "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+                  "path": "lab/PulseWindow.java",
+                  "provenance": "prior_tool_trace"
+                }
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 0
+            }
+          ],
+          "trigger_provenance": {
+            "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+            "path": "lab/PulseWindow.java",
+            "provenance": "prior_tool_trace"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/DormantLatch.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 96,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_before_first_read": true,
+          "injection_fired": true,
+          "injection_hit": true,
+          "injection_noise": true,
+          "injection_stale_pointer": false,
+          "injection_tokens": 160,
+          "issues": [],
+          "latency_seconds": 9.645011611282825,
+          "navigation_state_written": null,
+          "phase": "unknown_region",
+          "prompt_tokens": 1455,
+          "read_calls": 1,
+          "source_bytes": 92,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 1551,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": {
+                "items": [
+                  {
+                    "anchor": {
+                      "line": 4,
+                      "path": "lab/PulseWindow.java"
+                    },
+                    "claim": "PulseWindow.span returns integer 27 for input 11",
+                    "freshness": "fresh",
+                    "identity": "lab.PulseWindow#span(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "lab/PulseWindow.java",
+                    "provenance": {
+                      "file_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+                      "kind": "first_visit_source_read",
+                      "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1"
+                    },
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_PREAMBLE",
+                "trigger": {
+                  "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+                  "path": "lab/PulseWindow.java",
+                  "provenance": "prior_tool_trace"
+                }
+              },
+              "model_action": {
+                "action": "search",
+                "query": "DormantLatch armed"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/DormantLatch.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/DormantLatch.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+            "path": "lab/PulseWindow.java",
+            "provenance": "prior_tool_trace"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "`lab/PulseWindow.java` defines `PulseWindow.span(int input)`, which always returns `33` regardless of the input."
+          },
+          "citation_ok": false,
+          "completion_tokens": 255,
+          "correct": false,
+          "format_repair_used": true,
+          "injection_adoption": false,
+          "injection_before_first_read": true,
+          "injection_fired": true,
+          "injection_hit": false,
+          "injection_noise": false,
+          "injection_stale_pointer": true,
+          "injection_tokens": 82,
+          "issues": [
+            "fields",
+            "answer_type",
+            "citations",
+            "wrong_answer",
+            "wrong_citation"
+          ],
+          "latency_seconds": 14.662958497181535,
+          "navigation_state_written": null,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 1971,
+          "read_calls": 3,
+          "source_bytes": 279,
+          "source_files": 1,
+          "source_lines": 15,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 2226,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": {
+                "items": [
+                  {
+                    "claim": null,
+                    "freshness": "stale",
+                    "path": "lab/PulseWindow.java",
+                    "pointer": "Source changed; reread localized path.",
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_POINTER",
+                "trigger": {
+                  "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+                  "path": "lab/PulseWindow.java",
+                  "provenance": "prior_tool_trace"
+                }
+              },
+              "model_action": {
+                "action": "search",
+                "query": "PulseWindow span lab/PulseWindow.java"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 2
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/PulseWindow.java"
+              },
+              "step": 3
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "repair",
+              "format_repair": true,
+              "injection": null,
+              "model_action": {
+                "answer": "`lab/PulseWindow.java` defines `PulseWindow.span(int input)`, which always returns `33` regardless of the input."
+              }
+            }
+          ],
+          "trigger_provenance": {
+            "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+            "path": "lab/PulseWindow.java",
+            "provenance": "prior_tool_trace"
+          },
+          "valid": false
+        },
+        {
+          "answer": {
+            "answer": 27,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/PulseWindow.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 72,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": true,
+          "injection_before_first_read": true,
+          "injection_fired": true,
+          "injection_hit": true,
+          "injection_noise": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 160,
+          "issues": [],
+          "latency_seconds": 3.0043167769908905,
+          "navigation_state_written": null,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 545,
+          "read_calls": 0,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "total_tokens": 617,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "injection": {
+                "items": [
+                  {
+                    "anchor": {
+                      "line": 4,
+                      "path": "lab/PulseWindow.java"
+                    },
+                    "claim": "PulseWindow.span returns integer 27 for input 11",
+                    "freshness": "fresh",
+                    "identity": "lab.PulseWindow#span(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "lab/PulseWindow.java",
+                    "provenance": {
+                      "file_sha256": "3bb78d2f1d91d1aa99fb8e1f0e98d65c47f1e8958211b6d6ca585834016f8567",
+                      "kind": "first_visit_source_read",
+                      "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1"
+                    },
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_PREAMBLE",
+                "trigger": {
+                  "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+                  "path": "lab/PulseWindow.java",
+                  "provenance": "prior_tool_trace"
+                }
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": 27,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/PulseWindow.java"
+                  }
+                ]
+              },
+              "step": 0
+            }
+          ],
+          "trigger_provenance": {
+            "memory_id": "52a110ca-cbf5-4432-bc32-ab5ce7d46fc1",
+            "path": "lab/PulseWindow.java",
+            "provenance": "prior_tool_trace"
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "path-injection-v2-run"
+}
