@@ -35,6 +35,22 @@ class JavaModuleDependency:
     resolution: str
 
 
+@dataclass(frozen=True)
+class JavaRepositorySnapshot:
+    """One-warm immutable view of Java source facts.
+
+    Cross-file resolvers must use this view instead of independently walking
+    the repository.  It is deliberately scoped to a GitRepo instance; the
+    caller can discard the repo to obtain a fresh snapshot after edits.
+    """
+
+    paths: tuple[str, ...]
+    texts: dict[str, str]
+    classes: dict[str, tuple[Any, ...]]
+    methods: dict[str, tuple[Any, ...]]
+    fingerprint: tuple[tuple[str, int, int], ...]
+
+
 class JavaProjectModel:
     def __init__(self, repo: Any):
         self.repo = repo
@@ -227,6 +243,9 @@ class JavaProjectModel:
 
 
 def java_project_model(repo: Any) -> JavaProjectModel:
+    cached = getattr(repo, "_tmf_java_project_model", None)
+    if cached is not None and getattr(repo, "_tmf_java_snapshot_pinned", False):
+        return cached
     probe = JavaProjectModel(repo)
     relevant = [
         path for path in probe._tracked_paths()
@@ -237,10 +256,47 @@ def java_project_model(repo: Any) -> JavaProjectModel:
         for path in relevant
         if (repo.root / path).is_file()
     )
-    cached = getattr(repo, "_tmf_java_project_model", None)
     cached_fingerprint = getattr(repo, "_tmf_java_project_model_fingerprint", None)
     if cached is None or cached_fingerprint != fingerprint:
         cached = probe.build()
         setattr(repo, "_tmf_java_project_model", cached)
         setattr(repo, "_tmf_java_project_model_fingerprint", fingerprint)
     return cached
+
+
+def java_repository_snapshot(repo: Any) -> JavaRepositorySnapshot:
+    """Build and cache repository-wide Java facts once per repo instance."""
+    from .java_extract import extract_java_classes, extract_java_methods
+
+    cached = getattr(repo, "_tmf_java_repository_snapshot", None)
+    if cached is not None and getattr(repo, "_tmf_java_snapshot_pinned", False):
+        return cached
+    model = java_project_model(repo)
+    paths = tuple(model.java_paths())
+    fingerprint = tuple(
+        (path, (repo.root / path).stat().st_mtime_ns, (repo.root / path).stat().st_size)
+        for path in paths
+        if (repo.root / path).is_file()
+    )
+    if cached is not None and cached.fingerprint == fingerprint:
+        return cached
+    texts: dict[str, str] = {}
+    classes: dict[str, tuple[Any, ...]] = {}
+    methods: dict[str, tuple[Any, ...]] = {}
+    for path in paths:
+        try:
+            text = repo.read_file(path)
+            texts[path] = text
+            try:
+                classes[path] = tuple(extract_java_classes(path, text))
+                methods[path] = tuple(extract_java_methods(path, text))
+            except ImportError:
+                # Preserve the existing Java parser degradation path: the
+                # source cache remains useful, but no syntax facts are claimed.
+                classes[path] = ()
+                methods[path] = ()
+        except (OSError, UnicodeError):
+            continue
+    snapshot = JavaRepositorySnapshot(paths, texts, classes, methods, fingerprint)
+    setattr(repo, "_tmf_java_repository_snapshot", snapshot)
+    return snapshot

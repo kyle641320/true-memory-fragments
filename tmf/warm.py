@@ -552,6 +552,10 @@ def warm_repo(repo_root: str | Path) -> dict[str, Any]:
             failed_files = {}
 
         paths = _warmable_paths(repo)
+        if any(path.endswith(".java") for path in paths):
+            from .java_project import java_repository_snapshot
+            java_repository_snapshot(repo)
+            setattr(repo, "_tmf_java_snapshot_pinned", True)
         if "claim_inventory" not in manifest or "reverse_index" not in manifest:
             manifest = _upgrade_complete_manifest(repo, store, manifest_path, manifest, paths)
         noop_result = _complete_noop_result(repo, store, manifest, paths)

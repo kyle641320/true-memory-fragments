@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import re
 from functools import lru_cache
 from pathlib import Path
@@ -18,6 +19,7 @@ from .verify import verify_observed_claim
 from .derivation_versions import versions_for_path
 
 MODEL = "tmf-v1-heuristic"
+_LOGGER = logging.getLogger(__name__)
 
 
 def derive_cache_declaration_claim(repo: GitRepo, item) -> Claim:
@@ -1012,15 +1014,39 @@ def derive_write_edge_claim(repo: GitRepo, edge) -> Claim | None:
 def _java_node_anchor_for(repo: GitRepo, path: str | None, qualname: str | None, node_kind: str | None) -> dict:
     if not path or not qualname or not node_kind:
         return _anchor(path, None, None, qualname)
+    cache = getattr(repo, "_tmf_java_anchor_cache", {})
+    key = (path, qualname, node_kind)
+    if key in cache:
+        return cache[key]
     try:
-        source = repo.read_file(path)
-        for node in [*extract_java_classes(path, source), *extract_java_methods(path, source), *extract_java_fields(path, source)]:
+        snapshot = getattr(repo, "_tmf_java_repository_snapshot", None)
+        if snapshot is not None and getattr(repo, "_tmf_java_snapshot_pinned", False):
+            nodes = [
+                *snapshot.classes.get(path, ()),
+                *snapshot.methods.get(path, ()),
+                *extract_java_fields(path, snapshot.texts.get(path, "")),
+            ]
+        else:
+            source = repo.read_file(path)
+            nodes = [*extract_java_classes(path, source), *extract_java_methods(path, source), *extract_java_fields(path, source)]
+        for node in nodes:
             kind = node.declaration_kind if hasattr(node, "declaration_kind") else node.node_kind
             if node.qualname == qualname and kind == node_kind:
-                return _anchor(path, node.line_start, node.line_end, qualname)
-    except Exception:
-        pass
-    return _anchor(path, None, None, qualname)
+                result = _anchor(path, node.line_start, node.line_end, qualname)
+                cache[key] = result
+                setattr(repo, "_tmf_java_anchor_cache", cache)
+                return result
+    except Exception as exc:
+        # Anchors are enrichment: preserve the historical fail-soft result, but
+        # leave a diagnostic trail for corrupt snapshots/read/parser failures.
+        _LOGGER.debug(
+            "Java anchor lookup failed for path=%r qualname=%r node_kind=%r: %s",
+            path, qualname, node_kind, exc, exc_info=True,
+        )
+    result = _anchor(path, None, None, qualname)
+    cache[key] = result
+    setattr(repo, "_tmf_java_anchor_cache", cache)
+    return result
 
 
 def derive_inherit_edge_claim(repo: GitRepo, edge) -> Claim | None:
@@ -1091,6 +1117,9 @@ def _sanitize_semantic_claim(claim: Claim, existing_ids: set[str]) -> Claim | No
     return claim
 
 def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False, model: DeriverModel | None = None, semantic_backend: SemanticExtractorBackend | None = None) -> list[Claim]:
+    if path.endswith(".java"):
+        from .java_project import java_repository_snapshot
+        java_repository_snapshot(repo)
     text = repo.read_file(path)
     functions = extract_functions(path, text)
     classes = extract_classes(path, text)

@@ -66,7 +66,8 @@ class JavaProjectIndex:
 
     def _paths(self) -> list[str]:
         from .java_project import java_project_model
-        return java_project_model(self.repo).java_paths()
+        snapshot = getattr(self.repo, "_tmf_java_repository_snapshot", None)
+        return list(snapshot.paths) if snapshot is not None else java_project_model(self.repo).java_paths()
 
     def build(self) -> "JavaProjectIndex":
         if self._built:
@@ -77,13 +78,18 @@ class JavaProjectIndex:
         project = java_project_model(self.repo)
         for path in self._paths():
             try:
-                source = self.repo.read_file(path)
+                snapshot = getattr(self.repo, "_tmf_java_repository_snapshot", None)
+                source = snapshot.texts.get(path) if snapshot is not None else self.repo.read_file(path)
+                if source is None:
+                    continue
                 location = project.source_for(path)
                 if location is not None and not self.policy.includes(source_set=location.source_set, generated=location.generated):
                     continue
                 package_match = _PACKAGE_RE.search(source)
                 package = package_match.group(1) if package_match else ""
-                for node in extract_java_classes(path, source):
+                snapshot = getattr(self.repo, "_tmf_java_repository_snapshot", None)
+                class_nodes = snapshot.classes.get(path, ()) if snapshot is not None else extract_java_classes(path, source)
+                for node in class_nodes:
                     if node.node_kind not in {"class", "interface", "enum"} or "." in node.qualname:
                         continue
                     simple = node.qualname
@@ -155,15 +161,18 @@ class JavaProjectIndex:
 
 def java_project_index(repo: Any, policy: JavaIndexPolicy | None = None) -> JavaProjectIndex:
     policy = policy or JavaIndexPolicy()
-    paths = JavaProjectIndex(repo, policy)._paths()
-    fingerprint = tuple(
+    cache = getattr(repo, "_tmf_java_project_indexes", {})
+    cached_entry = cache.get(policy)
+    if cached_entry is not None and getattr(repo, "_tmf_java_snapshot_pinned", False):
+        return cached_entry[1]
+    snapshot = getattr(repo, "_tmf_java_repository_snapshot", None)
+    paths = list(snapshot.paths) if snapshot is not None else JavaProjectIndex(repo, policy)._paths()
+    fingerprint = snapshot.fingerprint if snapshot is not None else tuple(
         (path, (repo.root / path).stat().st_mtime_ns, (repo.root / path).stat().st_size)
         for path in paths
         if (repo.root / path).is_file()
     )
-    cache = getattr(repo, "_tmf_java_project_indexes", {})
     cache_key = policy
-    cached_entry = cache.get(cache_key)
     if cached_entry is None or cached_entry[0] != fingerprint:
         cached = JavaProjectIndex(repo, policy).build()
         cache = dict(cache)

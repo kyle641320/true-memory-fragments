@@ -81,6 +81,8 @@ TMF's Java support is a conservative source-analysis system. Source-derived fact
 - [ ] Versioned Java graph schema and compatibility matrix.
 - [ ] Incremental indexing with module-level invalidation and concurrency tests.
 - [ ] Large-repository memory/time budgets and bounded query latency.
+  - [x] Phase-1 scan-count gate: a 240-file synthetic repository asserts one source read and one class/method parse per tracked Java file, while one warm lifecycle pins a shared immutable snapshot. Unpinned add/delete/modify invalidation and fresh-`GitRepo` lifecycle refresh are covered. This avoids flaky wall-clock limits and does not close memory or query-latency qualification.
+  - [x] Apache Dubbo preflight: the locked 4,051-file tree completed warm/no-op integrity with zero failed files; see `experiments/tmf-large-java-20260812/results/DUBBO-PREFLIGHT-SUCCESS.md`. This is not the SOURCE_ONLY/TMF_MAP A/B gate.
 - [ ] Held-out Maven, Gradle, Spring, Kafka, JPA, and MyBatis fixtures.
   - [x] Bounded persistence-adapter slice: independent Maven/Gradle fixtures cover exact-import JPA/Jakarta, Spring Data metadata, and MyBatis annotations; Spring/Kafka breadth remains incomplete.
 - [ ] Precision, resolution-rate, unresolved-reason, freshness, mutation, and deletion gates.

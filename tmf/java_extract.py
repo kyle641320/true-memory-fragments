@@ -2463,6 +2463,21 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         from .java_index import java_package, java_project_index
         project_index = java_project_index(repo)
         package = java_package(source)
+    snapshot = getattr(repo, "_tmf_java_repository_snapshot", None) if repo is not None else None
+
+    def methods_for(file_path: str, file_source: str | None = None) -> list[ClassNode]:
+        if snapshot is not None and file_path in snapshot.methods:
+            return list(snapshot.methods[file_path])
+        if file_source is None:
+            file_source = repo.read_file(file_path)
+        return extract_java_methods(file_path, file_source)
+
+    def classes_for(file_path: str, file_source: str | None = None) -> list[ClassNode]:
+        if snapshot is not None and file_path in snapshot.classes:
+            return list(snapshot.classes[file_path])
+        if file_source is None:
+            file_source = repo.read_file(file_path)
+        return extract_java_classes(file_path, file_source)
     by_qual = {m.qualname: m for m in java_methods if m.node_kind == "method"}
     by_class: dict[str, list[ClassNode]] = {}
     for m in java_methods:
@@ -2648,7 +2663,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             target_source = repo.read_file(symbol.path)
         except Exception:
             return [], "java_constructor_type_not_resolved"
-        constructors = [m for m in extract_java_methods(symbol.path, target_source)
+        constructors = [m for m in methods_for(symbol.path, target_source)
                         if m.node_kind == "constructor" and m.qualname.rsplit(".", 1)[0] == symbol.simple_name]
         return constructors, f"java_project_constructor_{resolution}"
 
@@ -2666,7 +2681,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             target_source = repo.read_file(target_path)
         except Exception:
             return [], "java_external_or_jdk_receiver"
-        methods = extract_java_methods(target_path, target_source)
+        methods = methods_for(target_path, target_source)
         methods = [m for m in methods if m.qualname.startswith(type_name + ".")]
         return methods, None
 
@@ -2744,7 +2759,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         if file_path == path:
             specs = parent_specs.get(class_qual, [])
         elif repo is not None:
-            classes = extract_java_classes(file_path, file_source)
+            classes = classes_for(file_path, file_source)
             edges_for_file, _ = resolve_java_inherit_edges(file_path, file_source, classes, repo=repo)
             specs = [
                 (edge.parent_path or file_path, edge.parent_qualname, edge.relation)
@@ -2772,7 +2787,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                     parent_source = file_source if parent_path == file_path else repo.read_file(parent_path)
                 except Exception:
                     continue
-                methods = java_methods if parent_path == path else extract_java_methods(parent_path, parent_source)
+                methods = java_methods if parent_path == path else methods_for(parent_path, parent_source)
                 found.extend(m for m in methods if m.qualname.rsplit(".", 1)[0] == parent_qual)
                 walk(parent_path, parent_source, parent_qual)
 
@@ -2789,7 +2804,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             target_source = repo.read_file(symbol.path)
         except Exception:
             return [], "java_external_or_jdk_receiver"
-        methods = [m for m in extract_java_methods(symbol.path, target_source) if m.qualname.startswith(symbol.simple_name + ".")]
+        methods = [m for m in methods_for(symbol.path, target_source) if m.qualname.startswith(symbol.simple_name + ".")]
         return methods, f"java_project_typed_receiver_{resolution}"
 
     def declared_return_type(method: ClassNode) -> str | None:
@@ -2961,7 +2976,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                                 parent_source = source if parent_path == path else repo.read_file(parent_path)
                             except Exception:
                                 continue
-                            candidates.extend(m for m in extract_java_methods(parent_path, parent_source)
+                            candidates.extend(m for m in methods_for(parent_path, parent_source)
                                               if m.node_kind == "constructor" and m.qualname.rsplit(".", 1)[0] == parent_qual)
                         resolution = "java_super_constructor"
                     else:
@@ -4199,20 +4214,32 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
     class_by_simple = {c.qualname.rsplit('.',1)[-1]: c for c in java_classes if c.node_kind in {'class','interface'}}
     component_beans = {simple: c for simple, c in class_by_simple.items()
                        if any(a in anns.get(simple, set()) and genuine(a) for a in bean_ann)}
+    exact_injection_present = any(
+        genuine(name) and re.search(rf"@{name}\b", source)
+        for name in ("Autowired", "Inject")
+    )
+    resource_import = imports.get("Resource")
+    exact_injection_present = exact_injection_present or (
+        resource_import in {"javax.annotation.Resource", "jakarta.annotation.Resource"}
+        and re.search(r"@Resource\b", source) is not None
+    )
     # Project-wide, tracked-source bean registry. This is not package scanning:
     # only declarations carrying exact explicitly imported annotations enter it.
     bean_candidates: list[tuple[str, ClassNode, str | None]] = []
     bean_assignable_types: dict[tuple[str, str, str], set[str]] = {}
     primary_candidate_keys: set[tuple[str, str, str]] = set()
     project_sources = [(path, source, java_classes, java_methods or [])]
-    if repo is not None:
-        from .java_project import java_project_model
+    if repo is not None and exact_injection_present:
+        from .java_project import java_repository_snapshot
         project_sources = []
-        for candidate_path in java_project_model(repo).java_paths():
-            candidate_source = repo.read_file(candidate_path)
+        snapshot = java_repository_snapshot(repo)
+        for candidate_path in snapshot.paths:
+            candidate_source = snapshot.texts.get(candidate_path)
+            if candidate_source is None:
+                continue
             project_sources.append((candidate_path, candidate_source,
-                                    extract_java_classes(candidate_path, candidate_source),
-                                    extract_java_methods(candidate_path, candidate_source)))
+                                    list(snapshot.classes.get(candidate_path, ())),
+                                    list(snapshot.methods.get(candidate_path, ()))))
     for candidate_path, candidate_source, candidate_classes, candidate_methods in project_sources:
         candidate_imports = _java_explicit_imports(candidate_source)
         candidate_package = _java_package(candidate_source) or ''
@@ -4286,7 +4313,6 @@ def resolve_java_inject_edges(path: str, source: str, java_classes: list[ClassNo
     # annotations remain true negatives.
     role_names = re.compile(r"(?:Inject|Autowired|Resource)$")
     exact_injection_names = {name for name in ("Autowired", "Inject") if genuine(name)}
-    resource_import = imports.get("Resource")
     if resource_import in {"javax.annotation.Resource", "jakarta.annotation.Resource"}:
         exact_injection_names.add("Resource")
     explicitly_imported = _java_explicit_imports(source)
@@ -5038,11 +5064,12 @@ def resolve_java_event_type_edges(path: str, source: str, java_methods: list[Cla
     exact_publisher = imports.get("ApplicationEventPublisher") == "org.springframework.context.ApplicationEventPublisher"
     publisher_receivers = set(re.findall(r"\bApplicationEventPublisher\s+([A-Za-z_][\w]*)\s*(?:[;,)])", source)) if exact_publisher else set()
     type_index: dict[str, list[tuple[str, ClassNode]]] = {}
-    for candidate in sorted(repo.root.rglob("*.java")):
-        if ".git" in candidate.parts or ".tmf" in candidate.parts:
+    from .java_project import java_repository_snapshot
+    snapshot = java_repository_snapshot(repo)
+    for rel in snapshot.paths:
+        text = snapshot.texts.get(rel)
+        if text is None:
             continue
-        rel = candidate.relative_to(repo.root).as_posix()
-        text = candidate.read_text(encoding="utf-8", errors="ignore")
         for node in extract_java_classes(rel, text):
             fqn = _java_source_type_fqn(text, node.qualname.rsplit(".", 1)[-1])
             if fqn:
@@ -5119,10 +5146,12 @@ def _eventuate_wrapper_channels(repo: Any, source: str) -> tuple[dict[str, tuple
         if simple == "DomainEventPublisher":
             continue
         candidates: list[tuple[str, str, str]] = []
-        for candidate_path in repo.root.rglob("*.java"):
-            if ".git" in candidate_path.parts or ".tmf" in candidate_path.parts:
+        from .java_project import java_repository_snapshot
+        snapshot = java_repository_snapshot(repo)
+        for candidate_path in snapshot.paths:
+            candidate_source = snapshot.texts.get(candidate_path)
+            if candidate_source is None:
                 continue
-            candidate_source = candidate_path.read_text(encoding="utf-8", errors="ignore")
             match = re.search(
                 rf"\binterface\s+{re.escape(simple)}\s+extends\s+DomainEventPublisherForAggregate\s*<\s*([A-Za-z_][\w.]*)\s*,",
                 candidate_source,
@@ -5130,8 +5159,7 @@ def _eventuate_wrapper_channels(repo: Any, source: str) -> tuple[dict[str, tuple
             if match:
                 aggregate = _java_source_type_fqn(candidate_source, match.group(1))
                 if aggregate:
-                    relpath = candidate_path.relative_to(repo.root).as_posix()
-                    candidates.append((aggregate, relpath, simple))
+                    candidates.append((aggregate, candidate_path, simple))
         unique = sorted(set(candidates))
         if len(unique) == 1:
             channels[receiver] = unique[0]
@@ -5273,10 +5301,12 @@ def resolve_java_saga_definitions(path: str, source: str, java_classes: list[Cla
     proxy_operations: dict[tuple[str, str], list[dict[str, Any]]] = {}
     handlers: dict[tuple[str, str], list[dict[str, Any]]] = {}
     if repo is not None:
-        for candidate_path in repo.root.rglob("*.java"):
-            if ".git" in candidate_path.parts or ".tmf" in candidate_path.parts:
+        from .java_project import java_repository_snapshot
+        snapshot = java_repository_snapshot(repo)
+        for candidate_path in snapshot.paths:
+            candidate = snapshot.texts.get(candidate_path)
+            if candidate is None:
                 continue
-            candidate = candidate_path.read_text(encoding="utf-8", errors="ignore")
             proxy = re.search(r"@SagaParticipantProxy\s*\(\s*channel\s*=\s*([A-Za-z_][\w.]*)\s*\)\s*public\s+class\s+(\w+)", candidate)
             if proxy:
                 channel_expr, proxy_name = proxy.groups()
@@ -5288,11 +5318,11 @@ def resolve_java_saga_definitions(path: str, source: str, java_classes: list[Cla
                 if channel:
                     for op in re.finditer(r"@SagaParticipantOperation\s*\(\s*commandClass\s*=\s*([\w.]+)\.class\s*,\s*replyClasses\s*=\s*([\w.]+)\.class\s*\)\s*public\s+[^\s]+\s+(\w+)\s*\(", candidate):
                         command, reply, method = op.groups()
-                        proxy_operations.setdefault((channel, method), []).append({"path": candidate_path.relative_to(repo.root).as_posix(), "proxy": proxy_name, "command": command, "reply": reply, "channel": channel})
+                        proxy_operations.setdefault((channel, method), []).append({"path": candidate_path, "proxy": proxy_name, "command": command, "reply": reply, "channel": channel})
             handler = re.search(r"@EventuateCommandHandler\s*\([^)]*\bchannel\s*=\s*\"([^\"]+)\"[^)]*\)\s*public\s+[^\s]+\s+(\w+)\s*\(\s*CommandMessage\s*<\s*([\w.]+)\s*>", candidate, re.DOTALL)
             if handler:
                 channel, method, command = handler.groups()
-                handlers.setdefault((channel, command.rsplit('.', 1)[-1]), []).append({"path": candidate_path.relative_to(repo.root).as_posix(), "method": method, "channel": channel, "command": command.rsplit('.', 1)[-1]})
+                handlers.setdefault((channel, command.rsplit('.', 1)[-1]), []).append({"path": candidate_path, "method": method, "channel": channel, "command": command.rsplit('.', 1)[-1]})
     for cls in java_classes:
         if cls.node_kind != "class":
             continue
@@ -5394,17 +5424,21 @@ def resolve_java_repository_declarations(path: str, source: str, java_classes: l
     exact = {n:f for n,f in repository_fqns.items() if imports.get(n)==f or (jpa_wildcard and n=='JpaRepository')}
     query_exact = imports.get('Query') == 'org.springframework.data.jpa.repository.Query' or jpa_wildcard
     ids=__import__('tmf.ids',fromlist=['stable_java_node_claim_id']); metadata={}; unresolved={}
+    if not exact:
+        return metadata, unresolved
     source_types: dict[str,str] = {}
     source_type_dependencies: dict[str,dict[str,Any]] = {}
     if repo is not None:
-        for candidate in sorted(repo.root.rglob('*.java')):
-            try: text=candidate.read_text(encoding='utf-8')
-            except (OSError,UnicodeError): continue
+        from .java_project import java_repository_snapshot
+        snapshot = java_repository_snapshot(repo)
+        for candidate_path in snapshot.paths:
+            text = snapshot.texts.get(candidate_path)
+            if text is None: continue
             im=_java_explicit_imports(text)
             persistence_wildcard = bool(re.search(r'(?m)^\s*import\s+(?:jakarta|javax)\.persistence\.\*\s*;', text))
             if not (im.get('Entity') in {'jakarta.persistence.Entity','javax.persistence.Entity'} or persistence_wildcard) or not re.search(r'@Entity\b',text): continue
             pkg=_java_package(text)
-            entity_classes = extract_java_classes(str(candidate.relative_to(repo.root)), text)
+            entity_classes = list(snapshot.classes.get(candidate_path, ()))
             for m in re.finditer(r'\b(?:class|record|enum)\s+([A-Za-z_$][\w$]*)\b',text):
                 fqn=f'{pkg}.{m.group(1)}' if pkg else m.group(1)
                 node = next((n for n in entity_classes if n.qualname.rsplit('.',1)[-1] == m.group(1)), None)

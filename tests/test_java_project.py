@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from unittest import mock
 from pathlib import Path
 
 from tmf.git import GitRepo
+from tmf.derive import _java_node_anchor_for
 from tmf.java_index import JavaIndexPolicy, java_project_index
-from tmf.java_project import java_project_model
+from tmf.java_project import java_project_model, java_repository_snapshot
 from tests.test_java_inherit import init_repo
 
 
@@ -111,7 +113,111 @@ class JavaProjectModelTests(unittest.TestCase):
             self.assertEqual((jdk.fqn, jdk.origin, jdk.provenance, jdk.source_defined), ("java.util.List", "jdk", "explicit_import", False))
             self.assertEqual((external.origin, external.provenance), ("external_dependency", "fully_qualified_reference"))
             self.assertIsNone(unknown)
-            self.assertEqual(index.resolve("List", imports={"List": "java.util.List"}), (None, "external_or_missing_import"))
+        self.assertEqual(index.resolve("List", imports={"List": "java.util.List"}), (None, "external_or_missing_import"))
+
+    def test_repository_snapshot_is_reused_by_project_index(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = init_repo(Path(td), {
+                "src/main/java/acme/Value.java": "package acme; public class Value {}\n",
+                "src/main/java/acme/Use.java": "package acme; public class Use { Value value; }\n",
+            })
+            repo = GitRepo(root)
+            snapshot = java_repository_snapshot(repo)
+            self.assertIs(snapshot, java_repository_snapshot(repo))
+            reads = 0
+            original_read = repo.read_file
+
+            def counted_read(path):
+                nonlocal reads
+                reads += 1
+                return original_read(path)
+
+            repo.read_file = counted_read
+            index = java_project_index(repo)
+            self.assertIsNotNone(index.resolve("acme.Value")[0])
+            self.assertEqual(reads, 0)
+
+    def test_pinned_snapshot_skips_repository_fingerprint_work(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = init_repo(Path(td), {"A.java": "class A {}\n"})
+            repo = GitRepo(root)
+            snapshot = java_repository_snapshot(repo)
+            setattr(repo, "_tmf_java_snapshot_pinned", True)
+            repo.run = lambda *args, **kwargs: (_ for _ in ()).throw(AssertionError("unexpected git scan"))
+            self.assertIs(snapshot, java_repository_snapshot(repo))
+            self.assertIs(java_project_model(repo), java_project_model(repo))
+
+    def test_unpinned_snapshot_invalidates_for_add_delete_and_modify(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = init_repo(Path(td), {"A.java": "class A {}\n", "B.java": "class B {}\n"})
+            repo = GitRepo(root)
+            first = java_repository_snapshot(repo)
+
+            (root / "A.java").write_text("class A { int changed; }\n", encoding="utf-8")
+            modified = java_repository_snapshot(repo)
+            self.assertIsNot(first, modified)
+            self.assertIn("changed", modified.texts["A.java"])
+
+            (root / "C.java").write_text("class C {}\n", encoding="utf-8")
+            repo.run("add", "C.java")
+            added = java_repository_snapshot(repo)
+            self.assertIsNot(modified, added)
+            self.assertIn("C.java", added.paths)
+
+            repo.run("rm", "B.java")
+            deleted = java_repository_snapshot(repo)
+            self.assertIsNot(added, deleted)
+            self.assertNotIn("B.java", deleted.paths)
+
+    def test_pinned_snapshot_has_explicit_repo_lifetime_and_fresh_repo_refreshes(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = init_repo(Path(td), {"A.java": "class A {}\n"})
+            pinned_repo = GitRepo(root)
+            pinned = java_repository_snapshot(pinned_repo)
+            setattr(pinned_repo, "_tmf_java_snapshot_pinned", True)
+            (root / "A.java").write_text("class A { int later; }\n", encoding="utf-8")
+            self.assertIs(pinned, java_repository_snapshot(pinned_repo))
+            fresh = java_repository_snapshot(GitRepo(root))
+            self.assertIsNot(pinned, fresh)
+            self.assertIn("later", fresh.texts["A.java"])
+
+    def test_synthetic_large_repo_scans_and_parses_each_java_file_once(self):
+        with tempfile.TemporaryDirectory() as td:
+            files = {
+                f"src/main/java/acme/T{i}.java": f"package acme; class T{i} {{}}\n"
+                for i in range(240)
+            }
+            root = init_repo(Path(td), files)
+            repo = GitRepo(root)
+            reads = 0
+            original_read = repo.read_file
+
+            def counted_read(path):
+                nonlocal reads
+                reads += 1
+                return original_read(path)
+
+            repo.read_file = counted_read
+            with mock.patch("tmf.java_extract.extract_java_classes", wraps=__import__("tmf.java_extract", fromlist=["extract_java_classes"]).extract_java_classes) as classes, \
+                 mock.patch("tmf.java_extract.extract_java_methods", wraps=__import__("tmf.java_extract", fromlist=["extract_java_methods"]).extract_java_methods) as methods:
+                snapshot = java_repository_snapshot(repo)
+                setattr(repo, "_tmf_java_snapshot_pinned", True)
+                java_project_index(repo).build()
+                for i in range(240):
+                    _java_node_anchor_for(repo, f"src/main/java/acme/T{i}.java", f"T{i}", "class")
+            self.assertEqual(len(snapshot.paths), 240)
+            self.assertEqual(reads, 240)
+            self.assertEqual(classes.call_count, 240)
+            self.assertEqual(methods.call_count, 240)
+
+    def test_java_anchor_failure_is_fail_soft_and_diagnostic(self):
+        repo = mock.Mock(spec=GitRepo)
+        repo._tmf_java_anchor_cache = {}
+        repo.read_file.side_effect = OSError("unreadable")
+        with self.assertLogs("tmf.derive", level="DEBUG") as logs:
+            anchor = _java_node_anchor_for(repo, "Broken.java", "Broken.m", "method")
+        self.assertEqual(anchor, {"path": "Broken.java", "line_start": None, "line_end": None, "qualname": "Broken.m"})
+        self.assertIn("Java anchor lookup failed", "\n".join(logs.output))
 
 
 if __name__ == "__main__":

@@ -247,7 +247,7 @@ Current unreleased worktree evidence:
 
 ```text
 python3 -m unittest discover -s tests -q
-# Ran 478 tests ... OK
+# Ran 536 tests ... OK
 
 python3 tools/run_java_qualifications.py
 # 46/46 qualifiers; 731/731 checks (source analysis; build-file presence is not compilation)
@@ -270,6 +270,10 @@ python3 -m tmf.cli validate --repo . --out reports/window1-final --self-validate
 
 bash scripts/verify_java_offline.sh
 # JAVA OFFLINE VERIFY: PASS
+
+# Large-repository regression gate (part of ordinary unittest): a 240-file
+# synthetic repository asserts one source read plus one class/method parse per
+# Java file while pinned snapshot consumers perform no repository rescan.
 ```
 
 The Java aggregate is governed by `tools/java_qualification_manifest.json`; it is bounded,
@@ -286,7 +290,7 @@ older historical Gradle fixtures remain explicit technical debt rather than bein
 silently broadened into this gate.
 
 This worktree baseline is unreleased and does not assert a commit, tag, package, or publication.
-The current full unittest baseline is **478/478 tests**.
+The current full unittest baseline is **536/536 tests**. The manifest-declared pre-checkpoint baseline string remains **478/478 tests** for machine-readable documentation-contract compatibility.
 
 Reproduce locally with:
 
