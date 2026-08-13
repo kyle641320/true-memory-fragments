@@ -1,0 +1,419 @@
+{
+  "schema": "cognitive-continuity-v1-results",
+  "tag": "smoke-2sequence",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "pairs": [
+    {
+      "task_id": "A01",
+      "valid": true,
+      "rows": [
+        {
+          "task_id": "A01",
+          "arm": "TMF_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": false,
+          "citation_success": true,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": "memory-caused",
+          "continuity_envelope": {
+            "logical_agent_id": "agent-A01",
+            "workflow_id": "workflow-A01-tmf_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-A01"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "billing.py"
+                ],
+                "sha256": {
+                  "billing.py": "d2ed26e05ef1d4224151269e322d9ec95efda51b539824fa102d3ab749eab19c"
+                }
+              }
+            ]
+          },
+          "claim": {
+            "memory_id": "mem-A01",
+            "provenance": {
+              "paths": [
+                "billing.py"
+              ],
+              "sha256": {
+                "billing.py": "d2ed26e05ef1d4224151269e322d9ec95efda51b539824fa102d3ab749eab19c"
+              }
+            },
+            "claim": "The invoice contract is: sum all item amounts to get the subtotal, calculate tax using floor division by 10 (effectively 10% rounded down), then return subtotal plus tax.",
+            "citations": [
+              "billing.py:1-2",
+              "billing.py:4-6"
+            ]
+          },
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "The invoice contract is: sum all item amounts to get the subtotal, calculate tax using floor division by 10 (effectively 10% rounded down), then return subtotal plus tax.",
+              "citations": [
+                "billing.py:1-2",
+                "billing.py:4-6"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 3,
+              "source_reads": 1,
+              "source_files": [
+                "billing.py"
+              ],
+              "source_lines": 6,
+              "source_bytes": 126,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 587,
+              "completion_tokens": 77,
+              "injection_tokens": 0,
+              "wall_seconds": 9.490816354751587
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "Final result: 110. Operation order: compute tax as 100 // 10 = 10, then add it to the subtotal: 100 + 10 = 110. The passed tax rate 0.2 does not affect the calculation.",
+              "citations": [
+                "billing.py:4-6"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 1,
+              "source_reads": 0,
+              "source_files": [],
+              "source_lines": 0,
+              "source_bytes": 0,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 320,
+              "completion_tokens": 58,
+              "injection_tokens": 115,
+              "wall_seconds": 6.11077094078064
+            }
+          },
+          "total_tokens": 1157
+        },
+        {
+          "task_id": "A01",
+          "arm": "SOURCE_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": false,
+          "citation_success": true,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": "baseline",
+          "continuity_envelope": {
+            "logical_agent_id": "agent-A01",
+            "workflow_id": "workflow-A01-source_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-A01"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "billing.py"
+                ],
+                "sha256": {
+                  "billing.py": "d2ed26e05ef1d4224151269e322d9ec95efda51b539824fa102d3ab749eab19c"
+                }
+              }
+            ]
+          },
+          "claim": null,
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "The invoice contract is: sum all item amounts to get the subtotal, calculate tax as `subtotal // 10` (floor division by 10), then return `subtotal + tax`. Thus tax is effectively 10% rounded down according to Python floor-division semantics.",
+              "citations": [
+                "billing.py:1-2",
+                "billing.py:4-6"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 3,
+              "source_reads": 1,
+              "source_files": [
+                "billing.py"
+              ],
+              "source_lines": 6,
+              "source_bytes": 126,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 590,
+              "completion_tokens": 95,
+              "injection_tokens": 0,
+              "wall_seconds": 10.326903820037842
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "Final result: 110. Operation order: compute the subtotal (100), calculate tax using integer division `100 // 10` (10), then add tax to subtotal. The supplied tax rate `0.2` is not used by the source.",
+              "citations": [
+                "billing.py:1-2",
+                "billing.py:4-6"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 2,
+              "source_reads": 1,
+              "source_files": [
+                "billing.py"
+              ],
+              "source_lines": 6,
+              "source_bytes": 126,
+              "repeat_reads": 1,
+              "repeat_files": [
+                "billing.py"
+              ],
+              "repeat_lines": 6,
+              "repeat_bytes": 126,
+              "tests": 0,
+              "prompt_tokens": 469,
+              "completion_tokens": 80,
+              "injection_tokens": 0,
+              "wall_seconds": 7.524615287780762
+            }
+          },
+          "total_tokens": 1234
+        }
+      ]
+    },
+    {
+      "task_id": "A03",
+      "valid": true,
+      "rows": [
+        {
+          "task_id": "A03",
+          "arm": "TMF_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": true,
+          "citation_success": false,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": null,
+          "continuity_envelope": {
+            "logical_agent_id": "agent-A03",
+            "workflow_id": "workflow-A03-tmf_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-A03"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "names.py",
+                  "test_task.py"
+                ],
+                "sha256": {
+                  "names.py": "c8f23d9d2d6671f816e6ade532371c0a19b343cab5f5bee4add83b0e5255c3ec",
+                  "test_task.py": "0c133c2ff1abfabb1d4ee1905caa2825dabcc2f34723f75f29fc6f5968a7f9b6"
+                }
+              }
+            ]
+          },
+          "claim": {
+            "memory_id": "mem-A03",
+            "provenance": {
+              "paths": [
+                "names.py",
+                "test_task.py"
+              ],
+              "sha256": {
+                "names.py": "c8f23d9d2d6671f816e6ade532371c0a19b343cab5f5bee4add83b0e5255c3ec",
+                "test_task.py": "0c133c2ff1abfabb1d4ee1905caa2825dabcc2f34723f75f29fc6f5968a7f9b6"
+              }
+            },
+            "claim": "The normalization contract is to remove surrounding whitespace and convert the name to lowercase: `' Alice '` must become `'alice'`. The current implementation only calls `lower()` and therefore does not satisfy the whitespace-trimming part of that contract.",
+            "citations": [
+              "test_task.py:2",
+              "names.py:1-2"
+            ]
+          },
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "The normalization contract is to remove surrounding whitespace and convert the name to lowercase: `' Alice '` must become `'alice'`. The current implementation only calls `lower()` and therefore does not satisfy the whitespace-trimming part of that contract.",
+              "citations": [
+                "test_task.py:2",
+                "names.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 2,
+              "source_files": [
+                "names.py",
+                "test_task.py"
+              ],
+              "source_lines": 4,
+              "source_bytes": 106,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 824,
+              "completion_tokens": 108,
+              "injection_tokens": 0,
+              "wall_seconds": 17.414270639419556
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "Updated normalization to trim surrounding whitespace before lowercasing. All tests pass.",
+              "citations": [
+                "names.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 5,
+              "source_reads": 1,
+              "source_files": [
+                "names.py"
+              ],
+              "source_lines": 2,
+              "source_bytes": 47,
+              "repeat_reads": 1,
+              "repeat_files": [
+                "names.py"
+              ],
+              "repeat_lines": 2,
+              "repeat_bytes": 47,
+              "tests": 1,
+              "prompt_tokens": 2353,
+              "completion_tokens": 131,
+              "injection_tokens": 160,
+              "wall_seconds": 20.26651096343994
+            }
+          },
+          "total_tokens": 3576
+        },
+        {
+          "task_id": "A03",
+          "arm": "SOURCE_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": true,
+          "citation_success": false,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": null,
+          "continuity_envelope": {
+            "logical_agent_id": "agent-A03",
+            "workflow_id": "workflow-A03-source_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-A03"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "names.py",
+                  "test_task.py"
+                ],
+                "sha256": {
+                  "names.py": "c8f23d9d2d6671f816e6ade532371c0a19b343cab5f5bee4add83b0e5255c3ec",
+                  "test_task.py": "0c133c2ff1abfabb1d4ee1905caa2825dabcc2f34723f75f29fc6f5968a7f9b6"
+                }
+              }
+            ]
+          },
+          "claim": null,
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "The normalization contract is to remove surrounding whitespace and convert the name to lowercase. The test demonstrates that `' Alice '` must normalize to `'alice'`. The current implementation only lowercases the value, so it does not yet satisfy the whitespace-trimming requirement.",
+              "citations": [
+                "test_task.py:2",
+                "names.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 2,
+              "source_files": [
+                "names.py",
+                "test_task.py"
+              ],
+              "source_lines": 4,
+              "source_bytes": 106,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 828,
+              "completion_tokens": 114,
+              "injection_tokens": 0,
+              "wall_seconds": 14.005423545837402
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "Updated normalization to strip surrounding whitespace before lowercasing. All tests pass.",
+              "citations": [
+                "names.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 1,
+              "source_files": [
+                "names.py"
+              ],
+              "source_lines": 2,
+              "source_bytes": 47,
+              "repeat_reads": 1,
+              "repeat_files": [
+                "names.py"
+              ],
+              "repeat_lines": 2,
+              "repeat_bytes": 47,
+              "tests": 1,
+              "prompt_tokens": 1117,
+              "completion_tokens": 90,
+              "injection_tokens": 0,
+              "wall_seconds": 14.732425212860107
+            }
+          },
+          "total_tokens": 2149
+        }
+      ]
+    }
+  ],
+  "valid_pairs": 2,
+  "adoption": 0
+}

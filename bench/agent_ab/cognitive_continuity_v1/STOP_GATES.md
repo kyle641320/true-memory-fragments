@@ -1,0 +1,2 @@
+# Frozen stop and product gates
+Run A01+A03 smoke first. Stop without prompt/mechanism tuning unless both pairs are valid and machine adoption >=1. Full run requires 8+ sequences. Product pass requires fresh TMF success >= SOURCE, stable adoption and directional reduction in repeated source reading and total token cost; semantic stale errors=0 and semantic success not lower. Semantic expects localized reread, not avoidance. Hash mismatch is fatal.

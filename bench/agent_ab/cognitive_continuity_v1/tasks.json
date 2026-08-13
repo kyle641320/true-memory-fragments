@@ -1,0 +1,92 @@
+[
+  {
+    "id": "A01",
+    "language": "python",
+    "kind": "understanding",
+    "scenario": "fresh",
+    "entry": "billing.py",
+    "phase_a_prompt": "Inspect the repository and explain the invoice calculation contract. Cite the source you read.",
+    "phase_b_prompt": "A caller passes subtotal 100 and tax rate 0.2. State the final result and the operation order, with source citation."
+  },
+  {
+    "id": "A02",
+    "language": "java",
+    "kind": "understanding",
+    "scenario": "fresh",
+    "entry": "RetryPolicy.java",
+    "phase_a_prompt": "Inspect the repository and explain the retry policy contract. Cite the source you read.",
+    "phase_b_prompt": "For attempt 3, state the retry delay and why, with source citation."
+  },
+  {
+    "id": "A03",
+    "language": "python",
+    "kind": "local_edit",
+    "scenario": "fresh",
+    "entry": "names.py",
+    "phase_a_prompt": "Inspect the repository and explain the name normalization contract. Cite the source you read.",
+    "phase_b_prompt": "Change normalization so surrounding whitespace is removed before lowercasing. Edit source and run tests."
+  },
+  {
+    "id": "A04",
+    "language": "java",
+    "kind": "local_edit",
+    "scenario": "semantic",
+    "entry": "Limiter.java",
+    "phase_a_prompt": "Inspect the repository and explain the limiter clamp contract. Cite the source you read.",
+    "phase_b_prompt": "Change clamp so its maximum is 80, not the current value. Edit source and run tests."
+  },
+  {
+    "id": "A05",
+    "language": "python",
+    "kind": "cross_file_trace",
+    "scenario": "fresh",
+    "entry": "checkout.py",
+    "phase_a_prompt": "Inspect the repository and trace checkout pricing. Cite the source you read.",
+    "phase_b_prompt": "State which function a checkout caller reaches to apply the discount and cite the call path."
+  },
+  {
+    "id": "A06",
+    "language": "java",
+    "kind": "cross_file_trace",
+    "scenario": "semantic",
+    "entry": "Gateway.java",
+    "phase_a_prompt": "Inspect the repository and trace gateway encoding. Cite the source you read.",
+    "phase_b_prompt": "State the downstream function reached by Gateway.send and what transformation it applies, with citations."
+  },
+  {
+    "id": "A07",
+    "language": "python",
+    "kind": "test_fix",
+    "scenario": "fresh",
+    "entry": "counter.py",
+    "phase_a_prompt": "Inspect the repository and explain counter increment behavior. Cite the source you read.",
+    "phase_b_prompt": "Fix the implementation so tests pass. Edit source and run tests."
+  },
+  {
+    "id": "A08",
+    "language": "java",
+    "kind": "test_fix",
+    "scenario": "semantic",
+    "entry": "Parity.java",
+    "phase_a_prompt": "Inspect the repository and explain parity acceptance behavior. Cite the source you read.",
+    "phase_b_prompt": "Fix the implementation so tests pass. Edit source and run tests."
+  },
+  {
+    "id": "A09",
+    "language": "python",
+    "kind": "understanding",
+    "scenario": "unknown",
+    "entry": "known.py",
+    "phase_a_prompt": "Inspect the repository and inventory the public functions in the small Python module. Cite source.",
+    "phase_b_prompt": "Determine whether a moon_phase function exists, with citation to the inspected module."
+  },
+  {
+    "id": "A10",
+    "language": "java",
+    "kind": "understanding",
+    "scenario": "unrelated",
+    "entry": "Scale.java",
+    "phase_a_prompt": "Inspect the repository and explain the unrelated Java helper. Cite source.",
+    "phase_b_prompt": "Explain how the scaling helper computes its return value, with citation."
+  }
+]

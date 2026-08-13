@@ -1,0 +1,19 @@
+{
+  "schema": "cognitive-continuity-v1-audit",
+  "decision": "STOP",
+  "valid_pairs": 2,
+  "adoption": 0,
+  "source_success": 1,
+  "tmf_success": 1,
+  "source_repeat_bytes": 173,
+  "tmf_repeat_bytes": 47,
+  "source_total_tokens": 3383,
+  "tmf_total_tokens": 4733,
+  "semantic_pairs": 0,
+  "semantic_stale_errors": 0,
+  "reason": "Frozen smoke adoption gate required >=1; observed 0. Full run prohibited.",
+  "notes": [
+    "A01 TMF avoided 126 repeat bytes and produced the same substantive answer as SOURCE, but the frozen machine golden expected token was mismatched, so both arms scored failure and adoption remained false. Results were not regraded.",
+    "A03 both arms reread 47 bytes and passed tests; TMF had no adoption."
+  ]
+}
