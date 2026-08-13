@@ -1,0 +1,90 @@
+{
+  "schema": "path-injection-v1",
+  "seed": 20260813,
+  "model": {
+    "id": "gpt-5.6-sol",
+    "timeout_seconds": 120
+  },
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_TOOL",
+    "TMF_INJECT_ONLY"
+  ],
+  "phases": [
+    "first_visit",
+    "fresh_revisit",
+    "unknown_region",
+    "semantic_mutation",
+    "unrelated_mutation"
+  ],
+  "budget": {
+    "max_agent_calls": 4,
+    "max_source_lines": 30,
+    "max_source_bytes": 2000,
+    "injection_top_k": 3,
+    "injection_max_tokens": 1200,
+    "format_repairs": 1
+  },
+  "sequences": [
+    {
+      "id": "P21",
+      "identity": "lab.QuotaRule#limit(int)",
+      "symbol": "QuotaRule.limit",
+      "region_path": "lab/QuotaRule.java",
+      "unknown_identity": "lab.LegacyToggle#enabled()",
+      "unknown_symbol": "LegacyToggle.enabled",
+      "unknown_path": "lab/LegacyToggle.java",
+      "input": 37,
+      "base_value": 19,
+      "mutated_value": 29,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does QuotaRule.limit return when input is 37?",
+        "fresh_revisit": "On an unchanged revisit, what integer does QuotaRule.limit return for 37?",
+        "unknown_region": "Does LegacyToggle declare a zero-argument method named enabled?",
+        "semantic_mutation": "After the working-tree change, what integer does QuotaRule.limit return for 37?",
+        "unrelated_mutation": "After an unrelated working-tree change, what integer does QuotaRule.limit return for 37?"
+      }
+    },
+    {
+      "id": "P22",
+      "identity": "lab.ShardPlan#width(int)",
+      "symbol": "ShardPlan.width",
+      "region_path": "lab/ShardPlan.java",
+      "unknown_identity": "lab.ColdArchive#active()",
+      "unknown_symbol": "ColdArchive.active",
+      "unknown_path": "lab/ColdArchive.java",
+      "input": 6,
+      "base_value": 48,
+      "mutated_value": 72,
+      "unknown_exists": false,
+      "tasks": {
+        "first_visit": "What integer does ShardPlan.width return when input is 6?",
+        "fresh_revisit": "On an unchanged revisit, what integer does ShardPlan.width return for 6?",
+        "unknown_region": "Does ColdArchive declare a zero-argument method named active?",
+        "semantic_mutation": "After the working-tree change, what integer does ShardPlan.width return for 6?",
+        "unrelated_mutation": "After an unrelated working-tree change, what integer does ShardPlan.width return for 6?"
+      }
+    },
+    {
+      "id": "P23",
+      "identity": "lab.FarePolicy#discount(int)",
+      "symbol": "FarePolicy.discount",
+      "region_path": "lab/FarePolicy.java",
+      "unknown_identity": "lab.RetiredOffer#open()",
+      "unknown_symbol": "RetiredOffer.open",
+      "unknown_path": "lab/RetiredOffer.java",
+      "input": 9,
+      "base_value": 14,
+      "mutated_value": 8,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does FarePolicy.discount return when input is 9?",
+        "fresh_revisit": "On an unchanged revisit, what integer does FarePolicy.discount return for 9?",
+        "unknown_region": "Does RetiredOffer declare a zero-argument method named open?",
+        "semantic_mutation": "After the working-tree change, what integer does FarePolicy.discount return for 9?",
+        "unrelated_mutation": "After an unrelated working-tree change, what integer does FarePolicy.discount return for 9?"
+      }
+    }
+  ]
+}

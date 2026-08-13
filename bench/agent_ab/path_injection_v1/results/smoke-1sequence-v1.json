@@ -1,0 +1,1485 @@
+{
+  "mode": "smoke",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "TMF_INJECT_ONLY",
+      "arm_order": [
+        "TMF_INJECT_ONLY",
+        "TMF_TOOL",
+        "SOURCE_ONLY"
+      ],
+      "memory_store": {
+        "lab.QuotaRule#limit(int)": {
+          "claim": "QuotaRule.limit returns integer 19 for input 37",
+          "freshness": "fresh",
+          "identity": "lab.QuotaRule#limit(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "lab/QuotaRule.java",
+          "provenance": {
+            "file_sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "kind": "first_visit_source_read",
+            "trace_event": "e2"
+          },
+          "source_authoritative": true
+        }
+      },
+      "sequence": "P21",
+      "sessions": [
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 89,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 8.137718584388494,
+          "phase": "first_visit",
+          "prompt_tokens": 604,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 84,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": true,
+          "injection_fired": true,
+          "injection_hit": true,
+          "injection_stale_pointer": false,
+          "injection_tokens": 105,
+          "issues": [],
+          "latency_seconds": 7.070858638733625,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 872,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": {
+                "items": [
+                  {
+                    "claim": "QuotaRule.limit returns integer 19 for input 37",
+                    "freshness": "fresh",
+                    "identity": "lab.QuotaRule#limit(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "lab/QuotaRule.java",
+                    "provenance": {
+                      "file_sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+                      "kind": "first_visit_source_read",
+                      "trace_event": "e2"
+                    },
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_PREAMBLE"
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 3,
+                "path": "lab/LegacyToggle.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 83,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": true,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 10,
+          "issues": [],
+          "latency_seconds": 7.840075887739658,
+          "phase": "unknown_region",
+          "prompt_tokens": 630,
+          "source_bytes": 122,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "LegacyToggle"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/LegacyToggle.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": {
+                "items": [],
+                "kind": "TMF_MEMORY_MISS"
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 3,
+                    "path": "lab/LegacyToggle.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/LegacyToggle.java",
+            "sha256": "5a191afb974c71b7524b1278a6e7db616e35822cb7edfdd0d05c71dac314a0ed",
+            "symbol": "lab.LegacyToggle#enabled()",
+            "target": "lab/LegacyToggle.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 29,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 129,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": true,
+          "injection_hit": false,
+          "injection_stale_pointer": true,
+          "injection_tokens": 59,
+          "issues": [],
+          "latency_seconds": 17.38271951302886,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 1173,
+          "source_bytes": 194,
+          "source_files": 2,
+          "source_lines": 12,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": {
+                "items": [
+                  {
+                    "claim": null,
+                    "freshness": "stale",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "lab/QuotaRule.java",
+                    "pointer": "Source changed; reread this localized region.",
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_POINTER"
+              },
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 2
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 29,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 3
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "c6e11a17cf08d230a775e5e4fa62b8e4bf9a71b2e939e81048b9e51af9a4d95e",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 84,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": true,
+          "injection_fired": true,
+          "injection_hit": true,
+          "injection_stale_pointer": false,
+          "injection_tokens": 105,
+          "issues": [],
+          "latency_seconds": 7.833205370232463,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 878,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": {
+                "items": [
+                  {
+                    "claim": "QuotaRule.limit returns integer 19 for input 37",
+                    "freshness": "fresh",
+                    "identity": "lab.QuotaRule#limit(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "lab/QuotaRule.java",
+                    "provenance": {
+                      "file_sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+                      "kind": "first_visit_source_read",
+                      "trace_event": "e2"
+                    },
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "TMF_MEMORY_PREAMBLE"
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_TOOL",
+      "arm_order": [
+        "TMF_INJECT_ONLY",
+        "TMF_TOOL",
+        "SOURCE_ONLY"
+      ],
+      "memory_store": {
+        "lab.QuotaRule#limit(int)": {
+          "claim": "QuotaRule.limit returns integer 19 for input 37",
+          "freshness": "fresh",
+          "identity": "lab.QuotaRule#limit(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "lab/QuotaRule.java",
+          "provenance": {
+            "file_sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "kind": "first_visit_source_read",
+            "trace_event": "e2"
+          },
+          "source_authoritative": true
+        }
+      },
+      "sequence": "P21",
+      "sessions": [
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 90,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 10.738692469894886,
+          "phase": "first_visit",
+          "prompt_tokens": 619,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 91,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 10.45289202593267,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 636,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit 37 unchanged revisit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 3,
+                "path": "lab/LegacyToggle.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 83,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.947762092575431,
+          "phase": "unknown_region",
+          "prompt_tokens": 611,
+          "source_bytes": 122,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "LegacyToggle"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/LegacyToggle.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 3,
+                    "path": "lab/LegacyToggle.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/LegacyToggle.java",
+            "sha256": "5a191afb974c71b7524b1278a6e7db616e35822cb7edfdd0d05c71dac314a0ed",
+            "symbol": "lab.LegacyToggle#enabled()",
+            "target": "lab/LegacyToggle.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 29,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 181,
+          "correct": true,
+          "format_repair_used": true,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 12.36021513864398,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 1326,
+          "source_bytes": 194,
+          "source_files": 2,
+          "source_lines": 12,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 1,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "tmf_lookup",
+                "identity_or_path": "lab/QuotaRule.java"
+              },
+              "step": 2
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 3
+            },
+            {
+              "format_repair": true,
+              "model_action": {
+                "answer": 29,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              }
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "c6e11a17cf08d230a775e5e4fa62b8e4bf9a71b2e939e81048b9e51af9a4d95e",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 115,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 7.953805817291141,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 632,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish",
+                "tmf_lookup"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "arm_order": [
+        "TMF_INJECT_ONLY",
+        "TMF_TOOL",
+        "SOURCE_ONLY"
+      ],
+      "memory_store": {
+        "lab.QuotaRule#limit(int)": {
+          "claim": "QuotaRule.limit returns integer 19 for input 37",
+          "freshness": "fresh",
+          "identity": "lab.QuotaRule#limit(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "lab/QuotaRule.java",
+          "provenance": {
+            "file_sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "kind": "first_visit_source_read",
+            "trace_event": "e2"
+          },
+          "source_authoritative": true
+        }
+      },
+      "sequence": "P21",
+      "sessions": [
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 88,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 7.353556826710701,
+          "phase": "first_visit",
+          "prompt_tokens": 604,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 87,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 12.72889006882906,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 613,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 3,
+                "path": "lab/LegacyToggle.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 83,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.504011373966932,
+          "phase": "unknown_region",
+          "prompt_tokens": 596,
+          "source_bytes": 122,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "LegacyToggle"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/LegacyToggle.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 3,
+                    "path": "lab/LegacyToggle.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/LegacyToggle.java",
+            "sha256": "5a191afb974c71b7524b1278a6e7db616e35822cb7edfdd0d05c71dac314a0ed",
+            "symbol": "lab.LegacyToggle#enabled()",
+            "target": "lab/LegacyToggle.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 29,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 90,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.451610717922449,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 623,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 29,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "c6e11a17cf08d230a775e5e4fa62b8e4bf9a71b2e939e81048b9e51af9a4d95e",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": 19,
+            "citations": [
+              {
+                "line": 4,
+                "path": "lab/QuotaRule.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "completion_tokens": 89,
+          "correct": true,
+          "format_repair_used": false,
+          "injection_adoption": false,
+          "injection_fired": false,
+          "injection_hit": false,
+          "injection_stale_pointer": false,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 8.871098758652806,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 619,
+          "source_bytes": 97,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_trust_error": false,
+          "tmf_adoption": false,
+          "tmf_calls": 0,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "search",
+                "query": "QuotaRule.limit"
+              },
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "read",
+                "path": "lab/QuotaRule.java"
+              },
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "injection": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 19,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "lab/QuotaRule.java"
+                  }
+                ]
+              },
+              "step": 2
+            }
+          ],
+          "trigger_provenance": {
+            "event": "e2",
+            "origin": "agent_tool_trace",
+            "path": "lab/QuotaRule.java",
+            "sha256": "6bdf76e2d9860495f25dec9bd336f974a455adaa1eb28a0d1fafe90b49a4c026",
+            "symbol": "lab.QuotaRule#limit(int)",
+            "target": "lab/QuotaRule.java"
+          },
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "path-injection-v1-run"
+}
