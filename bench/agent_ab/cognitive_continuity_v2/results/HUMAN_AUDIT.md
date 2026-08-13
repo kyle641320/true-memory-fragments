@@ -1,0 +1,3 @@
+# Human audit — cognitive_continuity_v2
+
+Decision: **INCOMPLETE — runtime blocked; no product ruling.** Preflight and frozen verification pass. The authoritative derive/Store path produced task-coverage claims for B01 and B05 (2/10 preflight tasks); misses were retained rather than filled with model answers. Smoke attempts did not produce a complete pair because the external broker rejected requests (exit 4), including a repeat attempt. Therefore valid pairs=0, adoption=0 observed but unmeasured, and repeat-reading, correctness/tests, semantic safety, and cost are unavailable. Full execution was not allowed.

@@ -10,13 +10,14 @@
 | Retrieval E2E v1 | smoke stopped on retrieval relevance/value gates | Negative within that lexical retrieval protocol; not a universal memory ruling. |
 | `middleware_hardening_v1` | mechanism hard gates **5/5 pass** | Exact-target/freshness injection, stale blocking and localized reread mechanics work on those fixtures. It does **not** prove Agent adoption or task value. |
 | `agent_middleware_value_v1` cold-start Agent smoke | **2/2 valid pairs**, SOURCE 2/2 success, TMF 2/2 success, TMF adoption **0/2** | A new stateless Agent did not adopt injected notes on its first encounter. **Scope limit:** it never performed the first visit, so this cannot negate repeat/revisit value for one cognitive subject. Result is preserved and not regraded. |
-| `cognitive_continuity_v1` second-read smoke | **2/2 valid pairs**, adoption **0/2** under frozen machine scoring; STOP | Explicit logical-agent/workflow continuity was tested across stateless calls. One understanding arm avoided 126 repeated bytes but both arms failed a defective frozen golden; the edit pair reread and passed. The preregistered adoption gate failed, so no full or semantic run occurred and no value claim is allowed. |
+| `cognitive_continuity_v1` | **INVALID_PROTOCOL**; 0/2 has no evidentiary force | Fixture/task/golden contradiction and non-TMF model-authored memory contamination. Preserve, never regrade or attribute to product. |
+| `cognitive_continuity_v2` prospective rerun | Preflight PASS; model smoke **incomplete (broker runtime rejection)** | New oracle-validated held-out fixtures and real Store-derived claims are frozen. No adoption/product conclusion yet. |
 
 ### Product decision
 
 **Do not recommend TMF_MIDDLEWARE for production on an Agent-value, speed, token, or reread-reduction claim.** It may be used only as an experimental safety/navigation mechanism where users explicitly accept unproven outcome value and count injection cost. Continue to recommend source-authoritative fallback and the hard freshness/stale gate as a qualified mechanism, not as a productivity win.
 
-Evidence level is **mechanism-qualified / Agent-outcome-unproven**. Both real smokes were descriptive (N=2 each), not statistically significant. The continuity v1 smoke also stopped before semantic coverage. Stable adoption, Python/Java breadth, semantic outcome, and net economic value remain unproved.
+Evidence level is **mechanism-qualified / Agent-outcome-unproven**. The cold-start smoke is descriptive (N=2). Cognitive v1 is invalid and excluded; v2 has no completed smoke because the broker rejected requests. Stable adoption, Python/Java breadth, semantic outcome, and net economic value remain unproved.
 
 
 ## Which experiment answers which question
@@ -26,7 +27,7 @@ Evidence level is **mechanism-qualified / Agent-outcome-unproven**. Both real sm
 | Tool-mode | Will an Agent proactively call TMF retrieval? | Forced delivery or revisit continuity |
 | Cold-start injection (`agent_middleware_value_v1`) | Will a stranger stateless Agent use supplied memory on its first source encounter? | Value on a second visit by the same cognitive subject |
 | Mechanism (`middleware_hardening_v1`) | Are exact-target freshness, stale blocking, and localized reread gates mechanically sound? | Agent adoption/productivity |
-| Cognitive continuity (`cognitive_continuity_v1`) | Can an explicit persistent cognitive layer carry source-bound knowledge from phase A into a different phase-B task across stateless model calls? | Hidden-state continuity or, after its smoke stop, broad/semantic/product value |
+| Cognitive continuity (`cognitive_continuity_v2`) | Can an explicit persistent cognitive layer carry source-bound knowledge from phase A into a different phase-B task across stateless model calls? | Hidden-state continuity or, after its smoke stop, broad/semantic/product value |
 
 A cognitive subject here is the audited `logical_agent_id` + `workflow_id` and minimal envelope (completion flag, memory IDs, provenance), **not** language-model hidden state or transcript replay. SOURCE receives the same envelope without claims.
 
@@ -43,7 +44,8 @@ Aggregate: source bytes 173/173, tool calls 8/8, estimated prompt tokens 1406/18
 
 ## Experiment index and non-mixing rule
 
-- Cognitive second-read value: [`cognitive_continuity_v1`](../bench/agent_ab/cognitive_continuity_v1/) — frozen protocol/hashes, machine JSON, paired CSV, and human audit; stopped at smoke.
+- Cognitive second-read v2: [`cognitive_continuity_v2`](../bench/agent_ab/cognitive_continuity_v2/) — prospective oracle/preflight and Store-only protocol; run incomplete.
+- Cognitive v1: [`cognitive_continuity_v1`](../bench/agent_ab/cognitive_continuity_v1/) — **INVALID_PROTOCOL**, historical artifacts only.
 - Cold-start forced-middleware value: [`agent_middleware_value_v1`](../bench/agent_ab/agent_middleware_value_v1/) — preserved 0/2 scope-limited result.
 - Mechanism only: [`middleware_hardening_v1`](../bench/agent_ab/middleware_hardening_v1/).
 - Retrieval E2E: [`retrieval_e2e_v1`](../bench/agent_ab/retrieval_e2e_v1/).

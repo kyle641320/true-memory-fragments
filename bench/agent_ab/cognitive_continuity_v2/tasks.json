@@ -1,0 +1,194 @@
+[
+  {
+    "id": "B01",
+    "language": "python",
+    "kind": "understanding",
+    "scenario": "fresh",
+    "entry": "flow.py",
+    "phase_a": "Map the dispatch call path.",
+    "phase_b": "What exact output does dispatch(\"  OK  \") return?",
+    "oracle": [
+      "python3",
+      "oracle.py"
+    ],
+    "golden": "OK",
+    "coverage": {
+      "edge_kind": "calls",
+      "callee_qualname": "sanitize"
+    }
+  },
+  {
+    "id": "B02",
+    "language": "java",
+    "kind": "understanding",
+    "scenario": "fresh",
+    "entry": "Labeler.java",
+    "phase_a": "Inspect label behavior.",
+    "phase_b": "What is label(\"az\")?",
+    "oracle": [
+      "sh",
+      "-c",
+      "javac *.java && java Main"
+    ],
+    "golden": "AZ",
+    "coverage": {
+      "qualname": "label"
+    }
+  },
+  {
+    "id": "B03",
+    "language": "python",
+    "kind": "local_edit",
+    "scenario": "fresh",
+    "entry": "slug.py",
+    "phase_a": "Inspect slug interface.",
+    "phase_b": "Make tests pass.",
+    "test": [
+      "python3",
+      "test_task.py"
+    ],
+    "patch": {
+      "old": "return s.lower()",
+      "new": "return s.strip().lower().replace(\" \", \"-\")"
+    }
+  },
+  {
+    "id": "B04",
+    "language": "java",
+    "kind": "local_edit",
+    "scenario": "semantic",
+    "entry": "Clamp.java",
+    "phase_a": "Inspect clamp interface.",
+    "phase_b": "Make tests pass.",
+    "test": [
+      "sh",
+      "-c",
+      "javac *.java && java TaskTest"
+    ],
+    "patch": {
+      "old": "Math.min(n, 90)",
+      "new": "Math.min(n, 75)"
+    },
+    "mutation": {
+      "old": "75",
+      "new": "85"
+    }
+  },
+  {
+    "id": "B05",
+    "language": "python",
+    "kind": "cross_file",
+    "scenario": "fresh",
+    "entry": "price.py",
+    "phase_a": "Trace total dependencies.",
+    "phase_b": "What result does total(50) return?",
+    "oracle": [
+      "python3",
+      "oracle.py"
+    ],
+    "golden": "60",
+    "coverage": {
+      "edge_kind": "calls",
+      "callee_qualname": "fee"
+    }
+  },
+  {
+    "id": "B06",
+    "language": "java",
+    "kind": "cross_file",
+    "scenario": "semantic",
+    "entry": "Router.java",
+    "phase_a": "Trace route dependencies.",
+    "phase_b": "What does route(\"x\") return?",
+    "oracle": [
+      "sh",
+      "-c",
+      "javac *.java && java Main"
+    ],
+    "golden": "[x]",
+    "coverage": {
+      "edge_kind": "calls",
+      "callee_qualname": "pack"
+    },
+    "mutation": {
+      "path": "Encoder.java",
+      "old": "\"[\"+s+\"]\"",
+      "new": "\"<\"+s+\">\""
+    }
+  },
+  {
+    "id": "B07",
+    "language": "python",
+    "kind": "test_fix",
+    "scenario": "fresh",
+    "entry": "count.py",
+    "phase_a": "Inspect next_count interface.",
+    "phase_b": "Make tests pass.",
+    "test": [
+      "python3",
+      "test_task.py"
+    ],
+    "patch": {
+      "old": "return n",
+      "new": "return n + 1"
+    }
+  },
+  {
+    "id": "B08",
+    "language": "java",
+    "kind": "test_fix",
+    "scenario": "semantic",
+    "entry": "Accept.java",
+    "phase_a": "Inspect ok interface.",
+    "phase_b": "Make tests pass.",
+    "test": [
+      "sh",
+      "-c",
+      "javac *.java && java TaskTest"
+    ],
+    "patch": {
+      "old": "n < 0",
+      "new": "n >= 0"
+    },
+    "mutation": {
+      "old": "n >= 0",
+      "new": "n == 0"
+    }
+  },
+  {
+    "id": "B09",
+    "language": "python",
+    "kind": "understanding",
+    "scenario": "unknown",
+    "entry": "catalog.py",
+    "phase_a": "Inventory functions.",
+    "phase_b": "Does beta exist?",
+    "oracle": [
+      "python3",
+      "-c",
+      "import catalog;print(hasattr(catalog,\"beta\"))"
+    ],
+    "golden": "False",
+    "coverage": {
+      "qualname": "beta"
+    }
+  },
+  {
+    "id": "B10",
+    "language": "java",
+    "kind": "understanding",
+    "scenario": "unrelated",
+    "entry": "Factor.java",
+    "phase_a": "Inspect helper.",
+    "phase_b": "What does triple(7) return?",
+    "oracle": [
+      "sh",
+      "-c",
+      "javac *.java && java Main"
+    ],
+    "golden": "21",
+    "coverage": {
+      "qualname": "triple"
+    }
+  }
+]

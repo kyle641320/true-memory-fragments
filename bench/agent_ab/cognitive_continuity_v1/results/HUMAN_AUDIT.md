@@ -1,3 +1,7 @@
+# INVALID_PROTOCOL notice
+
+**Decision: INVALID_PROTOCOL; the reported 0/2 adoption has no evidentiary force and must not be regraded or attributed to the product.** A01 contradicts fixture/task/golden: prompt says tax rate 0.2, source fixes `// 10` (result 110), while scorer expects 120. More fundamentally, the injected “claim” is the Phase-A model final answer, not a claim derived and persisted by TMF from source. This is non-TMF model-authored memory contamination. Original results, scorer, and goldens remain immutable historical records.
+
 # Human audit — cognitive_continuity_v1
 
 Frozen smoke gate **STOPPED** the experiment: 2/2 valid pairs, machine adoption 0/2 (required >=1). No full run and no prompt/mechanism tuning.
