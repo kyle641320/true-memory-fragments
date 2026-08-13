@@ -1,6 +1,6 @@
 # True Memory Fragments
 
-> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics pass, while Agent outcome value remains unproven. Cold-start injection 0/2 does not test repeat visits; cognitive-continuity v1 is INVALID_PROTOCOL and v2 is prospectively frozen but not yet completed. Read the authority page before mixing modes. (TMF)
+> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics qualify, but Agent outcome value remains unproven. Cognitive-continuity v1 is **INVALID_PROTOCOL**. V2's runtime recovered (the old blocked record is retained and superseded): its real frozen smoke produced 2/2 valid pairs, both arms 2/2 successful, and TMF adoption 0/2, so the adoption gate stopped the full run; TMF also cost more tokens on both pairs. Read the authority page before mixing modes. (TMF)
 
 True Memory Fragments is a **trusted code graph plus validation methodology** for AI coding agents. It records small, verifiable facts about a repository, keeps those facts bound to the current working tree, and degrades back to source whenever memory is missing, stale, or uncertain.
 

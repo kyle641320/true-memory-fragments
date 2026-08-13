@@ -3,7 +3,7 @@
 import hashlib, http.client, json, logging, os, socket, socketserver, threading, time, uuid
 
 PROTOCOL='tmf-agent-broker-v1'; MODEL='gpt-5.6-sol'
-MAX_REQUEST=65536; MAX_PROMPT=32768; MAX_BUDGET=4; MAX_OUTPUT=512; UPSTREAM_TIMEOUT=30.0; MAX_CONCURRENT=2
+MAX_REQUEST=65536; MAX_PROMPT=32768; MAX_BUDGET=4; MAX_OUTPUT=512; UPSTREAM_TIMEOUT=90.0; MAX_CONCURRENT=2
 LOG=logging.getLogger('tmf-model-broker')
 
 def response_error(code, rid=None): return {'protocol':PROTOCOL,'error':code,'request_id':rid or str(uuid.uuid4())}

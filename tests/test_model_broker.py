@@ -1,7 +1,14 @@
-import importlib.util,json,logging,os,socket,threading,time,unittest
+import ast,importlib.util,json,logging,os,socket,threading,time,unittest
 from pathlib import Path
 P=Path(__file__).parents[1]/'ops/tmf_model_broker/broker.py'; s=importlib.util.spec_from_file_location('broker',P); b=importlib.util.module_from_spec(s); s.loader.exec_module(b)
+CLIENT=P.with_name('client.py')
 class T(unittest.TestCase):
+ def test_rebuildable_timeout_hierarchy(self):
+  tree=ast.parse(CLIENT.read_text())
+  defaults=[n.args[1].value for n in ast.walk(tree) if isinstance(n,ast.Call) and isinstance(n.func,ast.Attribute) and n.func.attr=='get' and len(n.args)>=2 and isinstance(n.args[0],ast.Constant) and n.args[0].value=='TMF_BROKER_CLIENT_TIMEOUT']
+  self.assertEqual(defaults,['100'])
+  self.assertLess(b.UPSTREAM_TIMEOUT,float(defaults[0]))
+  self.assertLess(float(defaults[0]),120.0)
  def test_validation(self):
   self.assertEqual(b.validate({'protocol':b.PROTOCOL,'op':'preflight'})[0],'preflight')
   good={'protocol':b.PROTOCOL,'op':'complete','model':b.MODEL,'prompt':'x','budget':1}; self.assertEqual(b.validate(good)[1],'x')

@@ -11,13 +11,19 @@
 | `middleware_hardening_v1` | mechanism hard gates **5/5 pass** | Exact-target/freshness injection, stale blocking and localized reread mechanics work on those fixtures. It does **not** prove Agent adoption or task value. |
 | `agent_middleware_value_v1` cold-start Agent smoke | **2/2 valid pairs**, SOURCE 2/2 success, TMF 2/2 success, TMF adoption **0/2** | A new stateless Agent did not adopt injected notes on its first encounter. **Scope limit:** it never performed the first visit, so this cannot negate repeat/revisit value for one cognitive subject. Result is preserved and not regraded. |
 | `cognitive_continuity_v1` | **INVALID_PROTOCOL**; 0/2 has no evidentiary force | Fixture/task/golden contradiction and non-TMF model-authored memory contamination. Preserve, never regrade or attribute to product. |
-| `cognitive_continuity_v2` prospective rerun | Preflight PASS; model smoke **incomplete (broker runtime rejection)** | New oracle-validated held-out fixtures and real Store-derived claims are frozen. No adoption/product conclusion yet. |
+| `cognitive_continuity_v2` resumed smoke | **2/2 valid pairs**; SOURCE 2/2 success, TMF 2/2 success, qualified adoption **0/2**; STOP | Runtime recovered; the old blocked audit is retained but superseded. B01 had structural claim coverage yet repeated 1 read/91 bytes; B03 had no task claim coverage and repeated 2 reads/102 bytes. The frozen adoption gate prohibits a full run. |
 
 ### Product decision
 
 **Do not recommend TMF_MIDDLEWARE for production on an Agent-value, speed, token, or reread-reduction claim.** It may be used only as an experimental safety/navigation mechanism where users explicitly accept unproven outcome value and count injection cost. Continue to recommend source-authoritative fallback and the hard freshness/stale gate as a qualified mechanism, not as a productivity win.
 
-Evidence level is **mechanism-qualified / Agent-outcome-unproven**. The cold-start smoke is descriptive (N=2). Cognitive v1 is invalid and excluded; v2 has no completed smoke because the broker rejected requests. Stable adoption, Python/Java breadth, semantic outcome, and net economic value remain unproved.
+Evidence level is **mechanism-qualified / Agent-outcome-unproven**. The cold-start smoke is descriptive (N=2). Cognitive v1 is invalid and excluded. Cognitive v2's runtime recovered and its real N=2 smoke completed, but adoption was 0/2, so the frozen gate stopped the full run. Stable adoption, Python/Java breadth, semantic outcome, and net economic value remain unproved.
+
+## Cognitive continuity v2 resumed outcome
+
+The unchanged frozen smoke completed after the external broker timeout hierarchy was repaired. Both arms were valid and successful on B01 and B03, but neither TMF arm qualified as adoption. B01's TMF context included a structural call-edge claim and still repeated the same phase-B source read (1 read/91 bytes). B03 had no task claim coverage and repeated 2 reads/102 bytes. Preflight claim coverage of 2/10 tasks is structural coverage only; it does not establish that a claim answers task-specific implementation semantics. Current derived claim content cannot generally replace a second source read.
+
+TMF also cost more in each observed pair: B01 6,894 vs 1,376 SOURCE tokens and B03 7,420 vs 2,500. This is not a failure of the qualified middleware freshness/stale-blocking mechanism; it is failure to demonstrate claim-content sufficiency, Agent adoption, reread reduction, or value in this smoke. The historical runtime-blocked [`audit.json`](../bench/agent_ab/cognitive_continuity_v2/results/audit.json) and [`HUMAN_AUDIT.md`](../bench/agent_ab/cognitive_continuity_v2/results/HUMAN_AUDIT.md) remain intact, while the resumed [`audit_resumed.json`](../bench/agent_ab/cognitive_continuity_v2/results/audit_resumed.json) and [`HUMAN_AUDIT_RESUMED.md`](../bench/agent_ab/cognitive_continuity_v2/results/HUMAN_AUDIT_RESUMED.md) supersede only their runtime status.
 
 
 ## Which experiment answers which question
@@ -44,7 +50,7 @@ Aggregate: source bytes 173/173, tool calls 8/8, estimated prompt tokens 1406/18
 
 ## Experiment index and non-mixing rule
 
-- Cognitive second-read v2: [`cognitive_continuity_v2`](../bench/agent_ab/cognitive_continuity_v2/) — prospective oracle/preflight and Store-only protocol; run incomplete.
+- Cognitive second-read v2: [`cognitive_continuity_v2`](../bench/agent_ab/cognitive_continuity_v2/) — resumed frozen smoke completed; 2/2 valid, both arms 2/2 successful, adoption 0/2; stopped before full run.
 - Cognitive v1: [`cognitive_continuity_v1`](../bench/agent_ab/cognitive_continuity_v1/) — **INVALID_PROTOCOL**, historical artifacts only.
 - Cold-start forced-middleware value: [`agent_middleware_value_v1`](../bench/agent_ab/agent_middleware_value_v1/) — preserved 0/2 scope-limited result.
 - Mechanism only: [`middleware_hardening_v1`](../bench/agent_ab/middleware_hardening_v1/).

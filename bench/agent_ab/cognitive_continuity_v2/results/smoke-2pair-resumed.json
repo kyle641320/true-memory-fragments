@@ -1,0 +1,980 @@
+{
+  "schema": "cognitive-continuity-v2-results",
+  "tag": "smoke-2pair-resumed",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "pairs": [
+    {
+      "task_id": "B01",
+      "valid": true,
+      "rows": [
+        {
+          "task_id": "B01",
+          "arm": "SOURCE_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": true,
+          "citation_success": true,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": null,
+          "continuity_envelope": {
+            "logical_agent_id": "agent-B01",
+            "workflow_id": "workflow-B01-source_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-B01"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "flow.py",
+                  "oracle.py"
+                ],
+                "sha256": {
+                  "flow.py": "c918dff0def3a3a36dfe2b18c28703a8421a399c35ce3004468263cda2b822ca",
+                  "oracle.py": "6a5ff9d96b78349a69e3cf202c2b8d11921cbc32c6062bf1b564a106abbe45b0"
+                }
+              }
+            ]
+          },
+          "claim": null,
+          "claim_coverage_ids": [],
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "Dispatch path: oracle.py imports flow.dispatch, calls dispatch(\"  OK  \"), which calls sanitize(text); sanitize strips surrounding whitespace and returns \"OK\" through dispatch to print.",
+              "citations": [
+                "oracle.py:1",
+                "oracle.py:2",
+                "flow.py:1",
+                "flow.py:2",
+                "flow.py:4",
+                "flow.py:5"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 2,
+              "source_files": [
+                "flow.py",
+                "oracle.py"
+              ],
+              "source_lines": 7,
+              "source_bytes": 143,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 783,
+              "completion_tokens": 100,
+              "injection_tokens": 0,
+              "wall_seconds": 29.07905864715576
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "\"OK\"",
+              "citations": [
+                "flow.py:1-5"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 2,
+              "source_reads": 1,
+              "source_files": [
+                "flow.py"
+              ],
+              "source_lines": 5,
+              "source_bytes": 91,
+              "repeat_reads": 1,
+              "repeat_files": [
+                "flow.py"
+              ],
+              "repeat_lines": 5,
+              "repeat_bytes": 91,
+              "tests": 0,
+              "prompt_tokens": 468,
+              "completion_tokens": 25,
+              "injection_tokens": 0,
+              "wall_seconds": 8.112370252609253
+            }
+          },
+          "total_tokens": 1376
+        },
+        {
+          "task_id": "B01",
+          "arm": "TMF_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": true,
+          "citation_success": true,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": null,
+          "continuity_envelope": {
+            "logical_agent_id": "agent-B01",
+            "workflow_id": "workflow-B01-tmf_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-B01"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "flow.py",
+                  "oracle.py"
+                ],
+                "sha256": {
+                  "flow.py": "c918dff0def3a3a36dfe2b18c28703a8421a399c35ce3004468263cda2b822ca",
+                  "oracle.py": "6a5ff9d96b78349a69e3cf202c2b8d11921cbc32c6062bf1b564a106abbe45b0"
+                }
+              }
+            ]
+          },
+          "claim": {
+            "memory_id": "mem-B01",
+            "provenance": {
+              "paths": [
+                "flow.py",
+                "oracle.py"
+              ],
+              "sha256": {
+                "flow.py": "c918dff0def3a3a36dfe2b18c28703a8421a399c35ce3004468263cda2b822ca",
+                "oracle.py": "6a5ff9d96b78349a69e3cf202c2b8d11921cbc32c6062bf1b564a106abbe45b0"
+              }
+            },
+            "claims": [
+              {
+                "id": "claim_file_df2b0084b24553b0",
+                "type": "file",
+                "body": {
+                  "summary": "v1 observed 5 lines, 4 unique code-like identifiers, 2 Python functions, and 0 Java syntactic nodes; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "sanitize",
+                    "text",
+                    "strip",
+                    "dispatch"
+                  ],
+                  "function_nodes": [
+                    "sanitize",
+                    "dispatch"
+                  ],
+                  "java_nodes": 0,
+                  "anchors": [
+                    {
+                      "path": "flow.py",
+                      "line_start": 1,
+                      "line_end": 5
+                    }
+                  ],
+                  "notes": [
+                    "File-level heuristic; use source as ground truth for precise behavior."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "flow.py",
+                    "file_blob": "540c07dfa149d1cdbdbd09e6bfd153d43463b87f",
+                    "fn_hash": null,
+                    "commit": null,
+                    "qualname": null,
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              },
+              {
+                "id": "claim_fn_c86c521384b98f8e",
+                "type": "function",
+                "body": {
+                  "summary": "v1 observed Python function sanitize; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "sanitize"
+                  ],
+                  "qualname": "sanitize",
+                  "interface": {
+                    "language": "python",
+                    "signature": "def sanitize(text)",
+                    "params": [
+                      {
+                        "name": "text",
+                        "kind": "positional",
+                        "annotation": null,
+                        "default": null
+                      }
+                    ],
+                    "is_async": false,
+                    "is_generator": false,
+                    "return": {
+                      "shape": "value",
+                      "annotation": null,
+                      "has_value": true,
+                      "has_bare": false
+                    },
+                    "raises": [],
+                    "decorators": []
+                  },
+                  "anchors": [
+                    {
+                      "path": "flow.py",
+                      "line_start": 1,
+                      "line_end": 2
+                    }
+                  ],
+                  "graph": {
+                    "callees": [],
+                    "callers": [
+                      {
+                        "source_id": "claim_fn_7af34f175684024e",
+                        "source_path": "flow.py",
+                        "anchor": {
+                          "path": "flow.py",
+                          "line_start": 4,
+                          "line_end": 5,
+                          "qualname": "dispatch"
+                        },
+                        "evidence": "observed",
+                        "resolution": "module_name_or_self_method"
+                      }
+                    ],
+                    "unresolved_calls": [
+                      {
+                        "expr": "text.strip",
+                        "reason": "attribute_call_not_resolved"
+                      }
+                    ],
+                    "reads": [],
+                    "reads_unresolved": [],
+                    "writes": [],
+                    "writes_unresolved": [],
+                    "reads_env": [],
+                    "reads_env_unresolved": [],
+                    "reads_env_coverage": "partial",
+                    "reads_config_key": [],
+                    "reads_config_key_unresolved": [],
+                    "reads_config_key_coverage": "partial"
+                  },
+                  "notes": [
+                    "fn_hash is computed from Python tokenize token stream over the current working-tree function span; comments/trivia ignored, literals/identifiers preserved."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "flow.py",
+                    "file_blob": "540c07dfa149d1cdbdbd09e6bfd153d43463b87f",
+                    "fn_hash": "e4b44216f946370d1d4fa8a9b1eb0d1f42bb9b854795000183ec7b8b4d9d309b",
+                    "commit": null,
+                    "qualname": "sanitize",
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              },
+              {
+                "id": "claim_fn_7af34f175684024e",
+                "type": "function",
+                "body": {
+                  "summary": "v1 observed Python function dispatch; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "dispatch"
+                  ],
+                  "qualname": "dispatch",
+                  "interface": {
+                    "language": "python",
+                    "signature": "def dispatch(text)",
+                    "params": [
+                      {
+                        "name": "text",
+                        "kind": "positional",
+                        "annotation": null,
+                        "default": null
+                      }
+                    ],
+                    "is_async": false,
+                    "is_generator": false,
+                    "return": {
+                      "shape": "value",
+                      "annotation": null,
+                      "has_value": true,
+                      "has_bare": false
+                    },
+                    "raises": [],
+                    "decorators": []
+                  },
+                  "anchors": [
+                    {
+                      "path": "flow.py",
+                      "line_start": 4,
+                      "line_end": 5
+                    }
+                  ],
+                  "graph": {
+                    "callees": [
+                      {
+                        "target_id": "claim_fn_c86c521384b98f8e",
+                        "target_qualname": "sanitize",
+                        "target_path": "flow.py",
+                        "anchor": {
+                          "path": "flow.py",
+                          "line_start": 1,
+                          "line_end": 2,
+                          "qualname": "sanitize"
+                        },
+                        "evidence": "observed",
+                        "resolution": "module_name_or_self_method"
+                      }
+                    ],
+                    "callers": [],
+                    "unresolved_calls": [],
+                    "reads": [],
+                    "reads_unresolved": [],
+                    "writes": [],
+                    "writes_unresolved": [],
+                    "reads_env": [],
+                    "reads_env_unresolved": [],
+                    "reads_env_coverage": "partial",
+                    "reads_config_key": [],
+                    "reads_config_key_unresolved": [],
+                    "reads_config_key_coverage": "partial"
+                  },
+                  "notes": [
+                    "fn_hash is computed from Python tokenize token stream over the current working-tree function span; comments/trivia ignored, literals/identifiers preserved."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "flow.py",
+                    "file_blob": "540c07dfa149d1cdbdbd09e6bfd153d43463b87f",
+                    "fn_hash": "2f96cb111bdd8628cba8612467ce0039ce2e9b7799db357dfc6f8c18ab1addca",
+                    "commit": null,
+                    "qualname": "dispatch",
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              },
+              {
+                "id": "claim_edge_8eb5640a225b18b0",
+                "type": "cross-repo",
+                "body": {
+                  "edge_kind": "calls",
+                  "caller_id": "claim_fn_7af34f175684024e",
+                  "callee_id": "claim_fn_c86c521384b98f8e",
+                  "caller_path": "flow.py",
+                  "callee_path": "flow.py",
+                  "callee_qualname": "sanitize",
+                  "caller_node_kind": "method",
+                  "callee_node_kind": "method",
+                  "resolution": "module_name_or_self_method",
+                  "language": "python",
+                  "caller_anchor": {
+                    "path": "flow.py",
+                    "line_start": 4,
+                    "line_end": 5,
+                    "qualname": "dispatch"
+                  },
+                  "callee_anchor": {
+                    "path": "flow.py",
+                    "line_start": 1,
+                    "line_end": 2,
+                    "qualname": "sanitize"
+                  },
+                  "anchors": [],
+                  "notes": [
+                    "Call edge is observed only when statically resolved without ambiguity; source remains authority."
+                  ],
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "flow.py",
+                    "file_blob": "540c07dfa149d1cdbdbd09e6bfd153d43463b87f",
+                    "fn_hash": "2f96cb111bdd8628cba8612467ce0039ce2e9b7799db357dfc6f8c18ab1addca",
+                    "commit": null,
+                    "qualname": "dispatch",
+                    "role": "caller",
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  },
+                  {
+                    "path": "flow.py",
+                    "file_blob": "540c07dfa149d1cdbdbd09e6bfd153d43463b87f",
+                    "fn_hash": "e4b44216f946370d1d4fa8a9b1eb0d1f42bb9b854795000183ec7b8b4d9d309b",
+                    "commit": null,
+                    "qualname": "sanitize",
+                    "role": "callee",
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              },
+              {
+                "id": "claim_file_977539acefb8e4a3",
+                "type": "file",
+                "body": {
+                  "summary": "v1 observed 2 lines, 3 unique code-like identifiers, 0 Python functions, and 0 Java syntactic nodes; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "flow",
+                    "dispatch",
+                    "print"
+                  ],
+                  "function_nodes": [],
+                  "java_nodes": 0,
+                  "anchors": [
+                    {
+                      "path": "oracle.py",
+                      "line_start": 1,
+                      "line_end": 2
+                    }
+                  ],
+                  "notes": [
+                    "File-level heuristic; use source as ground truth for precise behavior."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "oracle.py",
+                    "file_blob": "ce051a5437fd495cfe8841ec7b3edd8437cb8d12",
+                    "fn_hash": null,
+                    "commit": null,
+                    "qualname": null,
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              }
+            ]
+          },
+          "claim_coverage_ids": [
+            "claim_edge_8eb5640a225b18b0"
+          ],
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "Dispatch path: oracle.py imports flow.dispatch, then calls dispatch(\"  OK  \"). flow.dispatch passes the input to sanitize, which returns text.strip(); the result is \"OK\", which oracle.py prints.",
+              "citations": [
+                "oracle.py:1",
+                "oracle.py:2",
+                "flow.py:1",
+                "flow.py:2",
+                "flow.py:4",
+                "flow.py:5"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 2,
+              "source_files": [
+                "flow.py",
+                "oracle.py"
+              ],
+              "source_lines": 7,
+              "source_bytes": 143,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 0,
+              "prompt_tokens": 780,
+              "completion_tokens": 103,
+              "injection_tokens": 0,
+              "wall_seconds": 75.55019974708557
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "\"OK\"",
+              "citations": [
+                "flow.py:1-5"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 2,
+              "source_reads": 1,
+              "source_files": [
+                "flow.py"
+              ],
+              "source_lines": 5,
+              "source_bytes": 91,
+              "repeat_reads": 1,
+              "repeat_files": [
+                "flow.py"
+              ],
+              "repeat_lines": 5,
+              "repeat_bytes": 91,
+              "tests": 0,
+              "prompt_tokens": 4146,
+              "completion_tokens": 25,
+              "injection_tokens": 1840,
+              "wall_seconds": 8.354586839675903
+            }
+          },
+          "total_tokens": 6894
+        }
+      ]
+    },
+    {
+      "task_id": "B03",
+      "valid": true,
+      "rows": [
+        {
+          "task_id": "B03",
+          "arm": "SOURCE_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": true,
+          "citation_success": false,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": null,
+          "continuity_envelope": {
+            "logical_agent_id": "agent-B03",
+            "workflow_id": "workflow-B03-source_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-B03"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "slug.py",
+                  "test_task.py"
+                ],
+                "sha256": {
+                  "slug.py": "b289798473df38c110db9053412b8b1a173635a3a1c0d6c4fd4e0710e4f08c63",
+                  "test_task.py": "27c07b5fef6014ed130cb2bea8e07f14fff13b7e79516be74370156f12bbbacd"
+                }
+              }
+            ]
+          },
+          "claim": null,
+          "claim_coverage_ids": [],
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "Updated `slug` to lowercase input, trim surrounding whitespace, and join whitespace-delimited words with hyphens. Tests pass.",
+              "citations": [
+                "slug.py:1-2",
+                "test_task.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 6,
+              "source_reads": 2,
+              "source_files": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "source_lines": 4,
+              "source_bytes": 84,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 1,
+              "prompt_tokens": 1321,
+              "completion_tokens": 115,
+              "injection_tokens": 0,
+              "wall_seconds": 25.67784857749939
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "All tests pass; no changes required.",
+              "citations": [
+                "slug.py:1",
+                "test_task.py:2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 2,
+              "source_files": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "source_lines": 4,
+              "source_bytes": 102,
+              "repeat_reads": 2,
+              "repeat_files": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "repeat_lines": 4,
+              "repeat_bytes": 102,
+              "tests": 1,
+              "prompt_tokens": 1012,
+              "completion_tokens": 52,
+              "injection_tokens": 0,
+              "wall_seconds": 15.49967885017395
+            }
+          },
+          "total_tokens": 2500
+        },
+        {
+          "task_id": "B03",
+          "arm": "TMF_CONTINUITY",
+          "valid": true,
+          "phase_a_complete": true,
+          "success": true,
+          "citation_success": false,
+          "adoption": false,
+          "stale_detected": false,
+          "stale_error": false,
+          "attribution": null,
+          "continuity_envelope": {
+            "logical_agent_id": "agent-B03",
+            "workflow_id": "workflow-B03-tmf_continuity",
+            "prior_task_complete": true,
+            "memory_ids": [
+              "mem-B03"
+            ],
+            "provenance": [
+              {
+                "paths": [
+                  "slug.py",
+                  "test_task.py"
+                ],
+                "sha256": {
+                  "slug.py": "b289798473df38c110db9053412b8b1a173635a3a1c0d6c4fd4e0710e4f08c63",
+                  "test_task.py": "27c07b5fef6014ed130cb2bea8e07f14fff13b7e79516be74370156f12bbbacd"
+                }
+              }
+            ]
+          },
+          "claim": {
+            "memory_id": "mem-B03",
+            "provenance": {
+              "paths": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "sha256": {
+                "slug.py": "b289798473df38c110db9053412b8b1a173635a3a1c0d6c4fd4e0710e4f08c63",
+                "test_task.py": "27c07b5fef6014ed130cb2bea8e07f14fff13b7e79516be74370156f12bbbacd"
+              }
+            },
+            "claims": [
+              {
+                "id": "claim_file_32025f0cc4656c95",
+                "type": "file",
+                "body": {
+                  "summary": "v1 observed 2 lines, 4 unique code-like identifiers, 1 Python functions, and 0 Java syntactic nodes; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "slug",
+                    "join",
+                    "lower",
+                    "split"
+                  ],
+                  "function_nodes": [
+                    "slug"
+                  ],
+                  "java_nodes": 0,
+                  "anchors": [
+                    {
+                      "path": "slug.py",
+                      "line_start": 1,
+                      "line_end": 2
+                    }
+                  ],
+                  "notes": [
+                    "File-level heuristic; use source as ground truth for precise behavior."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "slug.py",
+                    "file_blob": "a61758a26e1fd6319811b67e8d7c4f46d70fa154",
+                    "fn_hash": null,
+                    "commit": null,
+                    "qualname": null,
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              },
+              {
+                "id": "claim_fn_47a5695fd62c62a5",
+                "type": "function",
+                "body": {
+                  "summary": "v1 observed Python function slug; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "slug"
+                  ],
+                  "qualname": "slug",
+                  "interface": {
+                    "language": "python",
+                    "signature": "def slug(s)",
+                    "params": [
+                      {
+                        "name": "s",
+                        "kind": "positional",
+                        "annotation": null,
+                        "default": null
+                      }
+                    ],
+                    "is_async": false,
+                    "is_generator": false,
+                    "return": {
+                      "shape": "value",
+                      "annotation": null,
+                      "has_value": true,
+                      "has_bare": false
+                    },
+                    "raises": [],
+                    "decorators": []
+                  },
+                  "anchors": [
+                    {
+                      "path": "slug.py",
+                      "line_start": 1,
+                      "line_end": 2
+                    }
+                  ],
+                  "graph": {
+                    "callees": [],
+                    "callers": [],
+                    "unresolved_calls": [
+                      {
+                        "expr": "Constant.join",
+                        "reason": "attribute_call_not_resolved"
+                      },
+                      {
+                        "expr": "s.lower(...).split",
+                        "reason": "attribute_call_not_resolved"
+                      },
+                      {
+                        "expr": "s.lower",
+                        "reason": "attribute_call_not_resolved"
+                      }
+                    ],
+                    "reads": [],
+                    "reads_unresolved": [],
+                    "writes": [],
+                    "writes_unresolved": [],
+                    "reads_env": [],
+                    "reads_env_unresolved": [],
+                    "reads_env_coverage": "partial",
+                    "reads_config_key": [],
+                    "reads_config_key_unresolved": [],
+                    "reads_config_key_coverage": "partial"
+                  },
+                  "notes": [
+                    "fn_hash is computed from Python tokenize token stream over the current working-tree function span; comments/trivia ignored, literals/identifiers preserved."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "slug.py",
+                    "file_blob": "a61758a26e1fd6319811b67e8d7c4f46d70fa154",
+                    "fn_hash": "1fd620dabcac7470d24c4c08852b3829d6ffa4a932a637f75f06fec0a2202de7",
+                    "commit": null,
+                    "qualname": "slug",
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              },
+              {
+                "id": "claim_file_61aa8edaa4dc6d3c",
+                "type": "file",
+                "body": {
+                  "summary": "v1 observed 2 lines, 2 unique code-like identifiers, 0 Python functions, and 0 Java syntactic nodes; exact behavior lives in source anchors.",
+                  "keywords": [
+                    "slug",
+                    "assert"
+                  ],
+                  "function_nodes": [],
+                  "java_nodes": 0,
+                  "anchors": [
+                    {
+                      "path": "test_task.py",
+                      "line_start": 1,
+                      "line_end": 2
+                    }
+                  ],
+                  "notes": [
+                    "File-level heuristic; use source as ground truth for precise behavior."
+                  ],
+                  "verification": {
+                    "method": "v1-observed-keyword-check",
+                    "supported": true
+                  },
+                  "source_provenance": {
+                    "origin": "locally_derived",
+                    "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+                    "trust": "source_rederived"
+                  }
+                },
+                "bindings": [
+                  {
+                    "path": "test_task.py",
+                    "file_blob": "d9720520ea0b5bdaf5a12d7253ea631f17e9a76e",
+                    "fn_hash": null,
+                    "commit": null,
+                    "qualname": null,
+                    "role": null,
+                    "line_start": null,
+                    "line_end": null,
+                    "hash_kind": null
+                  }
+                ]
+              }
+            ]
+          },
+          "claim_coverage_ids": [],
+          "phase_a": {
+            "final": {
+              "action": "final",
+              "answer": "Updated `slug` to lowercase input, trim surrounding whitespace, and join whitespace-separated words with hyphens. Tests pass.",
+              "citations": [
+                "slug.py:1-2",
+                "test_task.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 6,
+              "source_reads": 2,
+              "source_files": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "source_lines": 4,
+              "source_bytes": 84,
+              "repeat_reads": 0,
+              "repeat_files": [],
+              "repeat_lines": 0,
+              "repeat_bytes": 0,
+              "tests": 1,
+              "prompt_tokens": 1317,
+              "completion_tokens": 115,
+              "injection_tokens": 0,
+              "wall_seconds": 20.283986568450928
+            }
+          },
+          "phase_b": {
+            "final": {
+              "action": "final",
+              "answer": "Tests pass; no changes were needed.",
+              "citations": [
+                "slug.py:1-2",
+                "test_task.py:1-2"
+              ]
+            },
+            "telemetry": {
+              "tool_calls": 4,
+              "source_reads": 2,
+              "source_files": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "source_lines": 4,
+              "source_bytes": 102,
+              "repeat_reads": 2,
+              "repeat_files": [
+                "slug.py",
+                "test_task.py"
+              ],
+              "repeat_lines": 4,
+              "repeat_bytes": 102,
+              "tests": 1,
+              "prompt_tokens": 4951,
+              "completion_tokens": 52,
+              "injection_tokens": 985,
+              "wall_seconds": 13.719689130783081
+            }
+          },
+          "total_tokens": 7420
+        }
+      ]
+    }
+  ],
+  "valid_pairs": 2,
+  "adoption": 0
+}

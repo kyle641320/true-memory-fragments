@@ -1,0 +1,31 @@
+{
+  "schema": "cognitive-continuity-v2-resumed-audit",
+  "tag": "smoke-2pair-resumed",
+  "decision": "STOP_ADOPTION_GATE",
+  "supersedes_runtime_status_of": "audit.json",
+  "historical_blocked_audit_retained": true,
+  "preflight": "PASS",
+  "valid_pairs": 2,
+  "source_success_pairs": 2,
+  "tmf_success_pairs": 2,
+  "qualified_adoption_pairs": 0,
+  "smoke_required_adoption_pairs": 1,
+  "full_run_allowed": false,
+  "tmf_claim_coverage_preflight_tasks": 2,
+  "interpretation": {
+    "B01": "TMF had structural call-edge coverage but phase B still reread flow.py (1 read, 91 bytes); the claim was not adopted to avoid rereading.",
+    "B03": "TMF had zero task claim coverage and phase B reread 2 files / 102 bytes; derived claims did not cover the required behavior.",
+    "coverage_scope": "Preflight 2/10 is structural claim coverage, not evidence that claims answer task-specific implementation semantics.",
+    "product": "Mechanism remains qualified, but current claim content, adoption, and outcome value are not proved. This smoke cost more tokens in both TMF arms."
+  },
+  "tokens": {
+    "B01": {
+      "tmf": 6894,
+      "source": 1376
+    },
+    "B03": {
+      "tmf": 7420,
+      "source": 2500
+    }
+  }
+}
