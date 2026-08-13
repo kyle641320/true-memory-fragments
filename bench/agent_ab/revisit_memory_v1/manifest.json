@@ -1,0 +1,12 @@
+{
+  "schema":"revisit-memory-v1","seed":8132026,
+  "model":{"id":"gpt-5.6-sol","timeout_seconds":120},
+  "budget":{"calls_per_task":1,"max_source_lines":40},
+  "sequences":["S01","S02","S03"],
+  "phases":["first_visit","fresh_revisit","mutation_revisit"],
+  "arms":["CONTROL","TMF_MEMORY"],
+  "region":{"identity":"com.acme.PricePolicy#discount(int,boolean)","path":"com/acme/PricePolicy.java"},
+  "unknown":{"identity":"com.acme.Inventory#available(int)","path":"com/acme/Inventory.java"},
+  "mutation":{"semantic_path":"com/acme/PricePolicy.java","unrelated_path":"com/acme/Inventory.java"},
+  "tasks":{"first_visit":"Explain checkout discount and cite source.","fresh_revisit":"For VIP subtotal 120, what discount and total result? Cite source.","mutation_revisit":"After the working-tree change, for VIP subtotal 120, what discount and total result? Cite source.","unknown":"Does Inventory report count zero available? Cite source."}
+}

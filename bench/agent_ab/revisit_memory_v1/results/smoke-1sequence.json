@@ -1,0 +1,261 @@
+{
+  "frozen_sha256": "dedda97b79c6d69aa971e19650cc1f0b7d6751a6376cba571772ae2148fdd355",
+  "mode": "smoke",
+  "post_fingerprint": "954216ddab5dba4a6f000cf7162556a5d4271b43fa2e2ee85c524659d10ef3c2",
+  "post_tree": {
+    "com/acme/Inventory.java": "0d022783726dceca1c32bdd67c83fdd8c850098c780b9084858040369b5d0f93",
+    "com/acme/OrderService.java": "13e9bbb1a89f9fcc6e93edf661081c20257c0bf9d2b5ef514d5c5c578b4a0622",
+    "com/acme/PricePolicy.java": "06e5bf77b46778417573d9d3d8ed68d56cd27b76f4a4b046ebc7527386ddd29f"
+  },
+  "pre_fingerprint": "9aa4f1490dcbe816c6580685105388cd58132da4aef152d1f403487a33d7c640",
+  "pre_tree": {
+    "com/acme/Inventory.java": "bb3d048be7f5631d9610c62103e0cdeb23d6f5a896fdec078aba09c3da5412d7",
+    "com/acme/OrderService.java": "13e9bbb1a89f9fcc6e93edf661081c20257c0bf9d2b5ef514d5c5c578b4a0622",
+    "com/acme/PricePolicy.java": "bb72dce3a6380176b5a95d183d68ca87572d1c1e7d79c659f8ba42089cdca028"
+  },
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "CONTROL",
+      "memory_store": null,
+      "sequence": "S01",
+      "sessions": [
+        {
+          "answer": {
+            "answer": "Checkout asks the price policy for a discount, then subtracts it from the subtotal. VIP customers with a subtotal of at least 100 receive a fixed discount of 20; otherwise the discount is 0.",
+            "citations": [
+              "com/acme/OrderService.java:6",
+              "com/acme/OrderService.java:7",
+              "com/acme/PricePolicy.java:4",
+              "com/acme/PricePolicy.java:5"
+            ]
+          },
+          "broker_call_id": "cd0f903018062837",
+          "completion_tokens": 93,
+          "correct": false,
+          "latency_seconds": 3.665331929922104,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 268,
+          "source_bytes": 513,
+          "source_files": 2,
+          "source_lines": 17,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0,
+          "total_tokens": 361,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "VIP subtotal 120 receives a 20 discount, resulting in a total of 100.",
+            "citations": [
+              "com/acme/PricePolicy.java:4",
+              "com/acme/OrderService.java:6-8"
+            ]
+          },
+          "broker_call_id": "be04ed8ccfdc92fa",
+          "completion_tokens": 79,
+          "correct": true,
+          "latency_seconds": 3.106732552871108,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 276,
+          "source_bytes": 513,
+          "source_files": 2,
+          "source_lines": 17,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0,
+          "total_tokens": 355,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "No. Inventory reports available only when count is greater than zero.",
+            "citations": [
+              "com/acme/Inventory.java:3"
+            ]
+          },
+          "broker_call_id": "ef4dba3e7acd5d25",
+          "completion_tokens": 33,
+          "correct": false,
+          "latency_seconds": 2.600072680041194,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown",
+          "prompt_tokens": 123,
+          "source_bytes": 111,
+          "source_files": 1,
+          "source_lines": 4,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0,
+          "total_tokens": 156,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "VIP subtotal 120 gets a discount of 0 and a checkout total of 120.",
+            "citations": [
+              "com/acme/PricePolicy.java:4-5",
+              "com/acme/OrderService.java:6-7"
+            ]
+          },
+          "broker_call_id": "62054db4adb171eb",
+          "completion_tokens": 120,
+          "correct": true,
+          "latency_seconds": 3.9016065932810307,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 282,
+          "source_bytes": 513,
+          "source_files": 2,
+          "source_lines": 17,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0,
+          "total_tokens": 402,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_MEMORY",
+      "memory_store": {
+        "com.acme.PricePolicy#discount(int,boolean)": {
+          "anchors": [
+            {
+              "lines": [
+                3,
+                4,
+                5
+              ],
+              "path": "com/acme/PricePolicy.java"
+            }
+          ],
+          "claim": "VIP subtotal >= 100 receives discount 20. OrderService subtracts discount from subtotal.",
+          "freshness": "fresh",
+          "identity": "com.acme.PricePolicy#discount(int,boolean)",
+          "provenance": {
+            "file_sha256": "bb72dce3a6380176b5a95d183d68ca87572d1c1e7d79c659f8ba42089cdca028",
+            "tree_fingerprint": "9aa4f1490dcbe816c6580685105388cd58132da4aef152d1f403487a33d7c640"
+          }
+        }
+      },
+      "sequence": "S01",
+      "sessions": [
+        {
+          "answer": {
+            "answer": "Checkout subtracts a fixed 20-unit discount when the customer is VIP and the subtotal is at least 100; otherwise it subtracts 0.",
+            "citations": [
+              "com/acme/PricePolicy.java:4",
+              "com/acme/PricePolicy.java:5",
+              "com/acme/OrderService.java:6",
+              "com/acme/OrderService.java:7"
+            ]
+          },
+          "broker_call_id": "7e84fe96497cc043",
+          "completion_tokens": 81,
+          "correct": false,
+          "latency_seconds": 4.262478597462177,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 268,
+          "source_bytes": 513,
+          "source_files": 2,
+          "source_lines": 17,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0,
+          "total_tokens": 349,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "Discount: 20; total: 100.",
+            "citations": [
+              "com/acme/PricePolicy.java:3-5"
+            ]
+          },
+          "broker_call_id": "6419ba979a8857a5",
+          "completion_tokens": 33,
+          "correct": true,
+          "latency_seconds": 2.146072916686535,
+          "memory_adoption": true,
+          "memory_hit": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 234,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.00039301812648773193,
+          "total_tokens": 267,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "No. Inventory.available returns true only when count is greater than zero, so zero is unavailable.",
+            "citations": [
+              "com/acme/Inventory.java:3"
+            ]
+          },
+          "broker_call_id": "bbf8d9c4aa14b4a4",
+          "completion_tokens": 39,
+          "correct": false,
+          "latency_seconds": 3.811947112902999,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown",
+          "prompt_tokens": 123,
+          "source_bytes": 111,
+          "source_files": 1,
+          "source_lines": 4,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.00037997961044311523,
+          "total_tokens": 162,
+          "valid": true
+        },
+        {
+          "answer": {
+            "answer": "For VIP subtotal 120, the discount is 0 and the total is 120.",
+            "citations": [
+              "com/acme/PricePolicy.java:4-5"
+            ]
+          },
+          "broker_call_id": "388be0a2a441e46a",
+          "completion_tokens": 41,
+          "correct": true,
+          "latency_seconds": 2.7355816401541233,
+          "memory_adoption": false,
+          "memory_hit": true,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 179,
+          "source_bytes": 165,
+          "source_files": 1,
+          "source_lines": 7,
+          "stale_blocked": true,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.0001993030309677124,
+          "total_tokens": 220,
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "revisit-memory-v1-run"
+}
