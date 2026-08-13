@@ -19,7 +19,7 @@ def execute(tid,arm,broker):
  entry=w/t['entry']; old=entry.read_bytes(); claim=mw.Claim(f'{tid}-entry','fixture-'+tid,'base@45ab3e4',t['entry'],tid,'agent',None,None,mw.digest(old),1)
  if t['scenario']=='semantic':
   s=entry.read_text(); s=s.replace('100','120').replace('return Codec.encode(s)','return Codec.encode(s.trim())').replace('n % 2 != 0','n % 3 != 0'); entry.write_text(s)
- sysmsg=f'''You are a stateless coding agent in a frozen experiment. Work only via JSON actions. Task: {t['prompt']}\nAvailable actions: {{"action":"list"}}, {{"action":"read","path":"relative"}}, {{"action":"search","query":"text"}}, {{"action":"edit","path":"relative","old":"exact","new":"replacement"}}, {{"action":"test"}}, {{"action":"final","answer":string,"citations":["path:line"]}}. One action only per response, strict JSON. Source is authoritative.''' 
+ sysmsg=f'''You are a stateless coding agent in a frozen experiment. Work only via JSON actions. Task: {t['prompt']}\nAvailable actions: {{"action":"list"}}, {{"action":"read","path":"relative"}}, {{"action":"search","query":"text"}}, {{"action":"edit","path":"relative","old":"exact","new":"replacement"}}, {{"action":"test"}}, {{"action":"final","answer":string,"citations":["path:line"]}}. One action only per response, strict JSON. Source is authoritative.'''
  history=[]; telemetry={'tool_calls':0,'source_reads':0,'source_files':set(),'source_lines':0,'source_bytes':0,'tests':0,'prompt_tokens':0,'completion_tokens':0,'injection_tokens':0}; final=None; invalid=False; state=mw.GateState(); injected=[]; start=time.time()
  for turn in range(M['budgets']['max_turns']):
   prompt=sysmsg+'\n'+('\n'.join(history) if history else 'Begin.')
