@@ -1,0 +1,67 @@
+{
+  "conclusion": "No task/prompt/metric adaptation. Completions count only after transcript/schema/budget validation; held-out correctness is separate.",
+  "hashes": {
+    "base_manifest_sha256": "d730c3910fa79e278fe348ef0768da5e2e0d260510ebff8f57151012b84fdffa",
+    "pilot_manifest_sha256": "02629938811b7dadb41a1c5a0fefa9cccf6f12de93db222e4149d6670b8c6821",
+    "protocol_sha256": "90f66e057828d9760f6201844654fc06ecac87f9d44aa6ea87356c56c6fa6ff3"
+  },
+  "isolation_probe": {
+    "ambient_secrets": [],
+    "inet_blocked": true
+  },
+  "repo_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY",
+      "budget_valid": true,
+      "citation_correct": false,
+      "completion_tokens": 212,
+      "prompt_tokens": 4280,
+      "request_id": "7bbc2ba0-af3c-4f7c-8a57-337ee0ed354a",
+      "source_files": 4,
+      "source_lines": 488,
+      "task_correct": false,
+      "task_id": "P01",
+      "transport_valid": true
+    },
+    {
+      "arm": "TMF_MAP",
+      "budget_valid": true,
+      "citation_correct": false,
+      "completion_tokens": 144,
+      "prompt_tokens": 4361,
+      "request_id": "88075a63-fb57-4f1f-829e-4e4ca8363a4e",
+      "source_files": 4,
+      "source_lines": 488,
+      "task_correct": false,
+      "task_id": "P01",
+      "transport_valid": true
+    }
+  ],
+  "schema": "java_real_v1-broker-pilot-v1-audit",
+  "source_report": "bench/agent_ab/java_real_v1/broker_pilot_v1/smoke-1pair.json",
+  "source_report_sha256": "961951ee865c60354b3dea275354230565f8b2c62aa921ffaacef703efbcfb55",
+  "summary": {
+    "SOURCE_ONLY": {
+      "heldout_citation_accuracy": 0.0,
+      "heldout_task_accuracy": 0.0,
+      "mean_prompt_tokens": 4280.0,
+      "n": 1,
+      "transport_valid_rate": 1.0
+    },
+    "TMF_MAP": {
+      "heldout_citation_accuracy": 0.0,
+      "heldout_task_accuracy": 0.0,
+      "mean_prompt_tokens": 4361.0,
+      "n": 1,
+      "transport_valid_rate": 1.0
+    }
+  },
+  "valid_pairs": [
+    {
+      "pair_id": "P01",
+      "reason": null,
+      "valid": true
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+{
+  "base_manifest_sha256": "d730c3910fa79e278fe348ef0768da5e2e0d260510ebff8f57151012b84fdffa",
+  "created_at": "2026-08-13T03:04:22Z",
+  "execution_kind": "real_broker_isolated_evidence_agent",
+  "invalid_pairs": 0,
+  "isolation_probe": {
+    "ambient_secrets": [],
+    "inet_blocked": true
+  },
+  "pairs": [
+    {
+      "cross_arm_state_files": [],
+      "order": [
+        "SOURCE_ONLY",
+        "TMF_MAP"
+      ],
+      "pair_id": "P01",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "assignment_order": 0,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "7bbc2ba0-af3c-4f7c-8a57-337ee0ed354a",
+            "usage": {
+              "completion_tokens": 212,
+              "completion_tokens_details": {
+                "reasoning_tokens": 57
+              },
+              "prompt_tokens": 4280,
+              "total_tokens": 4492
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "The supplied evidence does not show a complete publication-to-consumption path. It only establishes that Visit is the domain entity and Owner.addVisit(petId, visit) resolves the Pet and delegates to pet.addVisit(visit). No publisher or consumer Java code is provided.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:16",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:37-39",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:174-189"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "e068f30d3562fc9d26a0a6ba5e52f1d9369b1d3b08cbde4d4e26059c76e89acc",
+          "raw_answer": "{\n  \"answer\": \"The supplied evidence does not show a complete publication-to-consumption path. It only establishes that Visit is the domain entity and Owner.addVisit(petId, visit) resolves the Pet and delegates to pet.addVisit(visit). No publisher or consumer Java code is provided.\",\n  \"citations\": [\n    \"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:16\",\n    \"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:37-39\",\n    \"src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:174-189\"\n  ],\n  \"confidence\": \"high\"\n}",
+          "source_manifest": [
+            {
+              "lines": 219,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "sha256": "a6bb0ccb65f5df9dfde087f914e05aae57a53036c14a538522fbc80e8ddab184"
+            },
+            {
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "sha256": "b3f79922d07b7ac11aba597a88866c27a67620768b791f616c195b01e5d3045e"
+            },
+            {
+              "lines": 65,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+              "sha256": "2599a713f6bb020f2d777c4035f1fdd8c8e7ca87525c0593cb9e73d9e5dba168"
+            },
+            {
+              "lines": 117,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/Vet.java",
+              "sha256": "a3d64e093e451bc4494e802ba04199b0a8c068a4b6dc33036a717aa596f37998"
+            }
+          ],
+          "task_id": "P01",
+          "tmf_included": false,
+          "tmf_sha256": null,
+          "valid_arm": true,
+          "wall_seconds": 6.761945486068726
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "assignment_order": 1,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "88075a63-fb57-4f1f-829e-4e4ca8363a4e",
+            "usage": {
+              "completion_tokens": 144,
+              "prompt_tokens": 4361,
+              "total_tokens": 4505
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "The supplied evidence does not show a complete publication-to-consumption Java path. It only establishes the domain endpoint: Visit is a JPA entity mapped to `visits`; `Owner.addVisit(petId, visit)` validates inputs, resolves the pet, and delegates to `pet.addVisit(visit)`. No publisher, consumer, controller, service, repository, or `Pet.addVisit` implementation is supplied.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:37-50",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:174-189"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "4896ffb4c307452a024753f218926ce50d67f965c79904c69f175ed624af02f7",
+          "raw_answer": "{\"answer\":\"The supplied evidence does not show a complete publication-to-consumption Java path. It only establishes the domain endpoint: Visit is a JPA entity mapped to `visits`; `Owner.addVisit(petId, visit)` validates inputs, resolves the pet, and delegates to `pet.addVisit(visit)`. No publisher, consumer, controller, service, repository, or `Pet.addVisit` implementation is supplied.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:37-50\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:174-189\"],\"confidence\":\"high\"}",
+          "source_manifest": [
+            {
+              "lines": 219,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "sha256": "a6bb0ccb65f5df9dfde087f914e05aae57a53036c14a538522fbc80e8ddab184"
+            },
+            {
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "sha256": "b3f79922d07b7ac11aba597a88866c27a67620768b791f616c195b01e5d3045e"
+            },
+            {
+              "lines": 65,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+              "sha256": "2599a713f6bb020f2d777c4035f1fdd8c8e7ca87525c0593cb9e73d9e5dba168"
+            },
+            {
+              "lines": 117,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/Vet.java",
+              "sha256": "a3d64e093e451bc4494e802ba04199b0a8c068a4b6dc33036a717aa596f37998"
+            }
+          ],
+          "task_id": "P01",
+          "tmf_included": true,
+          "tmf_sha256": "5feb269952440aa6f91fad7244700cba6b4d0339c34bc4553c026152b2cc8fea",
+          "valid_arm": true,
+          "wall_seconds": 4.336502552032471
+        }
+      ],
+      "valid_pair": true
+    }
+  ],
+  "pilot_manifest_sha256": "02629938811b7dadb41a1c5a0fefa9cccf6f12de93db222e4149d6670b8c6821",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "protocol_sha256": "90f66e057828d9760f6201844654fc06ecac87f9d44aa6ea87356c56c6fa6ff3",
+  "repo_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+  "repo_status": "?? .tmf/\n?? AGENTS.md",
+  "schema": "java_real_v1-broker-pilot-v1-report",
+  "tag": "smoke-1pair",
+  "valid_pairs": 1
+}

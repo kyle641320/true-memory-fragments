@@ -1,0 +1,413 @@
+{
+  "base_manifest_sha256": "d730c3910fa79e278fe348ef0768da5e2e0d260510ebff8f57151012b84fdffa",
+  "created_at": "2026-08-13T03:05:28Z",
+  "execution_kind": "real_broker_isolated_evidence_agent",
+  "invalid_pairs": 0,
+  "isolation_probe": {
+    "ambient_secrets": [],
+    "inet_blocked": true
+  },
+  "pairs": [
+    {
+      "cross_arm_state_files": [],
+      "order": [
+        "SOURCE_ONLY",
+        "TMF_MAP"
+      ],
+      "pair_id": "P01",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "assignment_order": 0,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "2d429aab-e0b4-43f7-9a56-7e5125df920a",
+            "usage": {
+              "completion_tokens": 160,
+              "completion_tokens_details": {
+                "reasoning_tokens": 52
+              },
+              "prompt_tokens": 4280,
+              "total_tokens": 4440
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "The complete Java publication-to-consumption path cannot be located from the supplied evidence. The evidence only shows creation of a Visit and its addition to a Pet through Owner.addVisit(); it contains no event publisher or consumer/listener.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:52-57",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:174-189"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "e068f30d3562fc9d26a0a6ba5e52f1d9369b1d3b08cbde4d4e26059c76e89acc",
+          "raw_answer": "{\"answer\":\"The complete Java publication-to-consumption path cannot be located from the supplied evidence. The evidence only shows creation of a Visit and its addition to a Pet through Owner.addVisit(); it contains no event publisher or consumer/listener.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:52-57\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:174-189\"],\"confidence\":\"high\"}",
+          "source_manifest": [
+            {
+              "lines": 219,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "sha256": "a6bb0ccb65f5df9dfde087f914e05aae57a53036c14a538522fbc80e8ddab184"
+            },
+            {
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "sha256": "b3f79922d07b7ac11aba597a88866c27a67620768b791f616c195b01e5d3045e"
+            },
+            {
+              "lines": 65,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+              "sha256": "2599a713f6bb020f2d777c4035f1fdd8c8e7ca87525c0593cb9e73d9e5dba168"
+            },
+            {
+              "lines": 117,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/Vet.java",
+              "sha256": "a3d64e093e451bc4494e802ba04199b0a8c068a4b6dc33036a717aa596f37998"
+            }
+          ],
+          "task_id": "P01",
+          "tmf_included": false,
+          "tmf_sha256": null,
+          "valid_arm": true,
+          "wall_seconds": 4.436289310455322
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "assignment_order": 1,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "60f126c2-61ef-4508-922f-b904ae83c663",
+            "usage": {
+              "completion_tokens": 188,
+              "completion_tokens_details": {
+                "reasoning_tokens": 58
+              },
+              "prompt_tokens": 4361,
+              "total_tokens": 4549
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "The complete publication-to-consumption Java path cannot be established from the supplied evidence. The visible booking path only shows Owner.addVisit(petId, visit) resolving the pet and delegating to Pet.addVisit(visit); Pet and any event publisher/consumer code are absent. Visit is the persisted domain entity mapped to the visits table.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:175-188",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:37-50"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "4896ffb4c307452a024753f218926ce50d67f965c79904c69f175ed624af02f7",
+          "raw_answer": "{\"answer\":\"The complete publication-to-consumption Java path cannot be established from the supplied evidence. The visible booking path only shows Owner.addVisit(petId, visit) resolving the pet and delegating to Pet.addVisit(visit); Pet and any event publisher/consumer code are absent. Visit is the persisted domain entity mapped to the visits table.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:175-188\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:37-50\"],\"confidence\":\"high\"}",
+          "source_manifest": [
+            {
+              "lines": 219,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "sha256": "a6bb0ccb65f5df9dfde087f914e05aae57a53036c14a538522fbc80e8ddab184"
+            },
+            {
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "sha256": "b3f79922d07b7ac11aba597a88866c27a67620768b791f616c195b01e5d3045e"
+            },
+            {
+              "lines": 65,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+              "sha256": "2599a713f6bb020f2d777c4035f1fdd8c8e7ca87525c0593cb9e73d9e5dba168"
+            },
+            {
+              "lines": 117,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/Vet.java",
+              "sha256": "a3d64e093e451bc4494e802ba04199b0a8c068a4b6dc33036a717aa596f37998"
+            }
+          ],
+          "task_id": "P01",
+          "tmf_included": true,
+          "tmf_sha256": "5feb269952440aa6f91fad7244700cba6b4d0339c34bc4553c026152b2cc8fea",
+          "valid_arm": true,
+          "wall_seconds": 6.271445989608765
+        }
+      ],
+      "valid_pair": true
+    },
+    {
+      "cross_arm_state_files": [],
+      "order": [
+        "TMF_MAP",
+        "SOURCE_ONLY"
+      ],
+      "pair_id": "P02",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "assignment_order": 0,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "68cbca48-7d2d-43ae-86e9-2aba40c5411e",
+            "usage": {
+              "completion_tokens": 428,
+              "completion_tokens_details": {
+                "reasoning_tokens": 119
+              },
+              "prompt_tokens": 2967,
+              "total_tokens": 3395
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "Changing VisitBooked’s constructor shape, field names, or types directly impacts its producer, listener path, and tests. VisitScheduler constructs it with visitId, petId, and date; VetRoster reads all three: date drives workload calculation and assignment persistence, visitId is persisted, and petId is logged. The owner-module test explicitly matches and verifies petId. Current booking order is: attach visit, flush persistence, then publish the event, all inside bookVisit’s transaction. Moving publication before flush could expose an event before the visit ID/state is flushed; the supplied evidence does not establish listener execution relative to the publisher transaction’s commit. The vet listener delegates the event to assignVet, which has its own transactional boundary and saves the assignment. Therefore transaction/event reordering must preserve availability of visitId/date and account for failure consistency between visit persistence, publication, and assignment.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73",
+              "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "8a43a584648806a7e53a23d5ce9ef44ad0f26f5f97f6d19b5bf14b9c17c6792d",
+          "raw_answer": "{\n  \"answer\": \"Changing VisitBooked’s constructor shape, field names, or types directly impacts its producer, listener path, and tests. VisitScheduler constructs it with visitId, petId, and date; VetRoster reads all three: date drives workload calculation and assignment persistence, visitId is persisted, and petId is logged. The owner-module test explicitly matches and verifies petId. Current booking order is: attach visit, flush persistence, then publish the event, all inside bookVisit’s transaction. Moving publication before flush could expose an event before the visit ID/state is flushed; the supplied evidence does not establish listener execution relative to the publisher transaction’s commit. The vet listener delegates the event to assignVet, which has its own transactional boundary and saves the assignment. Therefore transaction/event reordering must preserve availability of visitId/date and account for failure consistency between visit persistence, publication, and assignment.\",\n  \"citations\": [\n    \"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73\",\n    \"src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60\"\n  ],\n  \"confidence\": \"high\"\n}",
+          "source_manifest": [
+            {
+              "lines": 89,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "sha256": "0857b26c49040e0fe88972f1e3910ff18668eae4004f686548a348573b75220a"
+            },
+            {
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "sha256": "43d2f3f041efea7956602f479686faceaeeaab060af726505f8a327f79b70274"
+            },
+            {
+              "lines": 51,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "sha256": "9d2b650143af9816b327acf6bae436d009452b74cdb3b56306f484bc7131b2f2"
+            },
+            {
+              "lines": 63,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "sha256": "a1f4bc80845d0f2a5a5b8c1713fd630e858764d62627785d32dd5cd26b0d287b"
+            }
+          ],
+          "task_id": "P02",
+          "tmf_included": true,
+          "tmf_sha256": "3f3a983052b017a492a7aa65bfe5d5398f9968c8d547838063a54c6b4185ce47",
+          "valid_arm": true,
+          "wall_seconds": 10.671786785125732
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "assignment_order": 1,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "f7bfc72a-f0fc-484b-9b6f-46dd19748f6e",
+            "usage": {
+              "completion_tokens": 378,
+              "completion_tokens_details": {
+                "reasoning_tokens": 86
+              },
+              "prompt_tokens": 2887,
+              "total_tokens": 3265
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "Changing VisitBooked fields directly impacts its producer, consumer, logging, persistence mapping, and test assertions. VisitScheduler constructs it with visitId, petId, and date; VetRoster reads all three, using date for load calculation, visitId/date for VisitAssignment persistence, and visitId/petId/date for logging. The owner test specifically depends on petId(). Ordering is persistence-first: bookVisit is transactional, adds the visit, explicitly flushes, then publishes VisitBooked. Moving publication before flush could expose an event before persistence/ID materialization implied by the current sequence. The vet listener receives the event through @ApplicationModuleListener and delegates to assignVet, which has its own @Transactional boundary; changing listener or transaction ordering therefore directly affects when assignment work occurs relative to booking persistence.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44",
+              "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "aee6f3d2dd30b0cb8d0ef7f7598490c5e363da522ec0faa005668bf48d5b7ea1",
+          "raw_answer": "{\n  \"answer\": \"Changing VisitBooked fields directly impacts its producer, consumer, logging, persistence mapping, and test assertions. VisitScheduler constructs it with visitId, petId, and date; VetRoster reads all three, using date for load calculation, visitId/date for VisitAssignment persistence, and visitId/petId/date for logging. The owner test specifically depends on petId(). Ordering is persistence-first: bookVisit is transactional, adds the visit, explicitly flushes, then publishes VisitBooked. Moving publication before flush could expose an event before persistence/ID materialization implied by the current sequence. The vet listener receives the event through @ApplicationModuleListener and delegates to assignVet, which has its own @Transactional boundary; changing listener or transaction ordering therefore directly affects when assignment work occurs relative to booking persistence.\",\n  \"citations\": [\n    \"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44\",\n    \"src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60\"\n  ],\n  \"confidence\": \"high\"\n}",
+          "source_manifest": [
+            {
+              "lines": 89,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "sha256": "0857b26c49040e0fe88972f1e3910ff18668eae4004f686548a348573b75220a"
+            },
+            {
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "sha256": "43d2f3f041efea7956602f479686faceaeeaab060af726505f8a327f79b70274"
+            },
+            {
+              "lines": 51,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "sha256": "9d2b650143af9816b327acf6bae436d009452b74cdb3b56306f484bc7131b2f2"
+            },
+            {
+              "lines": 63,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "sha256": "a1f4bc80845d0f2a5a5b8c1713fd630e858764d62627785d32dd5cd26b0d287b"
+            }
+          ],
+          "task_id": "P02",
+          "tmf_included": false,
+          "tmf_sha256": null,
+          "valid_arm": true,
+          "wall_seconds": 9.70655608177185
+        }
+      ],
+      "valid_pair": true
+    },
+    {
+      "cross_arm_state_files": [],
+      "order": [
+        "TMF_MAP",
+        "SOURCE_ONLY"
+      ],
+      "pair_id": "P03",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "assignment_order": 0,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "5c28dfc0-2b3c-47c6-a4c9-ccde4f2c4054",
+            "usage": {
+              "completion_tokens": 392,
+              "prompt_tokens": 7315,
+              "total_tokens": 7707
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "Add `import jakarta.validation.constraints.NotNull;` and annotate `Visit.date` with `@NotNull` immediately above `@DateTimeFormat`. This is the smallest change because the field currently has formatting but no null-validation constraint, while `description` already uses Bean Validation. Targeted verification: add a visit-booking MVC/validation test that submits or validates a `Visit` with `date == null` and a nonblank description, then asserts a field error for `date` (preferably code `NotNull`) and no successful redirect/persistence. Also retain a valid-date case. Tests were not run.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:19",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:21",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:29",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:46",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:47",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:49",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:50",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:55",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:56",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:63",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:64"
+            ],
+            "confidence": "high"
+          },
+          "prompt_sha256": "ffafff0dcb4978a81012f2920280de7516c6218b5a17c5b7363188af7f128a1c",
+          "raw_answer": "{\"answer\":\"Add `import jakarta.validation.constraints.NotNull;` and annotate `Visit.date` with `@NotNull` immediately above `@DateTimeFormat`. This is the smallest change because the field currently has formatting but no null-validation constraint, while `description` already uses Bean Validation. Targeted verification: add a visit-booking MVC/validation test that submits or validates a `Visit` with `date == null` and a nonblank description, then asserts a field error for `date` (preferably code `NotNull`) and no successful redirect/persistence. Also retain a valid-date case. Tests were not run.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:19\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:21\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:29\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:46\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:47\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:49\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:50\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:55\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:56\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:63\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:64\"],\"confidence\":\"high\"}",
+          "source_manifest": [
+            {
+              "lines": 212,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+              "sha256": "f8382f126ad9db1256742c137761a9d69a5c0fbc3af70fc07857d740836a79b8"
+            },
+            {
+              "lines": 252,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+              "sha256": "752633fba6a725405a6354328c3b5b837ba696a752159d4bce3eb16d50f8a4ba"
+            },
+            {
+              "lines": 119,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+              "sha256": "09388df8c2fc3de9eb23f170bbc2b5f082e15e038e27fb33f943093a56340ec1"
+            },
+            {
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "sha256": "b3f79922d07b7ac11aba597a88866c27a67620768b791f616c195b01e5d3045e"
+            }
+          ],
+          "task_id": "P03",
+          "tmf_included": true,
+          "tmf_sha256": "3e3978c87b981230a9b56a39a5dce20e8fb89a9f2c6e1e23e29f444f054b4f9c",
+          "valid_arm": true,
+          "wall_seconds": 8.844685792922974
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "assignment_order": 1,
+          "broker": {
+            "calls": 1,
+            "model": "gpt-5.6-sol",
+            "protocol": "tmf-agent-broker-v1",
+            "request_id": "a06c61fd-44a9-45f9-89ef-c8465e969538",
+            "usage": {
+              "completion_tokens": 247,
+              "prompt_tokens": 7231,
+              "total_tokens": 7478
+            }
+          },
+          "budget_valid": true,
+          "parsed_answer": {
+            "answer": "Smallest change: in Visit.java, import jakarta.validation.constraints.NotNull and annotate the date field with @NotNull (alongside @DateTimeFormat). Targeted verification: add a visit-creation MVC validation test that POSTs a valid description while omitting the date, then asserts a field error on visit.date, an OK response, and redisplay of the visit form rather than redirect/booking. This is necessary despite the constructor default because request binding can set date to null; existing evidence only verifies null-date validation for Pet.birthDate, not Visit.date.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45-47",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:55-57",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:63-65",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:49-50",
+              "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java:105-115"
+            ],
+            "confidence": 0.94
+          },
+          "prompt_sha256": "b9c5c65f0059a9540222c139f3f1ec11b7f2f0cd8dca8dbf56332582ea8eca30",
+          "raw_answer": "{\"answer\":\"Smallest change: in Visit.java, import jakarta.validation.constraints.NotNull and annotate the date field with @NotNull (alongside @DateTimeFormat). Targeted verification: add a visit-creation MVC validation test that POSTs a valid description while omitting the date, then asserts a field error on visit.date, an OK response, and redisplay of the visit form rather than redirect/booking. This is necessary despite the constructor default because request binding can set date to null; existing evidence only verifies null-date validation for Pet.birthDate, not Visit.date.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45-47\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:55-57\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:63-65\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:49-50\",\"src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java:105-115\"],\"confidence\":0.94}",
+          "source_manifest": [
+            {
+              "lines": 212,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+              "sha256": "f8382f126ad9db1256742c137761a9d69a5c0fbc3af70fc07857d740836a79b8"
+            },
+            {
+              "lines": 252,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/ui/OwnerControllerTests.java",
+              "sha256": "752633fba6a725405a6354328c3b5b837ba696a752159d4bce3eb16d50f8a4ba"
+            },
+            {
+              "lines": 119,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+              "sha256": "09388df8c2fc3de9eb23f170bbc2b5f082e15e038e27fb33f943093a56340ec1"
+            },
+            {
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "sha256": "b3f79922d07b7ac11aba597a88866c27a67620768b791f616c195b01e5d3045e"
+            }
+          ],
+          "task_id": "P03",
+          "tmf_included": false,
+          "tmf_sha256": null,
+          "valid_arm": true,
+          "wall_seconds": 6.128854036331177
+        }
+      ],
+      "valid_pair": true
+    }
+  ],
+  "pilot_manifest_sha256": "02629938811b7dadb41a1c5a0fefa9cccf6f12de93db222e4149d6670b8c6821",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "protocol_sha256": "90f66e057828d9760f6201844654fc06ecac87f9d44aa6ea87356c56c6fa6ff3",
+  "repo_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+  "repo_status": "?? .tmf/\n?? AGENTS.md",
+  "schema": "java_real_v1-broker-pilot-v1-report",
+  "tag": "pilot-3pair",
+  "valid_pairs": 3
+}

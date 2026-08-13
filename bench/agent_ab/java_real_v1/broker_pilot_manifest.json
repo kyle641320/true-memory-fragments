@@ -1,0 +1,35 @@
+{
+  "schema": "java_real_v1-broker-pilot-v1",
+  "status": "versioned_pilot_does_not_modify_frozen_manifest_or_formal_results",
+  "base_manifest": "manifest.json",
+  "base_manifest_sha256": "d730c3910fa79e278fe348ef0768da5e2e0d260510ebff8f57151012b84fdffa",
+  "model": {
+    "id": "gpt-5.6-sol",
+    "temperature": 0,
+    "timeout_seconds": 120
+  },
+  "broker": {
+    "client": "/opt/tmf-model-broker/client",
+    "socket": "/run/tmf-model-broker/broker.sock",
+    "protocol": "tmf-agent-broker-v1",
+    "network_wrapper": "/usr/bin/unshare --net --"
+  },
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_MAP"
+  ],
+  "task_order": [
+    "P01",
+    "P02",
+    "P03"
+  ],
+  "seed": "java_real_v1-broker-pilot-v1:2026-08-13",
+  "pairs": 3,
+  "broker_call_budget_per_arm": 1,
+  "inherited_budgets": {
+    "tool_calls": 12,
+    "source_files": 8,
+    "source_lines": 800,
+    "context_tokens": 12000
+  }
+}
