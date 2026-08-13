@@ -1,0 +1,655 @@
+{
+  "created_at": "2026-08-13T03:18:35Z",
+  "isolation_probe": {
+    "ambient_secrets": [],
+    "inet_blocked": true
+  },
+  "manifest_sha256": "481c2ffdd2cab011fbfab466a6f42f4b871490efa3a95c81890f4e78723e85e9",
+  "pairs": [
+    {
+      "order": [
+        "TMF_MAP",
+        "SOURCE_ONLY"
+      ],
+      "pair_id": "P01",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "broker_calls": 2,
+          "candidate_sha256": "19240921d07fe6bb0ea6e09fec20d86806272181283cf388b21c0959c7ab1688",
+          "latency_seconds": 15.27090334892273,
+          "parsed_answer": {
+            "answer": "POST /owners/{ownerId}/pets/{petId}/visits/new \u2192 VisitController.processNewVisitForm() validates the Visit and calls VisitScheduler.bookVisit() \u2192 the scheduler reloads the Owner, adds the Visit to the selected Pet, flushes persistence, and publishes VisitBooked(visitId, petId, date) \u2192 VetEventListener consumes VisitBooked via @ApplicationModuleListener and calls vetRoster.assignVet(event).",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-105",
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:179-189",
+              "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-25",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44"
+            ],
+            "confidence": "high"
+          },
+          "raw_answer": "{\n  \"answer\": \"POST /owners/{ownerId}/pets/{petId}/visits/new \u2192 VisitController.processNewVisitForm() validates the Visit and calls VisitScheduler.bookVisit() \u2192 the scheduler reloads the Owner, adds the Visit to the selected Pet, flushes persistence, and publishes VisitBooked(visitId, petId, date) \u2192 VetEventListener consumes VisitBooked via @ApplicationModuleListener and calls vetRoster.assignVet(event).\",\n  \"citations\": [\n    \"src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-105\",\n    \"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50\",\n    \"src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:179-189\",\n    \"src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-25\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44\"\n  ],\n  \"confidence\": \"high\"\n}",
+          "selection_paths": [
+            "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java"
+          ],
+          "selection_schema_valid": true,
+          "source_files": 7,
+          "source_lines": 600,
+          "source_manifest": [
+            {
+              "end": 108,
+              "lines": 108,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "start": 1
+            },
+            {
+              "end": 52,
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            {
+              "end": 26,
+              "lines": 26,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "start": 1
+            },
+            {
+              "end": 87,
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "start": 1
+            },
+            {
+              "end": 51,
+              "lines": 51,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "start": 1
+            },
+            {
+              "end": 65,
+              "lines": 65,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java",
+              "start": 1
+            },
+            {
+              "end": 211,
+              "lines": 211,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "start": 1
+            }
+          ],
+          "task_id": "P01",
+          "tmf_adoption": false,
+          "tmf_available": true,
+          "tool_calls": 2,
+          "total_tokens": 7406,
+          "usage": [
+            {
+              "completion_tokens": 347,
+              "completion_tokens_details": {
+                "reasoning_tokens": 218
+              },
+              "prompt_tokens": 1046,
+              "total_tokens": 1393
+            },
+            {
+              "completion_tokens": 285,
+              "completion_tokens_details": {
+                "reasoning_tokens": 41
+              },
+              "prompt_tokens": 5728,
+              "total_tokens": 6013
+            }
+          ],
+          "valid_arm": true
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "broker_calls": 2,
+          "candidate_sha256": "19240921d07fe6bb0ea6e09fec20d86806272181283cf388b21c0959c7ab1688",
+          "latency_seconds": 17.97308087348938,
+          "parsed_answer": {
+            "answer": "POST /owners/{ownerId}/pets/{petId}/visits/new \u2192 VisitController.processNewVisitForm() validates input and calls VisitScheduler.bookVisit() \u2192 the scheduler reloads the managed Owner, calls Owner.addVisit() (which delegates to Pet.addVisit()), flushes persistence, and publishes VisitBooked(visitId, petId, date) \u2192 VetEventListener.on() consumes the event and calls VetRoster.assignVet() \u2192 the roster selects the least-loaded vet and persists a VisitAssignment in visit_assignments.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-105",
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50",
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:179-189",
+              "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-26",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java:28-41"
+            ],
+            "confidence": 0.99
+          },
+          "raw_answer": "{\"answer\":\"POST /owners/{ownerId}/pets/{petId}/visits/new \u2192 VisitController.processNewVisitForm() validates input and calls VisitScheduler.bookVisit() \u2192 the scheduler reloads the managed Owner, calls Owner.addVisit() (which delegates to Pet.addVisit()), flushes persistence, and publishes VisitBooked(visitId, petId, date) \u2192 VetEventListener.on() consumes the event and calls VetRoster.assignVet() \u2192 the roster selects the least-loaded vet and persists a VisitAssignment in visit_assignments.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-105\",\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50\",\"src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java:179-189\",\"src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-26\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java:28-41\"],\"confidence\":0.99}",
+          "selection_paths": [
+            "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java"
+          ],
+          "selection_schema_valid": true,
+          "source_files": 7,
+          "source_lines": 600,
+          "source_manifest": [
+            {
+              "end": 108,
+              "lines": 108,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "start": 1
+            },
+            {
+              "end": 52,
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            {
+              "end": 26,
+              "lines": 26,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "start": 1
+            },
+            {
+              "end": 51,
+              "lines": 51,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "start": 1
+            },
+            {
+              "end": 89,
+              "lines": 89,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "start": 1
+            },
+            {
+              "end": 65,
+              "lines": 65,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java",
+              "start": 1
+            },
+            {
+              "end": 209,
+              "lines": 209,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "start": 1
+            }
+          ],
+          "task_id": "P01",
+          "tmf_adoption": false,
+          "tmf_available": false,
+          "tool_calls": 2,
+          "total_tokens": 7733,
+          "usage": [
+            {
+              "completion_tokens": 459,
+              "completion_tokens_details": {
+                "reasoning_tokens": 329
+              },
+              "prompt_tokens": 968,
+              "total_tokens": 1427
+            },
+            {
+              "completion_tokens": 289,
+              "prompt_tokens": 6017,
+              "total_tokens": 6306
+            }
+          ],
+          "valid_arm": true
+        }
+      ],
+      "valid_pair": true
+    },
+    {
+      "order": [
+        "TMF_MAP",
+        "SOURCE_ONLY"
+      ],
+      "pair_id": "P02",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "broker_calls": 2,
+          "candidate_sha256": "59e2a3edca5520f899282ee3dc872cf1c46dad9cc83ae77945d782f37fe33891",
+          "latency_seconds": 14.358647584915161,
+          "parsed_answer": {
+            "answer": "VisitBooked is the owner module\u2019s public cross-module contract. Changing, removing, renaming, retyping, or reordering its visitId, petId, or date components directly requires updates to event construction in VisitScheduler, consumption in VetRoster, and tests that construct or inspect the event. In particular, VetRoster uses date for workload calculation and persistence, visitId for assignment identity, and petId for logging. Current ordering is: add visit, flush persistence, then publish, all inside the transactional bookVisit method. Moving publication before flush could publish before the visit ID/persistence state is established; moving it outside the transaction would change transaction/event timing. The supplied source does not establish exact listener commit-phase semantics, so no stronger atomicity guarantee can be concluded.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-25",
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73",
+              "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60",
+              "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java:37-47"
+            ],
+            "confidence": "high"
+          },
+          "raw_answer": "{\"answer\":\"VisitBooked is the owner module\u2019s public cross-module contract. Changing, removing, renaming, retyping, or reordering its visitId, petId, or date components directly requires updates to event construction in VisitScheduler, consumption in VetRoster, and tests that construct or inspect the event. In particular, VetRoster uses date for workload calculation and persistence, visitId for assignment identity, and petId for logging. Current ordering is: add visit, flush persistence, then publish, all inside the transactional bookVisit method. Moving publication before flush could publish before the visit ID/persistence state is established; moving it outside the transaction would change transaction/event timing. The supplied source does not establish exact listener commit-phase semantics, so no stronger atomicity guarantee can be concluded.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-25\",\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44\",\"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73\",\"src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60\",\"src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java:37-47\"],\"confidence\":\"high\"}",
+          "selection_paths": [
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java"
+          ],
+          "selection_schema_valid": true,
+          "source_files": 9,
+          "source_lines": 600,
+          "source_manifest": [
+            {
+              "end": 26,
+              "lines": 26,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "start": 1
+            },
+            {
+              "end": 52,
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            {
+              "end": 51,
+              "lines": 51,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "start": 1
+            },
+            {
+              "end": 89,
+              "lines": 89,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "start": 1
+            },
+            {
+              "end": 63,
+              "lines": 63,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "start": 1
+            },
+            {
+              "end": 51,
+              "lines": 51,
+              "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+              "start": 1
+            },
+            {
+              "end": 36,
+              "lines": 36,
+              "path": "src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java",
+              "start": 1
+            },
+            {
+              "end": 219,
+              "lines": 219,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "start": 1
+            },
+            {
+              "end": 13,
+              "lines": 13,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java",
+              "start": 1
+            }
+          ],
+          "task_id": "P02",
+          "tmf_adoption": false,
+          "tmf_available": true,
+          "tool_calls": 2,
+          "total_tokens": 7720,
+          "usage": [
+            {
+              "completion_tokens": 225,
+              "completion_tokens_details": {
+                "reasoning_tokens": 93
+              },
+              "prompt_tokens": 1050,
+              "total_tokens": 1275
+            },
+            {
+              "completion_tokens": 315,
+              "prompt_tokens": 6130,
+              "total_tokens": 6445
+            }
+          ],
+          "valid_arm": true
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "broker_calls": 2,
+          "candidate_sha256": "59e2a3edca5520f899282ee3dc872cf1c46dad9cc83ae77945d782f37fe33891",
+          "latency_seconds": 19.25225520133972,
+          "parsed_answer": {
+            "answer": "VisitBooked is the owner module\u2019s public event contract with fields visitId, petId, and date. Changing field names, types, or constructor shape directly requires updating the publisher, vet consumer, and tests: VisitScheduler constructs all three values; VetRoster reads all three and persists visitId/date; tests construct events and inspect petId. Current booking order is add visit \u2192 flush persistence \u2192 publish event, all inside the @Transactional bookVisit method. Reordering publication before flush would remove the explicit guarantee that persistence is flushed before the event is emitted. The vet handler uses @ApplicationModuleListener and delegates to a separately @Transactional assignment method, but the supplied source does not establish its exact execution timing relative to the owner transaction\u2019s commit.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-26",
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44",
+              "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73",
+              "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60",
+              "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java:37-47"
+            ],
+            "confidence": "high"
+          },
+          "raw_answer": "{\n  \"answer\": \"VisitBooked is the owner module\u2019s public event contract with fields visitId, petId, and date. Changing field names, types, or constructor shape directly requires updating the publisher, vet consumer, and tests: VisitScheduler constructs all three values; VetRoster reads all three and persists visitId/date; tests construct events and inspect petId. Current booking order is add visit \u2192 flush persistence \u2192 publish event, all inside the @Transactional bookVisit method. Reordering publication before flush would remove the explicit guarantee that persistence is flushed before the event is emitted. The vet handler uses @ApplicationModuleListener and delegates to a separately @Transactional assignment method, but the supplied source does not establish its exact execution timing relative to the owner transaction\u2019s commit.\",\n  \"citations\": [\n    \"src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java:20-26\",\n    \"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44\",\n    \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-73\",\n    \"src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java:57-60\",\n    \"src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java:37-47\"\n  ],\n  \"confidence\": \"high\"\n}",
+          "selection_paths": [
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+            "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java"
+          ],
+          "selection_schema_valid": true,
+          "source_files": 9,
+          "source_lines": 600,
+          "source_manifest": [
+            {
+              "end": 26,
+              "lines": 26,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "start": 1
+            },
+            {
+              "end": 52,
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            {
+              "end": 51,
+              "lines": 51,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "start": 1
+            },
+            {
+              "end": 89,
+              "lines": 89,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "start": 1
+            },
+            {
+              "end": 63,
+              "lines": 63,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "start": 1
+            },
+            {
+              "end": 51,
+              "lines": 51,
+              "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+              "start": 1
+            },
+            {
+              "end": 36,
+              "lines": 36,
+              "path": "src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java",
+              "start": 1
+            },
+            {
+              "end": 219,
+              "lines": 219,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "start": 1
+            },
+            {
+              "end": 13,
+              "lines": 13,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/OwnerRepository.java",
+              "start": 1
+            }
+          ],
+          "task_id": "P02",
+          "tmf_adoption": false,
+          "tmf_available": false,
+          "tool_calls": 2,
+          "total_tokens": 7730,
+          "usage": [
+            {
+              "completion_tokens": 212,
+              "completion_tokens_details": {
+                "reasoning_tokens": 80
+              },
+              "prompt_tokens": 973,
+              "total_tokens": 1185
+            },
+            {
+              "completion_tokens": 415,
+              "completion_tokens_details": {
+                "reasoning_tokens": 82
+              },
+              "prompt_tokens": 6130,
+              "prompt_tokens_details": {
+                "cached_tokens": 5888
+              },
+              "total_tokens": 6545
+            }
+          ],
+          "valid_arm": true
+        }
+      ],
+      "valid_pair": true
+    },
+    {
+      "order": [
+        "SOURCE_ONLY",
+        "TMF_MAP"
+      ],
+      "pair_id": "P03",
+      "rows": [
+        {
+          "answer_schema_valid": true,
+          "arm": "SOURCE_ONLY",
+          "broker_calls": 2,
+          "candidate_sha256": "f24bed8b9bc311577223ebde0f9fbf5e989ec9311281361c4c3d84ad87c6eb17",
+          "latency_seconds": 11.031193971633911,
+          "parsed_answer": {
+            "answer": "Smallest change: in Visit.java, import jakarta.validation.constraints.NotNull and add @NotNull immediately above private LocalDate date. Targeted verification: POST the new-visit form with a null/blank date and otherwise valid data; assert validation errors return pets/createOrUpdateVisitForm and VisitScheduler.bookVisit is not invoked. Also verify a non-null valid date still books successfully.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45-50",
+              "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-105",
+              "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49"
+            ],
+            "confidence": 0.99
+          },
+          "raw_answer": "{\"answer\":\"Smallest change: in Visit.java, import jakarta.validation.constraints.NotNull and add @NotNull immediately above private LocalDate date. Targeted verification: POST the new-visit form with a null/blank date and otherwise valid data; assert validation errors return pets/createOrUpdateVisitForm and VisitScheduler.bookVisit is not invoked. Also verify a non-null valid date still books successfully.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45-50\",\"src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-105\",\"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49\"],\"confidence\":0.99}",
+          "selection_paths": [
+            "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+            "src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java"
+          ],
+          "selection_schema_valid": true,
+          "source_files": 7,
+          "source_lines": 600,
+          "source_manifest": [
+            {
+              "end": 87,
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "start": 1
+            },
+            {
+              "end": 52,
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            {
+              "end": 108,
+              "lines": 108,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "start": 1
+            },
+            {
+              "end": 26,
+              "lines": 26,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "start": 1
+            },
+            {
+              "end": 123,
+              "lines": 123,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+              "start": 1
+            },
+            {
+              "end": 36,
+              "lines": 36,
+              "path": "src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java",
+              "start": 1
+            },
+            {
+              "end": 168,
+              "lines": 168,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "start": 1
+            }
+          ],
+          "task_id": "P03",
+          "tmf_adoption": false,
+          "tmf_available": false,
+          "tool_calls": 2,
+          "total_tokens": 6917,
+          "usage": [
+            {
+              "completion_tokens": 182,
+              "completion_tokens_details": {
+                "reasoning_tokens": 75
+              },
+              "prompt_tokens": 971,
+              "total_tokens": 1153
+            },
+            {
+              "completion_tokens": 165,
+              "prompt_tokens": 5599,
+              "total_tokens": 5764
+            }
+          ],
+          "valid_arm": true
+        },
+        {
+          "answer_schema_valid": true,
+          "arm": "TMF_MAP",
+          "broker_calls": 2,
+          "candidate_sha256": "f24bed8b9bc311577223ebde0f9fbf5e989ec9311281361c4c3d84ad87c6eb17",
+          "latency_seconds": 15.822511434555054,
+          "parsed_answer": {
+            "answer": "In Visit.java, add `import jakarta.validation.constraints.NotNull;` and annotate `date` with `@NotNull` immediately before the field (between current lines 46 and 47). This is the smallest change because the POST already applies `@Valid` and returns the visit form on validation errors before calling `bookVisit`. Targeted verification: submit the new-visit POST with a null/blank date and a valid description; assert a field error for `date`, the form view `pets/createOrUpdateVisitForm`, and that `visitScheduler.bookVisit(...)` is not invoked.",
+            "citations": [
+              "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45-50",
+              "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-104"
+            ],
+            "confidence": 0.99
+          },
+          "raw_answer": "{\"answer\":\"In Visit.java, add `import jakarta.validation.constraints.NotNull;` and annotate `date` with `@NotNull` immediately before the field (between current lines 46 and 47). This is the smallest change because the POST already applies `@Valid` and returns the visit form on validation errors before calling `bookVisit`. Targeted verification: submit the new-visit POST with a null/blank date and a valid description; assert a field error for `date`, the form view `pets/createOrUpdateVisitForm`, and that `visitScheduler.bookVisit(...)` is not invoked.\",\"citations\":[\"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:45-50\",\"src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-104\"],\"confidence\":0.99}",
+          "selection_paths": [
+            "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+            "src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java"
+          ],
+          "selection_schema_valid": true,
+          "source_files": 7,
+          "source_lines": 600,
+          "source_manifest": [
+            {
+              "end": 87,
+              "lines": 87,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+              "start": 1
+            },
+            {
+              "end": 108,
+              "lines": 108,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "start": 1
+            },
+            {
+              "end": 52,
+              "lines": 52,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            {
+              "end": 123,
+              "lines": 123,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+              "start": 1
+            },
+            {
+              "end": 26,
+              "lines": 26,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "start": 1
+            },
+            {
+              "end": 36,
+              "lines": 36,
+              "path": "src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java",
+              "start": 1
+            },
+            {
+              "end": 168,
+              "lines": 168,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+              "start": 1
+            }
+          ],
+          "task_id": "P03",
+          "tmf_adoption": false,
+          "tmf_available": true,
+          "tool_calls": 2,
+          "total_tokens": 7035,
+          "usage": [
+            {
+              "completion_tokens": 200,
+              "completion_tokens_details": {
+                "reasoning_tokens": 93
+              },
+              "prompt_tokens": 1052,
+              "total_tokens": 1252
+            },
+            {
+              "completion_tokens": 184,
+              "prompt_tokens": 5599,
+              "total_tokens": 5783
+            }
+          ],
+          "valid_arm": true
+        }
+      ],
+      "valid_pair": true
+    }
+  ],
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "protocol_sha256": "d49eb1bd7d68c01f8fe04e258d95a4e35d4c2fb3ca260f6e3f8f81f1d3fbcd6e",
+  "repo_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+  "schema": "tmf-java-agent-ab-v2-run",
+  "tag": "pilot-3pair",
+  "valid_pairs": 3
+}

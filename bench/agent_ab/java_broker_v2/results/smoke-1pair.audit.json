@@ -1,0 +1,62 @@
+{
+  "both_arms_floor": false,
+  "independent_scoring": "frozen required citation paths; no prompt adaptation",
+  "manifest_sha256": "481c2ffdd2cab011fbfab466a6f42f4b871490efa3a95c81890f4e78723e85e9",
+  "recommendation": "Treat as small pilot only; expand solely under a separately preregistered protocol.",
+  "rows": [
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": true,
+      "latency_seconds": 22.11226534843445,
+      "required_path_coverage": 1.0,
+      "source_files": 7,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P01",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7946,
+      "valid": true
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": true,
+      "latency_seconds": 14.344211339950562,
+      "required_path_coverage": 1.0,
+      "source_files": 8,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P01",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7437,
+      "valid": true
+    }
+  ],
+  "schema": "tmf-java-agent-ab-v2-audit",
+  "source_run": "bench/agent_ab/java_broker_v2/results/smoke-1pair.json",
+  "source_sha256": "39336cb7a62a5de6b2a670de9aa56d256f51ebda462b8a13070d68fe9808c956",
+  "summary": {
+    "SOURCE_ONLY": {
+      "citation_accuracy": 1.0,
+      "mean_latency_seconds": 14.344211339950562,
+      "mean_source_lines": 600.0,
+      "mean_tokens": 7437.0,
+      "mean_tool_calls": 2.0,
+      "n": 1,
+      "task_accuracy": 1.0,
+      "tmf_adoption_rate": 0.0
+    },
+    "TMF_MAP": {
+      "citation_accuracy": 1.0,
+      "mean_latency_seconds": 22.11226534843445,
+      "mean_source_lines": 600.0,
+      "mean_tokens": 7946.0,
+      "mean_tool_calls": 2.0,
+      "n": 1,
+      "task_accuracy": 1.0,
+      "tmf_adoption_rate": 0.0
+    }
+  },
+  "valid_pairs": 1
+}

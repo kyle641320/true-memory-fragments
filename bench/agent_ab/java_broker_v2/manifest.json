@@ -1,0 +1,19 @@
+{
+  "schema":"tmf-java-agent-ab-v2","status":"FROZEN_BEFORE_EXECUTION","frozen_at":"2026-08-13T03:20:00Z",
+  "estimand":"paired intention-to-treat effect of access to TMF navigation on held-out Java task and citation accuracy, under an otherwise identical deterministic two-stage source-selection agent loop",
+  "v1_immutable":true,"v1_manifest_sha256":"d730c3910fa79e278fe348ef0768da5e2e0d260510ebff8f57151012b84fdffa",
+  "repository":{"path":"/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith","commit":"58c3310e36c7d827959df6af4d64bdeb8d81f1ea"},
+  "model":{"id":"gpt-5.6-sol","temperature":0,"timeout_seconds":120,"broker_calls_per_arm":2},
+  "arms":["SOURCE_ONLY","TMF_MAP"],"seed":"tmf-java-agent-ab-v2:2026-08-13","task_order":["P01","P02","P03"],
+  "tasks":[
+   {"id":"P01","prompt":"Locate the complete Java path for booking a visit through publication and consumption. Cite file:line evidence."},
+   {"id":"P02","prompt":"Analyze direct impact of changing VisitBooked fields and transaction/event ordering. Cite file:line evidence."},
+   {"id":"P03","prompt":"Design the smallest validation change preventing booking with a null visit date; identify exact edit and targeted verification. Cite evidence."}
+  ],
+  "budgets":{"selection_candidates":40,"selected_files":6,"source_lines":600,"tmf_max_chars":12000,"tool_slots":8,"answer_max_source_lines":600},
+  "evidence":{"format":"numbered source lines plus optional TMF thin navigation context","authority":"source_only","citation_regex":"^src/.+\\.java:[0-9]+(?:-[0-9]+)?$"},
+  "randomization":"sha256(seed:task:arm), ascending","primary_metrics":["task_accuracy","citation_accuracy"],
+  "secondary_metrics":["total_tokens","latency_seconds","source_lines","source_files","tool_calls","tmf_adoption"],
+  "validity_gates":["two broker calls per arm","valid selection JSON","valid answer JSON","exactly 600 source lines per arm","identical candidate catalog","no ambient secrets or arm network","clean pinned repository"],
+  "stopping":{"smoke_pairs":1,"pilot_pairs":3,"run_pilot_only_after_smoke_audit":true,"stop_if_both_arms_floor_after_pilot":true,"no_post_result_prompt_or_metric_changes":true}
+}

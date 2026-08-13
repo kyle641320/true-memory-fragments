@@ -1,0 +1,118 @@
+{
+  "both_arms_floor": false,
+  "independent_scoring": "frozen required citation paths; no prompt adaptation",
+  "manifest_sha256": "481c2ffdd2cab011fbfab466a6f42f4b871490efa3a95c81890f4e78723e85e9",
+  "recommendation": "Treat as small pilot only; expand solely under a separately preregistered protocol.",
+  "rows": [
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": true,
+      "latency_seconds": 15.27090334892273,
+      "required_path_coverage": 1.0,
+      "source_files": 7,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P01",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7406,
+      "valid": true
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": true,
+      "latency_seconds": 17.97308087348938,
+      "required_path_coverage": 1.0,
+      "source_files": 7,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P01",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7733,
+      "valid": true
+    },
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": true,
+      "latency_seconds": 14.358647584915161,
+      "required_path_coverage": 1.0,
+      "source_files": 9,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P02",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7720,
+      "valid": true
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": true,
+      "latency_seconds": 19.25225520133972,
+      "required_path_coverage": 1.0,
+      "source_files": 9,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P02",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7730,
+      "valid": true
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "citation_correct": true,
+      "latency_seconds": 11.031193971633911,
+      "required_path_coverage": 1.0,
+      "source_files": 7,
+      "source_lines": 600,
+      "task_correct": true,
+      "task_id": "P03",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 6917,
+      "valid": true
+    },
+    {
+      "arm": "TMF_MAP",
+      "citation_correct": false,
+      "latency_seconds": 15.822511434555054,
+      "required_path_coverage": 0.5,
+      "source_files": 7,
+      "source_lines": 600,
+      "task_correct": false,
+      "task_id": "P03",
+      "tmf_adoption": false,
+      "tool_calls": 2,
+      "total_tokens": 7035,
+      "valid": true
+    }
+  ],
+  "schema": "tmf-java-agent-ab-v2-audit",
+  "source_run": "bench/agent_ab/java_broker_v2/results/pilot-3pair.json",
+  "source_sha256": "10b2a60002afab74a60f7cd055eda0970a7723d8bdf6e076cc1ca40a2dd48d30",
+  "summary": {
+    "SOURCE_ONLY": {
+      "citation_accuracy": 1.0,
+      "mean_latency_seconds": 16.08551001548767,
+      "mean_source_lines": 600.0,
+      "mean_tokens": 7460.0,
+      "mean_tool_calls": 2.0,
+      "n": 3,
+      "task_accuracy": 1.0,
+      "tmf_adoption_rate": 0.0
+    },
+    "TMF_MAP": {
+      "citation_accuracy": 0.6666666666666666,
+      "mean_latency_seconds": 15.150687456130981,
+      "mean_source_lines": 600.0,
+      "mean_tokens": 7387.0,
+      "mean_tool_calls": 2.0,
+      "n": 3,
+      "task_accuracy": 0.6666666666666666,
+      "tmf_adoption_rate": 0.0
+    }
+  },
+  "valid_pairs": 3
+}

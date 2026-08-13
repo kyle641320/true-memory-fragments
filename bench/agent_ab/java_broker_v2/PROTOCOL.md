@@ -1,0 +1,7 @@
+# TMF Java Agent A/B v2 — frozen protocol
+
+`manifest.json` is the preregistration. v1 files and scores are immutable and excluded from v2 evaluation. The task text and goldens are copied without edits before execution; no golden paths/lines are inserted into prompts or retrieval.
+
+The broker is stateless raw inference, so the runner deterministically mediates a two-call loop. Call 1 selects up to six paths from an identical forty-path lexical candidate catalog. TMF_MAP additionally sees a query-derived TMF thin context; SOURCE_ONLY has no substitute hints. The runner validates selections and fills unused/invalid choices from the same catalog order. It then reads chosen files in order and deterministically pads/truncates from the shared catalog to exactly 600 numbered source lines. Call 2 answers from that evidence. Both arms have two broker calls, eight tool slots, and exactly 600 source lines; only TMF access differs.
+
+Citations must be `src/...java:line[-line]` and resolve to supplied evidence. A pair is valid only if every manifest gate passes. A one-pair smoke is audited first. If valid, the frozen three-pair pilot runs without adaptation. Accuracy uses frozen must-cite paths plus conservative fact-keyword checks; transport validity is reported separately. If both arms remain at task-accuracy floor zero, execution stops at three pairs and attributes the result using navigation adoption/coverage diagnostics rather than expanding.
