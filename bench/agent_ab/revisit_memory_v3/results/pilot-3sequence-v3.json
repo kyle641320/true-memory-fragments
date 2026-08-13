@@ -1,0 +1,870 @@
+{
+  "mode": "pilot",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "CONTROL",
+      "memory_store": null,
+      "sequence": "S11",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.5284608006477356,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 375,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.2075452357530594,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.4163302909582853,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 378,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.16036070883274078,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 3,
+                "path": "org/example/DormantFlag.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": true,
+            "memory_hit": "NOT_APPLICABLE"
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.419938500970602,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 302,
+          "source_bytes": 136,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.1143570989370346,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 23
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.5553907956928015,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 379,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.18565542995929718,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_MEMORY",
+      "memory_store": {
+        "org.example.TaxBand#rate(int)": {
+          "anchors": [
+            {
+              "lines": [
+                4
+              ],
+              "path": "org/example/TaxBand.java"
+            }
+          ],
+          "claim": {
+            "value": 17
+          },
+          "freshness": "fresh",
+          "identity": "org.example.TaxBand#rate(int)",
+          "provenance": {
+            "file_sha256": "781bcc28584278dc48f463d1148b7f6f1ffd94f6962d83f90e3292ac7c92784c",
+            "tree_fingerprint": "2fb0819f36feb2a1f33d34ef08e5771bbf50cf8788c8d3d76ce578a9fd63134a"
+          }
+        }
+      },
+      "sequence": "S11",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 5.573836699128151,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 375,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.21281465888023376,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "MEMORY",
+            "memory_hit": "HIT",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 40,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.7649573516100645,
+          "memory_adoption": true,
+          "memory_hit": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 383,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.30495598912239075,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 3,
+                "path": "org/example/DormantFlag.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": true,
+            "memory_hit": "MISS"
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.86601036041975,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 299,
+          "source_bytes": 136,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.12048892676830292,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "HIT",
+            "value": 23
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.967462019994855,
+          "memory_adoption": false,
+          "memory_hit": true,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 319,
+          "source_bytes": 102,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_blocked": true,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.5104299634695053,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_MEMORY",
+      "memory_store": {
+        "org.example.BufferPlan#capacity(int)": {
+          "anchors": [
+            {
+              "lines": [
+                4
+              ],
+              "path": "org/example/BufferPlan.java"
+            }
+          ],
+          "claim": {
+            "value": 64
+          },
+          "freshness": "fresh",
+          "identity": "org.example.BufferPlan#capacity(int)",
+          "provenance": {
+            "file_sha256": "6c07c5af557b3de8411f30b5b629e8104b69cfcb149e7cae4a81c5690663b4f4",
+            "tree_fingerprint": "d86e4b95e1a788c70e7c36fce078b263cca2b8723a6ac64084638e341afca2e8"
+          }
+        }
+      },
+      "sequence": "S12",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/BufferPlan.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 64
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 5.618449855595827,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 375,
+          "source_bytes": 288,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.22099539637565613,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/BufferPlan.java"
+              }
+            ],
+            "evidence_source": "MEMORY",
+            "memory_hit": "HIT",
+            "value": 64
+          },
+          "citation_ok": true,
+          "completion_tokens": 40,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.303882112726569,
+          "memory_adoption": true,
+          "memory_hit": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 387,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.29906444251537323,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 2,
+                "path": "org/example/ArchiveSwitch.java"
+              },
+              {
+                "line": 3,
+                "path": "org/example/ArchiveSwitch.java"
+              },
+              {
+                "line": 4,
+                "path": "org/example/ArchiveSwitch.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": false,
+            "memory_hit": "MISS"
+          },
+          "citation_ok": true,
+          "completion_tokens": 138,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 4.293879499658942,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 296,
+          "source_bytes": 139,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.1195613294839859,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/BufferPlan.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "HIT",
+            "value": 96
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.1614030450582504,
+          "memory_adoption": false,
+          "memory_hit": true,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 318,
+          "source_bytes": 109,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_blocked": true,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.6465781480073929,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "CONTROL",
+      "memory_store": null,
+      "sequence": "S12",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/BufferPlan.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 64
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.8291152641177177,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 375,
+          "source_bytes": 288,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.1473166048526764,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/BufferPlan.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 64
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.7897757329046726,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 378,
+          "source_bytes": 288,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.15191733837127686,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 2,
+                "path": "org/example/ArchiveSwitch.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": false,
+            "memory_hit": "NOT_APPLICABLE"
+          },
+          "citation_ok": false,
+          "completion_tokens": 41,
+          "correct": false,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [
+            "wrong_citation"
+          ],
+          "latency_seconds": 3.0770789831876755,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 299,
+          "source_bytes": 139,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.15583448112010956,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/BufferPlan.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 96
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.8226333875209093,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 379,
+          "source_bytes": 288,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.16169436275959015,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "CONTROL",
+      "memory_store": null,
+      "sequence": "S13",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/SeatPolicy.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 11
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 5.331228202208877,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 377,
+          "source_bytes": 287,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.1974552869796753,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/SeatPolicy.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 11
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.501399789005518,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 380,
+          "source_bytes": 287,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.16481615602970123,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 3,
+                "path": "org/example/RetiredMode.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": true,
+            "memory_hit": "NOT_APPLICABLE"
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 6.278631230816245,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 302,
+          "source_bytes": 133,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.12533925473690033,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/SeatPolicy.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 7
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.0493807774037123,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 381,
+          "source_bytes": 286,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.15061721205711365,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_MEMORY",
+      "memory_store": {
+        "org.example.SeatPolicy#allowance(int)": {
+          "anchors": [
+            {
+              "lines": [
+                4
+              ],
+              "path": "org/example/SeatPolicy.java"
+            }
+          ],
+          "claim": {
+            "value": 11
+          },
+          "freshness": "fresh",
+          "identity": "org.example.SeatPolicy#allowance(int)",
+          "provenance": {
+            "file_sha256": "10bb03eb682c7d0db3f44207776bb7ff3a41bdaa0cde098efc2e20d8e8ef2792",
+            "tree_fingerprint": "6c586266e8298f0e0d5736634a63874c4610d4cc3738654c8b6429272dac11cc"
+          }
+        }
+      },
+      "sequence": "S13",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/SeatPolicy.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 11
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.3806030489504337,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 377,
+          "source_bytes": 287,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.1788754016160965,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/SeatPolicy.java"
+              }
+            ],
+            "evidence_source": "MEMORY",
+            "memory_hit": "HIT",
+            "value": 11
+          },
+          "citation_ok": true,
+          "completion_tokens": 40,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.560239013284445,
+          "memory_adoption": true,
+          "memory_hit": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 385,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.27348287403583527,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 3,
+                "path": "org/example/RetiredMode.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": true,
+            "memory_hit": "MISS"
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.2413610871881247,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 299,
+          "source_bytes": 133,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.12089498341083527,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/SeatPolicy.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "HIT",
+            "value": 7
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 6.065303787589073,
+          "memory_adoption": false,
+          "memory_hit": true,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 321,
+          "source_bytes": 109,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_blocked": true,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.5319379270076752,
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "revisit-memory-v3-run"
+}

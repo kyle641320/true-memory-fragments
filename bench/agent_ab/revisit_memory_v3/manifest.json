@@ -1,0 +1,83 @@
+{
+  "schema": "revisit-memory-v3",
+  "seed": 13082026,
+  "model": {
+    "id": "gpt-5.6-sol",
+    "timeout_seconds": 120
+  },
+  "budget": {
+    "initial_calls_per_task": 1,
+    "format_repair_calls_per_task": 1,
+    "max_source_lines": 24,
+    "max_source_bytes": 1600
+  },
+  "arms": [
+    "CONTROL",
+    "TMF_MEMORY"
+  ],
+  "phases": [
+    "first_visit",
+    "fresh_revisit",
+    "unknown_region",
+    "mutation_revisit"
+  ],
+  "sequences": [
+    {
+      "id": "S11",
+      "identity": "org.example.TaxBand#rate(int)",
+      "region_path": "org/example/TaxBand.java",
+      "service_path": "org/example/BillingFacade.java",
+      "unknown_identity": "org.example.DormantFlag#enabled()",
+      "unknown_path": "org/example/DormantFlag.java",
+      "input": 42,
+      "base_value": 17,
+      "mutated_value": 23,
+      "unknown_exists": true,
+      "unrelated_mutation_path": "org/example/DormantFlag.java",
+      "tasks": {
+        "first_visit": "What integer does TaxBand.rate return when input is 42?",
+        "fresh_revisit": "On an unchanged revisit, what integer does TaxBand.rate return for 42?",
+        "unknown_region": "Does DormantFlag declare a zero-argument method named enabled?",
+        "mutation_revisit": "After the working-tree changes, what integer does TaxBand.rate return for 42?"
+      }
+    },
+    {
+      "id": "S12",
+      "identity": "org.example.BufferPlan#capacity(int)",
+      "region_path": "org/example/BufferPlan.java",
+      "service_path": "org/example/StreamCoordinator.java",
+      "unknown_identity": "org.example.ArchiveSwitch#active()",
+      "unknown_path": "org/example/ArchiveSwitch.java",
+      "input": 8,
+      "base_value": 64,
+      "mutated_value": 96,
+      "unknown_exists": false,
+      "unrelated_mutation_path": "org/example/ArchiveSwitch.java",
+      "tasks": {
+        "first_visit": "What integer does BufferPlan.capacity return when input is 8?",
+        "fresh_revisit": "On an unchanged revisit, what integer does BufferPlan.capacity return for 8?",
+        "unknown_region": "Does ArchiveSwitch declare a zero-argument method named active?",
+        "mutation_revisit": "After the working-tree changes, what integer does BufferPlan.capacity return for 8?"
+      }
+    },
+    {
+      "id": "S13",
+      "identity": "org.example.SeatPolicy#allowance(int)",
+      "region_path": "org/example/SeatPolicy.java",
+      "service_path": "org/example/BookingGateway.java",
+      "unknown_identity": "org.example.RetiredMode#open()",
+      "unknown_path": "org/example/RetiredMode.java",
+      "input": 5,
+      "base_value": 11,
+      "mutated_value": 7,
+      "unknown_exists": true,
+      "unrelated_mutation_path": "org/example/RetiredMode.java",
+      "tasks": {
+        "first_visit": "What integer does SeatPolicy.allowance return when input is 5?",
+        "fresh_revisit": "On an unchanged revisit, what integer does SeatPolicy.allowance return for 5?",
+        "unknown_region": "Does RetiredMode declare a zero-argument method named open?",
+        "mutation_revisit": "After the working-tree changes, what integer does SeatPolicy.allowance return for 5?"
+      }
+    }
+  ]
+}

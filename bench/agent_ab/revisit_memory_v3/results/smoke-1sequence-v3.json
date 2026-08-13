@@ -1,0 +1,296 @@
+{
+  "mode": "smoke",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "CONTROL",
+      "memory_store": null,
+      "sequence": "S11",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.431379284709692,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 375,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.2559628337621689,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.4399943873286247,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 378,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.19964389503002167,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 3,
+                "path": "org/example/DormantFlag.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": true,
+            "memory_hit": "NOT_APPLICABLE"
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 7.111334668472409,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 302,
+          "source_bytes": 136,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.11348538100719452,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 23
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.2468177415430546,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 379,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.21983496844768524,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_MEMORY",
+      "memory_store": {
+        "org.example.TaxBand#rate(int)": {
+          "anchors": [
+            {
+              "lines": [
+                4
+              ],
+              "path": "org/example/TaxBand.java"
+            }
+          ],
+          "claim": {
+            "value": 17
+          },
+          "freshness": "fresh",
+          "identity": "org.example.TaxBand#rate(int)",
+          "provenance": {
+            "file_sha256": "781bcc28584278dc48f463d1148b7f6f1ffd94f6962d83f90e3292ac7c92784c",
+            "tree_fingerprint": "2fb0819f36feb2a1f33d34ef08e5771bbf50cf8788c8d3d76ce578a9fd63134a"
+          }
+        }
+      },
+      "sequence": "S11",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.6397233065217733,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 375,
+          "source_bytes": 267,
+          "source_files": 2,
+          "source_lines": 11,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.18587522208690643,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "MEMORY",
+            "memory_hit": "HIT",
+            "value": 17
+          },
+          "citation_ok": true,
+          "completion_tokens": 40,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.3441932406276464,
+          "memory_adoption": true,
+          "memory_hit": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 383,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.3222934901714325,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 3,
+                "path": "org/example/DormantFlag.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "exists": true,
+            "memory_hit": "MISS"
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 2.4457440096884966,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 299,
+          "source_bytes": 136,
+          "source_files": 1,
+          "source_lines": 5,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.11429563164710999,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "org/example/TaxBand.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "HIT",
+            "value": 23
+          },
+          "citation_ok": true,
+          "completion_tokens": 39,
+          "correct": true,
+          "format_repair_used": false,
+          "initial_structural_errors": [],
+          "issues": [],
+          "latency_seconds": 3.3588448353111744,
+          "memory_adoption": false,
+          "memory_hit": true,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 319,
+          "source_bytes": 102,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_blocked": true,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.4766806960105896,
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "revisit-memory-v3-run"
+}

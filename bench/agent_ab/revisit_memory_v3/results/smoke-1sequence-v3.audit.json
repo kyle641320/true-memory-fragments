@@ -1,0 +1,134 @@
+{
+  "issues": [],
+  "metrics": {
+    "localized_reread_precision": 1.0,
+    "localized_reread_recall": 1.0,
+    "stale_detection_precision": 1.0,
+    "stale_detection_recall": 1.0,
+    "stale_errors": 0,
+    "valid_sequences": 1
+  },
+  "pass": true,
+  "phases": {
+    "first_visit": {
+      "CONTROL": {
+        "citation_rate": 1.0,
+        "completion_tokens": 41,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 3.431379284709692,
+        "memory_adoptions": 0,
+        "memory_hits": 0,
+        "n": 1,
+        "prompt_tokens": 375,
+        "source_bytes": 267,
+        "source_lines": 11
+      },
+      "TMF_MEMORY": {
+        "citation_rate": 1.0,
+        "completion_tokens": 41,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 2.6397233065217733,
+        "memory_adoptions": 0,
+        "memory_hits": 0,
+        "n": 1,
+        "prompt_tokens": 375,
+        "source_bytes": 267,
+        "source_lines": 11
+      }
+    },
+    "fresh_revisit": {
+      "CONTROL": {
+        "citation_rate": 1.0,
+        "completion_tokens": 41,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 2.4399943873286247,
+        "memory_adoptions": 0,
+        "memory_hits": 0,
+        "n": 1,
+        "prompt_tokens": 378,
+        "source_bytes": 267,
+        "source_lines": 11
+      },
+      "TMF_MEMORY": {
+        "citation_rate": 1.0,
+        "completion_tokens": 40,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 2.3441932406276464,
+        "memory_adoptions": 1,
+        "memory_hits": 1,
+        "n": 1,
+        "prompt_tokens": 383,
+        "source_bytes": 0,
+        "source_lines": 0
+      }
+    },
+    "mutation_revisit": {
+      "CONTROL": {
+        "citation_rate": 1.0,
+        "completion_tokens": 41,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 2.2468177415430546,
+        "memory_adoptions": 0,
+        "memory_hits": 0,
+        "n": 1,
+        "prompt_tokens": 379,
+        "source_bytes": 267,
+        "source_lines": 11
+      },
+      "TMF_MEMORY": {
+        "citation_rate": 1.0,
+        "completion_tokens": 39,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 3.3588448353111744,
+        "memory_adoptions": 0,
+        "memory_hits": 1,
+        "n": 1,
+        "prompt_tokens": 319,
+        "source_bytes": 102,
+        "source_lines": 6
+      }
+    },
+    "unknown_region": {
+      "CONTROL": {
+        "citation_rate": 1.0,
+        "completion_tokens": 42,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 7.111334668472409,
+        "memory_adoptions": 0,
+        "memory_hits": 0,
+        "n": 1,
+        "prompt_tokens": 302,
+        "source_bytes": 136,
+        "source_lines": 5
+      },
+      "TMF_MEMORY": {
+        "citation_rate": 1.0,
+        "completion_tokens": 39,
+        "correct_rate": 1.0,
+        "format_repair_rate": 0.0,
+        "format_repairs": 0,
+        "latency_seconds": 2.4457440096884966,
+        "memory_adoptions": 0,
+        "memory_hits": 0,
+        "n": 1,
+        "prompt_tokens": 299,
+        "source_bytes": 136,
+        "source_lines": 5
+      }
+    }
+  }
+}
