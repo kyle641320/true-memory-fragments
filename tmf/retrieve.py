@@ -85,7 +85,18 @@ def retrieve_path(repo_root: str | Path, path: str, *, use_model: bool = False) 
 def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_model: bool = False) -> RetrieveResult:
     repo = GitRepo(repo_root)
     store = Store(repo.root)
-    terms = {t.lower() for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query)}
+    raw_terms = {t.lower() for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query)}
+    # Cheap language-neutral morphology helps natural-language questions meet
+    # code identifiers (booking -> book, consumed -> consume) without a model,
+    # repository vocabulary, or benchmark-specific aliases.
+    terms = set(raw_terms)
+    for term in raw_terms:
+        for suffix in ("ations", "ation", "ments", "ment", "ing", "ers", "er", "ed", "s"):
+            if term.endswith(suffix) and len(term) - len(suffix) >= 4:
+                stem = term[:-len(suffix)]
+                terms.add(stem)
+                if suffix in {"ing", "ed"} and stem.endswith(stem[-1:] * 2):
+                    terms.add(stem[:-1])
 
     declaration_intent = bool(terms & {"declare", "declares", "declared", "source", "where", "which"})
     repository_intent = bool(terms & {"repository", "repositories", "persists", "persistence"})
@@ -247,7 +258,7 @@ def _add_embedding_seed_expansion(repo: GitRepo, store: Store, query: str, claim
 def _fresh_edge_neighbors(repo: GitRepo, store: Store, claim: Claim) -> list[Claim]:
     out: list[Claim] = []
     for edge in store.iter_claims():
-        if edge.body.get("edge_kind") not in {"calls", "inherits", "overrides"} or not check_freshness(repo, edge).fresh:
+        if edge.body.get("edge_kind") not in {"calls", "inherits", "overrides", "publishes_to", "subscribes_to"} or not check_freshness(repo, edge).fresh:
             continue
         neighbor_id = None
         if edge.body.get("edge_kind") == "calls":
@@ -260,6 +271,15 @@ def _fresh_edge_neighbors(repo: GitRepo, store: Store, claim: Claim) -> list[Cla
                 neighbor_id = edge.body.get("parent_id")
             elif edge.body.get("parent_id") == claim.id:
                 neighbor_id = edge.body.get("child_id")
+        elif edge.body.get("edge_kind") in {"publishes_to", "subscribes_to"}:
+            # Event/topic edges are directed source -> topic.  Returning both
+            # endpoints lets a bounded result bridge publisher/topic/consumer.
+            source_id = edge.body.get("publisher_id") or edge.body.get("subscriber_id") or edge.body.get("source_id") or edge.body.get("caller_id")
+            topic_id = edge.body.get("topic_id")
+            if source_id == claim.id:
+                neighbor_id = topic_id
+            elif topic_id == claim.id:
+                neighbor_id = source_id
         if isinstance(neighbor_id, str):
             neighbor = store.get_claim(neighbor_id)
             if neighbor is not None and check_freshness(repo, neighbor).fresh:

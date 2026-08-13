@@ -1,0 +1,353 @@
+{
+  "manifest_sha256": "0e15c011e78116cca307c533790c745eb7bfab4d111821af19fa176f68e3f8d0",
+  "mode": "description-ab",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "protocol_sha256": "4c7a65574c28c98396102ed52ff107245a111cd1f4bddc6ee3d19da35a55d3e6",
+  "rows": [
+    {
+      "arm": "TMF_AVAILABLE",
+      "latency_seconds": 21.694751262664795,
+      "parsed_answer": null,
+      "source_lines": 322,
+      "task_id": "P01",
+      "tmf_adoption": false,
+      "tmf_calls": 0,
+      "tool_calls": 6,
+      "total_tokens": 10402,
+      "transcript": [
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "query": "bookVisit"
+            },
+            "tool": "source_search"
+          },
+          "result": [
+            {
+              "line": 45,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "text": "public void bookVisit(Owner owner, Integer petId, Visit visit) {"
+            },
+            {
+              "line": 103,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "text": "visitScheduler.bookVisit(owner, petId, visit);"
+            },
+            {
+              "line": 49,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "text": "void bookVisitShouldPublishVisitBookedEvent(Scenario scenario) {"
+            },
+            {
+              "line": 57,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "text": "scenario.stimulate(() -> visitScheduler.bookVisit(owner, pet.getId(), visit))"
+            }
+          ],
+          "round": 1
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 140,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "1: /*\n2:  * Copyright 2012-2026 the original author or authors.\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\");\n5:  * you may not use this file except in compliance with the License.\n6:  * You may obtain a copy of the License at\n7:  *\n8:  *      https://www.apache.org/licenses/LICENSE-2.0\n9:  *\n10:  * Unless required by applicable law or agreed to in writing, software\n11:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n12:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n13:  * See the License for the specific language governing permissions and\n14:  * limitations under the License.\n15:  */\n16: package org.springframework.samples.petclinic.owner.application;\n17: \n18: import org.springframework.context.ApplicationEventPublisher;\n19: import org.springframework.samples.petclinic.owner.VisitBooked;\n20: import org.springframework.samples.petclinic.owner.domain.Owner;\n21: import org.springframework.samples.petclinic.owner.domain.OwnerRepository;\n22: import org.springframework.samples.petclinic.owner.domain.Visit;\n23: import org.springframework.stereotype.Service;\n24: import org.springframework.transaction.annotation.Transactional;\n25: \n26: /**\n27:  * Application service of the {@code owner} module handling visit booking.\n28:  * <p>\n29:  * After persistence, it publishes a {@link VisitBooked} event so other modules can react\n30:  * without direct dependencies on this module.\n31:  */\n32: @Service\n33: public class VisitScheduler {\n34: \n35: \tprivate final OwnerRepository owners;\n36: \n37: \tprivate final ApplicationEventPublisher eventPublisher;\n38: \n39: \tpublic VisitScheduler(OwnerRepository owners, ApplicationEventPublisher eventPublisher) {\n40: \t\tthis.owners = owners;\n41: \t\tthis.eventPublisher = eventPublisher;\n42: \t}\n43: \n44: \t@Transactional\n45: \tpublic void bookVisit(Owner owner, Integer petId, Visit visit) {\n46: \t\tOwner managedOwner = owners.findById(owner.getId()).orElseThrow();\n47: \t\tmanagedOwner.addVisit(petId, visit);\n48: \t\towners.flush();\n49: \t\teventPublisher.publishEvent(new VisitBooked(visit.getId(), petId, visit.getDate()));\n50: \t}\n51: \n52: }",
+            "end": 140,
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "start": 1
+          },
+          "round": 2
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "query": "VisitBooked"
+            },
+            "tool": "source_search"
+          },
+          "result": [
+            {
+              "line": 25,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+              "text": "public record VisitBooked(int visitId, int petId, LocalDate date) {"
+            },
+            {
+              "line": 19,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "text": "import org.springframework.samples.petclinic.owner.VisitBooked;"
+            },
+            {
+              "line": 29,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "text": "* After persistence, it publishes a {@link VisitBooked} event so other modules can react"
+            },
+            {
+              "line": 49,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "text": "eventPublisher.publishEvent(new VisitBooked(visit.getId(), petId, visit.getDate()));"
+            },
+            {
+              "line": 21,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "text": "import org.springframework.samples.petclinic.owner.VisitBooked;"
+            },
+            {
+              "line": 29,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "text": "* {@code vet} module. Communication happens only through the {@link VisitBooked} event,"
+            },
+            {
+              "line": 42,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "text": "void on(VisitBooked event) {"
+            },
+            {
+              "line": 23,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "text": "import org.springframework.samples.petclinic.owner.VisitBooked;"
+            },
+            {
+              "line": 31,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "text": "* When a {@link VisitBooked} event is received, this roster picks the least-loaded"
+            },
+            {
+              "line": 58,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "text": "* @param event the published {@link VisitBooked} event"
+            },
+            {
+              "line": 62,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "text": "void assignVet(VisitBooked event) {"
+            },
+            {
+              "line": 22,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "text": "import org.springframework.samples.petclinic.owner.VisitBooked;"
+            },
+            {
+              "line": 49,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "text": "void bookVisitShouldPublishVisitBookedEvent(Scenario scenario) {"
+            },
+            {
+              "line": 58,
+              "path": "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+              "text": ".andWaitForEventOfType(VisitBooked.class)"
+            },
+            {
+              "line": 24,
+              "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+              "text": "import org.springframework.samples.petclinic.owner.VisitBooked;"
+            },
+            {
+              "line": 35,
+              "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+              "text": "void visitBookedEventShouldTriggerVetAssignment(Scenario scenario) {"
+            },
+            {
+              "line": 42,
+              "path": "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+              "text": "scenario.publish(new VisitBooked(visitId, petId, visitDate))"
+            }
+          ],
+          "round": 3
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 115,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "start": 70
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "70: \t\tOptional<Owner> optionalOwner = owners.findById(ownerId);\n71: \t\tOwner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(\n72: \t\t\t\t\"Owner not found with id: \" + ownerId + \". Please ensure the ID is correct \"));\n73: \n74: \t\tPet pet = owner.getPet(petId);\n75: \t\tif (pet == null) {\n76: \t\t\tthrow new IllegalArgumentException(\n77: \t\t\t\t\t\"Pet with id \" + petId + \" not found for owner with id \" + ownerId + \".\");\n78: \t\t}\n79: \t\tmodel.put(\"pet\", pet);\n80: \t\tmodel.put(\"owner\", owner);\n81: \n82: \t\tVisit visit = new Visit();\n83: \t\tpet.addVisit(visit);\n84: \t\treturn visit;\n85: \t}\n86: \n87: \t// Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is\n88: \t// called\n89: \t@GetMapping(\"/owners/{ownerId}/pets/{petId}/visits/new\")\n90: \tpublic String initNewVisitForm() {\n91: \t\treturn \"pets/createOrUpdateVisitForm\";\n92: \t}\n93: \n94: \t// Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is\n95: \t// called\n96: \t@PostMapping(\"/owners/{ownerId}/pets/{petId}/visits/new\")\n97: \tpublic String processNewVisitForm(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,\n98: \t\t\tBindingResult result, RedirectAttributes redirectAttributes) {\n99: \t\tif (result.hasErrors()) {\n100: \t\t\treturn \"pets/createOrUpdateVisitForm\";\n101: \t\t}\n102: \n103: \t\tvisitScheduler.bookVisit(owner, petId, visit);\n104: \t\tredirectAttributes.addFlashAttribute(\"message\", \"Your visit has been booked\");\n105: \t\treturn \"redirect:/owners/{ownerId}\";\n106: \t}\n107: \n108: }",
+            "end": 115,
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "start": 70
+          },
+          "round": 4
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 80,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "start": 1
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "1: /*\n2:  * Copyright 2012-2025 the original author or authors.\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\");\n5:  * you may not use this file except in compliance with the License.\n6:  * You may obtain a copy of the License at\n7:  *\n8:  *      https://www.apache.org/licenses/LICENSE-2.0\n9:  *\n10:  * Unless required by applicable law or agreed to in writing, software\n11:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n12:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n13:  * See the License for the specific language governing permissions and\n14:  * limitations under the License.\n15:  */\n16: package org.springframework.samples.petclinic.vet.internal;\n17: \n18: import org.springframework.context.event.EventListener;\n19: import org.springframework.modulith.events.ApplicationModuleListener;\n20: import org.springframework.modulith.moments.DayHasPassed;\n21: import org.springframework.samples.petclinic.owner.VisitBooked;\n22: import org.springframework.stereotype.Component;\n23: \n24: /**\n25:  * Listener of the {@code vet} module reacting to visits booked by the {@code owner} and\n26:  * to Passage of Time events published by Spring Modulith Moments.\n27:  * <p>\n28:  * It demonstrates event-driven decoupling: the {@code owner} module does not know the\n29:  * {@code vet} module. Communication happens only through the {@link VisitBooked} event,\n30:  * which is part of the {@code owner} module public API.\n31:  */\n32: @Component\n33: class VetEventListener {\n34: \n35: \tprivate final VetRoster vetRoster;\n36: \n37: \tVetEventListener(VetRoster vetRoster) {\n38: \t\tthis.vetRoster = vetRoster;\n39: \t}\n40: \n41: \t@ApplicationModuleListener\n42: \tvoid on(VisitBooked event) {\n43: \t\tvetRoster.assignVet(event);\n44: \t}\n45: \n46: \t@EventListener\n47: \tvoid on(DayHasPassed event) {\n48: \t\tvetRoster.cleanupPastAssignments(event.getDate());\n49: \t}\n50: \n51: }",
+            "end": 80,
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "start": 1
+          },
+          "round": 5
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 90,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "start": 35
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "35:  * It also supports daily cleanup of past assignments triggered by the\n36:  * {@link org.springframework.modulith.moments.DayHasPassed} Passage of Time event: once a\n37:  * visit date has passed the corresponding row is deleted so the load-balancing counts\n38:  * stay accurate.\n39:  */\n40: @Service\n41: class VetRoster {\n42: \n43: \tprivate static final Logger log = LoggerFactory.getLogger(VetRoster.class);\n44: \n45: \tprivate final VetRepository vets;\n46: \n47: \tprivate final VisitAssignmentRepository visitAssignments;\n48: \n49: \tVetRoster(VetRepository vets, VisitAssignmentRepository visitAssignments) {\n50: \t\tthis.vets = vets;\n51: \t\tthis.visitAssignments = visitAssignments;\n52: \t}\n53: \n54: \t/**\n55: \t * Assigns the least-loaded veterinarian to the visit described by the given event.\n56: \t * Only <em>upcoming</em> assignments (visit date &ge; today) are considered when\n57: \t * computing the workload.\n58: \t * @param event the published {@link VisitBooked} event\n59: \t * @throws IllegalStateException if no vet is registered in the system\n60: \t */\n61: \t@Transactional\n62: \tvoid assignVet(VisitBooked event) {\n63: \t\tLocalDate visitDate = event.date();\n64: \t\tVet assignedVet = vets.findAll()\n65: \t\t\t.stream()\n66: \t\t\t.min(Comparator\n67: \t\t\t\t.comparingLong(vet -> visitAssignments.countByVetAndVisitDateGreaterThanEqual(vet, visitDate)))\n68: \t\t\t.orElseThrow(() -> new IllegalStateException(\"No veterinarian available for assignment\"));\n69: \n70: \t\tvisitAssignments.save(new VisitAssignment(event.visitId(), assignedVet, visitDate));\n71: \n72: \t\tlog.info(\"Visit {} (pet {}, {}) assigned to Dr. {} {}\", event.visitId(), event.petId(), visitDate,\n73: \t\t\t\tassignedVet.getFirstName(), assignedVet.getLastName());\n74: \t}\n75: \n76: \t/**\n77: \t * Removes all visit assignments whose visit date is strictly before {@code today}.\n78: \t * Intended to be called daily via a {@code DayHasPassed} event listener.\n79: \t * @param today the current date (as provided by the Passage of Time event)\n80: \t */\n81: \t@Transactional\n82: \tvoid cleanupPastAssignments(LocalDate today) {\n83: \t\tlong deleted = visitAssignments.deleteByVisitDateBefore(today);\n84: \t\tif (deleted > 0) {\n85: \t\t\tlog.info(\"Cleaned up {} past visit assignment(s) (before {})\", deleted, today);\n86: \t\t}\n87: \t}\n88: \n89: }",
+            "end": 90,
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "start": 35
+          },
+          "round": 6
+        }
+      ],
+      "valid_arm": false,
+      "variant": "neutral"
+    },
+    {
+      "arm": "TMF_AVAILABLE",
+      "latency_seconds": 30.06071710586548,
+      "parsed_answer": null,
+      "source_lines": 570,
+      "task_id": "P01",
+      "tmf_adoption": true,
+      "tmf_calls": 1,
+      "tool_calls": 6,
+      "total_tokens": 29459,
+      "transcript": [
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "limit": 20,
+              "query": "Complete Java execution path for booking a visit, from request/entry point through publication of the booking event/message and its consumer, including controllers, services, publishers, listeners, and handlers"
+            },
+            "tool": "tmf_retrieve"
+          },
+          "result": {
+            "next_action": "narrow query or explain one claim, then read source anchor",
+            "payload_prefix": "{\"claims\": [{\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 61, \"line_start\": 48, \"path\": \"src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java\", \"qualname\": \"VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Contract for Java method VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent in src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java is derived from Java interface facts and optional sanitized semantic model output.\", \"confidence\": 0.45, \"confidence_cap_applied\": false, \"extraction_tier\": \"java-contract\", \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"b702e762d659\", \"fn_hash_prefix\": \"c391dc9053ad\", \"path\": \"src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_contract_f4e9b4ac792962c5\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": \"method\", \"qualname\": \"VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"contract\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 106, \"line_start\": 96, \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"API route POST /owners/{ownerId}/pets/{petId}/visits/new in src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java is handled by VisitController.processNewVisitForm.\", \"confidence\": 0.45, \"confidence_cap_applied\": false, \"extraction_tier\": null, \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"c633e14c161d\", \"fn_hash_prefix\": \"38a30d86ddbc\", \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_api_0d938ac0a4960cf5\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": null, \"qualname\": \"VisitController.processNewVisitForm\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"api\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 50, \"line_start\": 44, \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\", \"qualname\": \"VisitScheduler.bookVisit\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Contract for Java method VisitScheduler.bookVisit in src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java is derived from Java interface facts and optional sanitized semantic model output.\", \"confidence\": 0.45, \"confidence_cap_applied\": false, \"extraction_tier\": \"java-contract\", \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"0df8c5f08663\", \"fn_hash_prefix\": \"1a430631f77d\", \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_contract_42a38ec2f6e97ca1\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": \"method\", \"qualname\": \"VisitScheduler.bookVisit\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"contract\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Java method VetEventListener.on source-observes event relation listens_type for type VisitBooked.\", \"confidence\": 0.55, \"confidence_cap_applied\": false, \"extraction_tier\": null, \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"460c4dfce2fe\", \"fn_hash_prefix\": \"a5292c8bd9b4\", \"path\": \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java\"}, {\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"2fcb76877912\", \"fn_hash_prefix\": \"43ee62cc97cf\", \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java\"}, {\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"460c4dfce2fe\", \"fn_hash_prefix\": \"07606956fe14\", \"path\": \"src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_event_type_edge_5f39327b6af66b9f\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": null, \"qualname\": null, \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"cross-repo\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 229, \"line_start\": 215, \"path\": \"src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java\", \"qualname\": \"ClinicServiceTests.shouldFindVisitsByPetId\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Contract for Java method ClinicServiceTests.shouldFindVisitsByPetId in src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java is derived from Java interface facts and optional sanitized semantic model output.\", \"confidence\": 0.45, \"confidence_cap_applied\": false, \"extraction_tier\": \"java-contract\", \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"307543fd268a\", \"fn_hash_prefix\": \"d03d2c91811f\", \"path\": \"src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_contract_ae79d1bf7dd079a3\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": \"method\", \"qualname\": \"ClinicServiceTests.shouldFindVisitsByPetId\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"contract\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 99, \"line_start\": 91, \"path\": \"src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java\", \"qualname\": \"VisitControllerTests.testProcessNewVisitFormHasErrors\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Contract for Java method VisitControllerTests.testProcessNewVisitFormHasErrors in src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java is derived from Java interface facts and optional sanitized semantic model output.\", \"confidence\": 0.45, \"confidence_cap_applied\": false, \"extraction_tier\": \"java-contract\", \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"24327b4623ba\", \"fn_hash_prefix\": \"be7aaa3d7852\", \"path\": \"src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_contract_1a6e884dd5de267b\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": \"method\", \"qualname\": \"VisitControllerTests.testProcessNewVisitFormHasErrors\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"contract\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 49, \"line_start\": 34, \"path\": \"src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java\", \"qualname\": \"VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Contract for Java method VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment in src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java is derived from Java interface facts and optional sanitized semantic model output.\", \"confidence\": 0.45, \"confidence_cap_applied\": false, \"extraction_tier\": \"java-contract\", \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"f977b3c6ef77\", \"fn_hash_prefix\": \"d2b4384e425e\", \"path\": \"src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_contract_74d101ebd97166a0\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": \"method\", \"qualname\": \"VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [], \"reads_unresolved\": [], \"scope\": \"contract\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 85, \"line_start\": 83, \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java\", \"qualname\": \"Visit.isNew\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Java method Visit.isNew in src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.\", \"confidence\": 0.35, \"confidence_cap_applied\": false, \"extraction_tier\": \"java-treesitter-syntactic\", \"fresh\": true, \"freshness_binding_refs\": [{\"commit_anchor_prefix\": \"58c3310e36c7\", \"file_blob_prefix\": \"a26659b7746a\", \"fn_hash_prefix\": \"b12eca0070e7\", \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java\"}], \"graph_coverage\": \"complete\", \"id\": \"claim_java_0642a7bcf0d01e6a\", \"kind\": \"structure\", \"language\": \"java\", \"node_kind\": \"method\", \"qualname\": \"Visit.isNew\", \"read_by\": [], \"read_by_coverage\": null, \"reads\": [{\"anchor\": {\"line_end\": 43, \"line_start\": 41, \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java\", \"qualname\": \"Visit.id\"}, \"evidence\": \"observed\", \"resolution\": \"java_this_field\", \"target_id\": \"claim_java_2c957597969325e2\", \"target_path\": \"src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java\", \"target_qualname\": \"Visit.id\"}], \"reads_unresolved\": [], \"scope\": \"class\", \"source_trust\": \"source_rederived\", \"stale_reasons\": [], \"trust\": {\"label\": \"\\u6e90\\u7801\\u89c2\\u5bdf\", \"level\": \"observed\"}, \"unresolved_call_count\": 0, \"unresolved_calls\": [], \"unresolved_read_count\": 0}, {\"action_hint\": \"can_use_with_source_anchor_for_precision\", \"anchors\": [{\"line_end\": 136, \"line_start\": 132, \"path\": \"src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java\", \"qualname\": \"OwnerController.findPaginatedForOwnersLastName\"}], \"belief_provenance_refs\": [], \"callees\": [], \"callers\": [], \"claim\": \"Contract for Java method OwnerControll",
+            "truncated": true
+          },
+          "round": 1
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 130,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+              "start": 1
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "1: /*\n2:  * Copyright 2012-2025 the original author or authors.\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\");\n5:  * you may not use this file except in compliance with the License.\n6:  * You may obtain a copy of the License at\n7:  *\n8:  *      https://www.apache.org/licenses/LICENSE-2.0\n9:  *\n10:  * Unless required by applicable law or agreed to in writing, software\n11:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n12:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n13:  * See the License for the specific language governing permissions and\n14:  * limitations under the License.\n15:  */\n16: package org.springframework.samples.petclinic.owner.ui;\n17: \n18: import java.util.Map;\n19: import java.util.Optional;\n20: \n21: import org.springframework.samples.petclinic.owner.application.VisitScheduler;\n22: import org.springframework.samples.petclinic.owner.domain.*;\n23: import org.springframework.stereotype.Controller;\n24: import org.springframework.validation.BindingResult;\n25: import org.springframework.web.bind.WebDataBinder;\n26: import org.springframework.web.bind.annotation.GetMapping;\n27: import org.springframework.web.bind.annotation.InitBinder;\n28: import org.springframework.web.bind.annotation.ModelAttribute;\n29: import org.springframework.web.bind.annotation.PathVariable;\n30: import org.springframework.web.bind.annotation.PostMapping;\n31: \n32: import jakarta.validation.Valid;\n33: import org.springframework.web.servlet.mvc.support.RedirectAttributes;\n34: \n35: /**\n36:  * @author Juergen Hoeller\n37:  * @author Ken Krebs\n38:  * @author Arjen Poutsma\n39:  * @author Michael Isvy\n40:  * @author Dave Syer\n41:  * @author Wick Dynex\n42:  */\n43: @Controller\n44: class VisitController {\n45: \n46: \tprivate final OwnerRepository owners;\n47: \n48: \tprivate final VisitScheduler visitScheduler;\n49: \n50: \tpublic VisitController(OwnerRepository owners, VisitScheduler visitScheduler) {\n51: \t\tthis.owners = owners;\n52: \t\tthis.visitScheduler = visitScheduler;\n53: \t}\n54: \n55: \t@InitBinder\n56: \tpublic void setAllowedFields(WebDataBinder dataBinder) {\n57: \t\tdataBinder.setDisallowedFields(\"id\");\n58: \t}\n59: \n60: \t/**\n61: \t * Called before each and every @RequestMapping annotated method. 2 goals: - Make sure\n62: \t * we always have fresh data - Since we do not use the session scope, make sure that\n63: \t * Pet object always has an id (Even though id is not part of the form fields)\n64: \t * @param petId\n65: \t * @return Pet\n66: \t */\n67: \t@ModelAttribute(\"visit\")\n68: \tpublic Visit loadPetWithVisit(@PathVariable(\"ownerId\") int ownerId, @PathVariable(\"petId\") int petId,\n69: \t\t\tMap<String, Object> model) {\n70: \t\tOptional<Owner> optionalOwner = owners.findById(ownerId);\n71: \t\tOwner owner = optionalOwner.orElseThrow(() -> new IllegalArgumentException(\n72: \t\t\t\t\"Owner not found with id: \" + ownerId + \". Please ensure the ID is correct \"));\n73: \n74: \t\tPet pet = owner.getPet(petId);\n75: \t\tif (pet == null) {\n76: \t\t\tthrow new IllegalArgumentException(\n77: \t\t\t\t\t\"Pet with id \" + petId + \" not found for owner with id \" + ownerId + \".\");\n78: \t\t}\n79: \t\tmodel.put(\"pet\", pet);\n80: \t\tmodel.put(\"owner\", owner);\n81: \n82: \t\tVisit visit = new Visit();\n83: \t\tpet.addVisit(visit);\n84: \t\treturn visit;\n85: \t}\n86: \n87: \t// Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is\n88: \t// called\n89: \t@GetMapping(\"/owners/{ownerId}/pets/{petId}/visits/new\")\n90: \tpublic String initNewVisitForm() {\n91: \t\treturn \"pets/createOrUpdateVisitForm\";\n92: \t}\n93: \n94: \t// Spring MVC calls method loadPetWithVisit(...) before processNewVisitForm is\n95: \t// called\n96: \t@PostMapping(\"/owners/{ownerId}/pets/{petId}/visits/new\")\n97: \tpublic String processNewVisitForm(@ModelAttribute Owner owner, @PathVariable int petId, @Valid Visit visit,\n98: \t\t\tBindingResult result, RedirectAttributes redirectAttributes) {\n99: \t\tif (result.hasErrors()) {\n100: \t\t\treturn \"pets/createOrUpdateVisitForm\";\n101: \t\t}\n102: \n103: \t\tvisitScheduler.bookVisit(owner, petId, visit);\n104: \t\tredirectAttributes.addFlashAttribute(\"message\", \"Your visit has been booked\");\n105: \t\treturn \"redirect:/owners/{ownerId}\";\n106: \t}\n107: \n108: }",
+            "end": 130,
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+            "start": 1
+          },
+          "round": 2
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 120,
+              "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+              "start": 1
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "1: /*\n2:  * Copyright 2012-2026 the original author or authors.\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\");\n5:  * you may not use this file except in compliance with the License.\n6:  * You may obtain a copy of the License at\n7:  *\n8:  *      https://www.apache.org/licenses/LICENSE-2.0\n9:  *\n10:  * Unless required by applicable law or agreed to in writing, software\n11:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n12:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n13:  * See the License for the specific language governing permissions and\n14:  * limitations under the License.\n15:  */\n16: package org.springframework.samples.petclinic.owner.application;\n17: \n18: import org.springframework.context.ApplicationEventPublisher;\n19: import org.springframework.samples.petclinic.owner.VisitBooked;\n20: import org.springframework.samples.petclinic.owner.domain.Owner;\n21: import org.springframework.samples.petclinic.owner.domain.OwnerRepository;\n22: import org.springframework.samples.petclinic.owner.domain.Visit;\n23: import org.springframework.stereotype.Service;\n24: import org.springframework.transaction.annotation.Transactional;\n25: \n26: /**\n27:  * Application service of the {@code owner} module handling visit booking.\n28:  * <p>\n29:  * After persistence, it publishes a {@link VisitBooked} event so other modules can react\n30:  * without direct dependencies on this module.\n31:  */\n32: @Service\n33: public class VisitScheduler {\n34: \n35: \tprivate final OwnerRepository owners;\n36: \n37: \tprivate final ApplicationEventPublisher eventPublisher;\n38: \n39: \tpublic VisitScheduler(OwnerRepository owners, ApplicationEventPublisher eventPublisher) {\n40: \t\tthis.owners = owners;\n41: \t\tthis.eventPublisher = eventPublisher;\n42: \t}\n43: \n44: \t@Transactional\n45: \tpublic void bookVisit(Owner owner, Integer petId, Visit visit) {\n46: \t\tOwner managedOwner = owners.findById(owner.getId()).orElseThrow();\n47: \t\tmanagedOwner.addVisit(petId, visit);\n48: \t\towners.flush();\n49: \t\teventPublisher.publishEvent(new VisitBooked(visit.getId(), petId, visit.getDate()));\n50: \t}\n51: \n52: }",
+            "end": 120,
+            "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+            "start": 1
+          },
+          "round": 3
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 160,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+              "start": 1
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "1: /*\n2:  * Copyright 2012-2025 the original author or authors.\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\");\n5:  * you may not use this file except in compliance with the License.\n6:  * You may obtain a copy of the License at\n7:  *\n8:  *      https://www.apache.org/licenses/LICENSE-2.0\n9:  *\n10:  * Unless required by applicable law or agreed to in writing, software\n11:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n12:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n13:  * See the License for the specific language governing permissions and\n14:  * limitations under the License.\n15:  */\n16: package org.springframework.samples.petclinic.vet.internal;\n17: \n18: import org.springframework.context.event.EventListener;\n19: import org.springframework.modulith.events.ApplicationModuleListener;\n20: import org.springframework.modulith.moments.DayHasPassed;\n21: import org.springframework.samples.petclinic.owner.VisitBooked;\n22: import org.springframework.stereotype.Component;\n23: \n24: /**\n25:  * Listener of the {@code vet} module reacting to visits booked by the {@code owner} and\n26:  * to Passage of Time events published by Spring Modulith Moments.\n27:  * <p>\n28:  * It demonstrates event-driven decoupling: the {@code owner} module does not know the\n29:  * {@code vet} module. Communication happens only through the {@link VisitBooked} event,\n30:  * which is part of the {@code owner} module public API.\n31:  */\n32: @Component\n33: class VetEventListener {\n34: \n35: \tprivate final VetRoster vetRoster;\n36: \n37: \tVetEventListener(VetRoster vetRoster) {\n38: \t\tthis.vetRoster = vetRoster;\n39: \t}\n40: \n41: \t@ApplicationModuleListener\n42: \tvoid on(VisitBooked event) {\n43: \t\tvetRoster.assignVet(event);\n44: \t}\n45: \n46: \t@EventListener\n47: \tvoid on(DayHasPassed event) {\n48: \t\tvetRoster.cleanupPastAssignments(event.getDate());\n49: \t}\n50: \n51: }",
+            "end": 160,
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+            "start": 1
+          },
+          "round": 4
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "query": "class VetRoster"
+            },
+            "tool": "source_search"
+          },
+          "result": [
+            {
+              "line": 41,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "text": "class VetRoster {"
+            }
+          ],
+          "round": 5
+        },
+        {
+          "action": {
+            "action": "tool",
+            "args": {
+              "end": 160,
+              "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+              "start": 1
+            },
+            "tool": "source_read"
+          },
+          "result": {
+            "content": "1: /*\n2:  * Copyright 2012-2026 the original author or authors.\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\");\n5:  * you may not use this file except in compliance with the License.\n6:  * You may obtain a copy of the License at\n7:  *\n8:  *      https://www.apache.org/licenses/LICENSE-2.0\n9:  *\n10:  * Unless required by applicable law or agreed to in writing, software\n11:  * distributed under the License is distributed on an \"AS IS\" BASIS,\n12:  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n13:  * See the License for the specific language governing permissions and\n14:  * limitations under the License.\n15:  */\n16: package org.springframework.samples.petclinic.vet.internal;\n17: \n18: import java.time.LocalDate;\n19: import java.util.Comparator;\n20: \n21: import org.slf4j.Logger;\n22: import org.slf4j.LoggerFactory;\n23: import org.springframework.samples.petclinic.owner.VisitBooked;\n24: import org.springframework.stereotype.Service;\n25: import org.springframework.transaction.annotation.Transactional;\n26: \n27: /**\n28:  * Domain service of the {@code vet} module managing the veterinarian roster and automatic\n29:  * vet assignment.\n30:  * <p>\n31:  * When a {@link VisitBooked} event is received, this roster picks the least-loaded\n32:  * veterinarian (fewest upcoming assignments) and persists the association in the\n33:  * {@code visit_assignments} table.\n34:  * <p>\n35:  * It also supports daily cleanup of past assignments triggered by the\n36:  * {@link org.springframework.modulith.moments.DayHasPassed} Passage of Time event: once a\n37:  * visit date has passed the corresponding row is deleted so the load-balancing counts\n38:  * stay accurate.\n39:  */\n40: @Service\n41: class VetRoster {\n42: \n43: \tprivate static final Logger log = LoggerFactory.getLogger(VetRoster.class);\n44: \n45: \tprivate final VetRepository vets;\n46: \n47: \tprivate final VisitAssignmentRepository visitAssignments;\n48: \n49: \tVetRoster(VetRepository vets, VisitAssignmentRepository visitAssignments) {\n50: \t\tthis.vets = vets;\n51: \t\tthis.visitAssignments = visitAssignments;\n52: \t}\n53: \n54: \t/**\n55: \t * Assigns the least-loaded veterinarian to the visit described by the given event.\n56: \t * Only <em>upcoming</em> assignments (visit date &ge; today) are considered when\n57: \t * computing the workload.\n58: \t * @param event the published {@link VisitBooked} event\n59: \t * @throws IllegalStateException if no vet is registered in the system\n60: \t */\n61: \t@Transactional\n62: \tvoid assignVet(VisitBooked event) {\n63: \t\tLocalDate visitDate = event.date();\n64: \t\tVet assignedVet = vets.findAll()\n65: \t\t\t.stream()\n66: \t\t\t.min(Comparator\n67: \t\t\t\t.comparingLong(vet -> visitAssignments.countByVetAndVisitDateGreaterThanEqual(vet, visitDate)))\n68: \t\t\t.orElseThrow(() -> new IllegalStateException(\"No veterinarian available for assignment\"));\n69: \n70: \t\tvisitAssignments.save(new VisitAssignment(event.visitId(), assignedVet, visitDate));\n71: \n72: \t\tlog.info(\"Visit {} (pet {}, {}) assigned to Dr. {} {}\", event.visitId(), event.petId(), visitDate,\n73: \t\t\t\tassignedVet.getFirstName(), assignedVet.getLastName());\n74: \t}\n75: \n76: \t/**\n77: \t * Removes all visit assignments whose visit date is strictly before {@code today}.\n78: \t * Intended to be called daily via a {@code DayHasPassed} event listener.\n79: \t * @param today the current date (as provided by the Passage of Time event)\n80: \t */\n81: \t@Transactional\n82: \tvoid cleanupPastAssignments(LocalDate today) {\n83: \t\tlong deleted = visitAssignments.deleteByVisitDateBefore(today);\n84: \t\tif (deleted > 0) {\n85: \t\t\tlog.info(\"Cleaned up {} past visit assignment(s) (before {})\", deleted, today);\n86: \t\t}\n87: \t}\n88: \n89: }",
+            "end": 160,
+            "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+            "start": 1
+          },
+          "round": 6
+        }
+      ],
+      "valid_arm": false,
+      "variant": "capability_and_when_to_use"
+    }
+  ],
+  "schema": "retrieval-e2e-v1-agent-run",
+  "valid_pairs": 0
+}

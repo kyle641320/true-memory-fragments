@@ -1,0 +1,78 @@
+{
+  "manifest_sha256": "0e15c011e78116cca307c533790c745eb7bfab4d111821af19fa176f68e3f8d0",
+  "rows": [
+    {
+      "failure": "retrieval_miss",
+      "graph_absence": [],
+      "mrr": 0.5,
+      "query": "Locate the complete Java path for booking a visit through publication and consumption. Cite file:line evidence.",
+      "ranked_paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignmentRepository.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/domain/ClinicServiceTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/VisitControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java"
+      ],
+      "recall_at": {
+        "10": 0.6666666666666666,
+        "3": 0.6666666666666666,
+        "5": 0.6666666666666666
+      },
+      "task_id": "P01"
+    },
+    {
+      "failure": null,
+      "graph_absence": [],
+      "mrr": 1.0,
+      "query": "Analyze direct impact of changing VisitBooked fields and transaction/event ordering. Cite file:line evidence.",
+      "ranked_paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/vet/internal/VetAssignmentTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Owner.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Pet.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/PetType.java"
+      ],
+      "recall_at": {
+        "10": 1.0,
+        "3": 0.3333333333333333,
+        "5": 0.6666666666666666
+      },
+      "task_id": "P02"
+    },
+    {
+      "failure": null,
+      "graph_absence": [],
+      "mrr": 1.0,
+      "query": "Design the smallest validation change preventing booking with a null visit date; identify exact edit and targeted verification. Cite evidence.",
+      "ranked_paths": [
+        "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetControllerTests.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/ui/PetValidatorTests.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/PetValidator.java",
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignment.java",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VisitAssignmentRepository.java",
+        "src/test/java/org/springframework/samples/petclinic/owner/application/VisitSchedulerTests.java"
+      ],
+      "recall_at": {
+        "10": 1.0,
+        "3": 0.5,
+        "5": 1.0
+      },
+      "task_id": "P03"
+    }
+  ],
+  "schema": "retrieval-e2e-v1-baseline"
+}
