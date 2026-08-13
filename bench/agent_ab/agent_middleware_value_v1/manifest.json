@@ -1,0 +1,168 @@
+{
+  "schema": "agent-middleware-value-v1",
+  "preregistered_at": "2026-08-13T14:20:00+08:00",
+  "base_commit": "45ab3e43f8a8e3ef12b08c5c6bed76d1dade7d48",
+  "model": "gpt-5.6-sol",
+  "temperature": 0,
+  "seed": 20260813,
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_MIDDLEWARE"
+  ],
+  "order": {
+    "A01": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A02": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A03": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A04": [
+      "SOURCE_ONLY",
+      "TMF_MIDDLEWARE"
+    ],
+    "A05": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A06": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A07": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A08": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A09": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ],
+    "A10": [
+      "TMF_MIDDLEWARE",
+      "SOURCE_ONLY"
+    ]
+  },
+  "budgets": {
+    "max_turns": 8,
+    "source_calls": 8,
+    "tool_calls": 12,
+    "completion_calls": 8,
+    "timeout_seconds": 120,
+    "max_read_bytes": 12000
+  },
+  "smoke": [
+    "A01",
+    "A03"
+  ],
+  "full_order": [
+    "A01",
+    "A02",
+    "A03",
+    "A04",
+    "A05",
+    "A06",
+    "A07",
+    "A08",
+    "A09",
+    "A10"
+  ],
+  "tasks": [
+    {
+      "id": "A01",
+      "language": "python",
+      "kind": "understanding",
+      "scenario": "fresh",
+      "prompt": "Explain how the final invoice total is computed. Return JSON with answer and citations.",
+      "entry": "billing.py"
+    },
+    {
+      "id": "A02",
+      "language": "java",
+      "kind": "understanding",
+      "scenario": "fresh",
+      "prompt": "Explain how retry delay is computed. Return JSON with answer and citations.",
+      "entry": "RetryPolicy.java"
+    },
+    {
+      "id": "A03",
+      "language": "python",
+      "kind": "local_edit",
+      "scenario": "fresh",
+      "prompt": "Change normalize so surrounding whitespace is removed before lowercasing. Edit source and run tests.",
+      "entry": "names.py"
+    },
+    {
+      "id": "A04",
+      "language": "java",
+      "kind": "local_edit",
+      "scenario": "semantic",
+      "prompt": "Change clamp so its maximum is 80, not the current value. Edit source and run tests.",
+      "entry": "Limiter.java"
+    },
+    {
+      "id": "A05",
+      "language": "python",
+      "kind": "cross_file_trace",
+      "scenario": "fresh",
+      "prompt": "Explain the cross-file call path from checkout to discount. Return JSON with answer and citations.",
+      "entry": "checkout.py"
+    },
+    {
+      "id": "A06",
+      "language": "java",
+      "kind": "cross_file_trace",
+      "scenario": "semantic",
+      "prompt": "Explain the cross-file call path from Gateway.send to Codec.encode. Return JSON with answer and citations.",
+      "entry": "Gateway.java"
+    },
+    {
+      "id": "A07",
+      "language": "python",
+      "kind": "test_fix",
+      "scenario": "fresh",
+      "prompt": "Fix the implementation so tests pass. Edit source and run tests.",
+      "entry": "counter.py"
+    },
+    {
+      "id": "A08",
+      "language": "java",
+      "kind": "test_fix",
+      "scenario": "semantic",
+      "prompt": "Fix the implementation so tests pass. Edit source and run tests.",
+      "entry": "Parity.java"
+    },
+    {
+      "id": "A09",
+      "language": "python",
+      "kind": "understanding",
+      "scenario": "unknown",
+      "prompt": "Find whether this repository defines a moon_phase function. Return JSON with answer and citations.",
+      "entry": "known.py"
+    },
+    {
+      "id": "A10",
+      "language": "java",
+      "kind": "understanding",
+      "scenario": "unrelated",
+      "prompt": "Explain how Scale.doubleValue works. Return JSON with answer and citations.",
+      "entry": "Scale.java"
+    }
+  ],
+  "value_gate": {
+    "success_tmf_gte_source": true,
+    "fresh_adoption_min": 1,
+    "repeat_read_and_total_cost_direction": "decrease",
+    "semantic_stale_errors": 0,
+    "semantic_success_not_lower": true
+  },
+  "schema_repair": "one symmetric repair call, charged to budgets; otherwise invalid"
+}

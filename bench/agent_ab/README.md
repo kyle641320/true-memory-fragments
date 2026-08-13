@@ -1,3 +1,5 @@
+> **Status note (2026-08-13):** Historical result for this specific protocol. Do not generalize it across delivery modes. See the unique current [Agent runtime value status](../../docs/AGENT_RUNTIME_VALUE_STATUS.md).
+
 # TMF Agent A/B benchmark skeleton
 
 Measurement-only proxy experiment. Findings are success, including TMF losses.

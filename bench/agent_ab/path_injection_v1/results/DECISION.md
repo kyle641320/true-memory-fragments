@@ -1,3 +1,5 @@
+> **Status note (2026-08-13):** Historical result for this specific protocol. Do not generalize it across delivery modes. See the unique current [Agent runtime value status](../../../../docs/AGENT_RUNTIME_VALUE_STATUS.md).
+
 # path_injection_v1 decision
 
 **STOP after smoke; pilot not run; no v2 opened.** The frozen smoke produced 1/1 sequence and all 15 arm-phase answers were accurate with valid citations, but the preregistered validity audit failed.

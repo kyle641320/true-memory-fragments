@@ -1,0 +1,44 @@
+{
+  "valid_pairs": 2,
+  "attempted_pairs": 2,
+  "full_run_executed": false,
+  "stop_gate": "FAILED: fresh adoption 0; required >=1",
+  "product_decision": "TMF_MIDDLEWARE agent outcome value remains unproven; do not recommend for production value/cost claims. Mechanism remains qualified separately.",
+  "arms": {
+    "SOURCE_ONLY": {
+      "n": 2,
+      "successes": 2,
+      "success_rate": 1.0,
+      "adoptions": 0,
+      "source_reads": 2,
+      "source_bytes": 173,
+      "tool_calls": 8,
+      "prompt_tokens": 1406,
+      "completion_tokens": 168,
+      "injection_tokens": 0,
+      "wall_seconds": 25.679165840148926
+    },
+    "TMF_MIDDLEWARE": {
+      "n": 2,
+      "successes": 2,
+      "success_rate": 1.0,
+      "adoptions": 0,
+      "source_reads": 2,
+      "source_bytes": 173,
+      "tool_calls": 8,
+      "prompt_tokens": 1874,
+      "completion_tokens": 181,
+      "injection_tokens": 236,
+      "wall_seconds": 33.978278160095215
+    }
+  },
+  "errors": {
+    "memory_caused": 0,
+    "stale_memory_caused": 0,
+    "post_reread_agent_failure": 0,
+    "baseline_agent_failure": 0,
+    "output_contract": 0,
+    "tool_runtime": 0,
+    "mechanism_errors": 0
+  }
+}

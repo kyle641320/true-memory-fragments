@@ -1,3 +1,5 @@
+> **Status note (2026-08-13):** Historical result for this specific protocol. Do not generalize it across delivery modes. See the unique current [Agent runtime value status](../../../../docs/AGENT_RUNTIME_VALUE_STATUS.md).
+
 # Smoke stop-gate decision
 
 The frozen one-sequence smoke is invalid (`valid_sequences=0`). Both arms returned the requested typed unknown-region result and enums, but omitted the required source path-line citation; citation coverage was therefore 0 for that phase. Per the preregistered stop gate, the three-sequence pilot was not run and no frozen scorer, prompt, golden, fixture, or protocol was changed after observing results.

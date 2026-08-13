@@ -1,0 +1,220 @@
+{
+  "schema": "agent-middleware-value-v1-results",
+  "tag": "smoke-2pair",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "manifest_sha256": "ccce4f0e5cd2864525c57cba97544bd8a2f01be104796996d835aecd3672fb77",
+  "pairs": [
+    {
+      "task_id": "A01",
+      "valid": true,
+      "rows": [
+        {
+          "task_id": "A01",
+          "arm": "TMF_MIDDLEWARE",
+          "valid": true,
+          "success": true,
+          "citation_success": true,
+          "adoption": false,
+          "stale_error": false,
+          "mechanism_error": false,
+          "attribution": null,
+          "final": {
+            "action": "final",
+            "answer": "The invoice total is computed by summing all item amounts into a subtotal, calculating tax as integer floor division of that subtotal by 10, and adding the tax to the subtotal: `sum(items) + (sum(items) // 10)`.",
+            "citations": [
+              "billing.py:1",
+              "billing.py:2",
+              "billing.py:4",
+              "billing.py:5",
+              "billing.py:6"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 3,
+            "source_reads": 1,
+            "source_files": [
+              "billing.py"
+            ],
+            "source_lines": 6,
+            "source_bytes": 126,
+            "tests": 0,
+            "prompt_tokens": 592,
+            "completion_tokens": 98,
+            "injection_tokens": 118,
+            "wall_seconds": 12.258728981018066
+          },
+          "injections": [
+            {
+              "kind": "FRESH",
+              "reason": "exact_target_identity",
+              "items": [
+                {
+                  "claim_id": "A01-entry",
+                  "path": "billing.py",
+                  "line": 1,
+                  "region": null,
+                  "freshness": "fresh",
+                  "provenance": {
+                    "repo": "fixture-A01",
+                    "branch": "base@45ab3e4",
+                    "source_sha256": "d2ed26e05ef1d4224151269e322d9ec95efda51b539824fa102d3ab749eab19c",
+                    "gate_reason": "exact_target_identity"
+                  },
+                  "non_instruction": true
+                }
+              ],
+              "provenance": {
+                "hook": "before_read",
+                "target_origin": "tool_router"
+              },
+              "non_instruction": true
+            }
+          ]
+        },
+        {
+          "task_id": "A01",
+          "arm": "SOURCE_ONLY",
+          "valid": true,
+          "success": true,
+          "citation_success": true,
+          "adoption": false,
+          "stale_error": false,
+          "mechanism_error": false,
+          "attribution": null,
+          "final": {
+            "action": "final",
+            "answer": "The item amounts are summed to get the subtotal. Tax is computed as the subtotal floor-divided by 10, and the final invoice total is the subtotal plus that tax.",
+            "citations": [
+              "billing.py:1",
+              "billing.py:2",
+              "billing.py:4",
+              "billing.py:5",
+              "billing.py:6"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 3,
+            "source_reads": 1,
+            "source_files": [
+              "billing.py"
+            ],
+            "source_lines": 6,
+            "source_bytes": 126,
+            "tests": 0,
+            "prompt_tokens": 475,
+            "completion_tokens": 85,
+            "injection_tokens": 0,
+            "wall_seconds": 10.512383460998535
+          },
+          "injections": []
+        }
+      ]
+    },
+    {
+      "task_id": "A03",
+      "valid": true,
+      "rows": [
+        {
+          "task_id": "A03",
+          "arm": "TMF_MIDDLEWARE",
+          "valid": true,
+          "success": true,
+          "citation_success": false,
+          "adoption": false,
+          "stale_error": false,
+          "mechanism_error": false,
+          "attribution": null,
+          "final": {
+            "action": "final",
+            "answer": "Updated normalize to strip surrounding whitespace before lowercasing. All tests pass.",
+            "citations": [
+              "names.py:2"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 5,
+            "source_reads": 1,
+            "source_files": [
+              "names.py"
+            ],
+            "source_lines": 2,
+            "source_bytes": 47,
+            "tests": 1,
+            "prompt_tokens": 1282,
+            "completion_tokens": 83,
+            "injection_tokens": 118,
+            "wall_seconds": 21.71954917907715
+          },
+          "injections": [
+            {
+              "kind": "FRESH",
+              "reason": "exact_target_identity",
+              "items": [
+                {
+                  "claim_id": "A03-entry",
+                  "path": "names.py",
+                  "line": 1,
+                  "region": null,
+                  "freshness": "fresh",
+                  "provenance": {
+                    "repo": "fixture-A03",
+                    "branch": "base@45ab3e4",
+                    "source_sha256": "c8f23d9d2d6671f816e6ade532371c0a19b343cab5f5bee4add83b0e5255c3ec",
+                    "gate_reason": "exact_target_identity"
+                  },
+                  "non_instruction": true
+                }
+              ],
+              "provenance": {
+                "hook": "before_read",
+                "target_origin": "tool_router"
+              },
+              "non_instruction": true
+            }
+          ]
+        },
+        {
+          "task_id": "A03",
+          "arm": "SOURCE_ONLY",
+          "valid": true,
+          "success": true,
+          "citation_success": false,
+          "adoption": false,
+          "stale_error": false,
+          "mechanism_error": false,
+          "attribution": null,
+          "final": {
+            "action": "final",
+            "answer": "Updated normalize to strip surrounding whitespace before lowercasing. All tests pass.",
+            "citations": [
+              "names.py:1-2"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 5,
+            "source_reads": 1,
+            "source_files": [
+              "names.py"
+            ],
+            "source_lines": 2,
+            "source_bytes": 47,
+            "tests": 1,
+            "prompt_tokens": 931,
+            "completion_tokens": 83,
+            "injection_tokens": 0,
+            "wall_seconds": 15.16678237915039
+          },
+          "injections": []
+        }
+      ]
+    }
+  ],
+  "valid_pairs": 2
+}
