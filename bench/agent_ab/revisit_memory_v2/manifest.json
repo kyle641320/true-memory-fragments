@@ -1,0 +1,79 @@
+{
+  "schema": "revisit-memory-v2",
+  "seed": 8132026,
+  "model": {
+    "id": "gpt-5.6-sol",
+    "timeout_seconds": 120
+  },
+  "budget": {
+    "calls_per_task": 1,
+    "max_source_lines": 24,
+    "max_source_bytes": 1600
+  },
+  "arms": [
+    "CONTROL",
+    "TMF_MEMORY"
+  ],
+  "phases": [
+    "first_visit",
+    "fresh_revisit",
+    "unknown_region",
+    "mutation_revisit"
+  ],
+  "sequences": [
+    {
+      "id": "S01",
+      "identity": "com.acme.ShippingRule#fee(int)",
+      "region_path": "com/acme/ShippingRule.java",
+      "service_path": "com/acme/ShippingService.java",
+      "unknown_identity": "com.acme.LegacyCatalog#archived()",
+      "unknown_path": "com/acme/LegacyCatalog.java",
+      "input": 75,
+      "base_value": 9,
+      "mutated_value": 4,
+      "unrelated_mutation_path": "com/acme/LegacyCatalog.java",
+      "tasks": {
+        "first_visit": "What integer does ShippingRule.fee return when input is 75?",
+        "fresh_revisit": "On an unchanged revisit, what integer does ShippingRule.fee return for 75?",
+        "unknown_region": "Does LegacyCatalog declare a zero-argument method named archived?",
+        "mutation_revisit": "After the working-tree changes, what integer does ShippingRule.fee return for 75?"
+      }
+    },
+    {
+      "id": "S02",
+      "identity": "com.acme.RetryRule#attempts(int)",
+      "region_path": "com/acme/RetryRule.java",
+      "service_path": "com/acme/JobExecutor.java",
+      "unknown_identity": "com.acme.OldScheduler#paused()",
+      "unknown_path": "com/acme/OldScheduler.java",
+      "input": 3,
+      "base_value": 5,
+      "mutated_value": 2,
+      "unrelated_mutation_path": "com/acme/OldScheduler.java",
+      "tasks": {
+        "first_visit": "What integer does RetryRule.attempts return when input is 3?",
+        "fresh_revisit": "On an unchanged revisit, what integer does RetryRule.attempts return for 3?",
+        "unknown_region": "Does OldScheduler declare a zero-argument method named paused?",
+        "mutation_revisit": "After the working-tree changes, what integer does RetryRule.attempts return for 3?"
+      }
+    },
+    {
+      "id": "S03",
+      "identity": "com.acme.QuotaRule#limit(int)",
+      "region_path": "com/acme/QuotaRule.java",
+      "service_path": "com/acme/UploadGateway.java",
+      "unknown_identity": "com.acme.LegacyAccount#trial()",
+      "unknown_path": "com/acme/LegacyAccount.java",
+      "input": 50,
+      "base_value": 80,
+      "mutated_value": 65,
+      "unrelated_mutation_path": "com/acme/LegacyAccount.java",
+      "tasks": {
+        "first_visit": "What integer does QuotaRule.limit return when input is 50?",
+        "fresh_revisit": "On an unchanged revisit, what integer does QuotaRule.limit return for 50?",
+        "unknown_region": "Does LegacyAccount declare a zero-argument method named trial?",
+        "mutation_revisit": "After the working-tree changes, what integer does QuotaRule.limit return for 50?"
+      }
+    }
+  ]
+}
