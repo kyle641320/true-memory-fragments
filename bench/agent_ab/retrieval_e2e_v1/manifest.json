@@ -1,0 +1,19 @@
+{
+ "schema":"tmf-retrieval-e2e-v1","status":"FROZEN_BEFORE_EXECUTION","frozen_at":"2026-08-13T03:40:00Z",
+ "repository":{"path":"/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith","commit":"58c3310e36c7d827959df6af4d64bdeb8d81f1ea"},
+ "model":{"id":"gpt-5.6-sol","temperature":0},"arms":["SOURCE_ONLY","TMF_AVAILABLE"],"seed":"retrieval-e2e-v1:2026-08-13",
+ "tasks":[
+  {"id":"P01","prompt":"Locate the complete Java path for booking a visit through publication and consumption. Cite file:line evidence."},
+  {"id":"P02","prompt":"Analyze direct impact of changing VisitBooked fields and transaction/event ordering. Cite file:line evidence."},
+  {"id":"P03","prompt":"Design the smallest validation change preventing booking with a null visit date; identify exact edit and targeted verification. Cite evidence."}
+ ],
+ "retrieval":{"k":[3,5,10],"raw_natural_language_only":true,"golden_unit":"path","metrics":["recall_at_k","mrr","actionability"]},
+ "budgets":{"max_rounds":6,"total_tool_calls":6,"source_lines":600,"model_calls":7,"tmf_limit":10,"tmf_max_chars":12000},
+ "tools":{"source":["source_search","source_read"],"tmf":["tmf_retrieve","tmf_explain","tmf_callers","tmf_readers","tmf_writers","tmf_subtypes"]},
+ "agent":{"no_hints":true,"json_action_schema":{"action":"tool|answer","tool":"string","args":"object","answer":"object"},"fail_closed":true,"transcript":true},
+ "metrics":["active_tmf_call_rate","tmf_adoption_rate","task_accuracy","citation_accuracy","source_lines","tokens","latency_seconds"],
+ "failure_taxonomy":["graph_absence","retrieval_miss","ranking_miss","output_packing_miss"],
+ "description_ab":{"allowed_once_if_zero_calls":true,"variants":["neutral","capability_and_when_to_use"],"selection":"run both once on P01 only; never select winner for pilot"},
+ "stopping":{"smoke_pairs":1,"pilot_pairs":3,"minimum_valid_pairs":3,"stop_if_zero_tmf_calls_after_allowed_ab":true,"stop_if_adoption_zero":true,"stop_if_no_task_or_citation_gain":true,"no_prompt_metric_or_golden_changes":true},
+ "immutability":{"prior_v1_v2_results":"read_only","freeze_before_baseline":true}
+}
