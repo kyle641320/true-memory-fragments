@@ -1,0 +1,1194 @@
+{
+  "frozen_hash": "ab3398390496b2c01ad53b3f2a06b79b65b72965f3c69cdc099f5884c6f8160c  PROTOCOL.md\n135f474f24fb992626d4779a4d4f96e1966dd33ae20afc3ba4e8033dcfdfcd4a  STOP_GATES.md\n973b40d1bcb5a7977509be5e66e34dc029e4f80b085096cf7b0a0c45c3ba9f66  manifest.json\nda5bc9a456e9dca7219eb5f004977f876e12d4ddeb94645d096a55e20c286085  tasks.json\n93c779b2dc6e3865ad28453772a7623f344381947eb595f71a3f66b890653736  goldens/goldens.jsonl\n885b4c311782b255b7d64def885f8a6842e809f02be53ef05786440128c28d87  runner.py\n920fb5fff49856d96d2579bd68beb7bf2d50c8367217352f9d8dc793bf05d1f1  scorer.py\n67db82ece070d1cd407839ba39aad8502159e6bc63f5f5e44644b418b6ff8e19  audit.py",
+  "mode": "smoke",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "TMF_INJECT_ONLY",
+      "arm_order": [
+        "TMF_INJECT_ONLY",
+        "SOURCE_ONLY"
+      ],
+      "independent_session_ids": [
+        "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+        "69d21ef2-50f9-4d54-8fce-f412e1f7065e",
+        "cb305821-0268-4607-b372-65fad36c2883",
+        "37595f4e-b4a4-4e95-9602-161df3dca147",
+        "c261eb2f-5003-4ceb-aa86-f62752bf05e1"
+      ],
+      "memory_store": {
+        "heldout.OrbitLedger#quota(int)": {
+          "anchor": {
+            "line": 4,
+            "path": "heldout/OrbitLedger.java"
+          },
+          "claim": "OrbitLedger.quota returns integer 41 for input 7",
+          "freshness": "fresh",
+          "identity": "heldout.OrbitLedger#quota(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "heldout/OrbitLedger.java",
+          "provenance": {
+            "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+            "file_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+            "kind": "first_visit_source_tool_trace",
+            "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+          },
+          "source_authoritative": true,
+          "value": 41
+        }
+      },
+      "prior_navigation_state": {
+        "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+        "origin": "source_tool_trace",
+        "path": "heldout/OrbitLedger.java",
+        "repo_id": "L41",
+        "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+        "source_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+        "symbol": "heldout.OrbitLedger#quota(int)"
+      },
+      "sequence": "L41",
+      "sessions": [
+        {
+          "affected_path_read": true,
+          "answer": {
+            "answer": 41,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 92,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": false,
+          "injection_items": 0,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 12.265693567693233,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": null,
+          "navigation_state_written": {
+            "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+            "origin": "source_tool_trace",
+            "path": "heldout/OrbitLedger.java",
+            "repo_id": "L41",
+            "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+            "source_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+            "symbol": "heldout.OrbitLedger#quota(int)"
+          },
+          "old_fact_withheld": true,
+          "phase": "first_visit",
+          "prompt_tokens": 554,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+          "source_bytes": 100,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/OrbitLedger.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 646,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger.quota"
+              },
+              "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 41,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": true
+        },
+        {
+          "affected_path_read": false,
+          "answer": {
+            "answer": 41,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 31,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": true,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": true,
+          "injection_items": 1,
+          "injection_tokens": 195,
+          "issues": [],
+          "latency_seconds": 3.330868300050497,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": "FRESH",
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 438,
+          "read_calls": 0,
+          "read_gate_blocks": 0,
+          "session_id": "69d21ef2-50f9-4d54-8fce-f412e1f7065e",
+          "source_bytes": 0,
+          "source_lines": 0,
+          "source_paths": [],
+          "stale_trust_error": false,
+          "total_tokens": 664,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": {
+                "items": [
+                  {
+                    "anchor": {
+                      "line": 4,
+                      "path": "heldout/OrbitLedger.java"
+                    },
+                    "claim": "OrbitLedger.quota returns integer 41 for input 7",
+                    "freshness": "fresh",
+                    "identity": "heldout.OrbitLedger#quota(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "heldout/OrbitLedger.java",
+                    "provenance": {
+                      "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                      "file_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+                      "kind": "first_visit_source_tool_trace",
+                      "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                    },
+                    "source_authoritative": true,
+                    "value": 41
+                  }
+                ],
+                "kind": "FRESH",
+                "trigger": {
+                  "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                  "origin": "prior_source_tool_trace",
+                  "path": "heldout/OrbitLedger.java",
+                  "prior_session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                }
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": 41,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "69d21ef2-50f9-4d54-8fce-f412e1f7065e",
+              "step": 0
+            }
+          ],
+          "used_fresh_without_read": true,
+          "valid": true
+        },
+        {
+          "affected_path_read": true,
+          "answer": {
+            "answer": null,
+            "citations": []
+          },
+          "citation_ok": false,
+          "claim_wrong": false,
+          "completion_tokens": 221,
+          "correct": false,
+          "format_repair_used": true,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": true,
+          "injection_items": 1,
+          "injection_tokens": 99,
+          "issues": [
+            "answer_type",
+            "citations",
+            "wrong_answer",
+            "wrong_citation"
+          ],
+          "latency_seconds": 14.244291983544827,
+          "localized_reread": true,
+          "machine_attribution": "output-contract failure",
+          "middleware_kind": "STALE",
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 1551,
+          "read_calls": 2,
+          "read_gate_blocks": 0,
+          "session_id": "cb305821-0268-4607-b372-65fad36c2883",
+          "source_bytes": 200,
+          "source_lines": 10,
+          "source_paths": [
+            "heldout/OrbitLedger.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 1871,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": {
+                "items": [
+                  {
+                    "claim": null,
+                    "freshness": "stale",
+                    "path": "heldout/OrbitLedger.java",
+                    "pointer": "Source changed; read affected path before final.",
+                    "source_authoritative": true
+                  }
+                ],
+                "kind": "STALE",
+                "trigger": {
+                  "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                  "origin": "prior_source_tool_trace",
+                  "path": "heldout/OrbitLedger.java",
+                  "prior_session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                }
+              },
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger quota semantic change heldout/OrbitLedger.java"
+              },
+              "session_id": "cb305821-0268-4607-b372-65fad36c2883",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "cb305821-0268-4607-b372-65fad36c2883",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger quota semantic change input 7"
+              },
+              "session_id": "cb305821-0268-4607-b372-65fad36c2883",
+              "step": 2
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "cb305821-0268-4607-b372-65fad36c2883",
+              "step": 3
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "repair",
+              "format_repair": true,
+              "middleware": null,
+              "model_action": {
+                "answer": null,
+                "citations": []
+              },
+              "session_id": "cb305821-0268-4607-b372-65fad36c2883"
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": false
+        },
+        {
+          "affected_path_read": false,
+          "answer": {
+            "answer": 41,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 31,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": true,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": true,
+          "injection_items": 1,
+          "injection_tokens": 195,
+          "issues": [],
+          "latency_seconds": 2.6869804803282022,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": "FRESH",
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 439,
+          "read_calls": 0,
+          "read_gate_blocks": 0,
+          "session_id": "37595f4e-b4a4-4e95-9602-161df3dca147",
+          "source_bytes": 0,
+          "source_lines": 0,
+          "source_paths": [],
+          "stale_trust_error": false,
+          "total_tokens": 665,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": {
+                "items": [
+                  {
+                    "anchor": {
+                      "line": 4,
+                      "path": "heldout/OrbitLedger.java"
+                    },
+                    "claim": "OrbitLedger.quota returns integer 41 for input 7",
+                    "freshness": "fresh",
+                    "identity": "heldout.OrbitLedger#quota(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "heldout/OrbitLedger.java",
+                    "provenance": {
+                      "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                      "file_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+                      "kind": "first_visit_source_tool_trace",
+                      "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                    },
+                    "source_authoritative": true,
+                    "value": 41
+                  }
+                ],
+                "kind": "FRESH",
+                "trigger": {
+                  "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                  "origin": "prior_source_tool_trace",
+                  "path": "heldout/OrbitLedger.java",
+                  "prior_session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                }
+              },
+              "model_action": {
+                "action": "finish",
+                "answer": 41,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "37595f4e-b4a4-4e95-9602-161df3dca147",
+              "step": 0
+            }
+          ],
+          "used_fresh_without_read": true,
+          "valid": true
+        },
+        {
+          "affected_path_read": false,
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/QuietRelay.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 93,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": true,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": true,
+          "injection_items": 1,
+          "injection_tokens": 195,
+          "issues": [],
+          "latency_seconds": 7.8464021272957325,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": "FRESH",
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "unknown_region",
+          "prompt_tokens": 1455,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "c261eb2f-5003-4ceb-aa86-f62752bf05e1",
+          "source_bytes": 96,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/QuietRelay.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 1743,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": {
+                "items": [
+                  {
+                    "anchor": {
+                      "line": 4,
+                      "path": "heldout/OrbitLedger.java"
+                    },
+                    "claim": "OrbitLedger.quota returns integer 41 for input 7",
+                    "freshness": "fresh",
+                    "identity": "heldout.OrbitLedger#quota(int)",
+                    "line": 4,
+                    "non_instruction": true,
+                    "path": "heldout/OrbitLedger.java",
+                    "provenance": {
+                      "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                      "file_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+                      "kind": "first_visit_source_tool_trace",
+                      "session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                    },
+                    "source_authoritative": true,
+                    "value": 41
+                  }
+                ],
+                "kind": "FRESH",
+                "trigger": {
+                  "event_id": "dff8c8c9-b61b-4a0f-b849-e6d142082099",
+                  "origin": "prior_source_tool_trace",
+                  "path": "heldout/OrbitLedger.java",
+                  "prior_session_id": "2533bc1a-02d2-4576-b347-567ba0f8c6e5"
+                }
+              },
+              "model_action": {
+                "action": "search",
+                "query": "QuietRelay ready()"
+              },
+              "session_id": "c261eb2f-5003-4ceb-aa86-f62752bf05e1",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/QuietRelay.java"
+              },
+              "session_id": "c261eb2f-5003-4ceb-aa86-f62752bf05e1",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/QuietRelay.java"
+                  }
+                ]
+              },
+              "session_id": "c261eb2f-5003-4ceb-aa86-f62752bf05e1",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": true,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "SOURCE_ONLY",
+      "arm_order": [
+        "TMF_INJECT_ONLY",
+        "SOURCE_ONLY"
+      ],
+      "independent_session_ids": [
+        "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+        "9e6ce29a-827c-4771-8c87-da7be825a2e6",
+        "04e50cd0-a624-4229-82b0-de3a90f9fd6d",
+        "2a5da217-20d8-4176-9495-d2b39037097a",
+        "fd2432b2-5433-439a-b4d9-ad1290fd24b6"
+      ],
+      "memory_store": {
+        "heldout.OrbitLedger#quota(int)": {
+          "anchor": {
+            "line": 4,
+            "path": "heldout/OrbitLedger.java"
+          },
+          "claim": "OrbitLedger.quota returns integer 41 for input 7",
+          "freshness": "fresh",
+          "identity": "heldout.OrbitLedger#quota(int)",
+          "line": 4,
+          "non_instruction": true,
+          "path": "heldout/OrbitLedger.java",
+          "provenance": {
+            "event_id": "cc535d5b-616c-4cc1-8750-3a0187939d8e",
+            "file_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+            "kind": "first_visit_source_tool_trace",
+            "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0"
+          },
+          "source_authoritative": true,
+          "value": 41
+        }
+      },
+      "prior_navigation_state": {
+        "event_id": "cc535d5b-616c-4cc1-8750-3a0187939d8e",
+        "origin": "source_tool_trace",
+        "path": "heldout/OrbitLedger.java",
+        "repo_id": "L41",
+        "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+        "source_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+        "symbol": "heldout.OrbitLedger#quota(int)"
+      },
+      "sequence": "L41",
+      "sessions": [
+        {
+          "affected_path_read": true,
+          "answer": {
+            "answer": 41,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 103,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": false,
+          "injection_items": 0,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 10.208038544282317,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": null,
+          "navigation_state_written": {
+            "event_id": "cc535d5b-616c-4cc1-8750-3a0187939d8e",
+            "origin": "source_tool_trace",
+            "path": "heldout/OrbitLedger.java",
+            "repo_id": "L41",
+            "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+            "source_sha256": "23f21b1a9d10404b8827ecafe8cf746a63f4e7f3ef868adc8738f5573dfcf3ff",
+            "symbol": "heldout.OrbitLedger#quota(int)"
+          },
+          "old_fact_withheld": true,
+          "phase": "first_visit",
+          "prompt_tokens": 554,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+          "source_bytes": 100,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/OrbitLedger.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 657,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger.quota input 7"
+              },
+              "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 41,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "77a55aac-ec3b-42cd-9c72-4314994b3fe0",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": true
+        },
+        {
+          "affected_path_read": true,
+          "answer": {
+            "answer": 41,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 124,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": false,
+          "injection_items": 0,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 6.9278652016073465,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": null,
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 566,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "9e6ce29a-827c-4771-8c87-da7be825a2e6",
+          "source_bytes": 100,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/OrbitLedger.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 690,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger quota unchanged revisit 7"
+              },
+              "session_id": "9e6ce29a-827c-4771-8c87-da7be825a2e6",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "9e6ce29a-827c-4771-8c87-da7be825a2e6",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 41,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "9e6ce29a-827c-4771-8c87-da7be825a2e6",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": true
+        },
+        {
+          "affected_path_read": true,
+          "answer": {
+            "answer": 53,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 103,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": false,
+          "injection_items": 0,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 8.672764396294951,
+          "localized_reread": true,
+          "machine_attribution": "none",
+          "middleware_kind": null,
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "semantic_mutation",
+          "prompt_tokens": 597,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "04e50cd0-a624-4229-82b0-de3a90f9fd6d",
+          "source_bytes": 100,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/OrbitLedger.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 700,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger.quota semantic change quota(7)"
+              },
+              "session_id": "04e50cd0-a624-4229-82b0-de3a90f9fd6d",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "04e50cd0-a624-4229-82b0-de3a90f9fd6d",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 53,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "04e50cd0-a624-4229-82b0-de3a90f9fd6d",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": true
+        },
+        {
+          "affected_path_read": true,
+          "answer": {
+            "answer": 41,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/OrbitLedger.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 97,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": false,
+          "injection_items": 0,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 8.9638178832829,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": null,
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "unrelated_mutation",
+          "prompt_tokens": 569,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "2a5da217-20d8-4176-9495-d2b39037097a",
+          "source_bytes": 100,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/OrbitLedger.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 666,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "OrbitLedger quota"
+              },
+              "session_id": "2a5da217-20d8-4176-9495-d2b39037097a",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/OrbitLedger.java"
+              },
+              "session_id": "2a5da217-20d8-4176-9495-d2b39037097a",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": 41,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/OrbitLedger.java"
+                  }
+                ]
+              },
+              "session_id": "2a5da217-20d8-4176-9495-d2b39037097a",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": true
+        },
+        {
+          "affected_path_read": false,
+          "answer": {
+            "answer": true,
+            "citations": [
+              {
+                "line": 4,
+                "path": "heldout/QuietRelay.java"
+              }
+            ]
+          },
+          "citation_ok": true,
+          "claim_wrong": false,
+          "completion_tokens": 98,
+          "correct": true,
+          "format_repair_used": false,
+          "fresh_claim_hash_matches": false,
+          "human_audit": {
+            "agrees": null,
+            "notes": "",
+            "reviewer": null
+          },
+          "injection_before_first_read": false,
+          "injection_items": 0,
+          "injection_tokens": 0,
+          "issues": [],
+          "latency_seconds": 8.545395161956549,
+          "localized_reread": false,
+          "machine_attribution": "none",
+          "middleware_kind": null,
+          "navigation_state_written": null,
+          "old_fact_withheld": true,
+          "phase": "unknown_region",
+          "prompt_tokens": 613,
+          "read_calls": 1,
+          "read_gate_blocks": 0,
+          "session_id": "fd2432b2-5433-439a-b4d9-ad1290fd24b6",
+          "source_bytes": 96,
+          "source_lines": 5,
+          "source_paths": [
+            "heldout/QuietRelay.java"
+          ],
+          "stale_trust_error": false,
+          "total_tokens": 711,
+          "transcript": [
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "search",
+                "query": "class QuietRelay ready()"
+              },
+              "session_id": "fd2432b2-5433-439a-b4d9-ad1290fd24b6",
+              "step": 0
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "read",
+                "path": "heldout/QuietRelay.java"
+              },
+              "session_id": "fd2432b2-5433-439a-b4d9-ad1290fd24b6",
+              "step": 1
+            },
+            {
+              "available_tools": [
+                "search",
+                "read",
+                "finish"
+              ],
+              "call_kind": "agent",
+              "middleware": null,
+              "model_action": {
+                "action": "finish",
+                "answer": true,
+                "citations": [
+                  {
+                    "line": 4,
+                    "path": "heldout/QuietRelay.java"
+                  }
+                ]
+              },
+              "session_id": "fd2432b2-5433-439a-b4d9-ad1290fd24b6",
+              "step": 2
+            }
+          ],
+          "used_fresh_without_read": false,
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "middleware-layered-v1-run"
+}

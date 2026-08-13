@@ -1,0 +1,134 @@
+{
+  "schema": "middleware-layered-v1",
+  "seed": 20260813,
+  "model": {
+    "id": "gpt-5.6-sol",
+    "timeout_seconds": 120
+  },
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_INJECT_ONLY"
+  ],
+  "phases": [
+    "first_visit",
+    "fresh_revisit",
+    "semantic_mutation",
+    "unrelated_mutation",
+    "unknown_region"
+  ],
+  "budget": {
+    "max_agent_calls": 4,
+    "max_source_lines": 30,
+    "max_source_bytes": 2000,
+    "injection_top_k": 3,
+    "injection_max_tokens": 500,
+    "format_repairs": 1
+  },
+  "gates": {
+    "stale_precision": 1.0,
+    "stale_recall": 1.0,
+    "false_inject": 0,
+    "stale_trust_errors": 0,
+    "unknown_false_hits": 0,
+    "localized_reread_rate": 1.0,
+    "fresh_claim_accuracy": 1.0,
+    "fresh_savings_directional": true
+  },
+  "sequences": [
+    {
+      "id": "L41",
+      "identity": "heldout.OrbitLedger#quota(int)",
+      "symbol": "OrbitLedger.quota",
+      "region_path": "heldout/OrbitLedger.java",
+      "unknown_identity": "heldout.QuietRelay#ready()",
+      "unknown_path": "heldout/QuietRelay.java",
+      "input": 7,
+      "base_value": 41,
+      "mutated_value": 53,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does OrbitLedger.quota return for input 7?",
+        "fresh_revisit": "On an unchanged revisit, what integer does OrbitLedger.quota return for 7?",
+        "semantic_mutation": "After the semantic change, what integer does OrbitLedger.quota return for 7?",
+        "unrelated_mutation": "After an unrelated file change, what integer does OrbitLedger.quota return for 7?",
+        "unknown_region": "Does QuietRelay declare a zero-argument method named ready?"
+      }
+    },
+    {
+      "id": "L42",
+      "identity": "heldout.HarborMeter#depth(int)",
+      "symbol": "HarborMeter.depth",
+      "region_path": "heldout/HarborMeter.java",
+      "unknown_identity": "heldout.SpareAnchor#locked()",
+      "unknown_path": "heldout/SpareAnchor.java",
+      "input": 9,
+      "base_value": 72,
+      "mutated_value": 66,
+      "unknown_exists": false,
+      "tasks": {
+        "first_visit": "What integer does HarborMeter.depth return for input 9?",
+        "fresh_revisit": "On an unchanged revisit, what integer does HarborMeter.depth return for 9?",
+        "semantic_mutation": "After the semantic change, what integer does HarborMeter.depth return for 9?",
+        "unrelated_mutation": "After an unrelated file change, what integer does HarborMeter.depth return for 9?",
+        "unknown_region": "Does SpareAnchor declare a zero-argument method named locked?"
+      }
+    },
+    {
+      "id": "L43",
+      "identity": "heldout.CedarClock#ticks(int)",
+      "symbol": "CedarClock.ticks",
+      "region_path": "heldout/CedarClock.java",
+      "unknown_identity": "heldout.GhostDial#awake()",
+      "unknown_path": "heldout/GhostDial.java",
+      "input": 12,
+      "base_value": 35,
+      "mutated_value": 48,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does CedarClock.ticks return for input 12?",
+        "fresh_revisit": "On an unchanged revisit, what integer does CedarClock.ticks return for 12?",
+        "semantic_mutation": "After the semantic change, what integer does CedarClock.ticks return for 12?",
+        "unrelated_mutation": "After an unrelated file change, what integer does CedarClock.ticks return for 12?",
+        "unknown_region": "Does GhostDial declare a zero-argument method named awake?"
+      }
+    },
+    {
+      "id": "L44",
+      "identity": "heldout.QuartzRoute#distance(int)",
+      "symbol": "QuartzRoute.distance",
+      "region_path": "heldout/QuartzRoute.java",
+      "unknown_identity": "heldout.IdleFork#open()",
+      "unknown_path": "heldout/IdleFork.java",
+      "input": 5,
+      "base_value": 88,
+      "mutated_value": 91,
+      "unknown_exists": false,
+      "tasks": {
+        "first_visit": "What integer does QuartzRoute.distance return for input 5?",
+        "fresh_revisit": "On an unchanged revisit, what integer does QuartzRoute.distance return for 5?",
+        "semantic_mutation": "After the semantic change, what integer does QuartzRoute.distance return for 5?",
+        "unrelated_mutation": "After an unrelated file change, what integer does QuartzRoute.distance return for 5?",
+        "unknown_region": "Does IdleFork declare a zero-argument method named open?"
+      }
+    },
+    {
+      "id": "L45",
+      "identity": "heldout.NimbusCache#slots(int)",
+      "symbol": "NimbusCache.slots",
+      "region_path": "heldout/NimbusCache.java",
+      "unknown_identity": "heldout.LostKey#valid()",
+      "unknown_path": "heldout/LostKey.java",
+      "input": 14,
+      "base_value": 29,
+      "mutated_value": 37,
+      "unknown_exists": true,
+      "tasks": {
+        "first_visit": "What integer does NimbusCache.slots return for input 14?",
+        "fresh_revisit": "On an unchanged revisit, what integer does NimbusCache.slots return for 14?",
+        "semantic_mutation": "After the semantic change, what integer does NimbusCache.slots return for 14?",
+        "unrelated_mutation": "After an unrelated file change, what integer does NimbusCache.slots return for 14?",
+        "unknown_region": "Does LostKey declare a zero-argument method named valid?"
+      }
+    }
+  ]
+}

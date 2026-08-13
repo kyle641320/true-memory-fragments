@@ -1,0 +1,75 @@
+# Layered audit
+
+```json
+{
+  "agent_outcome": {
+    "SOURCE_ONLY": {
+      "attribution_counts": {
+        "none": 5
+      },
+      "citation_accuracy": 1.0,
+      "completion_tokens": 525,
+      "injection_tokens": 0,
+      "latency_seconds": 43.317881187424064,
+      "n": 5,
+      "prompt_tokens": 2899,
+      "read_calls": 5,
+      "source_bytes": 496,
+      "source_lines": 25,
+      "task_accuracy": 1.0,
+      "total_tokens": 3424
+    },
+    "TMF_INJECT_ONLY": {
+      "attribution_counts": {
+        "none": 4,
+        "output-contract failure": 1
+      },
+      "citation_accuracy": 0.8,
+      "completion_tokens": 468,
+      "injection_tokens": 684,
+      "latency_seconds": 40.37423645891249,
+      "n": 5,
+      "prompt_tokens": 4437,
+      "read_calls": 4,
+      "source_bytes": 396,
+      "source_lines": 20,
+      "task_accuracy": 0.8,
+      "total_tokens": 5589
+    }
+  },
+  "fresh_savings": {
+    "directional_pass": true,
+    "read_calls": {
+      "delta": -1,
+      "source_only": 1,
+      "tmf": 0
+    },
+    "source_lines": {
+      "delta": -5,
+      "source_only": 5,
+      "tmf": 0
+    },
+    "total_tokens": {
+      "delta": -26,
+      "source_only": 690,
+      "tmf": 664
+    }
+  },
+  "mechanism": {
+    "budget_errors": 0,
+    "false_inject": 1,
+    "fresh_claim_accuracy": 1.0,
+    "independent_session_errors": 0,
+    "localized_reread_rate": 1.0,
+    "old_fact_leaks": 0,
+    "pre_read_order_errors": 0,
+    "stale_precision": 1.0,
+    "stale_recall": 1.0,
+    "stale_trust_errors": 0,
+    "unknown_false_hits": 1,
+    "valid_sequences": 1
+  },
+  "mechanism_pass": false,
+  "value_gate_pass": true
+}
+```
