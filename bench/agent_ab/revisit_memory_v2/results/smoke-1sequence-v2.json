@@ -1,0 +1,274 @@
+{
+  "mode": "smoke",
+  "preflight": {
+    "credential_owner": "broker",
+    "model": "gpt-5.6-sol",
+    "network_owner": "broker",
+    "protocol": "tmf-agent-broker-v1",
+    "stateless": true,
+    "tools": []
+  },
+  "rows": [
+    {
+      "arm": "CONTROL",
+      "memory_store": null,
+      "sequence": "S01",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "com/acme/ShippingRule.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 9
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "issues": [],
+          "latency_seconds": 12.31171995215118,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 268,
+          "source_bytes": 262,
+          "source_files": 2,
+          "source_lines": 12,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.21119602024555206,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "com/acme/ShippingRule.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 9
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "issues": [],
+          "latency_seconds": 2.505884200334549,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 271,
+          "source_bytes": 262,
+          "source_files": 2,
+          "source_lines": 12,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.15864893794059753,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [],
+            "evidence_source": "SOURCE",
+            "exists": false,
+            "memory_hit": "NOT_APPLICABLE"
+          },
+          "citation_ok": false,
+          "completion_tokens": 27,
+          "correct": false,
+          "issues": [
+            "wrong_citation"
+          ],
+          "latency_seconds": 2.3067498952150345,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 175,
+          "source_bytes": 98,
+          "source_files": 1,
+          "source_lines": 4,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.11990778148174286,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "com/acme/ShippingRule.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 4
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "issues": [],
+          "latency_seconds": 2.496272748336196,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 272,
+          "source_bytes": 262,
+          "source_files": 2,
+          "source_lines": 12,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.15669874846935272,
+          "valid": true
+        }
+      ]
+    },
+    {
+      "arm": "TMF_MEMORY",
+      "memory_store": {
+        "com.acme.ShippingRule#fee(int)": {
+          "anchors": [
+            {
+              "lines": [
+                4
+              ],
+              "path": "com/acme/ShippingRule.java"
+            }
+          ],
+          "claim": {
+            "value": 9
+          },
+          "freshness": "fresh",
+          "identity": "com.acme.ShippingRule#fee(int)",
+          "provenance": {
+            "file_sha256": "f8fa2f0a979e401a713e6931008bee462455083bb8850559049ed3a8655ef866",
+            "tree_fingerprint": "60d5a2ad1ba57f7283e56a7be0ec361ee1d032930ebfe21ebeebb33a4dce8b7d"
+          }
+        }
+      },
+      "sequence": "S01",
+      "sessions": [
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "com/acme/ShippingRule.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "NOT_APPLICABLE",
+            "value": 9
+          },
+          "citation_ok": true,
+          "completion_tokens": 42,
+          "correct": true,
+          "issues": [],
+          "latency_seconds": 2.65000544115901,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "first_visit",
+          "prompt_tokens": 268,
+          "source_bytes": 262,
+          "source_files": 2,
+          "source_lines": 12,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.1624803990125656,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "com/acme/ShippingRule.java"
+              }
+            ],
+            "evidence_source": "MEMORY",
+            "memory_hit": "HIT",
+            "value": 9
+          },
+          "citation_ok": true,
+          "completion_tokens": 41,
+          "correct": true,
+          "issues": [],
+          "latency_seconds": 2.5214247964322567,
+          "memory_adoption": true,
+          "memory_hit": true,
+          "phase": "fresh_revisit",
+          "prompt_tokens": 267,
+          "source_bytes": 0,
+          "source_files": 0,
+          "source_lines": 0,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.29580481350421906,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [],
+            "evidence_source": "NONE",
+            "exists": false,
+            "memory_hit": "MISS"
+          },
+          "citation_ok": false,
+          "completion_tokens": 24,
+          "correct": false,
+          "issues": [
+            "wrong_citation"
+          ],
+          "latency_seconds": 2.370324932038784,
+          "memory_adoption": false,
+          "memory_hit": false,
+          "phase": "unknown_region",
+          "prompt_tokens": 172,
+          "source_bytes": 98,
+          "source_files": 1,
+          "source_lines": 4,
+          "stale_blocked": false,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.12195669114589691,
+          "valid": true
+        },
+        {
+          "answer": {
+            "citations": [
+              {
+                "line": 4,
+                "path": "com/acme/ShippingRule.java"
+              }
+            ],
+            "evidence_source": "SOURCE",
+            "memory_hit": "HIT",
+            "value": 4
+          },
+          "citation_ok": true,
+          "completion_tokens": 40,
+          "correct": true,
+          "issues": [],
+          "latency_seconds": 3.829646535217762,
+          "memory_adoption": false,
+          "memory_hit": true,
+          "phase": "mutation_revisit",
+          "prompt_tokens": 217,
+          "source_bytes": 127,
+          "source_files": 1,
+          "source_lines": 6,
+          "stale_blocked": true,
+          "stale_trust_error": false,
+          "tmf_lookup_ms": 0.5153119564056396,
+          "valid": true
+        }
+      ]
+    }
+  ],
+  "schema": "revisit-memory-v2-run"
+}
