@@ -1,0 +1,20 @@
+{
+  "read_only": true,
+  "tasks": [
+    {
+      "path": "fixtures/java-retry-heldout/src/main/java/heldout/retry/Decoy.java",
+      "tool_target_gate": "FRESH",
+      "wrong_target": "MISS",
+      "stale": "STALE",
+      "stale_old_fact_leak": false
+    },
+    {
+      "path": "fixtures/java-cache-heldout/src/main/java/heldout/cache/Service.java",
+      "tool_target_gate": "FRESH",
+      "wrong_target": "MISS",
+      "stale": "STALE",
+      "stale_old_fact_leak": false
+    }
+  ],
+  "pass": true
+}

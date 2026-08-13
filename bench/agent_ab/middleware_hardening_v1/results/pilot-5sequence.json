@@ -1,0 +1,165 @@
+{
+  "frozen_hashes": [
+    "d503fac85171f482faf3f00209a52709d34a92afc5245d142b9f2fd40fd79ef3  bench/agent_ab/middleware_hardening_v1/PROTOCOL.md",
+    "798536d9294b4d70369ebe328998371e3b91c70cfbe0e99dd05a572d8229a92e  bench/agent_ab/middleware_hardening_v1/manifest.json"
+  ],
+  "hard_gate_pass": true,
+  "metrics": {
+    "false_inject": 0,
+    "false_stale_comment_format_count": 1,
+    "fresh_source_binding": 1.0,
+    "fresh_source_bytes": 0,
+    "fresh_source_lines": 0,
+    "fresh_source_reads": 0,
+    "localized_reread_rate": 1.0,
+    "sequence_passes": 5,
+    "stale_precision": 1.0,
+    "stale_recall": 1.0,
+    "stale_trust_error": 0,
+    "total_injection_tokens_estimate": 599,
+    "unknown_false_hit": 0
+  },
+  "rows": [
+    {
+      "agent_outcome": {
+        "attribution": "mechanism-only; independent secondary metric",
+        "executed": false
+      },
+      "blocked_after_verified_region": false,
+      "blocked_before_reread": true,
+      "changed_kind": "STALE",
+      "fresh_cost": {
+        "injection_tokens_estimate": 120,
+        "source_bytes": 0,
+        "source_lines": 0,
+        "source_reads": 0
+      },
+      "fresh_kind": "FRESH",
+      "fresh_source_binding": true,
+      "localized_read": {
+        "bytes": 108,
+        "lines": 3,
+        "path": "heldout/OrbitLedger.java"
+      },
+      "mechanism_pass": true,
+      "mutation": "semantic",
+      "repeat_kind": "MISS",
+      "sequence": "H51",
+      "stale_expected": true,
+      "unknown_kind": "MISS"
+    },
+    {
+      "agent_outcome": {
+        "attribution": "mechanism-only; independent secondary metric",
+        "executed": false
+      },
+      "blocked_after_verified_region": false,
+      "blocked_before_reread": false,
+      "changed_kind": "MISS",
+      "fresh_cost": {
+        "injection_tokens_estimate": 120,
+        "source_bytes": 0,
+        "source_lines": 0,
+        "source_reads": 0
+      },
+      "fresh_kind": "FRESH",
+      "fresh_source_binding": true,
+      "localized_read": {
+        "bytes": 0,
+        "lines": 3,
+        "path": "heldout/HarborMeter.java"
+      },
+      "mechanism_pass": true,
+      "mutation": "rename-move",
+      "repeat_kind": "MISS",
+      "sequence": "H52",
+      "stale_expected": false,
+      "unknown_kind": "MISS"
+    },
+    {
+      "agent_outcome": {
+        "attribution": "mechanism-only; independent secondary metric",
+        "executed": false
+      },
+      "blocked_after_verified_region": false,
+      "blocked_before_reread": true,
+      "changed_kind": "STALE",
+      "fresh_cost": {
+        "injection_tokens_estimate": 119,
+        "source_bytes": 0,
+        "source_lines": 0,
+        "source_reads": 0
+      },
+      "fresh_kind": "FRESH",
+      "fresh_source_binding": true,
+      "localized_read": {
+        "bytes": 143,
+        "lines": 3,
+        "path": "heldout/CedarClock.java"
+      },
+      "mechanism_pass": true,
+      "mutation": "comment-format",
+      "repeat_kind": "MISS",
+      "sequence": "H53",
+      "stale_expected": true,
+      "unknown_kind": "MISS"
+    },
+    {
+      "agent_outcome": {
+        "attribution": "mechanism-only; independent secondary metric",
+        "executed": false
+      },
+      "blocked_after_verified_region": false,
+      "blocked_before_reread": false,
+      "changed_kind": "MISS",
+      "fresh_cost": {
+        "injection_tokens_estimate": 120,
+        "source_bytes": 0,
+        "source_lines": 0,
+        "source_reads": 0
+      },
+      "fresh_kind": "FRESH",
+      "fresh_source_binding": true,
+      "localized_read": {
+        "bytes": 111,
+        "lines": 3,
+        "path": "heldout/QuartzRoute.java"
+      },
+      "mechanism_pass": true,
+      "mutation": "branch-switch",
+      "repeat_kind": "MISS",
+      "sequence": "H54",
+      "stale_expected": false,
+      "unknown_kind": "MISS"
+    },
+    {
+      "agent_outcome": {
+        "attribution": "mechanism-only; independent secondary metric",
+        "executed": false
+      },
+      "blocked_after_verified_region": false,
+      "blocked_before_reread": true,
+      "changed_kind": "STALE",
+      "fresh_cost": {
+        "injection_tokens_estimate": 120,
+        "source_bytes": 0,
+        "source_lines": 0,
+        "source_reads": 0
+      },
+      "fresh_kind": "FRESH",
+      "fresh_source_binding": true,
+      "localized_read": {
+        "bytes": 0,
+        "lines": 3,
+        "path": "heldout/NimbusCache.java"
+      },
+      "mechanism_pass": true,
+      "mutation": "dirty-delete",
+      "repeat_kind": "MISS",
+      "sequence": "H55",
+      "stale_expected": true,
+      "unknown_kind": "MISS"
+    }
+  ],
+  "schema": "middleware-hardening-v1-result"
+}

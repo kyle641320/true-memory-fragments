@@ -1,0 +1,1 @@
+Protocol and manifest hashes in FROZEN.sha256 were written before tests/results execution. Any P0 or five-sequence gate failure stops the run; no result-driven prompt/retrieval/parser tuning is allowed.
