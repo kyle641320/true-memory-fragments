@@ -1,0 +1,6 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),test=require('node:test');
+const {createJiti}=require('jiti'); const m=createJiti(__filename,{interopDefault:true})(path.resolve(__dirname,'../index.ts'));
+function fixture(){const root=fs.mkdtempSync(path.join(os.tmpdir(),'tmf-oc-')),repo=path.join(root,'repo'),state=path.join(root,'state');fs.mkdirSync(repo);fs.mkdirSync(state);return{root,repo,state}}
+test('routes only an explicit file into exactly one managed repo',()=>{const f=fixture();assert.equal(m.resolveFile({path:'a.py'},f.repo),path.join(f.repo,'a.py'));assert.equal(m.route(path.join(f.repo,'a.py'),[{repoRoot:f.repo}]).repoRoot,f.repo);assert.equal(m.route(path.join(f.repo,'a.py'),[{repoRoot:f.repo},{repoRoot:f.repo}]),undefined)});
+test('real before_tool_call harness fails open without warm state',()=>{const f=fixture();assert.equal(m.runPreToolUse({toolName:'read',params:{path:path.join(f.repo,'a.py')}},f.root,{repos:[{repoRoot:f.repo,stateRoot:f.state}],tmfRoot:path.resolve(__dirname,'../../../..')}),undefined)});
+test('ambiguous apply_patch has no path and conservatively passes',()=>{const f=fixture();assert.equal(m.runPreToolUse({toolName:'apply_patch',params:{input:'*** patch'}},f.root,{repos:[{repoRoot:f.repo}]}),undefined)});

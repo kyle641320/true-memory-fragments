@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 $CLAUDE_PROJECT_DIR/integrations/reflex/hooks/pre_tool_use.py",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

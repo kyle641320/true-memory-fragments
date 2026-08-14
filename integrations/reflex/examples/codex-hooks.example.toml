@@ -1,0 +1,30 @@
+# Codex 钩子配置示例
+#
+# OpenAI Codex 兼容 Claude Code 的钩子 schema：它会读取 CLAUDE_PLUGIN_ROOT /
+# CLAUDE_PROJECT_DIR 等兼容环境变量，并复用相同的 PreToolUse stdin JSON 协议。
+#
+# ⚠️ 重要局限（如实标注，不假装与 Claude Code 等价）：
+#   Codex 的 PreToolUse 拦截覆盖不如 Claude Code 严密。Codex 的工具集与
+#   内部执行路径与 Claude Code 不完全一致，agent 可能绕到一条未被钩子
+#   覆盖的工具路径完成等价的文件读取/修改工作（例如某些内置的批量文件
+#   操作、apply_patch 变体或 shell 内联读取），从而不经过本钩子。
+#   在 Claude Code 上 Read/Edit/Write 是 agent 触碰文件的强制收敛点；
+#   在 Codex 上这一保证较弱。请勿假设 Codex 上的反射覆盖率与 Claude Code 相同。
+#
+# 放置位置（取决于 Codex 版本，二选一）：
+#   ~/.codex/config.toml  下的 [hooks] 段，或
+#   项目根 .codex/hooks.json（若该版本支持 JSON 钩子）
+
+# config.toml 形式：
+[hooks.pre_tool_use]
+matcher = "Read|Edit|Write|apply_patch"
+command = "python3 ${CLAUDE_PROJECT_DIR}/integrations/reflex/hooks/pre_tool_use.py"
+timeout_ms = 5000
+
+# 环境变量（让钩子找到 TMF 引擎）：
+# 在启动 Codex 的 shell 中 export，或写入 Codex 的 env 配置：
+#
+# 注意：matcher 多加了 apply_patch —— 这是 Codex 常见的改文件路径之一，
+# 但它仅传 patch 文本、未必带 file_path，钩子对无法解析 file_path 的输入
+# 会保守放行（见 resolve_file_path）。这说明 Codex 覆盖率的天然漏点：
+# 无显式 file_path 的工具调用无法被函数级拦截。

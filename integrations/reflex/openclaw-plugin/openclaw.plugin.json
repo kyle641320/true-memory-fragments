@@ -1,0 +1,18 @@
+{
+  "id": "tmf-reflex",
+  "name": "TMF Consistency Reflex",
+  "description": "Hard-block stale code actions using TMF function freshness",
+  "activation": {"onStartup": true},
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "enabled": {"type": "boolean", "default": true},
+      "mode": {"type": "string", "enum": ["block", "approval"], "default": "block"},
+      "python": {"type": "string", "default": "python3"},
+      "tmfRoot": {"type": "string", "description": "Optional TMF checkout/package root"},
+      "repos": {"type": "array", "items": {"type": "object", "required": ["repoRoot"], "properties": {"repoRoot": {"type": "string"}, "stateRoot": {"type": "string"}}, "additionalProperties": false}}
+    },
+    "additionalProperties": false
+  },
+  "hooks": ["session_start", "before_tool_call"]
+}
