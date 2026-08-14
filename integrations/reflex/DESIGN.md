@@ -37,7 +37,9 @@ range to cover every matching reliable anchor. `before_tool_call` records only
 a candidate; a successful matching `after_tool_call` records observation.
 Errors never count. OpenClaw integer and decimal-string pagination fields are
 normalized equivalently so transport normalization cannot create a
-"must Read / Read forbidden" deadlock.
+"must Read / Read forbidden" deadlock. If a parser binding has no reliable
+line anchor, line 1 plus a limit that covers the current complete file is the
+conservative whole-file proof; a shorter range remains blocked.
 
 ## Locator evidence boundary
 

@@ -51,4 +51,8 @@ missing results never unlock the edit.
 OpenClaw lifecycle payloads can carry `offset` and `limit` as either integers or
 decimal strings. Both representations are normalized with the same strict
 positive-integer policy; fractional, negative, and malformed values do not
-cover an anchor.
+cover an anchor. When TMF cannot provide a reliable symbol anchor, the plugin
+requires a demonstrable whole-file Read: line 1 plus no limit, or a positive
+limit at least as large as the current file's line count. This preserves the
+conservative boundary without rejecting OpenClaw's normal `offset: 1,
+limit: 2000` whole-file request.

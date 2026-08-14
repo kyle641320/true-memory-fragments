@@ -112,14 +112,21 @@ function paginationInt(value:unknown, fallback:number|null):number|null {
   if (typeof value==="string" && /^\d+$/.test(value.trim())) return Number(value);
   return null;
 }
-function coversAnchor(params:Record<string,unknown>, item:StalePath):boolean {
-  if (!item.anchor?.reliable || !Number.isInteger(item.anchor.line_start) || !Number.isInteger(item.anchor.line_end)) return params.offset==null && params.limit==null;
-  // OpenClaw may normalize pagination fields to decimal strings between the
-  // model tool call and plugin lifecycle event. Treat those exactly like the
-  // numeric Read API while rejecting fractions, negatives, and junk.
+function coversAnchor(params:Record<string,unknown>, item:StalePath, totalLines?:number):boolean {
   const start=paginationInt(params.offset,1);
   const limit=paginationInt(params.limit,null);
   if (start==null || start<1) return false;
+  if (!item.anchor?.reliable || !Number.isInteger(item.anchor.line_start) || !Number.isInteger(item.anchor.line_end)) {
+    // Some parser bindings do not carry line anchors. In that case require a
+    // demonstrable whole-file Read: start at line 1 and either omit the limit
+    // or request at least the current file's complete line count.
+    if (start!==1) return false;
+    if (params.limit==null) return true;
+    return limit!=null && limit>0 && totalLines!=null && limit>=totalLines;
+  }
+  // OpenClaw may normalize pagination fields to decimal strings between the
+  // model tool call and plugin lifecycle event. Treat those exactly like the
+  // numeric Read API while rejecting fractions, negatives, and junk.
   if (params.limit==null) return start<=item.anchor.line_start!;
   if (limit==null || limit<=0) return false;
   return start<=item.anchor.line_start! && start+limit-1>=item.anchor.line_end!;
@@ -152,7 +159,13 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
     if (check.status===2) return block(config,"need_warm",active);
     if (check.status!==0 || check.decision?.decision!=="allow") return block(config,"engine_error",active);
     active.sourceChanged=false;
-    if (!matches.every(item=>coversAnchor(params,item))) return block(config,"need_read",active);
+    if (!matches.every(item=>{
+      const source=path.join(active.collision.canonical_repo_root,item.path);
+      let totalLines:number|undefined;
+      try { const text=fs.readFileSync(source,"utf8"); totalLines=text.length===0?0:text.split(/\r?\n/).length-(text.endsWith("\n")?1:0); }
+      catch { return false; }
+      return coversAnchor(params,item,totalLines);
+    })) return block(config,"need_read",active);
     const ck=callKey(ctx,event); if (ck) reads.set(ck,{pendingKey:key!,paths:matches.map(x=>x.path),blobs:new Map(matches.map(x=>[x.path,x.current_source_blob!]))});
     return undefined;
   }

@@ -2,14 +2,15 @@
 
 ## Root cause
 
-The v3 excluded smoke reached the intended sequence: stale edit blocked, localized warm succeeded, then the agent issued an exact `Read api.py` covering the stale `quote` anchor. OpenClaw's production lifecycle supplied Read pagination as decimal strings (`offset: "1"`, `limit: "2000"`). The plugin anchor predicate accepted only JavaScript numbers, classified that full Read as partial, and returned `need_read`. This produced a self-deadlock: the gate required a Read while forbidding the qualifying Read.
+The v3 excluded smoke reached the intended sequence: stale edit blocked, localized warm succeeded, then the agent issued an exact `Read api.py`. Two production transport/metadata shapes combined to reject it. OpenClaw's lifecycle can supply Read pagination as decimal strings, while Python callee-collision bindings can have `reliable: false` with no line range. The plugin accepted only numeric pagination and, for an unreliable anchor, accepted only literally omitted pagination. It therefore rejected OpenClaw's normal whole-file `offset: 1, limit: 2000` request and returned `need_read`. This produced a self-deadlock: the gate required a Read while forbidding the qualifying whole-file Read.
 
 The Python freshness hook was not the blocker after warm; its Read decision was `allow`. The fault was the plugin's transport-shape handling before candidate registration.
 
 ## Fix
 
 - Normalize Read `offset`/`limit` from either safe integers or unsigned decimal strings.
-- Preserve conservative rejection for fractions, negatives, zero limits, and malformed values.
+- For unavailable/unreliable anchors, accept only a demonstrable whole-file Read: start at line 1 and omit the limit or request at least the current complete file line count.
+- Preserve conservative rejection for fractions, negatives, zero limits, malformed values, and shorter unreliable-anchor ranges.
 - Keep the production lifecycle invariant: `before_tool_call` allows and registers only a qualifying recovery-read candidate; only successful `after_tool_call` records observation.
 - A failed Read remains unobserved; the identical stale fingerprint remains blocked; a corrected retry can proceed only after successful observation.
 
