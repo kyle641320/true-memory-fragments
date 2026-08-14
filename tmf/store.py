@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .schema import Claim
+from .index import InvertedIndex
 
 IDENTITY_FILE = "local_identity.json"
 FOREIGN_MARKER = "foreign_store.json"
@@ -42,6 +43,26 @@ class Store:
         self.claims_dir = self.root / "claims"
         self._initialized = False
         self._foreign_checked = False
+        self._index: InvertedIndex | None = None
+
+    @property
+    def index(self) -> InvertedIndex:
+        if self._index is None:
+            self._index = InvertedIndex(self.root)
+        return self._index
+
+    def ensure_index(self) -> bool:
+        """Ensure the derived index exists; atomically rebuild when absent/bad."""
+        if self.index.valid():
+            return True
+        try:
+            self.index.rebuild(self.iter_claims())
+            return True
+        except Exception:
+            return False
+
+    def rebuild_index(self) -> int:
+        return self.index.rebuild(self.iter_claims())
 
     def _identity_path(self) -> Path:
         return self.root / IDENTITY_FILE
@@ -153,12 +174,22 @@ class Store:
         tmp = path.with_suffix(path.suffix + f".{os.getpid()}.tmp")
         tmp.write_text(json.dumps(claim.to_dict(), ensure_ascii=False, indent=2, sort_keys=False) + "\n", encoding="utf-8")
         tmp.replace(path)
+        # The claim file is authoritative. Index maintenance is best effort;
+        # retrieval detects a missing/bad index and safely rebuilds/falls back.
+        try:
+            self.index.upsert(claim)
+        except Exception:
+            self.index.close()
 
     def delete_claim(self, claim_id: str) -> bool:
         path = self.claim_path(claim_id)
         if not path.exists():
             return False
         path.unlink()
+        try:
+            self.index.delete(claim_id)
+        except Exception:
+            self.index.close()
         return True
 
     def reconcile_path_claims(self, relpath: str, current_claims: list[Claim]) -> list[str]:
@@ -205,10 +236,10 @@ class Store:
                 continue
 
     def claims_for_path(self, relpath: str) -> list[Claim]:
-        return [
-            claim for claim in self.iter_claims()
-            if any(binding.path == relpath for binding in claim.bindings)
-        ]
+        ids = self.index.path_ids(relpath) if self.ensure_index() else None
+        if ids is not None:
+            return [claim for claim_id in ids if (claim := self.get_claim(claim_id)) is not None]
+        return [claim for claim in self.iter_claims() if any(binding.path == relpath for binding in claim.bindings)]
 
     def reconcile_edge_claims_for_caller_path(self, relpath: str, current_edge_claims: list[Claim]) -> list[str]:
         """Delete stale edge claims whose caller/reader side is this path.

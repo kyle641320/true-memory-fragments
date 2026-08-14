@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -120,8 +121,13 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
             score -= 8
         return score
 
+    candidate_ids = store.index.lexical_ids(terms) if store.ensure_index() else None
+    candidates = (
+        [claim for claim_id in candidate_ids if (claim := store.get_claim(claim_id)) is not None]
+        if candidate_ids is not None else store.iter_claims()
+    )
     scored: list[tuple[int, Claim]] = []
-    for claim in store.iter_claims():
+    for claim in candidates:
         score = lexical_score(claim)
         if score:
             scored.append((score, claim))
@@ -162,9 +168,13 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
         if len(claims) >= limit:
             break
 
-    if len(claims) < limit:
+    # Keep explicitly configured semantic routing additive. With neither
+    # configured, an indexed lexical miss stays bounded instead of scanning the
+    # authoritative store for semantic candidates.
+    semantic_configured = bool(os.environ.get("TMF_ROUTER_COMMAND") or os.environ.get("TMF_EMBED_COMMAND"))
+    if len(claims) < limit and (not terms or semantic_configured):
         _add_router_seeds(repo, store, query, claims, seen_ids, limit)
-    if len(claims) < limit:
+    if len(claims) < limit and (not terms or semantic_configured):
         _add_embedding_seed_expansion(repo, store, query, claims, seen_ids, limit)
 
     retrieved = [_fresh_item(repo, claim) for claim in claims]

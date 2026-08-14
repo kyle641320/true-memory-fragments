@@ -74,9 +74,14 @@ class McpService:
         if not qualname:
             raise ValueError("provide claim_id or qualname")
         rel_path = self._inside_repo_path(path) if path else None
-        matches = []
         q = str(qualname)
-        for claim in self.store.iter_claims():
+        indexed_ids = self.store.index.exact_ids(q, rel_path) if self.store.ensure_index() else None
+        candidates = (
+            [claim for claim_id in indexed_ids if (claim := self.store.get_claim(claim_id)) is not None]
+            if indexed_ids is not None else self.store.iter_claims()
+        )
+        matches = []
+        for claim in candidates:
             if scopes and claim.scope not in scopes:
                 continue
             cq = claim.body.get("qualname")
