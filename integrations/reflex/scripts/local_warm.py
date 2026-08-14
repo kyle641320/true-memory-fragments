@@ -76,8 +76,11 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
     all_fresh = all(c["fresh"] for c in stale_check)
 
     return {
+        "schema_version": "tmf.reflex.local_warm.v1",
         "action": "local_re_warm",
         "file": rel_path,
+        "canonical_repo_root": str(Path(repo_root).resolve()),
+        "canonical_state_root": str(state_path),
         "blob": blob,
         "total_claims": len(claims),
         "function_claims": len(function_claims),
@@ -88,7 +91,7 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
         "message": (
             f"✅ 局部重新认知完成：{rel_path}\n"
             f"   函数数：{len(function_claims)} | 全部 fresh：{all_fresh}\n"
-            f"   下次触碰此文件时反射将通过。"
+            f"   仍需在同一会话成功 Read 当前文件，双门才会允许修正后的重试。"
             if all_fresh
             else f"⚠️ 局部 warm 后仍有 stale：{rel_path}\n"
             f"   请检查文件是否在 warm 期间被再次修改。"

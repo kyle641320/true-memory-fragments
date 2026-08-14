@@ -26,10 +26,12 @@ TMF Function-Level Consistency Reflex Hook
 """
 
 import ast
+import hashlib
 import json
 import sys
 import os
 import textwrap
+import shlex
 from pathlib import Path
 
 # ── 配置 ──────────────────────────────────────────────────────────
@@ -118,6 +120,7 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
         return {"fresh": True, "stale_functions": [], "error": None}
 
     stale_functions: list[str] = []
+    stale_items: list[dict] = []
     for claim_id in sorted(claim_ids):
         claim = store.get_claim(claim_id)
         if claim is None:
@@ -130,10 +133,21 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
                 func_name = parts[1] if len(parts) > 1 else stale_binding
                 detail = parts[2].strip() if len(parts) > 2 else "changed"
                 stale_functions.append(f"{func_name} — {detail}")
+                binding = next((b for b in claim.bindings if b.path == rel_path), None)
+                stale_items.append({
+                    "path": rel_path,
+                    "symbol": func_name,
+                    "qualname": getattr(binding, "qualname", None) or func_name,
+                    "line_start": getattr(binding, "line_start", None),
+                    "line_end": getattr(binding, "line_end", None),
+                    "stored_blob": getattr(binding, "file_blob", None),
+                    "detail": detail,
+                })
 
     return {
         "fresh": len(stale_functions) == 0,
         "stale_functions": stale_functions,
+        "stale_items": stale_items,
         "error": None,
     }
 
@@ -265,6 +279,9 @@ def check_called_symbol_freshness(repo_root: str, new_text: str, state_root: Pat
             "qualname": qualname or symbol,
             "path": binding.path if binding else "",
             "details": freshness.stale_bindings,
+            "line_start": getattr(binding, "line_start", None),
+            "line_end": getattr(binding, "line_end", None),
+            "stored_blob": getattr(binding, "file_blob", None),
         })
 
     return {
@@ -272,6 +289,87 @@ def check_called_symbol_freshness(repo_root: str, new_text: str, state_root: Pat
         "stale_calls": stale_calls,
         "error": None,
     }
+
+
+def _stable_json(value: object) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+
+
+def action_fingerprint(tool_name: str, tool_input: dict, rel_path: str) -> str:
+    payload = {"tool_name": tool_name, "path": rel_path, "input": tool_input}
+    return hashlib.sha256(_stable_json(payload).encode()).hexdigest()
+
+
+def source_blob(repo_root: str, rel_path: str) -> str | None:
+    _ensure_tmf_importable()
+    from tmf.git import GitRepo
+    return GitRepo(repo_root).blob_sha(rel_path)
+
+
+def collision_payload(repo_root: str, state_root: Path, rel_path: str, tool_name: str,
+                      tool_input: dict, stale_items: list[dict], reason_code: str) -> dict:
+    repo = str(Path(repo_root).resolve())
+    state = str(state_root.resolve())
+    paths: list[dict] = []
+    for item in stale_items:
+        stale_path = str(item.get("path") or rel_path)
+        current = source_blob(repo, stale_path)
+        paths.append({
+            "path": stale_path,
+            "symbol": item.get("symbol"),
+            "qualname": item.get("qualname"),
+            "anchor": {
+                "line_start": item.get("line_start"),
+                "line_end": item.get("line_end"),
+                "reliable": isinstance(item.get("line_start"), int) and isinstance(item.get("line_end"), int),
+            },
+            "stored_blob": item.get("stored_blob"),
+            "current_source_blob": current,
+            "detail": item.get("detail") or "; ".join(item.get("details") or []),
+        })
+    paths = sorted(paths, key=lambda x: (x["path"], str(x.get("qualname"))))
+    warm_script = Path(__file__).resolve().parent.parent / "scripts" / "local_warm.py"
+    commands = [
+        f"python3 {shlex.quote(str(warm_script))} {shlex.quote(repo)} {shlex.quote(p['path'])} --state-root {shlex.quote(state)}"
+        for p in {p["path"]: p for p in paths}.values()
+    ]
+    identity = {
+        "repo_root": repo, "state_root": state, "blocked_action_fingerprint": action_fingerprint(tool_name, tool_input, rel_path),
+        "paths": [{"path": p["path"], "blob": p["current_source_blob"], "qualname": p.get("qualname")} for p in paths],
+    }
+    return {
+        "schema_version": "tmf.reflex.collision.v1",
+        "decision": "block",
+        "reason_code": reason_code,
+        "collision_id": hashlib.sha256(_stable_json(identity).encode()).hexdigest()[:24],
+        "canonical_repo_root": repo,
+        "canonical_state_root": state,
+        "session_identity": None,
+        "run_identity": None,
+        "blocked_action_fingerprint": identity["blocked_action_fingerprint"],
+        "blocked_tool": tool_name,
+        "blocked_target_path": rel_path,
+        "stale_paths": paths,
+        "recovery_commands": commands,
+        "recovery_command": commands[0] if len(commands) == 1 else None,
+    }
+
+
+def emit_block(payload: dict, human_reason: str) -> None:
+    payload["reason"] = human_reason
+    sys.stderr.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    raise SystemExit(EXIT_BLOCK)
+
+
+def emit_allow(repo_root: str | None = None, state_root: Path | None = None,
+               rel_path: str | None = None, reason_code: str = "fresh") -> None:
+    payload = {"schema_version": "tmf.reflex.decision.v1", "decision": "allow", "reason_code": reason_code}
+    if repo_root and state_root and rel_path:
+        payload.update({"canonical_repo_root": str(Path(repo_root).resolve()),
+                        "canonical_state_root": str(state_root.resolve()),
+                        "target_path": rel_path, "current_source_blob": source_blob(repo_root, rel_path)})
+    sys.stdout.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    raise SystemExit(EXIT_ALLOW)
 
 
 def main() -> None:
@@ -384,13 +482,13 @@ def main() -> None:
                     f"执行上条命令后 TMF 缓存即更新到当前版本，再次写这个调用时会自动放行。\n\n"
                     f"正在执行的操作：{tool_name} → {rel_path}"
                 )
-                sys.stderr.write(
-                    json.dumps({"decision": "block", "reason": message}, ensure_ascii=False) + "\n"
-                )
-                sys.exit(EXIT_BLOCK)
+                items = [{**item, "detail": "; ".join(item["details"]) if item["details"] else "fn_hash mismatch"}
+                         for item in call_result["stale_calls"]]
+                emit_block(collision_payload(repo_root, state_root, rel_path, tool_name, tool_input,
+                                             items, "stale_collision"), message)
 
         # 文件 fresh 且本次新写调用的符号 fresh/未知/多义 — 放行
-        sys.exit(EXIT_ALLOW)
+        emit_allow(repo_root, state_root, rel_path)
 
     # 8. 有 stale 函数 — 硬阻断
     stale_list = "\n".join(f"  • {fn}" for fn in result["stale_functions"])
@@ -409,10 +507,8 @@ def main() -> None:
     )
 
     # Claude Code PreToolUse 阻断格式
-    sys.stderr.write(
-        json.dumps({"decision": "block", "reason": message}, ensure_ascii=False) + "\n"
-    )
-    sys.exit(EXIT_BLOCK)
+    emit_block(collision_payload(repo_root, state_root, rel_path, tool_name, tool_input,
+                                 result["stale_items"], "stale_collision"), message)
 
 
 if __name__ == "__main__":
