@@ -269,6 +269,29 @@ class ReflexHealthTests(unittest.TestCase):
             code2, stderr2 = call_hook(repo, "caller.py", tool_name="Edit", new_text=good_text)
             self.assertEqual(code2, 0, f"局部 warm 后再写调用应放行: {stderr2}")
 
+    def test_E_openclaw_batched_edit_shape_blocks_stale_callee(self):
+        """OpenClaw edit params use edits[].newText; production hook must inspect them."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "u.py": "def build_url(host, path):\n    return f'http://{host}/{path}'\n",
+                "caller.py": "from u import build_url\n",
+            })
+            warm_repo(repo)
+            (repo / "u.py").write_text(
+                "def build_url(host, path, scheme):\n"
+                "    return f'{scheme}://{host}/{path}'\n", encoding="utf-8")
+            code, stderr = call_hook(
+                repo,
+                "caller.py",
+                tool_name="Edit",
+                tool_input_extra={"edits": [{
+                    "oldText": "from u import build_url\n",
+                    "newText": "from u import build_url\n\ndef run():\n    return build_url('h', 'p')\n",
+                }]},
+            )
+            self.assertEqual(code, 2, stderr)
+            self.assertIn("build_url", stderr)
+
     def test_E_boundary_existing_stale_call_in_file_is_ignored(self):
         """只管本次新增内容：目标文件里既有 stale 调用，但这次写 fresh 调用，应放行。"""
         with tempfile.TemporaryDirectory() as td:

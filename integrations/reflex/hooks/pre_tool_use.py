@@ -145,6 +145,19 @@ def extract_new_written_text(tool_name: str, tool_input: dict) -> str:
             value = tool_input.get(key)
             if isinstance(value, str):
                 return value
+        # OpenClaw's current edit tool batches exact replacements under
+        # params.edits[].newText. Inspect every newly written fragment so the
+        # native before_tool_call adapter cannot miss stale callees.
+        edits = tool_input.get("edits")
+        if isinstance(edits, list):
+            fragments = []
+            for item in edits:
+                if not isinstance(item, dict):
+                    continue
+                value = item.get("newText") or item.get("new_string") or item.get("new_text")
+                if isinstance(value, str):
+                    fragments.append(value)
+            return "\n".join(fragments)
         return ""
     if tool_name == "write":
         for key in ("content", "text", "data"):
