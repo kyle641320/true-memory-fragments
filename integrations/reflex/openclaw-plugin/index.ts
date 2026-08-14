@@ -106,12 +106,23 @@ function rearmSource(value:Pending): void {
   value.expiresAt=value.createdAt+DEFAULT_TTL_MS;
   for (const [key,candidate] of reads) if(candidate.pendingKey===pendingKey(value.session,{repoRoot:value.collision.canonical_repo_root,stateRoot:value.collision.canonical_state_root})) reads.delete(key);
 }
+function paginationInt(value:unknown, fallback:number|null):number|null {
+  if (value==null) return fallback;
+  if (typeof value==="number" && Number.isSafeInteger(value)) return value;
+  if (typeof value==="string" && /^\d+$/.test(value.trim())) return Number(value);
+  return null;
+}
 function coversAnchor(params:Record<string,unknown>, item:StalePath):boolean {
   if (!item.anchor?.reliable || !Number.isInteger(item.anchor.line_start) || !Number.isInteger(item.anchor.line_end)) return params.offset==null && params.limit==null;
-  const start=typeof params.offset==="number"?params.offset:1;
+  // OpenClaw may normalize pagination fields to decimal strings between the
+  // model tool call and plugin lifecycle event. Treat those exactly like the
+  // numeric Read API while rejecting fractions, negatives, and junk.
+  const start=paginationInt(params.offset,1);
+  const limit=paginationInt(params.limit,null);
+  if (start==null || start<1) return false;
   if (params.limit==null) return start<=item.anchor.line_start!;
-  if (typeof params.limit!=="number" || params.limit<=0) return false;
-  return start<=item.anchor.line_start! && start+params.limit-1>=item.anchor.line_end!;
+  if (limit==null || limit<=0) return false;
+  return start<=item.anchor.line_start! && start+limit-1>=item.anchor.line_end!;
 }
 function actionFingerprint(toolName:string,params:Record<string,unknown>,rel:string):string {
   const stable=(v:any):string=>Array.isArray(v)?`[${v.map(stable).join(",")}]`:v&&typeof v==="object"?`{${Object.keys(v).sort().map(k=>`${JSON.stringify(k)}:${stable(v[k])}`).join(",")}}`:JSON.stringify(v);

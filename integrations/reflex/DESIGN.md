@@ -27,6 +27,18 @@ SessionStart calibration is advisory and separate: it projects a previously gene
 
 Function precision follows engine support (currently strongest for Python). File suffix recognition is not evidence that every language has function claims. Claude's explicit file tools provide stronger interception coverage than Codex variants with pathless patches or shell-based edits. OpenClaw's adapter is tested through the actual plugin registration callbacks without installing it globally.
 
+## Recovery lifecycle invariant
+
+A pending collision creates one deliberate exception to the ordinary stale
+pre-tool gate: an exact canonical recovery Read may execute so cognition can be
+refreshed. That exception is narrow. The plugin requires the recorded source
+blob to be unchanged, localized warm reconciliation to be current, and the Read
+range to cover every matching reliable anchor. `before_tool_call` records only
+a candidate; a successful matching `after_tool_call` records observation.
+Errors never count. OpenClaw integer and decimal-string pagination fields are
+normalized equivalently so transport normalization cannot create a
+"must Read / Read forbidden" deadlock.
+
 ## Locator evidence boundary
 
 Retrieval experiments and the execution reflex are different experiments. The prior Guava A/B v2 measured locator adoption/hits and did not put stale code actions through PreToolUse or `before_tool_call`. A locator zero-hit observation says nothing about whether the reflex blocks a collision; only the collision harness measures that path.

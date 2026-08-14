@@ -38,3 +38,17 @@ Pathless/ambiguous actions, missing state, engine failures and unsupported
 claims fail open. Repository routing requires exactly one configured match.
 No telemetry, credentials, runtime ledgers or machine-specific defaults ship in
 this package.
+
+## Recovery Read lifecycle
+
+Once a stale collision is pending, an exact recovery `read` is not treated as a
+normal dangerous retry. `before_tool_call` first verifies the canonical stale
+path, anchor coverage, unchanged source blob, and current localized TMF warm;
+it then registers a candidate and allows the Read to execute. Only a successful
+matching `after_tool_call` promotes that candidate to an observation. Failed or
+missing results never unlock the edit.
+
+OpenClaw lifecycle payloads can carry `offset` and `limit` as either integers or
+decimal strings. Both representations are normalized with the same strict
+positive-integer policy; fractional, negative, and malformed values do not
+cover an anchor.
