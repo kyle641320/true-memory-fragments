@@ -11,8 +11,9 @@ Source audited in place (not modified or deleted): the sibling workspace project
 | `openclaw-plugin/index.ts` | `openclaw-plugin/index.ts` | Reimplemented as small generic product adapter; retained native hooks, removed deployment telemetry/lifecycle specialization |
 | `openclaw-plugin/openclaw.plugin.json` | same | Rewritten with parameter-only roots and no machine defaults |
 | reflex/session tests | `tests/*`, plugin `tests/harness.test.cjs` | Relevant collision, loop, calibration, and actual hook-registration coverage migrated |
-| `scripts/tmf-git-freshness-calibrate.py` | not copied | Depends on later prototype-only `tmf.invalidation`/timeout APIs absent from current mainline; existing manifest consumer retained without duplicating engine invalidation logic |
-| `scripts/tmf-zhihu-calibrate.sh`, git hook prototypes | not copied | Zhihu/deployment-specific absolute paths and duplicated invalidation orchestration |
+| `scripts/tmf-git-freshness-calibrate.py` | `scripts/git_calibrate.py` | Reimplemented against current Store/derive APIs; emits the compatible function invalidation manifest and locally reconciles changed files |
+| generic behavior from `hooks/*` | `git-hooks/*` | Reimplemented without Zhihu paths, ledgers or deployment locks; failures do not break Git |
+| `scripts/tmf-zhihu-calibrate.sh` and hook deployment wrappers | not copied | Zhihu-specific state, ledger and lifecycle wiring belongs to deployment integration |
 | source validation snapshots | replaced by `reports/reflex-integration-2026-08-14.md` | Runtime evidence is regenerated against mainline |
 | `__pycache__`, state, ledger/trace files, Guava external telemetry/A-B artifacts | not copied | Runtime or experiment-only artifacts |
 

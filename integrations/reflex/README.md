@@ -15,6 +15,7 @@ The integration deliberately does not duplicate the TMF engine, rank importance,
 - `hooks/pre_tool_use.py`: Claude-compatible PreToolUse stdin/exit-code adapter. `exit 2` hard-blocks stale `Read`, `Edit`, `Write`, or path-resolvable `apply_patch` actions.
 - `hooks/session_start.py`: consumes invalidation manifests and injects a non-blocking suspect-cognition warning.
 - `scripts/local_warm.py`: re-derives one file only, restores its claims, and verifies freshness.
+- `scripts/git_calibrate.py` and `git-hooks/`: produce/refresh an invalidation manifest after Git transitions; hook failures never break Git.
 - `openclaw-plugin/`: native `before_tool_call` and `session_start` adapter, with a real hook-registration harness. It never edits gateway configuration.
 - `examples/`: Claude and Codex configurations. Codex coverage is inherently weaker when an action has no explicit path.
 
@@ -43,6 +44,16 @@ Configure one or more explicit repositories. Paths are deployment parameters, ne
 ```
 
 Installing/enabling/restarting a production gateway is intentionally outside this repository operation.
+
+For plugin-only guidance, including linked installation, verification and removal, see
+[`openclaw-plugin/README.md`](openclaw-plugin/README.md).
+
+### Optional Git calibration hooks
+
+Copy or symlink the scripts in `git-hooks/` into a target repository's configured
+hooks directory (`git rev-parse --git-path hooks`). They use only checkout-relative
+paths and write the latest manifest under `.tmf/invalidation-manifests/` by default.
+Existing hooks must be merged rather than overwritten.
 
 ## Recovery loop
 

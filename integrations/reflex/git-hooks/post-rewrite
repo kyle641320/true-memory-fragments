@@ -1,0 +1,3 @@
+#!/bin/sh
+set -eu
+while read -r old new rest; do "$(dirname "$0")/post-merge" "$old" "$new"; done

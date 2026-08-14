@@ -1,0 +1,10 @@
+#!/bin/sh
+# Install as post-merge and post-commit; arguments may override the revision pair.
+set -eu
+repo=$(git rev-parse --show-toplevel)
+old=${1:-ORIG_HEAD}
+new=${2:-HEAD}
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+out=${TMF_INVALIDATION_MANIFEST:-$repo/.tmf/invalidation-manifests/latest.json}
+PYTHONPATH=${TMF_WORKTREE:-$(CDPATH= cd -- "$root/../.." && pwd)}${PYTHONPATH:+:$PYTHONPATH} \
+  python3 "$root/scripts/git_calibrate.py" --repo "$repo" --old "$old" --new "$new" --output "$out" >/dev/null || true

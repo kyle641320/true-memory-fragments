@@ -53,21 +53,14 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
     function_claims = [c for c in claims if c.scope == "function"]
     all_claim_types = list(set(c.scope for c in claims))
 
-    # 写入 claims（只替换该文件相关的 claims，不影响其他文件）
-    # 先删除旧 claims 中仅绑定此文件的
-    old_ids: set[str] = set()
-    for old_claim in store.iter_claims():
-        for binding in old_claim.bindings:
-            if binding.path == rel_path:
-                old_ids.add(old_claim.id)
-                break
-
-    for old_id in old_ids:
-        store.delete_claim(old_id)
-
-    # 写入新 claims
-    for claim in claims:
-        store.put_claim(claim)
+    # Reconcile through Store's guarded path/edge lifecycle. In particular,
+    # never delete multi-file claims merely because one binding matches.
+    with store.write_lock():
+        store.reconcile_path_claims(rel_path, claims)
+        edge_claims = [claim for claim in claims if claim.body.get("edge_kind")]
+        store.reconcile_edge_claims_for_caller_path(rel_path, edge_claims)
+        for claim in claims:
+            store.put_claim(claim)
 
     # 验证：重新检查 freshness
     stale_check: list[dict] = []

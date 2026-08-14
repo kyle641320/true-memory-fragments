@@ -24,7 +24,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 HOOK_SCRIPT = PROJECT_ROOT / "hooks" / "pre_tool_use.py"
 WARM_SCRIPT = PROJECT_ROOT / "scripts" / "local_warm.py"
-CALIBRATE_SCRIPT = PROJECT_ROOT / "scripts" / "tmf-git-freshness-calibrate.py"
+CALIBRATE_SCRIPT = PROJECT_ROOT / "scripts" / "git_calibrate.py"
 TMF_WORKTREE = PROJECT_ROOT.parent.parent
 
 
@@ -72,7 +72,6 @@ def calibrate_repo(repo: Path, old_rev: str, new_rev: str = "HEAD", update_cache
         old_rev,
         new_rev,
         update_cache=update_cache,
-        state_root=repo / ".tmf",
     )
 
 
@@ -122,6 +121,20 @@ def local_warm(repo: Path, rel_path: str) -> dict:
 
 
 class ReflexHealthTests(unittest.TestCase):
+
+    def test_git_calibration_emits_manifest_and_refreshes_changed_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"mod.py": "def f(x):\n    return x\n"})
+            warm_repo(repo)
+            old = subprocess.run(["git", "rev-parse", "HEAD"], cwd=repo, check=True,
+                                 capture_output=True, text=True).stdout.strip()
+            (repo / "mod.py").write_text("def f(x, y):\n    return x + y\n", encoding="utf-8")
+            _git(repo, "add", "mod.py"); _git(repo, "commit", "-m", "drift")
+            manifest = calibrate_repo(repo, old)
+            self.assertEqual(manifest["entries"][0]["status"], "changed")
+            self.assertEqual(manifest["entries"][0]["qualname"], "f")
+            code, stderr = call_hook(repo, "mod.py")
+            self.assertEqual(code, 0, stderr)
 
     def test_D1_reflex_triggers_and_names_function(self):
         """D1: stale 函数 → 硬阻断(exit 2) + 精确报出函数名。"""

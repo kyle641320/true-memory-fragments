@@ -1,0 +1,4 @@
+#!/bin/sh
+set -eu
+[ "${3:-0}" = 1 ] || exit 0
+exec "$(dirname "$0")/post-merge" "${1:-ORIG_HEAD}" "${2:-HEAD}"
