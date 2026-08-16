@@ -3,6 +3,7 @@ const crypto=require('node:crypto');
 const fs=require('node:fs');
 const os=require('node:os');
 const path=require('node:path');
+const cp=require('node:child_process');
 const test=require('node:test');
 const {createJiti}=require('jiti');
 const m=createJiti(__filename,{interopDefault:true})(path.resolve(__dirname,'../index.ts'));
@@ -48,8 +49,43 @@ async function establish(f,h,session='s'){const out=await h.before_tool_call(sta
 async function warm(f){const b=fs.readFileSync(path.join(f.repo,'dep.py'));const blob=crypto.createHash('sha1').update(`blob ${b.length}\0`).update(b).digest('hex');fs.writeFileSync(path.join(f.state,'warm'),blob)}
 async function successfulRead(f,h,session='s',id='read',params={}){const ev=readEvent(f,id,params);const c=ctx(session,id);assert.equal(await h.before_tool_call(ev,c),undefined);await h.after_tool_call({...ev,result:{content:'ok'}},c)}
 
+function javaProductionFixture(){
+  const root=fs.mkdtempSync(path.join(os.tmpdir(),'tmf-java-oc-')),repo=path.join(root,'repo');
+  fs.mkdirSync(repo);const source=path.join(repo,'Demo.java');
+  const old='class Demo {\n  Demo(int value) { }\n  int helper(int value) { return value + 1; }\n}\n';
+  const current='class Demo {\n  Demo(int value) { }\n  int helper(int value, int delta) { return value + delta; }\n}\n';
+  fs.writeFileSync(source,old);
+  for(const args of [['init','-q'],['config','user.email','t@t'],['config','user.name','t'],['add','.'],['commit','-qm','old']]) cp.execFileSync('git',args,{cwd:repo});
+  const tmfRoot=path.resolve(__dirname,'../../../..'),warmScript=path.resolve(__dirname,'../../scripts/local_warm.py');
+  const env={...process.env,TMF_WORKTREE:tmfRoot,PYTHONPATH:[tmfRoot,process.env.PYTHONPATH||''].filter(Boolean).join(path.delimiter)};
+  const warm=()=>JSON.parse(cp.execFileSync('python3',[warmScript,repo,'Demo.java','--state-root',path.join(repo,'.tmf')],{env,encoding:'utf8'}));
+  const first=warm();assert.equal(first.java_method_claims,1);assert.equal(first.java_constructor_claims,1);assert.equal(first.callable_claims,2);assert.equal(first.all_fresh_now,true);
+  fs.writeFileSync(source,current);
+  const config={mode:'block',python:'python3',tmfRoot,repos:[{repoRoot:repo,stateRoot:path.join(repo,'.tmf')}]};
+  return{root,repo,source,old,current,config,warm,cleanup(){m.resetState();fs.rmSync(root,{recursive:true,force:true})}};
+}
+
 test('routes only explicit files into exactly one managed repo',()=>{const f=fixture();try{assert.equal(m.resolveFile({path:'a.py'},f.repo),path.join(f.repo,'a.py'));assert.equal(m.route(path.join(f.repo,'a.py'),[{repoRoot:f.repo}]).repoRoot,f.repo);assert.equal(m.route(path.join(f.repo,'a.py'),[{repoRoot:f.repo},{repoRoot:f.repo}]),undefined)}finally{f.cleanup()}});
 test('register captures production lifecycle handlers',()=>{const f=fixture();try{const h=registered(f);for(const name of ['before_tool_call','after_tool_call','session_end'])assert.equal(typeof h[name],'function')}finally{f.cleanup()}});
+test('production Java claims drive real plugin stale block and dual-gate recovery',()=>{const f=javaProductionFixture();try{
+  const hash=()=>crypto.createHash('sha256').update(fs.readFileSync(f.source)).digest('hex');
+  const before=hash();
+  const stale={toolName:'edit',toolCallId:'java-stale',params:{path:f.source,edits:[{oldText:'return value + delta;',newText:'return value + 1;'}]}};
+  const corrected={toolName:'edit',toolCallId:'java-corrected',params:{path:f.source,edits:[{oldText:'return value + delta;',newText:'return Math.addExact(value, delta);'}]}};
+  reason(m.runPreToolUse(stale,f.repo,f.config,ctx('java-session','java-stale')),'need_warm');
+  assert.equal(hash(),before,'blocked production edit must not mutate Java source');
+  const warmed=f.warm();assert.equal(warmed.java_method_claims,1);assert.equal(warmed.all_fresh_now,true);
+  reason(m.runPreToolUse(stale,f.repo,f.config,ctx('java-session','warm-retry')),'need_read');
+  const read={toolName:'read',toolCallId:'java-read',params:{path:f.source,offset:1,limit:2000}},readCtx=ctx('java-session','java-read');
+  assert.equal(m.runPreToolUse(read,f.repo,f.config,readCtx),undefined);
+  m.runAfterToolCall({...read,result:{content:fs.readFileSync(f.source,'utf8')}},f.repo,f.config,readCtx);
+  reason(m.runPreToolUse(stale,f.repo,f.config,ctx('java-session','stale-again')),'stale_retry');
+  assert.equal(hash(),before,'stale retry must not mutate Java source');
+  const fixCtx=ctx('java-session','java-corrected');assert.equal(m.runPreToolUse(corrected,f.repo,f.config,fixCtx),undefined);
+  fs.writeFileSync(f.source,f.current.replace('return value + delta;','return Math.addExact(value, delta);'));
+  m.runAfterToolCall({...corrected,result:{ok:true}},f.repo,f.config,fixCtx);
+  assert.deepEqual(m.debugState(),{pending:0,reads:0,mutations:0});
+}finally{f.cleanup()}});
 test('block creates pending; warm fresh without Read remains need_read',async()=>{const f=fixture();try{const h=registered(f);await establish(f,h);assert.equal(m.debugState().pending,1);await warm(f);reason(await h.before_tool_call(stale(f),ctx('s','retry')),'need_read')}finally{f.cleanup()}});
 test('successful exact Read unlocks corrected retry and pending is consumed only after success',async()=>{const f=fixture();try{const h=registered(f);await establish(f,h);await warm(f);await successfulRead(f,h);const ev=corrected(f),c=ctx('s','fix');assert.equal(await h.before_tool_call(ev,c),undefined);assert.equal(m.debugState().pending,1);await h.after_tool_call({...ev,result:{ok:true}},c);assert.equal(m.debugState().pending,0)}finally{f.cleanup()}});
 test('production lifecycle accepts OpenClaw string pagination for an exact recovery Read',async()=>{const f=fixture();try{const h=registered(f);await establish(f,h);await warm(f);const ev=readEvent(f,'string-read',{offset:'1',limit:'2000'}),c=ctx('s','string-read');assert.equal(await h.before_tool_call(ev,c),undefined);assert.equal(m.debugState().reads,1);await h.after_tool_call({...ev,result:{content:'current source'}},c);assert.equal(await h.before_tool_call(corrected(f),ctx('s','fix')),undefined)}finally{f.cleanup()}});

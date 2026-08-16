@@ -122,6 +122,73 @@ def local_warm(repo: Path, rel_path: str) -> dict:
 
 class ReflexHealthTests(unittest.TestCase):
 
+    def test_java_method_signature_collision_and_local_warm(self):
+        """Old Java method claim blocks after signature/body drift, then current warm allows."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "Demo.java": (
+                    "class Demo {\n"
+                    "  int helper(int value) { return value + 1; }\n"
+                    "  int stable(int value) { return value * 2; }\n"
+                    "}\n"
+                ),
+            })
+            warm_repo(repo)
+            (repo / "Demo.java").write_text(
+                "class Demo {\n"
+                "  int helper(int value, int delta) { return value + delta; }\n"
+                "  int stable(int value) { return value * 2; }\n"
+                "}\n", encoding="utf-8")
+
+            code, stderr = call_hook(repo, "Demo.java")
+            self.assertEqual(code, 2, stderr)
+            payload = json.loads(stderr.strip().splitlines()[-1])
+            self.assertEqual(payload["schema_version"], "tmf.reflex.collision.v1")
+            self.assertEqual(payload["stale_paths"][0]["qualname"], "Demo.helper")
+            self.assertTrue(payload["stale_paths"][0]["anchor"]["reliable"])
+            self.assertNotIn("Demo.stable", stderr)
+
+            result = local_warm(repo, "Demo.java")
+            self.assertEqual(result["python_function_claims"], 0)
+            self.assertEqual(result["java_method_claims"], 2)
+            self.assertEqual(result["callable_claims"], 2)
+            self.assertEqual(result["function_claims"], 0)
+            self.assertTrue(result["all_fresh_now"])
+            self.assertEqual(set(result["callables"]), {"Demo.helper", "Demo.stable"})
+            code, stderr = call_hook(repo, "Demo.java")
+            self.assertEqual(code, 0, stderr)
+
+    def test_java_constructor_collision(self):
+        """Java constructors use the existing class-scoped claim without schema changes."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "Demo.java": "class Demo { Demo(int value) { } }\n",
+            })
+            warm_repo(repo)
+            (repo / "Demo.java").write_text(
+                "class Demo { Demo(int value, String label) { } }\n", encoding="utf-8")
+            code, stderr = call_hook(repo, "Demo.java")
+            self.assertEqual(code, 2, stderr)
+            payload = json.loads(stderr.strip().splitlines()[-1])
+            self.assertEqual(payload["stale_paths"][0]["qualname"], "Demo.Demo")
+            result = local_warm(repo, "Demo.java")
+            self.assertEqual(result["java_constructor_claims"], 1)
+            self.assertEqual(result["callable_claims"], 1)
+
+    def test_unrelated_java_method_in_other_file_does_not_block(self):
+        """A stale Java callable only blocks its bound file under existing file-touch semantics."""
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "Changed.java": "class Changed { int helper(int x) { return x; } }\n",
+                "Unrelated.java": "class Unrelated { int stable(int x) { return x * 2; } }\n",
+            })
+            warm_repo(repo)
+            (repo / "Changed.java").write_text(
+                "class Changed { int helper(int x, int y) { return x + y; } }\n",
+                encoding="utf-8")
+            code, stderr = call_hook(repo, "Unrelated.java")
+            self.assertEqual(code, 0, stderr)
+
     def test_git_calibration_emits_manifest_and_refreshes_changed_file(self):
         with tempfile.TemporaryDirectory() as td:
             repo = make_repo(Path(td), {"mod.py": "def f(x):\n    return x\n"})

@@ -90,9 +90,38 @@ def resolve_state_root(repo_root: str) -> Path:
     return Path(configured).expanduser().resolve() if configured else Path(repo_root) / ".tmf"
 
 
+def is_callable_claim(claim: object) -> bool:
+    """Select claims whose source node can be checked as a callable."""
+    if getattr(claim, "scope", None) == "function":
+        return True
+    body = getattr(claim, "body", None)
+    return (
+        getattr(claim, "scope", None) == "class"
+        and isinstance(body, dict)
+        and body.get("language") == "java"
+        and body.get("node_kind") in {"method", "constructor"}
+    )
+
+
+def _claim_anchor(claim: object, binding: object, rel_path: str) -> tuple[int | None, int | None]:
+    """Prefer binding anchors, falling back to Java's existing body anchors."""
+    line_start = getattr(binding, "line_start", None)
+    line_end = getattr(binding, "line_end", None)
+    if isinstance(line_start, int) and isinstance(line_end, int):
+        return line_start, line_end
+    body = getattr(claim, "body", None)
+    if isinstance(body, dict):
+        for anchor in body.get("anchors") or []:
+            if isinstance(anchor, dict) and anchor.get("path") == rel_path:
+                start, end = anchor.get("line_start"), anchor.get("line_end")
+                if isinstance(start, int) and isinstance(end, int):
+                    return start, end
+    return None, None
+
+
 def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dict:
     """
-    检查指定文件中所有 function-scope claims 的 freshness。
+    检查指定文件中所有 Python function 和 Java method/constructor claims。
 
     返回:
         {"fresh": bool, "stale_functions": [str], "error": str | None}
@@ -106,10 +135,11 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
     repo = GitRepo(repo_root)
     store = Store(state_root.parent if state_root.name == ".tmf" else repo_root)
 
-    # 收集该文件的所有 function-scope claim IDs
+    # 收集该文件的所有 callable claim IDs。Java callable claims intentionally
+    # retain their existing scope=class schema.
     claim_ids: set[str] = set()
     for claim in store.iter_claims():
-        if claim.scope != "function":
+        if not is_callable_claim(claim):
             continue
         for binding in claim.bindings:
             if binding.path == rel_path:
@@ -134,12 +164,13 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
                 detail = parts[2].strip() if len(parts) > 2 else "changed"
                 stale_functions.append(f"{func_name} — {detail}")
                 binding = next((b for b in claim.bindings if b.path == rel_path), None)
+                line_start, line_end = _claim_anchor(claim, binding, rel_path)
                 stale_items.append({
                     "path": rel_path,
                     "symbol": func_name,
                     "qualname": getattr(binding, "qualname", None) or func_name,
-                    "line_start": getattr(binding, "line_start", None),
-                    "line_end": getattr(binding, "line_end", None),
+                    "line_start": line_start,
+                    "line_end": line_end,
                     "stored_blob": getattr(binding, "file_blob", None),
                     "detail": detail,
                 })

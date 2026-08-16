@@ -50,7 +50,18 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
 
     # 推导当前文件的 claims
     claims = derive_claims_for_path(repo, rel_path)
-    function_claims = [c for c in claims if c.scope == "function"]
+    python_function_claims = [c for c in claims if c.scope == "function"]
+    java_method_claims = [
+        c for c in claims
+        if c.scope == "class" and c.body.get("language") == "java"
+        and c.body.get("node_kind") == "method"
+    ]
+    java_constructor_claims = [
+        c for c in claims
+        if c.scope == "class" and c.body.get("language") == "java"
+        and c.body.get("node_kind") == "constructor"
+    ]
+    callable_claims = python_function_claims + java_method_claims + java_constructor_claims
     all_claim_types = list(set(c.scope for c in claims))
 
     # Reconcile through Store's guarded path/edge lifecycle. In particular,
@@ -64,7 +75,7 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
 
     # 验证：重新检查 freshness
     stale_check: list[dict] = []
-    for claim in function_claims:
+    for claim in callable_claims:
         fresh_result = check_freshness(repo, claim)
         stale_check.append({
             "claim_id": claim.id,
@@ -83,14 +94,20 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
         "canonical_state_root": str(state_path),
         "blob": blob,
         "total_claims": len(claims),
-        "function_claims": len(function_claims),
+        # Preserve the original field while making callable coverage explicit.
+        "function_claims": len(python_function_claims),
+        "python_function_claims": len(python_function_claims),
+        "java_method_claims": len(java_method_claims),
+        "java_constructor_claims": len(java_constructor_claims),
+        "callable_claims": len(callable_claims),
         "claim_types": all_claim_types,
         "functions": [c["qualname"] for c in stale_check],
+        "callables": [c["qualname"] for c in stale_check],
         "all_fresh_now": all_fresh,
         "stale_check": stale_check,
         "message": (
             f"✅ 局部重新认知完成：{rel_path}\n"
-            f"   函数数：{len(function_claims)} | 全部 fresh：{all_fresh}\n"
+            f"   callable 数：{len(callable_claims)} | 全部 fresh：{all_fresh}\n"
             f"   仍需在同一会话成功 Read 当前文件，双门才会允许修正后的重试。"
             if all_fresh
             else f"⚠️ 局部 warm 后仍有 stale：{rel_path}\n"
