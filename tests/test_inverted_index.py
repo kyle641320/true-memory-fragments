@@ -55,13 +55,14 @@ class InvertedIndexTests(unittest.TestCase):
         self.assertNotIn(claim.id, store.index.path_ids("a.py"))
         self.assertNotIn(claim.id, store.index.exact_ids("alpha_value", "a.py"))
 
-    def test_corrupt_index_safely_rebuilds(self):
+    def test_corrupt_index_returns_gap_without_ordinary_query_rebuild(self):
         store = Store(self.repo)
         store.index.close()
         store.index.path.write_bytes(b"not sqlite")
         result = retrieve_text(self.repo, "beta_value", 5)
-        self.assertTrue(result.claims)
-        self.assertTrue(Store(self.repo).index.valid())
+        self.assertEqual([], result.claims)
+        self.assertEqual(["inverted_index_missing_no_full_store_fallback"], result.gaps)
+        self.assertFalse(Store(self.repo).index.valid())
 
     def test_stale_index_id_is_ignored(self):
         store = Store(self.repo)
@@ -81,6 +82,7 @@ class InvertedIndexTests(unittest.TestCase):
             "exact": db.execute("SELECT value,claim_id,kind FROM exact_names ORDER BY 1,2,3").fetchall(),
             "paths": db.execute("SELECT value,claim_id FROM paths ORDER BY 1,2").fetchall(),
             "lexical": db.execute("SELECT claim_id,search_text FROM lexical ORDER BY claim_id").fetchall(),
+            "edges": db.execute("SELECT relation_kind,endpoint,edge_id,endpoint_role FROM edge_endpoints ORDER BY 1,2,3,4").fetchall(),
         }
 
     def test_bulk_rebuild_equals_incremental_maintenance(self):

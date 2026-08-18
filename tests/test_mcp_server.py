@@ -50,7 +50,7 @@ class McpServerTests(unittest.TestCase):
                 self.assertEqual(init["result"]["serverInfo"]["version"], __version__)
                 listed = self._rpc(proc, "tools/list", {}, 2)
                 names = {tool["name"] for tool in listed["result"]["tools"]}
-                expected = {"tmf_context", "tmf_retrieve", "tmf_explain", "tmf_callers", "tmf_readers", "tmf_writers", "tmf_subtypes", "tmf_warm", "tmf_status"}
+                expected = {"tmf_context", "tmf_fragment", "tmf_retrieve", "tmf_explain", "tmf_callers", "tmf_readers", "tmf_writers", "tmf_subtypes", "tmf_warm", "tmf_status"}
                 self.assertEqual(expected, names)
                 warm = self._rpc(proc, "tools/call", {"name": "tmf_warm", "arguments": {}}, 3)
                 self.assertIn("content", warm["result"])

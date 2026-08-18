@@ -28,19 +28,19 @@ def init_repo(tmp_path: Path) -> Path:
 
 
 class TmfV0Tests(unittest.TestCase):
-    def test_retrieve_path_creates_fresh_claim(self):
+    def test_refresh_path_creates_fresh_claim(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             self.assertTrue(data["claims"])
             self.assertTrue(data["claims"][0]["fresh"])
             self.assertTrue((repo / ".tmf" / "claims").exists())
 
-    def test_retrieve_path_rederives_in_place_after_committed_blob_change(self):
+    def test_refresh_path_rederives_in_place_after_committed_blob_change(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             before_files = sorted((repo / ".tmf" / "claims").glob("*.json"))
             file_claims = [p for p in before_files if json.loads(p.read_text())["scope"] == "file"]
             self.assertEqual(len(file_claims), 1)
@@ -50,7 +50,7 @@ class TmfV0Tests(unittest.TestCase):
             (repo / "app.py").write_text("def add(a, b):\n    return a + b + 1\n", encoding="utf-8")
             run(["git", "add", "app.py"], repo)
             run(["git", "commit", "-m", "change"], repo)
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             self.assertTrue(data["claims"][0]["fresh"])
 
@@ -64,7 +64,7 @@ class TmfV0Tests(unittest.TestCase):
     def test_uncommitted_worktree_change_is_not_misreported_fresh(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             before_files = sorted((repo / ".tmf" / "claims").glob("*.json"))
             before_file = [p for p in before_files if json.loads(p.read_text())["scope"] == "file"][0]
             before_blob = json.loads(before_file.read_text())["bindings"][0]["file_blob"]
@@ -72,7 +72,7 @@ class TmfV0Tests(unittest.TestCase):
             # No commit: the coding-agent common case. Freshness must track the
             # working tree, not HEAD:path.
             (repo / "app.py").write_text("def add(a, b):\n    return a + b + 2\n", encoding="utf-8")
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             self.assertTrue(data["claims"][0]["fresh"])
             after_files = sorted((repo / ".tmf" / "claims").glob("*.json"))
@@ -84,9 +84,9 @@ class TmfV0Tests(unittest.TestCase):
     def test_retrieve_text_repairs_stale_top_match(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             (repo / "app.py").write_text("def add(a, b):\n    patched_value = a + b + 3\n    return patched_value\n", encoding="utf-8")
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "add", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             self.assertTrue(data["claims"])
             self.assertTrue(data["claims"][0]["fresh"])
@@ -96,7 +96,7 @@ class TmfV0Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
             (repo / "app.py").write_text("def obsolete_widget():\n    return 1\n", encoding="utf-8")
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
 
             # The old cached claims match the query, but the current source no
             # longer does. Re-derivation may refresh the file; it must not let
@@ -111,7 +111,7 @@ class TmfV0Tests(unittest.TestCase):
     def test_summary_does_not_store_source_lines(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             claim_files = sorted((repo / ".tmf" / "claims").glob("*.json"))
             claim_file = [p for p in claim_files if json.loads(p.read_text())["scope"] == "file"][0]
             summary = json.loads(claim_file.read_text())["body"]["summary"]

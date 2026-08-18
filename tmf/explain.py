@@ -7,6 +7,8 @@ from .git import GitRepo
 from .schema import Claim
 from .store import Store
 from .warm import warm_is_complete
+from .index import EDGE_ENDPOINT_FIELDS
+from .relations import RequestFreshnessCache
 
 
 def _verification(claim: Claim) -> str:
@@ -142,6 +144,13 @@ def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
     if claim.scope not in {"function", "declaration"}:
         return graph
     store = Store(repo.root)
+    relation_kinds = {"calls", "reads"}
+    edge_ids = store.index.edge_ids(claim.id, relation_kinds, 128)
+    if edge_ids is None:
+        graph["gaps"] = ["endpoint_edge_index_missing"]
+        graph["coverage"] = "partial"
+        return graph
+    freshness_cache = RequestFreshnessCache(repo)
     if claim.scope == "function":
         callees = list(graph.get("callees", []))
         callers = list(graph.get("callers", []))
@@ -149,8 +158,9 @@ def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
         seen_callees = {item.get("target_id") for item in callees if isinstance(item, dict)}
         seen_callers = {item.get("source_id") for item in callers if isinstance(item, dict)}
         seen_reads = {item.get("target_id") for item in reads if isinstance(item, dict)}
-        for edge in store.iter_claims():
-            if not check_freshness(repo, edge).fresh:
+        for edge_id in edge_ids:
+            edge = store.get_claim(edge_id)
+            if edge is None or not freshness_cache.check(edge).fresh:
                 continue
             if edge.body.get("edge_kind") == "calls":
                 if edge.body.get("caller_id") == claim.id and edge.body.get("callee_id") not in seen_callees:
@@ -170,8 +180,9 @@ def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
         return graph
     read_by = list(graph.get("read_by", []))
     seen_readers = {item.get("source_id") for item in read_by if isinstance(item, dict)}
-    for edge in store.iter_claims():
-        if edge.body.get("edge_kind") != "reads" or not check_freshness(repo, edge).fresh:
+    for edge_id in edge_ids:
+        edge = store.get_claim(edge_id)
+        if edge is None or edge.body.get("edge_kind") != "reads" or not freshness_cache.check(edge).fresh:
             continue
         if edge.body.get("declaration_id") == claim.id and edge.body.get("reader_id") not in seen_readers:
             read_by.append({"source_id": edge.body.get("reader_id"), "source_path": edge.body.get("reader_path"), "evidence": edge.evidence, "resolution": edge.body.get("resolution")})

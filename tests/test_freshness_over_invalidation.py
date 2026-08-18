@@ -10,7 +10,7 @@ from tmf.extract import extract_functions, fn_hash_for_span
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_call_edge_claim_id, stable_file_claim_id, stable_function_claim_id
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path
 from tmf.store import Store
 
 
@@ -40,7 +40,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
                 Path(td),
                 {"m.py": "class C:\n    def target(self):\n        return 1\n"},
             )
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_function_claim_id("m.py", "C.target"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text(
@@ -56,7 +56,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
                 Path(td),
                 {"m.py": "def outer():\n    def inner():\n        return 1\n    return inner()\n"},
             )
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_function_claim_id("m.py", "outer.inner"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text(
@@ -87,7 +87,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
     def test_method_body_change_stales_method(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "class C:\n    def target(self):\n        return 1\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_function_claim_id("m.py", "C.target"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text("class C:\n    def target(self):\n        return 2\n", encoding="utf-8")
@@ -97,7 +97,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
     def test_method_internal_block_structure_change_stales_method(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "class C:\n    def target(self):\n        return 1\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_function_claim_id("m.py", "C.target"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text(
@@ -118,7 +118,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
     def test_same_file_changed_function_stales_only_that_function_not_sibling(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "def f1():\n    return 1\n\ndef f2():\n    return 2\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             store = Store(repo)
             f1 = store.get_claim(stable_function_claim_id("m.py", "f1"))
             f2 = store.get_claim(stable_function_claim_id("m.py", "f2"))
@@ -132,7 +132,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
     def test_comment_only_and_indent_width_changes_keep_function_fresh(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "def f():\n    if True:\n        return 1\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_function_claim_id("m.py", "f"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text("# comment only\ndef f():\n  if True:\n    return 1\n", encoding="utf-8")
@@ -142,7 +142,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
     def test_changed_function_body_stales_function(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "def f():\n    return 1\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_function_claim_id("m.py", "f"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text("def f():\n    return 2\n", encoding="utf-8")
@@ -153,7 +153,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
     def test_file_claim_still_stales_on_any_file_blob_change(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "def f():\n    return 1\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_file_claim_id("m.py"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text("# changed\ndef f():\n    return 1\n", encoding="utf-8")
@@ -167,7 +167,7 @@ class FreshnessOverInvalidationTests(unittest.TestCase):
                 "a.py": "from b import helper\n\ndef main():\n    return helper()\n",
                 "b.py": "def helper():\n    return 1\n\ndef spare():\n    return 2\n",
             })
-            retrieve_path(repo, "a.py")
+            refresh_path(repo, "a.py")
             edge = next(claim for claim in Store(repo).iter_claims() if claim.body.get("edge_kind") == "calls")
             (repo / "b.py").write_text("def helper():\n    return 1\n\ndef spare():\n    return 20\n", encoding="utf-8")
             self.assertTrue(check_freshness(GitRepo(repo), edge).fresh, check_freshness(GitRepo(repo), edge).stale_bindings)

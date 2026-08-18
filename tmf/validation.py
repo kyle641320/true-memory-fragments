@@ -18,7 +18,7 @@ from .ids import stable_api_claim_id, stable_call_edge_claim_id, stable_config_c
 from .llm import ModelCandidate
 from .model_derive import _claim_from_candidate
 from .provenance import pr_evidence
-from .retrieve import retrieve_path, retrieve_text, reverse_callers, reverse_readers, reverse_writers
+from .retrieve import refresh_path, retrieve_text, reverse_callers, reverse_readers, reverse_writers
 from .store import Store
 from .warm import warm_repo
 
@@ -118,8 +118,7 @@ def _freshness_checks(repo_path: Path) -> dict[str, Any]:
         warm_repo(r3)
         helper = stable_function_claim_id("b.py", "helper")
         (r3 / "b.py").write_text("def renamed():\n    return 1\n\ndef spare():\n    return 2\n", encoding="utf-8")
-        from .retrieve import retrieve_path
-        retrieve_path(r3, "b.py")
+        refresh_path(r3, "b.py")
         tombstone_removed = Store(r3).get_claim(helper) is None
         events.append({"scenario": "rename_delete_reconcile", "claim_id": helper, "expected_removed": True, "actual_removed": tombstone_removed})
 
@@ -235,7 +234,7 @@ def _lifecycle_checks(repo_path: Path) -> dict[str, Any]:
         edge_id = edge_ids[0] if edge_ids else None
         helper_id = stable_function_claim_id("b.py", "helper")
         (r / "b.py").write_text("def spare():\n    return 2\n", encoding="utf-8")
-        retrieve_path(r, "a.py")
+        refresh_path(r, "a.py")
         store = Store(r)
         edge_removed = edge_id is None or store.get_claim(edge_id) is None
         callers = reverse_callers(r, helper_id)
@@ -244,7 +243,7 @@ def _lifecycle_checks(repo_path: Path) -> dict[str, Any]:
         r2 = _copy_repo(repo_path, root, "guard")
         warm_repo(r2)
         edge_ids = [claim.id for claim in Store(r2).iter_claims() if claim.body.get("edge_kind") == "calls"]
-        retrieve_path(r2, "b.py")
+        refresh_path(r2, "b.py")
         survived = bool(edge_ids) and Store(r2).get_claim(edge_ids[0]) is not None
         checks.append({"name": "multi_binding_edge_survives_path_node_reconcile", "pass": survived, "edge_id": edge_ids[0] if edge_ids else None})
     return {"checks": checks, "failures": [c for c in checks if not c["pass"]]}
@@ -425,7 +424,7 @@ def _config_node_checks(repo_path: Path) -> dict[str, Any]:
         r.mkdir()
         (r / "config.json").write_text('{"timeout":30,"name":"svc"}\n', encoding="utf-8")
         repo = GitRepo(r)
-        retrieve_path(r, "config.json")
+        refresh_path(r, "config.json")
         timeout_id = stable_config_claim_id("config.json", "timeout")
         timeout = Store(r).get_claim(timeout_id)
         fresh_initial = timeout is not None and check_freshness(repo, timeout).fresh
@@ -437,7 +436,7 @@ def _config_node_checks(repo_path: Path) -> dict[str, Any]:
         r2.mkdir()
         (r2 / "config.json").write_text('{"timeout":30,"name":"svc"}\n', encoding="utf-8")
         repo2 = GitRepo(r2)
-        retrieve_path(r2, "config.json")
+        refresh_path(r2, "config.json")
         timeout2 = Store(r2).get_claim(timeout_id)
         (r2 / "config.json").write_text('{\n  "name": "svc",\n  "timeout": 30\n}\n', encoding="utf-8")
         fresh_after_reformat = timeout2 is not None and check_freshness(repo2, timeout2).fresh
@@ -447,7 +446,7 @@ def _config_node_checks(repo_path: Path) -> dict[str, Any]:
         r3.mkdir()
         (r3 / "config.json").write_text('{"timeout":30,"name":"svc"}\n', encoding="utf-8")
         repo3 = GitRepo(r3)
-        retrieve_path(r3, "config.json")
+        refresh_path(r3, "config.json")
         timeout3 = Store(r3).get_claim(timeout_id)
         (r3 / "config.json").write_text('{"timeout":30,"name":"api"}\n', encoding="utf-8")
         fresh_after_unrelated = timeout3 is not None and check_freshness(repo3, timeout3).fresh
@@ -456,16 +455,16 @@ def _config_node_checks(repo_path: Path) -> dict[str, Any]:
         r4 = root / "json_delete"
         r4.mkdir()
         (r4 / "config.json").write_text('{"timeout":30,"name":"svc"}\n', encoding="utf-8")
-        retrieve_path(r4, "config.json")
+        refresh_path(r4, "config.json")
         (r4 / "config.json").write_text('{"name":"svc"}\n', encoding="utf-8")
-        retrieve_path(r4, "config.json")
+        refresh_path(r4, "config.json")
         removed = Store(r4).get_claim(timeout_id) is None
         checks.append({"name": "config_key_delete_reconciles", "pass": removed})
 
         r5 = root / "json_invalid"
         r5.mkdir()
         (r5 / "broken.json").write_text('{"timeout": ', encoding="utf-8")
-        retrieve_path(r5, "broken.json")
+        refresh_path(r5, "broken.json")
         config_count = sum(1 for claim in Store(r5).iter_claims() if claim.scope == "config")
         checks.append({"name": "invalid_config_zero_nodes_no_crash", "pass": config_count == 0, "config_count": config_count})
 
@@ -486,7 +485,7 @@ def _api_node_checks(repo_path: Path) -> dict[str, Any]:
         api_path.write_text("@app.route('/x', methods=['POST'])\ndef handler():\n    return 'ok'\n\ndef unrelated():\n    return 1\n", encoding="utf-8")
         subprocess.run(["git", "add", "api.py"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         subprocess.run(["git", "commit", "-m", "api fixture"], cwd=repo, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        retrieve_path(repo, "api.py")
+        refresh_path(repo, "api.py")
         store = Store(repo)
         claim_id = stable_api_claim_id("api.py", "POST", "/x", "handler")
         claim = store.get_claim(claim_id)
@@ -502,11 +501,11 @@ def _api_node_checks(repo_path: Path) -> dict[str, Any]:
             api_path.write_text("@app.route('/x', methods=['POST'])\ndef handler():\n    return 'ok'\n\ndef unrelated():\n    return 2\n", encoding="utf-8")
             record("api_unrelated_function_fresh", check_freshness(GitRepo(repo), claim).fresh)
             api_path.write_text("def handler():\n    return 'ok'\n", encoding="utf-8")
-            retrieve_path(repo, "api.py")
+            refresh_path(repo, "api.py")
             record("api_delete_reconciles", Store(repo).get_claim(claim_id) is None)
 
         api_path.write_text("PATH = '/dyn'\n@router.get(PATH)\ndef dyn():\n    return 'no'\n\n@bp.route('/unknown')\ndef unknown():\n    return 'no'\n", encoding="utf-8")
-        retrieve_path(repo, "api.py")
+        refresh_path(repo, "api.py")
         record("api_dynamic_unknown_skipped", not any(c.scope == "api" for c in Store(repo).iter_claims()))
 
     return {"checks": checks, "failures": [check for check in checks if not check["pass"]]}
@@ -573,7 +572,7 @@ def _read_edge_checks(repo_path: Path) -> dict[str, Any]:
             failures.append({"check": "unknown_name_unresolved"})
 
         (r / "config.py").write_text("TIMEOUT = 5\nOTHER = 9\n\ndef renamed():\n    return TIMEOUT\n", encoding="utf-8")
-        retrieve_path(r, "config.py")
+        refresh_path(r, "config.py")
         removed = Store(r).get_claim(edge_id) is None
         checks.append({"name": "reader_rename_reconciles_edge", "passed": removed})
         if not removed:
@@ -639,7 +638,7 @@ def _write_edge_checks(repo_path: Path) -> dict[str, Any]:
             if not decl_stale:
                 failures.append({"check": "write_edge_declaration_change_stales"})
             (r / "state.py").write_text("COUNT = 0\nOTHER = 9\n\ndef renamed():\n    global COUNT\n    COUNT += 1\n", encoding="utf-8")
-            retrieve_path(r, "state.py")
+            refresh_path(r, "state.py")
             removed_writer = Store(r).get_claim(edge_id) is None
             checks.append({"name": "write_edge_writer_rename_reconciles", "passed": removed_writer})
             if not removed_writer:

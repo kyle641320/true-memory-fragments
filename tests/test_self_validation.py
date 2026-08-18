@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path
 from tmf.store import Store
 from tmf.validation import _expected_stale_ids_for_sample, run_self_validation
 
@@ -37,7 +37,7 @@ class SelfValidationTests(unittest.TestCase):
             repo = init_repo(Path(td), {
                 "m.py": "def outer():\n    class Inner:\n        pass\n    return 1\n"
             })
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claims = list(Store(repo).iter_claims())
             by_qualname = {claim.body.get("qualname"): claim for claim in claims if isinstance(claim.body, dict)}
             inner = by_qualname["outer.Inner"]
@@ -73,7 +73,7 @@ class SelfValidationTests(unittest.TestCase):
             repo = init_repo(Path(td), {
                 "m.py": "def target():\n    return 1\n\ndef unrelated():\n    return 2\n"
             })
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claims = list(Store(repo).iter_claims())
             by_qualname = {claim.body.get("qualname"): claim for claim in claims if isinstance(claim.body, dict)}
             target = by_qualname["target"]

@@ -60,7 +60,7 @@ class EmbeddingRetrieveTests(unittest.TestCase):
             repo = init_repo(Path(td), {"m.py": "def add(a, b):\n    return a + b\n"})
             base_env = dict(os.environ)
             base_env.pop("TMF_EMBED_COMMAND", None)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT, env=base_env)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT, env=base_env)
             first = run([sys.executable, "-m", "tmf.cli", "retrieve", "add", "--repo", str(repo)], ROOT, env=base_env).stdout
             second = run([sys.executable, "-m", "tmf.cli", "retrieve", "add", "--repo", str(repo)], ROOT, env=base_env).stdout
             self.assertEqual(json.loads(first), json.loads(second))
@@ -74,8 +74,8 @@ class EmbeddingRetrieveTests(unittest.TestCase):
             })
             env = dict(os.environ)
             env["TMF_EMBED_COMMAND"] = f"{sys.executable} {write_fake_embedder(root)}"
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--repo", str(repo)], ROOT, env=env)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--repo", str(repo)], ROOT, env=env)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--refresh", "--repo", str(repo)], ROOT, env=env)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--refresh", "--repo", str(repo)], ROOT, env=env)
             data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "payments", "--repo", str(repo), "--limit", "5"], ROOT, env=env).stdout)
             names = {claim.get("qualname") for claim in data["claims"]}
             self.assertIn("charge", names)
@@ -90,7 +90,7 @@ class EmbeddingRetrieveTests(unittest.TestCase):
             repo = init_repo(root, {"b.py": "def charge():\n    return 'bill'\n"})
             env = dict(os.environ)
             env["TMF_EMBED_COMMAND"] = f"{sys.executable} {write_fake_embedder(root)}"
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--repo", str(repo)], ROOT, env=env)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--refresh", "--repo", str(repo)], ROOT, env=env)
             (repo / "b.py").write_text("def charge():\n    return 'changed bill'\n", encoding="utf-8")
             data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "payments", "--repo", str(repo), "--limit", "5"], ROOT, env=env).stdout)
             self.assertEqual(data["claims"], [])

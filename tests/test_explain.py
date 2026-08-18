@@ -30,7 +30,7 @@ class ExplainTests(unittest.TestCase):
     def test_explain_json_has_agent_branch_fields_and_recomputes_stale(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            retrieve = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo), "--model-derive"], ROOT).stdout)
+            retrieve = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo), "--model-derive"], ROOT).stdout)
             fn = [c for c in retrieve["claims"] if c["scope"] == "function"][0]
             (repo / "app.py").write_text("def add(a, b):\n    return a + b + 1\n", encoding="utf-8")
             explained = json.loads(run([sys.executable, "-m", "tmf.cli", "explain", fn["id"], "--repo", str(repo), "--json"], ROOT).stdout)
@@ -44,7 +44,7 @@ class ExplainTests(unittest.TestCase):
     def test_explain_reviewer_text_separates_provenance_from_freshness(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            retrieve = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo), "--model-derive"], ROOT).stdout)
+            retrieve = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo), "--model-derive"], ROOT).stdout)
             fn = [c for c in retrieve["claims"] if c["scope"] == "function"][0]
             text = run([sys.executable, "-m", "tmf.cli", "explain", fn["id"], "--repo", str(repo)], ROOT).stdout
             self.assertIn("[FRESH]", text)

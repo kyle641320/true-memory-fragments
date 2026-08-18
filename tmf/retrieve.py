@@ -19,6 +19,8 @@ def _is_unverified_foreign(claim: Claim) -> bool:
     return (claim.body or {}).get("source_provenance", {}).get("trust") == "unverified_foreign"
 from .metrics import log_event
 from .warm import COMPLETE_NOTE, PARTIAL_NOTE, load_complete_reverse_index
+from .relations import RequestFreshnessCache
+from .index import EDGE_ENDPOINT_FIELDS, SEMANTIC_CANDIDATE_HARD_LIMIT
 
 
 @dataclass
@@ -33,6 +35,7 @@ class RetrieveResult:
     query: str
     claims: list[RetrievedClaim]
     source_fallback: dict[str, str]
+    gaps: list[str] | None = None
 
 
 def _fresh_item(repo: GitRepo, claim: Claim) -> RetrievedClaim:
@@ -51,36 +54,65 @@ def _replace_path_claims(store: Store, relpath: str, claims: list[Claim]) -> Non
     store.reconcile_edge_claims_for_caller_path(relpath, [c for c in claims if c.body.get("edge_kind") in {"calls", "reads", "writes", "inherits", "overrides", "uses_type", "reads_env", "reads_config_key", "injects", "publishes_to", "subscribes_to"}])
 
 
+def refresh_path(repo_root: str | Path, path: str, *, use_model: bool = False) -> RetrieveResult:
+    """Explicitly re-derive one path and update its authoritative claim cache."""
+    repo = GitRepo(repo_root)
+    store = Store(repo.root)
+    rel = repo.relpath(path)
+    import time
+
+    start = time.perf_counter()
+    with store.write_lock():
+        claims = derive_claims_for_path(repo, rel, use_model=use_model)
+        _replace_path_claims(store, rel, claims)
+    log_event(
+        repo.root,
+        "rederive",
+        node_id=rel,
+        duration_ms=round((time.perf_counter() - start) * 1000, 3),
+        used_model=bool(use_model),
+    )
+    return retrieve_path(repo.root, rel)
+
+
 def retrieve_path(repo_root: str | Path, path: str, *, use_model: bool = False) -> RetrieveResult:
+    """Read current path evidence without mutating or re-deriving the store.
+
+    ``use_model`` remains accepted for API compatibility, but derivation is only
+    performed by the explicit ``refresh_path`` maintenance operation.
+    """
     repo = GitRepo(repo_root)
     store = Store(repo.root)
     rel = repo.relpath(path)
     claims = store.claims_for_path(rel)
 
-    # v1 read-through: missing or stale => derive current file + function claims synchronously.
-    stale_items = [c for c in claims if (not check_freshness(repo, c).fresh) or _is_unverified_foreign(c)]
+    freshness = {claim.id: check_freshness(repo, claim) for claim in claims}
+    stale_items = [
+        claim for claim in claims
+        if not freshness[claim.id].fresh or _is_unverified_foreign(claim)
+    ]
     if not claims:
         log_event(repo.root, "miss", node_id=rel)
     elif stale_items:
         for claim in stale_items:
-            fr = check_freshness(repo, claim)
+            fr = freshness[claim.id]
             log_event(repo.root, "stale_detected", node_id=claim.id, stale_bindings=fr.stale_bindings)
     else:
         log_event(repo.root, "cache_hit", node_id=rel, cache_bytes_estimate=sum(len(c.to_dict().get("claim", "")) for c in claims))
 
-    if not claims or stale_items:
-        import time
-        start = time.perf_counter()
-        with store.write_lock():
-            current_claims = derive_claims_for_path(repo, rel, use_model=use_model)
-            _replace_path_claims(store, rel, current_claims)
-        log_event(repo.root, "rederive", node_id=rel, duration_ms=round((time.perf_counter() - start) * 1000, 3), used_model=bool(use_model))
-        claims = current_claims
-
-    retrieved = [_fresh_item(repo, claim) for claim in claims]
+    stale_ids = {claim.id for claim in stale_items}
+    retrieved = [
+        RetrievedClaim(claim=claim, fresh=True, reason="fresh")
+        for claim in claims if claim.id not in stale_ids
+    ]
     source = repo.read_file(rel)
     log_event(repo.root, "degrade_to_source", node_id=rel, read_bytes=len(source.encode("utf-8")))
-    return RetrieveResult(query=rel, claims=retrieved, source_fallback={rel: source})
+    gaps: list[str] = []
+    if not claims:
+        gaps.append("path_claims_missing_refresh_required")
+    if stale_items:
+        gaps.append("stale_path_claims_omitted_refresh_required")
+    return RetrieveResult(query=rel, claims=retrieved, source_fallback={rel: source}, gaps=gaps)
 
 
 def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_model: bool = False) -> RetrieveResult:
@@ -121,10 +153,10 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
             score -= 8
         return score
 
-    candidate_ids = store.index.lexical_ids(terms) if store.ensure_index() else None
+    candidate_ids = store.index.lexical_ids(terms)
     candidates = (
         [claim for claim_id in candidate_ids if (claim := store.get_claim(claim_id)) is not None]
-        if candidate_ids is not None else store.iter_claims()
+        if candidate_ids is not None else []
     )
     scored: list[tuple[int, Claim]] = []
     for claim in candidates:
@@ -134,6 +166,8 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
     scored.sort(key=lambda item: (-item[0], _claim_path(item[1]), item[1].id))
 
     claims: list[Claim] = []
+    gaps: list[str] = []
+    source: dict[str, str] = {}
     seen_ids: set[str] = set()
     # Score a wider pool, then interleave paths.  A source file commonly emits a
     # file, class, method and contract claim with the same vocabulary; allowing
@@ -141,49 +175,64 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
     # workflow/impact anchors elsewhere in the repository.
     ranked = _diversify_paths(scored, limit)
     for claim in ranked:
-        current_claims = [claim]
         freshness = check_freshness(repo, claim)
         if _is_unverified_foreign(claim):
+            gaps.append("unverified_foreign_claim_omitted_refresh_required")
             continue
         if not freshness.fresh and claim.bindings:
             path = claim.bindings[0].path
             if Path(repo.root / path).exists():
-                with store.write_lock():
-                    current_claims = derive_claims_for_path(repo, path, use_model=use_model)
-                    _replace_path_claims(store, path, current_claims)
-                # A stale lexical hit is only permission to re-read its source.
-                # It must not confer the old claim's match onto unrelated facts
-                # derived from the current file. Re-score against current memory.
-                current_claims = sorted(
-                    (current for current in current_claims if lexical_score(current)),
-                    key=lexical_score,
-                    reverse=True,
-                )
-        for current in current_claims:
-            if current.id not in seen_ids:
-                seen_ids.add(current.id)
-                claims.append(current)
-                if len(claims) >= limit:
-                    break
+                source[path] = repo.read_file(path)
+            gaps.append("stale_lexical_claim_omitted_refresh_required")
+            continue
+        if claim.id not in seen_ids:
+            seen_ids.add(claim.id)
+            claims.append(claim)
         if len(claims) >= limit:
             break
 
     # Keep explicitly configured semantic routing additive. With neither
     # configured, an indexed lexical miss stays bounded instead of scanning the
     # authoritative store for semantic candidates.
-    semantic_configured = bool(os.environ.get("TMF_ROUTER_COMMAND") or os.environ.get("TMF_EMBED_COMMAND"))
+    router_configured = bool(os.environ.get("TMF_ROUTER_COMMAND"))
+    embedding_configured = bool(os.environ.get("TMF_EMBED_COMMAND"))
+    semantic_configured = router_configured or embedding_configured
+    semantic_candidates: list[Claim] = []
     if len(claims) < limit and (not terms or semantic_configured):
-        _add_router_seeds(repo, store, query, claims, seen_ids, limit)
-    if len(claims) < limit and (not terms or semantic_configured):
-        _add_embedding_seed_expansion(repo, store, query, claims, seen_ids, limit)
+        candidate_window = store.index.candidate_ids(SEMANTIC_CANDIDATE_HARD_LIMIT)
+        if candidate_window is None:
+            gaps.append("semantic_candidate_index_missing_no_full_store_fallback")
+        else:
+            semantic_ids, semantic_truncated = candidate_window
+            freshness_cache = RequestFreshnessCache(repo)
+            semantic_candidates = [
+                claim for claim_id in semantic_ids
+                if (claim := store.get_claim(claim_id)) is not None
+                and claim.id not in seen_ids
+                and not _is_unverified_foreign(claim)
+                and freshness_cache.check(claim).fresh
+            ]
+            if semantic_truncated:
+                gaps.append("semantic_candidate_window_truncated")
+    if len(claims) < limit and router_configured:
+        _add_router_seeds(query, semantic_candidates, claims, seen_ids, limit)
+    if len(claims) < limit and embedding_configured:
+        _add_embedding_seed_expansion(repo, store, query, semantic_candidates, claims, seen_ids, limit)
 
     retrieved = [_fresh_item(repo, claim) for claim in claims]
-    source: dict[str, str] = {}
     for claim in claims:
         for binding in claim.bindings:
             if binding.path not in source and Path(repo.root / binding.path).exists():
                 source[binding.path] = repo.read_file(binding.path)
-    return RetrieveResult(query=query, claims=retrieved, source_fallback=source)
+    return RetrieveResult(
+        query=query,
+        claims=retrieved,
+        source_fallback=source,
+        gaps=(
+            ["inverted_index_missing_no_full_store_fallback"]
+            if candidate_ids is None else list(dict.fromkeys(gaps))
+        ),
+    )
 
 
 def _claim_path(claim: Claim) -> str:
@@ -227,11 +276,7 @@ def _claim_embedding_text(claim: Claim) -> str:
     ])
 
 
-def _add_router_seeds(repo: GitRepo, store: Store, query: str, claims: list[Claim], seen_ids: set[str], limit: int) -> None:
-    candidates = [
-        claim for claim in store.iter_claims()
-        if claim.id not in seen_ids and not _is_unverified_foreign(claim) and check_freshness(repo, claim).fresh
-    ]
+def _add_router_seeds(query: str, candidates: list[Claim], claims: list[Claim], seen_ids: set[str], limit: int) -> None:
     by_id = {claim.id: claim for claim in candidates}
     for claim_id in route_claim_ids(query, candidates, limit - len(claims)):
         claim = by_id.get(claim_id)
@@ -243,11 +288,7 @@ def _add_router_seeds(repo: GitRepo, store: Store, query: str, claims: list[Clai
             return
 
 
-def _add_embedding_seed_expansion(repo: GitRepo, store: Store, query: str, claims: list[Claim], seen_ids: set[str], limit: int) -> None:
-    candidates = [
-        claim for claim in store.iter_claims()
-        if claim.id not in seen_ids and not _is_unverified_foreign(claim) and check_freshness(repo, claim).fresh
-    ]
+def _add_embedding_seed_expansion(repo: GitRepo, store: Store, query: str, candidates: list[Claim], claims: list[Claim], seen_ids: set[str], limit: int) -> None:
     ranked = rank_by_embedding(query, [_claim_embedding_text(claim) for claim in candidates], max(limit * 2, limit))
     for item in ranked:
         seed = candidates[item.index]
@@ -267,8 +308,14 @@ def _add_embedding_seed_expansion(repo: GitRepo, store: Store, query: str, claim
 
 def _fresh_edge_neighbors(repo: GitRepo, store: Store, claim: Claim) -> list[Claim]:
     out: list[Claim] = []
-    for edge in store.iter_claims():
-        if edge.body.get("edge_kind") not in {"calls", "inherits", "overrides", "publishes_to", "subscribes_to"} or not check_freshness(repo, edge).fresh:
+    relation_kinds = {"calls", "inherits", "overrides", "publishes_to", "subscribes_to"}
+    edge_ids = store.index.edge_ids(claim.id, relation_kinds, 64)
+    if edge_ids is None:
+        return out
+    freshness_cache = RequestFreshnessCache(repo)
+    for edge_id in edge_ids:
+        edge = store.get_claim(edge_id)
+        if edge is None or edge.body.get("edge_kind") not in relation_kinds or not freshness_cache.check(edge).fresh:
             continue
         neighbor_id = None
         if edge.body.get("edge_kind") == "calls":
@@ -292,7 +339,7 @@ def _fresh_edge_neighbors(repo: GitRepo, store: Store, claim: Claim) -> list[Cla
                 neighbor_id = source_id
         if isinstance(neighbor_id, str):
             neighbor = store.get_claim(neighbor_id)
-            if neighbor is not None and check_freshness(repo, neighbor).fresh:
+            if neighbor is not None and freshness_cache.check(neighbor).fresh:
                 out.append(neighbor)
     return out
 
@@ -321,8 +368,10 @@ def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str) -> dict[str
     stale_skipped = 0
     note = PARTIAL_NOTE
 
+    freshness_cache = RequestFreshnessCache(repo)
+
     def collect(claim: Claim) -> bool:
-        freshness = check_freshness(repo, claim)
+        freshness = freshness_cache.check(claim)
         if not freshness.fresh:
             return False
         callers.append({
@@ -335,20 +384,18 @@ def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str) -> dict[str
         })
         return True
 
-    for claim in list(store.iter_claims()):
+    edge_ids = store.index.edge_ids(node_id, {"calls"}, 128)
+    if edge_ids is None:
+        return {"node_id": node_id, "callers": [], "stale_skipped": 0, "coverage": "partial", "note": note, "gaps": ["endpoint_edge_index_missing"]}
+    for edge_id in edge_ids:
+        claim = store.get_claim(edge_id)
+        if claim is None:
+            stale_skipped += 1
+            continue
         if claim.body.get("edge_kind") != "calls" or claim.body.get("callee_id") != node_id:
             continue
         if collect(claim):
             continue
-        caller_path = claim.body.get("caller_path")
-        if isinstance(caller_path, str) and Path(repo.root / caller_path).exists():
-            # Lazy scan is the semantic baseline: future reverse indexes must return
-            # the same fresh-caller set as this read-through path, only faster.
-            current_claims = derive_claims_for_path(repo, caller_path)
-            _replace_path_claims(store, caller_path, current_claims)
-            refreshed = store.get_claim(claim.id)
-            if refreshed is not None and collect(refreshed):
-                continue
         stale_skipped += 1
 
     return {"node_id": node_id, "callers": callers, "stale_skipped": stale_skipped, "coverage": "partial", "note": note}
@@ -374,19 +421,18 @@ def reverse_readers(repo_root: str | Path, declaration_id: str) -> dict[str, Any
         })
         return True
 
-    for claim in list(store.iter_claims()):
+    edge_ids = store.index.edge_ids(declaration_id, {"reads"}, 128)
+    if edge_ids is None:
+        return {"node_id": declaration_id, "readers": [], "stale_skipped": 0, "coverage": "partial", "note": "Endpoint edge index missing; no full-store fallback.", "gaps": ["endpoint_edge_index_missing"]}
+    for edge_id in edge_ids:
+        claim = store.get_claim(edge_id)
+        if claim is None:
+            stale_skipped += 1
+            continue
         if claim.body.get("edge_kind") != "reads" or claim.body.get("declaration_id") != declaration_id:
             continue
-        if collect(claim):
-            continue
-        reader_path = claim.body.get("reader_path")
-        if isinstance(reader_path, str) and Path(repo.root / reader_path).exists():
-            current_claims = derive_claims_for_path(repo, reader_path)
-            _replace_path_claims(store, reader_path, current_claims)
-            refreshed = store.get_claim(claim.id)
-            if refreshed is not None and collect(refreshed):
-                continue
-        stale_skipped += 1
+        if not collect(claim):
+            stale_skipped += 1
     return {"node_id": declaration_id, "readers": readers, "stale_skipped": stale_skipped, "coverage": "partial", "note": "Known readers from already-derived files only; not a complete blast radius."}
 
 
@@ -410,19 +456,18 @@ def reverse_writers(repo_root: str | Path, declaration_id: str) -> dict[str, Any
         })
         return True
 
-    for claim in list(store.iter_claims()):
+    edge_ids = store.index.edge_ids(declaration_id, {"writes"}, 128)
+    if edge_ids is None:
+        return {"node_id": declaration_id, "writers": [], "stale_skipped": 0, "coverage": "partial", "note": "Endpoint edge index missing; no full-store fallback.", "gaps": ["endpoint_edge_index_missing"]}
+    for edge_id in edge_ids:
+        claim = store.get_claim(edge_id)
+        if claim is None:
+            stale_skipped += 1
+            continue
         if claim.body.get("edge_kind") != "writes" or claim.body.get("declaration_id") != declaration_id:
             continue
-        if collect(claim):
-            continue
-        writer_path = claim.body.get("writer_path")
-        if isinstance(writer_path, str) and Path(repo.root / writer_path).exists():
-            current_claims = derive_claims_for_path(repo, writer_path)
-            _replace_path_claims(store, writer_path, current_claims)
-            refreshed = store.get_claim(claim.id)
-            if refreshed is not None and collect(refreshed):
-                continue
-        stale_skipped += 1
+        if not collect(claim):
+            stale_skipped += 1
     return {"node_id": declaration_id, "writers": writers, "stale_skipped": stale_skipped, "coverage": "partial", "note": "Known writers from already-derived files only; not a complete blast radius."}
 
 
@@ -447,19 +492,18 @@ def reverse_subtypes(repo_root: str | Path, node_id: str) -> dict[str, Any]:
         })
         return True
 
-    for claim in list(store.iter_claims()):
+    edge_ids = store.index.edge_ids(node_id, {"inherits"}, 128)
+    if edge_ids is None:
+        return {"node_id": node_id, "subtypes": [], "stale_skipped": 0, "coverage": "partial", "note": "Endpoint edge index missing; no full-store fallback.", "gaps": ["endpoint_edge_index_missing"]}
+    for edge_id in edge_ids:
+        claim = store.get_claim(edge_id)
+        if claim is None:
+            stale_skipped += 1
+            continue
         if claim.body.get("edge_kind") != "inherits" or claim.body.get("parent_id") != node_id or claim.body.get("relation") != "extends":
             continue
-        if collect(claim):
-            continue
-        child_path = claim.body.get("child_path")
-        if isinstance(child_path, str) and Path(repo.root / child_path).exists():
-            current_claims = derive_claims_for_path(repo, child_path)
-            _replace_path_claims(store, child_path, current_claims)
-            refreshed = store.get_claim(claim.id)
-            if refreshed is not None and collect(refreshed):
-                continue
-        stale_skipped += 1
+        if not collect(claim):
+            stale_skipped += 1
     return {"node_id": node_id, "subtypes": subtypes, "stale_skipped": stale_skipped, "coverage": "partial", "note": "Known subtypes from already-derived files only; Java inheritance reverse coverage is partial."}
 
 
@@ -484,19 +528,18 @@ def reverse_implementors(repo_root: str | Path, node_id: str) -> dict[str, Any]:
         })
         return True
 
-    for claim in list(store.iter_claims()):
+    edge_ids = store.index.edge_ids(node_id, {"inherits"}, 128)
+    if edge_ids is None:
+        return {"node_id": node_id, "implementors": [], "stale_skipped": 0, "coverage": "partial", "note": "Endpoint edge index missing; no full-store fallback.", "gaps": ["endpoint_edge_index_missing"]}
+    for edge_id in edge_ids:
+        claim = store.get_claim(edge_id)
+        if claim is None:
+            stale_skipped += 1
+            continue
         if claim.body.get("edge_kind") != "inherits" or claim.body.get("parent_id") != node_id or claim.body.get("relation") != "implements":
             continue
-        if collect(claim):
-            continue
-        child_path = claim.body.get("child_path")
-        if isinstance(child_path, str) and Path(repo.root / child_path).exists():
-            current_claims = derive_claims_for_path(repo, child_path)
-            _replace_path_claims(store, child_path, current_claims)
-            refreshed = store.get_claim(claim.id)
-            if refreshed is not None and collect(refreshed):
-                continue
-        stale_skipped += 1
+        if not collect(claim):
+            stale_skipped += 1
     return {"node_id": node_id, "implementors": implementors, "stale_skipped": stale_skipped, "coverage": "partial", "note": "Known implementors from already-derived files only; Java inheritance reverse coverage is partial."}
 
 

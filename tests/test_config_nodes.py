@@ -10,7 +10,7 @@ from pathlib import Path
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_config_claim_id
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path
 from tmf.store import Store
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,7 +39,7 @@ class ConfigNodeTests(unittest.TestCase):
     def test_json_top_level_key_config_node_fresh_format_immune_and_value_sensitive(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"config.json": '{"timeout": 30, "name": "svc"}\n'})
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "config.json", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "config.json", "--refresh", "--repo", str(repo)], ROOT).stdout)
             configs = [c for c in data["claims"] if c["scope"] == "config"]
             self.assertEqual({c["qualname"] for c in configs}, {"timeout", "name"})
             timeout = Store(repo).get_claim(stable_config_claim_id("config.json", "timeout"))
@@ -57,27 +57,27 @@ class ConfigNodeTests(unittest.TestCase):
     def test_json_unrelated_key_change_does_not_stale_and_delete_reconciles(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"config.json": '{"timeout": 30, "name": "svc"}\n'})
-            retrieve_path(repo, "config.json")
+            refresh_path(repo, "config.json")
             timeout_id = stable_config_claim_id("config.json", "timeout")
             timeout = Store(repo).get_claim(timeout_id)
             self.assertIsNotNone(timeout)
             (repo / "config.json").write_text('{"timeout": 30, "name": "api"}\n', encoding="utf-8")
             self.assertTrue(check_freshness(GitRepo(repo), timeout).fresh)
             (repo / "config.json").write_text('{"name": "api"}\n', encoding="utf-8")
-            retrieve_path(repo, "config.json")
+            refresh_path(repo, "config.json")
             self.assertIsNone(Store(repo).get_claim(timeout_id))
 
     def test_invalid_json_degrades_to_no_config_nodes_without_crash(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"broken.json": '{"timeout": '})
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "broken.json", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "broken.json", "--refresh", "--repo", str(repo)], ROOT).stdout)
             self.assertFalse([c for c in data["claims"] if c["scope"] == "config"])
 
     @unittest.skipIf(sys.version_info < (3, 11), "tomllib unavailable")
     def test_toml_top_level_key_config_node_fresh_format_immune_and_value_sensitive(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"pyproject.toml": 'name = "svc"\ntimeout = 30\n'})
-            retrieve_path(repo, "pyproject.toml")
+            refresh_path(repo, "pyproject.toml")
             timeout = Store(repo).get_claim(stable_config_claim_id("pyproject.toml", "timeout"))
             self.assertIsNotNone(timeout)
             self.assertTrue(check_freshness(GitRepo(repo), timeout).fresh)

@@ -37,7 +37,7 @@ class TmfV1Tests(unittest.TestCase):
     def test_path_retrieve_derives_file_and_function_claims(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             scopes = {c.get("qualname") or c["scope"] for c in data["claims"]}
             self.assertIn("file", scopes)
@@ -49,7 +49,7 @@ class TmfV1Tests(unittest.TestCase):
     def test_fn_hash_uses_worktree_and_token_stream_not_regex_whitespace(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             claim_files = sorted((repo / ".tmf" / "claims").glob("*.json"))
             before = {json.loads(p.read_text())["body"].get("qualname"): json.loads(p.read_text()) for p in claim_files}
             before_add_hash = before["add"]["bindings"][0]["fn_hash"][:12]
@@ -65,7 +65,7 @@ class TmfV1Tests(unittest.TestCase):
                 "    return x\n",
                 encoding="utf-8",
             )
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             after = {c.get("qualname"): c for c in data["claims"] if c.get("qualname")}
             self.assertNotEqual(after["add"]["freshness_binding_refs"][0]["fn_hash_prefix"], before_add_hash)
@@ -75,7 +75,7 @@ class TmfV1Tests(unittest.TestCase):
     def test_feedback_usage_does_not_raise_confidence(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             claim = json.loads(proc.stdout)["claims"][0]
             before = claim["confidence"]
             proc = run([sys.executable, "-m", "tmf.cli", "feedback", claim["id"], "usage", "--repo", str(repo), "--note", "read during coding"], ROOT)
@@ -86,7 +86,7 @@ class TmfV1Tests(unittest.TestCase):
     def test_feedback_hunch_does_not_overwrite_fact(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             claim = json.loads(proc.stdout)["claims"][0]
             old_text = claim["claim"]
             proc = run([sys.executable, "-m", "tmf.cli", "feedback", claim["id"], "hunch", "--repo", str(repo), "--note", "maybe related to billing"], ROOT)
@@ -99,7 +99,7 @@ class TmfV1Tests(unittest.TestCase):
     def test_feedback_verified_can_raise_confidence(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT)
             claim = json.loads(proc.stdout)["claims"][0]
             proc = run([sys.executable, "-m", "tmf.cli", "feedback", claim["id"], "verified", "--repo", str(repo), "--note", "unit test observed"], ROOT)
             data = json.loads(proc.stdout)
@@ -127,7 +127,7 @@ class TmfV1PrecisionTests(unittest.TestCase):
             )
             run(["git", "add", "m.py"], repo)
             run(["git", "commit", "-m", "init"], repo)
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
             before = {c.get("qualname"): c for c in json.loads(proc.stdout)["claims"] if c["scope"] == "function"}
             before_hash = before["foo"]["freshness_binding_refs"][0]["fn_hash_prefix"]
 
@@ -140,7 +140,7 @@ class TmfV1PrecisionTests(unittest.TestCase):
                 "  return 'no'\n",
                 encoding="utf-8",
             )
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
             after = {c.get("qualname"): c for c in json.loads(proc.stdout)["claims"] if c["scope"] == "function"}
             self.assertEqual(after["foo"]["freshness_binding_refs"][0]["fn_hash_prefix"], before_hash)
 
@@ -154,10 +154,10 @@ class TmfV1PrecisionTests(unittest.TestCase):
             (repo / "m.py").write_text("def foo():\n    return 1\n\ndef keep():\n    return 2\n", encoding="utf-8")
             run(["git", "add", "m.py"], repo)
             run(["git", "commit", "-m", "init"], repo)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
 
             (repo / "m.py").write_text("def bar():\n    return 1\n\ndef keep():\n    return 2\n", encoding="utf-8")
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             names = {c.get("qualname") for c in data["claims"] if c["scope"] == "function"}
             self.assertEqual(names, {"bar", "keep"})
@@ -168,7 +168,7 @@ class TmfV1PrecisionTests(unittest.TestCase):
             self.assertFalse(any(c["body"].get("qualname") == "foo" for c in disk_claims))
 
             # A second read should not be forced stale by a dead foo claim.
-            proc2 = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            proc2 = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
             data2 = json.loads(proc2.stdout)
             self.assertTrue(all(c["fresh"] for c in data2["claims"]))
 
@@ -182,10 +182,10 @@ class TmfV1PrecisionTests(unittest.TestCase):
             (repo / "m.py").write_text("def foo():\n    return 1\n\ndef keep():\n    return 2\n", encoding="utf-8")
             run(["git", "add", "m.py"], repo)
             run(["git", "commit", "-m", "init"], repo)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
 
             (repo / "m.py").write_text("def keep():\n    return 2\n", encoding="utf-8")
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT)
             data = json.loads(proc.stdout)
             names = {c.get("qualname") for c in data["claims"] if c["scope"] == "function"}
             self.assertEqual(names, {"keep"})

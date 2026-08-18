@@ -8,7 +8,7 @@ from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_java_node_claim_id, stable_read_edge_claim_id, stable_write_edge_claim_id
 from tmf.java_extract import JAVA_DEGRADE_HINT, java_status
-from tmf.retrieve import retrieve_path, reverse_readers, reverse_writers
+from tmf.retrieve import refresh_path, reverse_readers, reverse_writers
 from tmf.store import Store
 from tmf.warm import warm_repo
 from tests.test_java_inherit import init_repo
@@ -101,8 +101,8 @@ class JavaFieldReadWriteTests(unittest.TestCase):
                 "pkg/Config.java": "package pkg; public class Config { public static int LIMIT; }\n",
                 "app/App.java": "package app;\nimport pkg.Config;\nclass App { static int LOCAL; void run() { int x = LOCAL + Config.LIMIT; LOCAL = x; Config.LIMIT = x; } }\n",
             })
-            retrieve_path(repo, "pkg/Config.java")
-            retrieve_path(repo, "app/App.java")
+            refresh_path(repo, "pkg/Config.java")
+            refresh_path(repo, "app/App.java")
             store = Store(repo)
             run_id = stable_java_node_claim_id("app/App.java", "App.run", "method")
             local_id = stable_java_node_claim_id("app/App.java", "App.LOCAL", "constant")

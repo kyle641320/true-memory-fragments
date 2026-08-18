@@ -9,7 +9,7 @@ from pathlib import Path
 
 from tmf.extract import extract_classes
 from tmf.ids import stable_class_claim_id, stable_contract_claim_id, stable_function_claim_id
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path
 from tmf.store import Store
 from tmf.warm import warm_repo
 
@@ -54,27 +54,27 @@ def b():
     def test_nested_class_claims_split_and_reconcile_independently(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "def a():\n    class V:\n        x = 1\n    return V\n\ndef b():\n    class V:\n        x = 2\n    return V\n"})
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             store = Store(repo)
             self.assertIsNotNone(store.get_claim(stable_class_claim_id("m.py", "a.V")))
             self.assertIsNotNone(store.get_claim(stable_class_claim_id("m.py", "b.V")))
             self.assertIsNone(store.get_claim(stable_class_claim_id("m.py", "V")))
             (repo / "m.py").write_text("def a():\n    class V:\n        x = 10\n    return V\n\ndef b():\n    class V:\n        x = 2\n    return V\n", encoding="utf-8")
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             self.assertIsNotNone(store.get_claim(stable_class_claim_id("m.py", "a.V")))
             self.assertIsNotNone(store.get_claim(stable_class_claim_id("m.py", "b.V")))
 
     def test_self_call_resolves_unique_base_method(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": "class Base:\n    def m(self):\n        return 1\n\nclass Child(Base):\n    def run(self):\n        return self.m()\n"})
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             child = [c for c in data["claims"] if c.get("qualname") == "Child.run"][0]
             self.assertEqual(child["callees"][0]["target_qualname"], "Base.m")
 
     def test_imported_module_func_resolves_unique_top_level(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"a.py": "import b\n\ndef main():\n    return b.helper()\n", "b.py": "def helper():\n    return 1\n"})
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             main = [c for c in data["claims"] if c.get("qualname") == "main"][0]
             self.assertEqual(main["callees"][0]["target_qualname"], "helper")
             self.assertEqual(main["callees"][0]["resolution"], "import_module_direct_top_level")

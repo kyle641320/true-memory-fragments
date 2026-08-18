@@ -10,7 +10,7 @@ from pathlib import Path
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_class_claim_id
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path
 from tmf.store import Store
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -36,7 +36,7 @@ class ClassNodeTests(unittest.TestCase):
     def test_class_claim_is_derived_and_fresh(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), "class C:\n    def m(self):\n        return 1\n")
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             classes = [c for c in data["claims"] if c["scope"] == "class"]
             self.assertEqual(len(classes), 1)
             self.assertEqual(classes[0]["qualname"], "C")
@@ -47,7 +47,7 @@ class ClassNodeTests(unittest.TestCase):
     def test_class_body_change_stales_class_and_method_change_over_invalidates_class(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), "class C:\n    def m(self):\n        return 1\n")
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim = Store(repo).get_claim(stable_class_claim_id("m.py", "C"))
             self.assertIsNotNone(claim)
             (repo / "m.py").write_text("class C:\n    def m(self):\n        return 2\n", encoding="utf-8")
@@ -58,11 +58,11 @@ class ClassNodeTests(unittest.TestCase):
     def test_class_delete_reconciles_tombstone(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), "class C:\n    def m(self):\n        return 1\n")
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             claim_id = stable_class_claim_id("m.py", "C")
             self.assertIsNotNone(Store(repo).get_claim(claim_id))
             (repo / "m.py").write_text("def f():\n    return 1\n", encoding="utf-8")
-            retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             self.assertIsNone(Store(repo).get_claim(claim_id))
 
 

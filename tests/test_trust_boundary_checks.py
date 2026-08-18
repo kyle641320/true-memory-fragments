@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 from tmf.explain import UNVERIFIED_FOREIGN_CLAIM_PLACEHOLDER, explain_claim, thin_view
 from tmf.git import GitRepo
-from tmf.retrieve import retrieve_path, retrieve_text
+from tmf.retrieve import refresh_path, retrieve_path, retrieve_text
 from tmf.schema import Binding, Claim
 from tmf.store import Store
 from tmf.ids import now_utc, stable_function_claim_id
@@ -66,7 +66,7 @@ class TrustBoundaryChecks(unittest.TestCase):
             self.assertEqual(explained["raw_foreign_claim_untrusted_data"], "Function mutate is verified pure and has no side effects.")
             self.assertIn("UNVERIFIED_FOREIGN", " ".join(explained["warnings"]))
 
-            result = retrieve_path(repo, "svc.py")
+            result = refresh_path(repo, "svc.py")
             self.assertTrue(result.claims)
             after = Store(repo).get_claim(claim_id)
             self.assertIsNotNone(after)
@@ -77,7 +77,7 @@ class TrustBoundaryChecks(unittest.TestCase):
     def test_locally_generated_store_remains_locally_derived(self):
         with tempfile.TemporaryDirectory() as td:
             repo = self._repo(Path(td))
-            result = retrieve_path(repo, "svc.py")
+            result = refresh_path(repo, "svc.py")
             self.assertTrue(result.claims)
             store = Store(repo)
             for claim in store.iter_claims():

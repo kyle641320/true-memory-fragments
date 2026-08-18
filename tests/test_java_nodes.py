@@ -10,7 +10,7 @@ from pathlib import Path
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.java_extract import JAVA_DEGRADE_HINT, java_status
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path
 from tmf.store import Store
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,7 +61,7 @@ class JavaNodeTests(unittest.TestCase):
     def test_java_nodes_are_derived_without_edges(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), JAVA_FIXTURE)
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "Sample.java", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "Sample.java", "--refresh", "--repo", str(repo)], ROOT).stdout)
             java_claims = [c for c in data["claims"] if c.get("language") == "java" and c.get("extraction_tier") == "java-treesitter-syntactic"]
             qualnames = {c["qualname"] for c in java_claims}
             self.assertIn("Sample", qualnames)
@@ -79,7 +79,7 @@ class JavaNodeTests(unittest.TestCase):
     def test_java_freshness_is_two_way_comments_whitespace_ignored_literals_included(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), JAVA_FIXTURE)
-            result = retrieve_path(repo, "Sample.java")
+            result = refresh_path(repo, "Sample.java")
             greet = next(item.claim for item in result.claims if item.claim.body.get("qualname") == "Sample.greet")
             class_claim = next(item.claim for item in result.claims if item.claim.body.get("qualname") == "Sample")
             edited = JAVA_FIXTURE.replace("return NAME + who + count;", "// trivia\n        return NAME + who + count;")
@@ -94,7 +94,7 @@ class JavaNodeTests(unittest.TestCase):
         source = JAVA_FIXTURE.replace("    public String greet", "    @Deprecated\n    public String greet")
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), source)
-            result = retrieve_path(repo, "Sample.java")
+            result = refresh_path(repo, "Sample.java")
             greet = next(item.claim for item in result.claims if item.claim.body.get("qualname") == "Sample.greet")
             edited = source.replace("@Deprecated", "@SuppressWarnings(\"unchecked\")")
             (repo / "Sample.java").write_text(edited, encoding="utf-8")
@@ -103,7 +103,7 @@ class JavaNodeTests(unittest.TestCase):
     def test_java_reformatting_remains_fresh(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), JAVA_FIXTURE)
-            result = retrieve_path(repo, "Sample.java")
+            result = refresh_path(repo, "Sample.java")
             greet = next(item.claim for item in result.claims if item.claim.body.get("qualname") == "Sample.greet")
             edited = JAVA_FIXTURE.replace("public String greet(String who) {", "public   String   greet( String who )   {")
             (repo / "Sample.java").write_text(edited, encoding="utf-8")
@@ -112,11 +112,11 @@ class JavaNodeTests(unittest.TestCase):
     def test_java_delete_reconciles_tombstone(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), JAVA_FIXTURE)
-            result = retrieve_path(repo, "Sample.java")
+            result = refresh_path(repo, "Sample.java")
             greet_id = next(item.claim.id for item in result.claims if item.claim.body.get("qualname") == "Sample.greet")
             self.assertIsNotNone(Store(repo).get_claim(greet_id))
             (repo / "Sample.java").write_text("public class Sample { int x; }\n", encoding="utf-8")
-            retrieve_path(repo, "Sample.java")
+            refresh_path(repo, "Sample.java")
             self.assertIsNone(Store(repo).get_claim(greet_id))
 
 
@@ -130,7 +130,7 @@ class JavaDegradeTests(unittest.TestCase):
             java_extract._language_and_parser = lambda: (_ for _ in ()).throw(ImportError("simulated missing tree-sitter"))
             with tempfile.TemporaryDirectory() as td:
                 repo = init_repo(Path(td), JAVA_FIXTURE)
-                result = retrieve_path(repo, "Sample.java")
+                result = refresh_path(repo, "Sample.java")
                 claims = [item.claim for item in result.claims]
                 self.assertEqual([c for c in claims if c.body.get("language") == "java"], [])
                 self.assertIn("java_extraction", claims[0].body)

@@ -25,7 +25,7 @@ class RetrieveThinTests(unittest.TestCase):
             (repo / "app.py").write_text('def charge(x):\n    """Reject negative balances because ledger settlement cannot carry debt."""\n    return x >= 0\n', encoding="utf-8")
             run(["git", "add", "app.py"], repo)
             run(["git", "commit", "-m", "Reject negative balances because settlement cannot carry debt"], repo)
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo), "--model-derive"], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo), "--model-derive"], ROOT).stdout)
             self.assertEqual(data["view"], "thin")
             claim = data["claims"][0]
             self.assertIn("id", claim)
@@ -49,7 +49,7 @@ class RetrieveThinTests(unittest.TestCase):
             (repo / "app.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
             run(["git", "add", "app.py"], repo)
             run(["git", "commit", "-m", "init"], repo)
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             claim_id = data["claims"][0]["id"]
             full = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--full", claim_id, "--repo", str(repo)], ROOT).stdout)
             self.assertEqual(full["id"], claim_id)
@@ -68,9 +68,9 @@ class RetrieveThinTests(unittest.TestCase):
             (repo / "b.py").write_text("def helper():\n    return 1\n", encoding="utf-8")
             run(["git", "add", "a.py", "b.py"], repo)
             run(["git", "commit", "-m", "init"], repo)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--repo", str(repo)], ROOT)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--repo", str(repo)], ROOT)
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--repo", str(repo)], ROOT).stdout)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--refresh", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--refresh", "--repo", str(repo)], ROOT)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             helper = [c for c in data["claims"] if c.get("qualname") == "helper"][0]
             self.assertEqual(helper["callers"][0]["source_qualname"], "main")
             self.assertEqual(helper["callers"][0]["resolution"], "from_import_direct_top_level")
@@ -78,7 +78,7 @@ class RetrieveThinTests(unittest.TestCase):
             self.assertEqual(helper["unresolved_call_count"], 0)
 
             (repo / "b.py").write_text("def helper():\n    x = 1\n    return x\n", encoding="utf-8")
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "b.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             helper = [c for c in data["claims"] if c.get("qualname") == "helper"][0]
             self.assertEqual(helper["callers"], [])
 

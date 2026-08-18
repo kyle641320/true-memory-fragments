@@ -12,6 +12,8 @@ from .git import GitRepo
 from .retrieve import retrieve_text, reverse_callers, reverse_readers, reverse_writers, reverse_subtypes, reverse_implementors
 from .store import Store
 from .warm import warm_is_complete, warm_repo
+from .index import EDGE_ENDPOINT_FIELDS
+from .relations import HARD_MAX_EDGES, HARD_MAX_NODES, RequestFreshnessCache, bounded_fragment
 
 HONEST_NOTE = (
     "TMF is a partial, source-bound memory. Fresh means the stored binding matches "
@@ -75,10 +77,10 @@ class McpService:
             raise ValueError("provide claim_id or qualname")
         rel_path = self._inside_repo_path(path) if path else None
         q = str(qualname)
-        indexed_ids = self.store.index.exact_ids(q, rel_path) if self.store.ensure_index() else None
+        indexed_ids = self.store.index.exact_ids(q, rel_path)
         candidates = (
             [claim for claim_id in indexed_ids if (claim := self.store.get_claim(claim_id)) is not None]
-            if indexed_ids is not None else self.store.iter_claims()
+            if indexed_ids is not None else []
         )
         matches = []
         for claim in candidates:
@@ -106,6 +108,7 @@ class McpService:
             "coverage": "complete" if warm_is_complete(self.repo.root) else "partial",
             "claims": [thin_view(explain_claim(self.repo, item.claim)) for item in result.claims],
             "source_fallback_paths": sorted(result.source_fallback),
+            "gaps": result.gaps or [],
         }
 
     def tmf_explain(self, claim_id: str, full: bool = False) -> dict[str, Any]:
@@ -161,68 +164,55 @@ class McpService:
         relation_budget = 3 if max_chars <= 3000 else 8
         relations = self._bounded_relations([item.claim for item in result.claims], edge_budget=relation_budget)
         relations.sort(key=lambda r: (str(r.get("for")), str(r.get("kind"))))
-        return {"question": str(question), "view": "thin_context", "coverage": "complete" if warm_is_complete(self.repo.root) else "partial", "truncated": False, "max_chars": max_chars, "claims": claims, "relations": relations, "source_fallback_paths": sorted(result.source_fallback)}
+        return {"question": str(question), "view": "thin_context", "coverage": "complete" if warm_is_complete(self.repo.root) and not result.gaps else "partial", "truncated": False, "max_chars": max_chars, "claims": claims, "relations": relations, "source_fallback_paths": sorted(result.source_fallback), "gaps": result.gaps or []}
 
     def _bounded_relations(self, seeds: list[Any], edge_budget: int) -> list[dict[str, Any]]:
         """Expose only existing fresh one-hop edges; never infer a chain."""
-        seed_ids = {c.id for c in seeds}
-        endpoint_fields = {
-            "calls": ("caller_id", "callee_id"), "reads": ("reader_id", "declaration_id"),
-            "writes": ("writer_id", "declaration_id"), "uses_type": ("user_id", "type_id"),
-            "inherits": ("child_id", "parent_id"), "overrides": ("method_id", "overridden_id"),
-            "publishes_type": ("source_id", "type_id"), "listens_type": ("source_id", "type_id"),
-        }
         out: list[dict[str, Any]] = []
-        stale_skipped = 0
-        unresolved = 0
-        all_edges = sorted(self.store.iter_claims(), key=lambda c: c.id)
-        shared_event_types = {
-            str(edge.body.get("type_id")) for edge in all_edges
-            if edge.body.get("edge_kind") in {"publishes_type", "listens_type"}
-            and seed_ids.intersection({str(edge.body.get("source_id")), str(edge.body.get("type_id"))})
-        }
-        for edge in sorted(all_edges, key=lambda e: (0 if e.body.get("edge_kind") in {"publishes_type", "listens_type"} else 1, e.id)):
-            kind = edge.body.get("edge_kind")
-            fields = endpoint_fields.get(kind)
-            shared_static_event_candidate = kind in {"publishes_type", "listens_type"} and str(edge.body.get("type_id")) in shared_event_types
-            if fields is None or (not shared_static_event_candidate and not seed_ids.intersection(str(edge.body.get(f)) for f in fields)):
-                continue
-            freshness = check_freshness(self.repo, edge)
-            if not freshness.fresh or edge.body.get("source_provenance", {}).get("trust") == "unverified_foreign":
-                stale_skipped += 1
-                continue
-            endpoints = {f: edge.body.get(f) for f in fields}
-            endpoint_claims = {field: self.store.get_claim(value) if isinstance(value, str) else None for field, value in endpoints.items()}
-            if any(claim is None for claim in endpoint_claims.values()):
-                unresolved += 1
-                continue
-            if any(
-                not check_freshness(self.repo, claim).fresh
-                or claim.body.get("source_provenance", {}).get("trust") == "unverified_foreign"
-                for claim in endpoint_claims.values()
-            ):
-                stale_skipped += 1
-                continue
-            endpoint_hints = {
-                field: {
-                    "qualname": claim.body.get("qualname"),
-                    "path": claim.bindings[0].path if claim.bindings else None,
-                    "anchor": self._anchor_for_claim(claim),
-                }
-                for field, claim in endpoint_claims.items()
-            }
-            related_seed = sorted(seed_ids.intersection(endpoints.values()))
-            out.append({"for": related_seed[0] if related_seed else sorted(shared_event_types)[0], "kind": kind, "edge_id": edge.id,
-                        "endpoints": endpoints, "endpoint_hints": endpoint_hints,
-                        "anchor": edge.body.get(fields[0].replace("_id", "_anchor")),
-                        "coverage": "partial", "unresolved": 0,
-                        "relation_semantics": "shared_source_observed_event_type_candidate" if shared_static_event_candidate else "one_hop_static_edge"})
+        for seed in seeds:
             if len(out) >= edge_budget:
                 break
-        if (stale_skipped or unresolved) and out:
-            out[0]["stale_skipped"] = stale_skipped
-            out[0]["unresolved"] = unresolved
+            fragment = bounded_fragment(
+                self.repo, self.store, entry=seed.id,
+                relations=EDGE_ENDPOINT_FIELDS, hop_limit=1,
+                boundary_types={"function", "declaration", "class", "topic"},
+                max_nodes=min(HARD_MAX_NODES, max(2, edge_budget * 2 + 1)),
+                max_edges=min(HARD_MAX_EDGES, edge_budget - len(out)),
+            )
+            for item in fragment["verified_hops"]:
+                endpoints = item["endpoints"]
+                out.append({
+                    "for": seed.id,
+                    "kind": item["relation_kind"],
+                    "edge_id": item["edge_id"],
+                    "endpoints": endpoints,
+                    "endpoint_hints": {
+                        field: {k: value for k, value in hint.items() if k != "claim_id" and k != "scope"}
+                        for field, hint in item["endpoint_hints"].items()
+                    },
+                    "coverage": "partial",
+                    "fragment_coverage": fragment["coverage"],
+                    "unresolved": len(fragment["stale_or_unknown"]),
+                    "relation_semantics": "one_hop_static_edge",
+                })
+                if len(out) >= edge_budget:
+                    break
         return out
+
+    def tmf_fragment(
+        self,
+        entry: str,
+        relations: list[str],
+        hop_limit: int,
+        boundary_types: list[str],
+        max_nodes: int = HARD_MAX_NODES,
+        max_edges: int = HARD_MAX_EDGES,
+    ) -> dict[str, Any]:
+        return bounded_fragment(
+            self.repo, self.store, entry=str(entry), relations=relations,
+            hop_limit=int(hop_limit), boundary_types=boundary_types,
+            max_nodes=int(max_nodes), max_edges=int(max_edges),
+        )
 
     def tmf_context(self, question: str, max_chars: int | None = None) -> dict[str, Any]:
         budget = max(180, int(max_chars)) if max_chars is not None else 3000
@@ -289,22 +279,31 @@ class McpService:
         return payload
 
     def tmf_status(self) -> dict[str, Any]:
-        import random
-        claims = list(self.store.iter_claims())
-        edge_counts: dict[str, int] = {}
-        for claim in claims:
-            kind = claim.body.get("edge_kind") if isinstance(claim.body, dict) else None
-            if isinstance(kind, str):
-                edge_counts[kind] = edge_counts.get(kind, 0) + 1
-        # Freshness: sample at most 20 claims to avoid O(n) git subprocess cost.
-        sample = random.sample(claims, min(20, len(claims)))
-        fresh_sample = sum(1 for c in sample if check_freshness(self.repo, c).fresh)
+        snapshot = self.store.index.status_snapshot(20)
+        if snapshot is None:
+            return {
+                "repo": str(self.repo.root),
+                "claims": None,
+                "freshness_sample": {"checked": 0, "fresh": 0, "stale": 0},
+                "warm_complete": warm_is_complete(self.repo.root),
+                "edge_counts": {},
+                "coverage": "partial",
+                "gaps": ["inverted_index_missing_no_full_store_fallback"],
+            }
+        sample = [
+            claim for claim_id in snapshot["freshness_sample_ids"]
+            if (claim := self.store.get_claim(str(claim_id))) is not None
+        ]
+        freshness_cache = RequestFreshnessCache(self.repo)
+        fresh_sample = sum(1 for claim in sample if freshness_cache.check(claim).fresh)
         return {
             "repo": str(self.repo.root),
-            "claims": len(claims),
+            "claims": snapshot["claims"],
             "freshness_sample": {"checked": len(sample), "fresh": fresh_sample, "stale": len(sample) - fresh_sample},
             "warm_complete": warm_is_complete(self.repo.root),
-            "edge_counts": edge_counts,
+            "edge_counts": snapshot["edge_counts"],
+            "coverage": "complete",
+            "index_schema_version": snapshot["index_schema_version"],
         }
 
     def call_tool(self, name: str, arguments: dict[str, Any] | None) -> dict[str, Any]:
@@ -317,6 +316,7 @@ class McpService:
             "tmf_writers": self.tmf_writers,
             "tmf_subtypes": self.tmf_subtypes,
             "tmf_context": self.tmf_context,
+            "tmf_fragment": self.tmf_fragment,
             "tmf_warm": self.tmf_warm,
             "tmf_status": self.tmf_status,
         }
@@ -334,6 +334,7 @@ def tools_list() -> list[dict[str, Any]]:
     reverse_props = {"claim_id": {"type": "string"}, "qualname": {"type": "string"}, "path": {"type": "string"}}
     return [
         {"name": "tmf_context", "description": first + "Return one deterministic thin context bundle with anchors and key fresh graph relations." + trust, "inputSchema": schema({"question": {"type": "string"}, "max_chars": {"type": "integer", "minimum": 180}}, ["question"])},
+        {"name": "tmf_fragment", "description": "Return a strictly bounded evidence fragment from the rebuildable endpoint index; a fragment is not a graph." + trust, "inputSchema": schema({"entry": {"type": "string"}, "relations": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "hop_limit": {"type": "integer", "minimum": 0, "maximum": 4}, "boundary_types": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "max_nodes": {"type": "integer", "minimum": 1, "maximum": 64}, "max_edges": {"type": "integer", "minimum": 1, "maximum": 128}}, ["entry", "relations", "hop_limit", "boundary_types"])},
         {"name": "tmf_retrieve", "description": first + "Retrieve thin TMF claims for a lexical query." + trust, "inputSchema": schema({"query": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 50}}, ["query"])},
         {"name": "tmf_explain", "description": "Explain one claim; full=true includes thick body/source-bound details." + trust, "inputSchema": schema({"claim_id": {"type": "string"}, "full": {"type": "boolean"}}, ["claim_id"])},
         {"name": "tmf_callers", "description": "List known callers by claim_id or by qualname plus optional path; ambiguous names return candidates, never a guess." + trust, "inputSchema": schema(reverse_props)},

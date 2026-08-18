@@ -53,7 +53,7 @@ class RouterRetrieveTests(unittest.TestCase):
             env = dict(os.environ)
             env.pop("TMF_ROUTER_COMMAND", None)
             env.pop("TMF_EMBED_COMMAND", None)
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT, env=env)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT, env=env)
             first = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "zzz", "--repo", str(repo)], ROOT, env=env).stdout)
             second = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "zzz", "--repo", str(repo)], ROOT, env=env).stdout)
             self.assertEqual(first, second)
@@ -65,7 +65,7 @@ class RouterRetrieveTests(unittest.TestCase):
             env = dict(os.environ)
             env.pop("TMF_EMBED_COMMAND", None)
             env["TMF_ROUTER_COMMAND"] = f"{sys.executable} {write_fake_router(root)}"
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT, env=env)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT, env=env)
             data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "semantic-miss", "--repo", str(repo)], ROOT, env=env).stdout)
             target = [claim for claim in data["claims"] if claim.get("qualname") == "target"][0]
             self.assertEqual(target["trust"]["level"], "observed")

@@ -8,7 +8,7 @@ from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_call_edge_claim_id, stable_java_node_claim_id
 from tmf.java_extract import JAVA_DEGRADE_HINT, extract_java_methods, java_node_id, java_status
-from tmf.retrieve import retrieve_path, reverse_callers
+from tmf.retrieve import refresh_path, reverse_callers
 from tmf.store import Store
 from tmf.warm import warm_repo
 from tests.test_java_inherit import init_repo
@@ -110,8 +110,8 @@ class Service {
                 "pkg/Util.java": "package pkg; public class Util { public static void f() {} }\n",
                 "app/App.java": "package app;\nimport pkg.Util;\nclass App { void run() { Util.f(); } }\n",
             })
-            retrieve_path(repo, "pkg/Util.java")
-            retrieve_path(repo, "app/App.java")
+            refresh_path(repo, "pkg/Util.java")
+            refresh_path(repo, "app/App.java")
             store = Store(repo)
             run_id = stable_java_node_claim_id("app/App.java", "App.run", "method")
             f_id = stable_java_node_claim_id("pkg/Util.java", "Util.f", "method")

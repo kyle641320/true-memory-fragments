@@ -236,10 +236,12 @@ class Store:
                 continue
 
     def claims_for_path(self, relpath: str) -> list[Claim]:
-        ids = self.index.path_ids(relpath) if self.ensure_index() else None
+        ids = self.index.path_ids(relpath)
         if ids is not None:
             return [claim for claim_id in ids if (claim := self.get_claim(claim_id)) is not None]
-        return [claim for claim in self.iter_claims() if any(binding.path == relpath for binding in claim.bindings)]
+        # Missing derived index is not permission for an ordinary read to scan
+        # every claim. Callers receive a gap and may explicitly refresh a path.
+        return []
 
     def reconcile_edge_claims_for_caller_path(self, relpath: str, current_edge_claims: list[Claim]) -> list[str]:
         """Delete stale edge claims whose caller/reader side is this path.
@@ -249,7 +251,9 @@ class Store:
         """
         current_ids = {claim.id for claim in current_edge_claims}
         deleted: list[str] = []
-        for claim in self.iter_claims():
+        # Every owned edge binds its owner source path, so the path index gives
+        # a complete local reconciliation set without scanning the claim store.
+        for claim in self.claims_for_path(relpath):
             if claim.scope != "cross-repo" and claim.body.get("edge_kind") not in {"calls", "reads", "writes", "inherits", "overrides", "uses_type", "reads_env", "reads_config_key", "injects", "publishes_to", "subscribes_to"}:
                 continue
             edge_kind = claim.body.get("edge_kind")

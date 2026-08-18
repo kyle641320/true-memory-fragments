@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 
 from tmf.metrics import log_event, stats
-from tmf.retrieve import retrieve_path
+from tmf.retrieve import refresh_path, retrieve_path
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -52,6 +52,7 @@ class MetricsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td))
             retrieve_path(repo, "m.py")
+            refresh_path(repo, "m.py")
             retrieve_path(repo, "m.py")
             events = (repo / ".tmf" / "metrics" / "events.jsonl").read_text(encoding="utf-8")
             self.assertIn('"miss"', events)

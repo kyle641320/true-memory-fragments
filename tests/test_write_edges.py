@@ -8,7 +8,7 @@ from pathlib import Path
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_declaration_claim_id, stable_function_claim_id, stable_read_edge_claim_id, stable_write_edge_claim_id
-from tmf.retrieve import retrieve_path, reverse_callers, reverse_readers, reverse_writers
+from tmf.retrieve import refresh_path, reverse_callers, reverse_readers, reverse_writers
 from tmf.store import Store
 from tmf.warm import warm_repo
 
@@ -97,14 +97,14 @@ class WriteEdgeTests(unittest.TestCase):
             edge_id = stable_write_edge_claim_id(writer_id, decl_id)
             self.assertIsNotNone(Store(repo).get_claim(edge_id))
             (repo / "settings.py").write_text("COUNT = 0\n\ndef renamed():\n    global COUNT\n    del COUNT\n", encoding="utf-8")
-            retrieve_path(repo, "settings.py")
+            refresh_path(repo, "settings.py")
             self.assertIsNone(Store(repo).get_claim(edge_id))
             warm_repo(repo)
             new_writer = stable_function_claim_id("settings.py", "renamed")
             new_edge = stable_write_edge_claim_id(new_writer, decl_id)
             self.assertIsNotNone(Store(repo).get_claim(new_edge))
             (repo / "settings.py").write_text("OTHER = 0\n\ndef renamed():\n    global OTHER\n    del OTHER\n", encoding="utf-8")
-            retrieve_path(repo, "settings.py")
+            refresh_path(repo, "settings.py")
             self.assertIsNone(Store(repo).get_claim(new_edge))
 
 

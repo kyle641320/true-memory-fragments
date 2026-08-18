@@ -9,7 +9,7 @@ from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_inherit_edge_claim_id, stable_java_node_claim_id
 from tmf.java_extract import JAVA_DEGRADE_HINT, java_status
-from tmf.retrieve import retrieve_path, reverse_implementors, reverse_subtypes
+from tmf.retrieve import refresh_path, reverse_implementors, reverse_subtypes
 from tmf.store import Store
 from tmf.warm import warm_repo
 
@@ -86,9 +86,9 @@ class Child extends Base implements ChildMarker {}
             # Make LocalA ambiguous in the same file; Ambiguous must not link by guessing.
             child_path = repo / "app/Child.java"
             child_path.write_text(child_path.read_text(encoding="utf-8") + "class LocalA {}\n", encoding="utf-8")
-            retrieve_path(repo, "pkg/Base.java")
-            retrieve_path(repo, "pkg/Left.java")
-            retrieve_path(repo, "app/Child.java")
+            refresh_path(repo, "pkg/Base.java")
+            refresh_path(repo, "pkg/Left.java")
+            refresh_path(repo, "app/Child.java")
             store = Store(repo)
             child = stable_java_node_claim_id("app/Child.java", "Child", "class")
             base = stable_java_node_claim_id("pkg/Base.java", "Base", "class")
@@ -121,7 +121,7 @@ class Child extends Base implements ChildMarker {}
             (repo / "Sample.java").write_text("interface Box {}\nclass Base {}\nclass Other {}\nclass Child extends Other implements Box<String> {}\n", encoding="utf-8")
             self.assertFalse(check_freshness(GitRepo(repo), store.get_claim(child)).fresh)
             self.assertFalse(check_freshness(GitRepo(repo), old_edge).fresh)
-            retrieve_path(repo, "Sample.java")
+            refresh_path(repo, "Sample.java")
             new_parent = stable_java_node_claim_id("Sample.java", "Other", "class")
             self.assertIsNone(Store(repo).get_claim(old_edge_id))
             self.assertIsNotNone(Store(repo).get_claim(stable_inherit_edge_claim_id(child, new_parent, "extends")))
@@ -174,7 +174,7 @@ class Child extends Base implements ChildMarker {}
             (repo / "Sample.java").write_text("class Base { int x = 2; }\nclass Child extends Base {}\nclass Spare { int y = 1; }\n", encoding="utf-8")
             self.assertFalse(check_freshness(GitRepo(repo), edge).fresh)
             (repo / "Sample.java").write_text("class Child {}\nclass Spare { int y = 1; }\n", encoding="utf-8")
-            retrieve_path(repo, "Sample.java")
+            refresh_path(repo, "Sample.java")
             self.assertIsNone(Store(repo).get_claim(edge_id))
 
 

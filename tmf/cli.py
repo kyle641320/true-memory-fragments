@@ -8,7 +8,7 @@ from .feedback import apply_feedback
 from .explain import explain_claim, full_view, render_reviewer_text, thin_view
 from .freshness import check_freshness
 from .git import GitRepo
-from .retrieve import retrieve_path, retrieve_text, reverse_callers
+from .retrieve import refresh_path, retrieve_path, retrieve_text, reverse_callers
 from .warm import warm_repo
 from .contract_warm import warm_contracts
 from .store import Store
@@ -32,7 +32,10 @@ def cmd_retrieve(args: argparse.Namespace) -> int:
         return 0
 
     if args.path:
-        result = retrieve_path(args.repo, args.path, use_model=args.model_derive)
+        result = (
+            refresh_path(args.repo, args.path, use_model=args.model_derive)
+            if args.refresh else retrieve_path(args.repo, args.path)
+        )
     else:
         result = retrieve_text(args.repo, args.query, limit=args.limit, use_model=args.model_derive)
     payload = {
@@ -40,6 +43,7 @@ def cmd_retrieve(args: argparse.Namespace) -> int:
         "view": "thin",
         "claims": [_claim_thin_view(repo, item.claim) for item in result.claims],
         "source_fallback_paths": list(result.source_fallback.keys()),
+        "gaps": result.gaps or [],
         "next_steps": {
             "explain": "tmf explain <claim-id> --repo <repo>",
             "full": "tmf retrieve --full <claim-id> --repo <repo>",
@@ -175,6 +179,7 @@ def build_parser() -> argparse.ArgumentParser:
     retrieve.add_argument("--limit", type=int, default=5)
     retrieve.add_argument("--include-source", action="store_true")
     retrieve.add_argument("--model-derive", action="store_true", help="derive function claims through model candidate+verification interface")
+    retrieve.add_argument("--refresh", action="store_true", help="explicitly re-derive --path before retrieving it")
     retrieve.add_argument("--full", metavar="CLAIM_ID", help="expand a single claim with thick body and full explain data")
     retrieve.set_defaults(func=cmd_retrieve)
 
@@ -231,6 +236,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.cmd == "retrieve" and not args.path and not args.query and not args.full:
         parser.error("retrieve requires --path or query")
+    if args.cmd == "retrieve" and args.refresh and not args.path:
+        parser.error("retrieve --refresh requires --path")
+    if args.cmd == "retrieve" and args.model_derive and not args.refresh:
+        parser.error("retrieve --model-derive requires --refresh")
     return args.func(args)
 
 

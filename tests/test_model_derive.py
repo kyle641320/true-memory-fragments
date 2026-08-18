@@ -30,7 +30,7 @@ class TmfModelDeriveTests(unittest.TestCase):
     def test_model_derive_default_candidate_is_source_observed(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), "def add(a, b):\n    return a + b\n")
-            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--repo", str(repo), "--model-derive"], ROOT)
+            proc = run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "app.py", "--refresh", "--repo", str(repo), "--model-derive"], ROOT)
             data = json.loads(proc.stdout)
             fn = [c for c in data["claims"] if c["scope"] == "function"][0]
             full = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--full", fn["id"], "--repo", str(repo)], ROOT).stdout)

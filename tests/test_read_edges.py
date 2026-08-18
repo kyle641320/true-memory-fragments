@@ -9,7 +9,7 @@ from tmf.derive import derive_claims_for_path
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
 from tmf.ids import stable_declaration_claim_id, stable_function_claim_id, stable_read_edge_claim_id
-from tmf.retrieve import retrieve_path, reverse_readers, reverse_callers
+from tmf.retrieve import refresh_path, reverse_readers, reverse_callers
 from tmf.store import Store
 from tmf.warm import warm_repo
 
@@ -114,7 +114,7 @@ class ReadEdgeTests(unittest.TestCase):
             self.assertIsNotNone(Store(repo).get_claim(edge_id))
 
             (repo / "settings.py").write_text("TIMEOUT = 5\n\ndef renamed():\n    return TIMEOUT\n", encoding="utf-8")
-            retrieve_path(repo, "settings.py")
+            refresh_path(repo, "settings.py")
             self.assertIsNone(Store(repo).get_claim(edge_id))
 
             warm_repo(repo)
@@ -122,7 +122,7 @@ class ReadEdgeTests(unittest.TestCase):
             new_edge = stable_read_edge_claim_id(new_reader, decl_id)
             self.assertIsNotNone(Store(repo).get_claim(new_edge))
             (repo / "settings.py").write_text("OTHER = 5\n\ndef renamed():\n    return OTHER\n", encoding="utf-8")
-            retrieve_path(repo, "settings.py")
+            refresh_path(repo, "settings.py")
             self.assertIsNone(Store(repo).get_claim(new_edge))
 
 

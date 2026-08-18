@@ -52,7 +52,7 @@ class Window1D1Tests(unittest.TestCase):
         repo_src = "class Base:\n    def m(self):\n        return 1\n\nclass Child(Base):\n    def call(self):\n        return self.m()\n"
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {"m.py": repo_src})
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "m.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             by_name = {c.get("qualname"): c for c in data["claims"] if c["scope"] == "function"}
             self.assertEqual(by_name["Child.call"]["callees"][0]["target_qualname"], "Base.m")
             self.assertFalse(by_name["Child.call"].get("unresolved_calls"))
@@ -63,7 +63,7 @@ class Window1D1Tests(unittest.TestCase):
                 "a.py": "import b\n\ndef main():\n    return b.helper()\n",
                 "b.py": "def helper():\n    return 1\n",
             })
-            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--repo", str(repo)], ROOT).stdout)
+            data = json.loads(run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--refresh", "--repo", str(repo)], ROOT).stdout)
             main = [c for c in data["claims"] if c.get("qualname") == "main"][0]
             self.assertEqual(main["callees"][0]["target_qualname"], "helper")
             self.assertEqual(main["callees"][0]["target_path"], "b.py")

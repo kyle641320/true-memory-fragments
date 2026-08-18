@@ -56,7 +56,7 @@ class ReconcileGuardTests(unittest.TestCase):
 
             # Re-derive only a.py. The multi-binding architecture claim mentions
             # a.py but must not be deleted by path-local reconciliation.
-            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--repo", str(repo)], ROOT)
+            run([sys.executable, "-m", "tmf.cli", "retrieve", "--path", "a.py", "--refresh", "--repo", str(repo)], ROOT)
             self.assertIsNotNone(store.get_claim(multi.id))
 
             disk_ids = {p.stem for p in (repo / ".tmf" / "claims").glob("*.json")}
