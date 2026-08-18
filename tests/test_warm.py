@@ -40,6 +40,15 @@ def init_repo(tmp_path: Path, files: dict[str, str]) -> Path:
 
 
 class WarmReverseIndexTests(unittest.TestCase):
+    def test_complete_noop_does_not_build_java_repository_snapshot(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"A.java": "class A {}\n"})
+            self.assertEqual(warm_repo(repo)["derived"], 1)
+            with mock.patch("tmf.java_project.java_repository_snapshot", side_effect=AssertionError("noop parsed Java")):
+                result = warm_repo(repo)
+            self.assertEqual(result["derived"], 0)
+            self.assertEqual(result["skipped"], 1)
+
     def test_refresh_claim_cache_only_touches_old_owner_binding_buckets(self):
         def claim(claim_id: str, owner: str, bindings: list[str]) -> Claim:
             return Claim(

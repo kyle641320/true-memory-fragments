@@ -72,23 +72,39 @@ class JavaProjectIndex:
     def build(self) -> "JavaProjectIndex":
         if self._built:
             return self
-        from .java_extract import extract_java_classes
-
         from .java_project import java_project_model
         project = java_project_model(self.repo)
+        snapshot = getattr(self.repo, "_tmf_java_repository_snapshot", None)
+        if snapshot is not None:
+            locations = {item.path: item for item in project.sources}
+            for item in snapshot.symbol_manifest():
+                location = locations.get(item["path"])
+                source_set = item.get("source_set", location.source_set if location else "unclassified")
+                generated = bool(item.get("generated", location.generated if location else False))
+                if not self.policy.includes(source_set=source_set, generated=generated):
+                    continue
+                symbol = JavaSymbol(
+                    fqn=item["fqn"], simple_name=item["simple_name"], path=item["path"],
+                    package=item.get("package", ""), module=item.get("module", location.module if location else "root"),
+                    source_set=source_set, generated=generated,
+                )
+                self._by_fqn.setdefault(symbol.fqn, symbol)
+                self._by_simple.setdefault(symbol.simple_name, []).append(symbol)
+                self._by_package_simple.setdefault((symbol.package, symbol.simple_name), []).append(symbol)
+                self._by_path_simple.setdefault((symbol.path, symbol.simple_name), []).append(symbol)
+            self._built = True
+            return self
+
+        from .java_extract import extract_java_classes
         for path in self._paths():
             try:
-                snapshot = getattr(self.repo, "_tmf_java_repository_snapshot", None)
-                source = snapshot.texts.get(path) if snapshot is not None else self.repo.read_file(path)
-                if source is None:
-                    continue
+                source = self.repo.read_file(path)
                 location = project.source_for(path)
                 if location is not None and not self.policy.includes(source_set=location.source_set, generated=location.generated):
                     continue
                 package_match = _PACKAGE_RE.search(source)
                 package = package_match.group(1) if package_match else ""
-                snapshot = getattr(self.repo, "_tmf_java_repository_snapshot", None)
-                class_nodes = snapshot.classes.get(path, ()) if snapshot is not None else extract_java_classes(path, source)
+                class_nodes = extract_java_classes(path, source)
                 for node in class_nodes:
                     if node.node_kind not in {"class", "interface", "enum"} or "." in node.qualname:
                         continue

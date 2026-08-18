@@ -2064,7 +2064,7 @@ def extract_java_functional_apis(repo: Any, path: str, source: str) -> list[ApiN
     imports = _java_explicit_imports(source)
     if any(imports.get(k) != v for k, v in _WEBFLUX_FQNS.items()):
         return []
-    java_paths = [p for p in repo.run("ls-files").splitlines() if p.endswith(".java")]
+    java_paths = [p for p in repo.ls_files() if p.endswith(".java")]
     class_candidates: dict[str, list[tuple[str, ClassNode]]] = {}
     method_candidates: dict[tuple[str, str], list[ClassNode]] = {}
     for candidate_path in java_paths:

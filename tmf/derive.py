@@ -1018,17 +1018,23 @@ def _java_node_anchor_for(repo: GitRepo, path: str | None, qualname: str | None,
     key = (path, qualname, node_kind)
     if key in cache:
         return cache[key]
+    path_cache = getattr(repo, "_tmf_java_anchor_nodes_cache", {})
     try:
-        snapshot = getattr(repo, "_tmf_java_repository_snapshot", None)
-        if snapshot is not None and getattr(repo, "_tmf_java_snapshot_pinned", False):
-            nodes = [
-                *snapshot.classes.get(path, ()),
-                *snapshot.methods.get(path, ()),
-                *extract_java_fields(path, snapshot.texts.get(path, "")),
-            ]
+        if path in path_cache:
+            nodes = path_cache[path]
         else:
-            source = repo.read_file(path)
-            nodes = [*extract_java_classes(path, source), *extract_java_methods(path, source), *extract_java_fields(path, source)]
+            snapshot = getattr(repo, "_tmf_java_repository_snapshot", None)
+            if snapshot is not None:
+                nodes = [
+                    *snapshot.classes.get(path, ()),
+                    *snapshot.methods.get(path, ()),
+                    *extract_java_fields(path, snapshot.texts.get(path, "")),
+                ]
+            else:
+                source = repo.read_file(path)
+                nodes = [*extract_java_classes(path, source), *extract_java_methods(path, source), *extract_java_fields(path, source)]
+            path_cache[path] = nodes
+            setattr(repo, "_tmf_java_anchor_nodes_cache", path_cache)
         for node in nodes:
             kind = node.declaration_kind if hasattr(node, "declaration_kind") else node.node_kind
             if node.qualname == qualname and kind == node_kind:

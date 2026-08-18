@@ -226,7 +226,7 @@ def _complete_noop_result(repo: GitRepo, store: Store, manifest: dict[str, Any],
     warmed_files = manifest.get("warmed_files")
     if not isinstance(warmed_files, dict) or len(warmed_files) != len(paths):
         return None
-    current = {path: repo.blob_sha(path) for path in paths}
+    current = repo.blob_shas(paths)
     if warmed_files != current:
         return None
     if manifest.get("derivation_versions") != _manifest_derivation_versions(paths):
@@ -552,22 +552,23 @@ def warm_repo(repo_root: str | Path) -> dict[str, Any]:
             failed_files = {}
 
         paths = _warmable_paths(repo)
-        if any(path.endswith(".java") for path in paths):
-            from .java_project import java_repository_snapshot
-            java_repository_snapshot(repo)
-            setattr(repo, "_tmf_java_snapshot_pinned", True)
         if "claim_inventory" not in manifest or "reverse_index" not in manifest:
             manifest = _upgrade_complete_manifest(repo, store, manifest_path, manifest, paths)
         noop_result = _complete_noop_result(repo, store, manifest, paths)
         if noop_result is not None:
             return noop_result
+        current_blobs = repo.blob_shas(paths)
+        if any(path.endswith(".java") for path in paths):
+            from .java_project import java_repository_snapshot
+            java_repository_snapshot(repo)
+            setattr(repo, "_tmf_java_snapshot_pinned", True)
         expected_inventory = manifest.get("claim_inventory")
         integrity_repair = (
             manifest.get("coverage") == "complete"
             and isinstance(expected_inventory, dict)
             and expected_inventory != _claim_inventory(store)
         )
-        changed_paths = {path for path in paths if previous.get(path) != repo.blob_sha(path)}
+        changed_paths = {path for path in paths if previous.get(path) != current_blobs.get(path)}
         legacy_java_paths, legacy_java_claims = _legacy_java_relationship_owners(store, set(paths))
         stored_derivation_versions = manifest.get("derivation_versions")
         current_derivation_versions = _manifest_derivation_versions(paths)
@@ -617,7 +618,7 @@ def warm_repo(repo_root: str | Path) -> dict[str, Any]:
         derived = 0
         skipped = 0
         for relpath in paths:
-            blob = repo.blob_sha(relpath)
+            blob = current_blobs.get(relpath)
             warmed_files[relpath] = blob
             path_claims = claims_by_path.get(relpath, []) if claims_by_path is not None else None
             # When warm has checkpointed this exact repo blob, the claims were

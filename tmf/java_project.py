@@ -2,13 +2,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import PurePosixPath
+from pathlib import Path
+import hashlib
+import json
+import os
 import re
+import tempfile
 import xml.etree.ElementTree as ET
-from typing import Any
+from typing import Any, Iterator, Mapping
+
+from .derivation_versions import JAVA_DERIVATION_VERSION
 
 
 _BUILD_FILES = {"pom.xml", "build.gradle", "build.gradle.kts"}
 _SETTINGS_FILES = {"settings.gradle", "settings.gradle.kts"}
+_JAVA_SNAPSHOT_CACHE_VERSION = "java.snapshot.v1"
 
 
 @dataclass(frozen=True)
@@ -35,20 +43,241 @@ class JavaModuleDependency:
     resolution: str
 
 
-@dataclass(frozen=True)
-class JavaRepositorySnapshot:
-    """One-warm immutable view of Java source facts.
+class _LazyTextMap(Mapping[str, str]):
+    def __init__(self, snapshot: "JavaRepositorySnapshot") -> None:
+        self.snapshot = snapshot
+        self._cache: dict[str, str] = {}
 
-    Cross-file resolvers must use this view instead of independently walking
-    the repository.  It is deliberately scoped to a GitRepo instance; the
-    caller can discard the repo to obtain a fresh snapshot after edits.
+    def __getitem__(self, path: str) -> str:
+        if path not in self.snapshot._path_set:
+            raise KeyError(path)
+        if path not in self._cache:
+            self._cache[path] = self.snapshot._read_pinned_text(path)
+            self.snapshot.loaded_text_count += 1
+        return self._cache[path]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.snapshot.paths)
+
+    def __len__(self) -> int:
+        return len(self.snapshot.paths)
+
+    def __contains__(self, path: object) -> bool:
+        return path in self.snapshot._path_set
+
+
+class _LazyNodeMap(Mapping[str, tuple[Any, ...]]):
+    def __init__(self, snapshot: "JavaRepositorySnapshot", kind: str) -> None:
+        self.snapshot = snapshot
+        self.kind = kind
+
+    def __getitem__(self, path: str) -> tuple[Any, ...]:
+        if path not in self.snapshot._path_set:
+            raise KeyError(path)
+        return self.snapshot._nodes(path)[0 if self.kind == "classes" else 1]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self.snapshot.paths)
+
+    def __len__(self) -> int:
+        return len(self.snapshot.paths)
+
+    def __contains__(self, path: object) -> bool:
+        return path in self.snapshot._path_set
+
+
+class JavaRepositorySnapshot:
+    """A pinned repository view whose source and syntax facts load per file.
+
+    ``paths`` and worktree blob identities are fixed at construction. Source
+    text remains authoritative and is read only on access. Parsed class/method
+    facts use path+blob+schema+derivation-version shards; shards never contain
+    source text. A compact symbol manifest lets ordinary type resolution avoid
+    opening every per-file shard on later processes.
     """
 
-    paths: tuple[str, ...]
-    texts: dict[str, str]
-    classes: dict[str, tuple[Any, ...]]
-    methods: dict[str, tuple[Any, ...]]
-    fingerprint: tuple[tuple[str, int, int], ...]
+    def __init__(self, repo: Any, paths: tuple[str, ...], blobs: dict[str, str | None], fingerprint: tuple[tuple[str, int, int], ...]) -> None:
+        self.repo = repo
+        self.paths = paths
+        self.blobs = dict(blobs)
+        self.fingerprint = fingerprint
+        self._path_set = frozenset(paths)
+        self._parsed: dict[str, tuple[tuple[Any, ...], tuple[Any, ...]]] = {}
+        self.texts: Mapping[str, str] = _LazyTextMap(self)
+        self.classes: Mapping[str, tuple[Any, ...]] = _LazyNodeMap(self, "classes")
+        self.methods: Mapping[str, tuple[Any, ...]] = _LazyNodeMap(self, "methods")
+        self.loaded_text_count = 0
+        self.loaded_shard_count = 0
+        self.parsed_source_count = 0
+        self._manifest_symbols: list[dict[str, Any]] | None = None
+
+    @property
+    def cache_dir(self) -> Path:
+        return Path(self.repo.root) / ".tmf" / "java_snapshot" / _JAVA_SNAPSHOT_CACHE_VERSION
+
+    @property
+    def manifest_path(self) -> Path:
+        return self.cache_dir / "manifest.json"
+
+    def _shard(self, path: str) -> Path:
+        return self.cache_dir / (hashlib.sha256(path.encode("utf-8")).hexdigest() + ".json")
+
+    def _verify_pinned_blob(self, path: str) -> None:
+        if self.repo.blob_sha(path) != self.blobs.get(path):
+            raise OSError(f"Java source changed after snapshot creation: {path}")
+
+    def _verify_all_pinned_blobs(self) -> None:
+        current = self.repo.blob_shas(self.paths)
+        for path in self.paths:
+            if current.get(path) != self.blobs.get(path):
+                raise OSError(f"Java source changed after snapshot creation: {path}")
+
+    def _read_pinned_text(self, path: str) -> str:
+        """Read source only if it still matches this snapshot's pinned blob.
+
+        Lazy loading creates a gap between snapshot construction and first
+        access. Refuse to combine bytes from a later worktree state with the
+        earlier blob identity; the caller can create a fresh GitRepo/snapshot.
+        """
+        expected = self.blobs.get(path)
+        self._verify_pinned_blob(path)
+        text = self.repo.read_file(path)
+        if self.repo.blob_sha(path) != expected:
+            raise OSError(f"Java source changed while snapshot was reading: {path}")
+        return text
+
+    def _nodes(self, path: str) -> tuple[tuple[Any, ...], tuple[Any, ...]]:
+        cached = self._parsed.get(path)
+        if cached is not None:
+            return cached
+        # Validate even on a shard hit: lazy access must never expose facts
+        # for the pinned blob after the worktree has moved to different bytes.
+        self._verify_pinned_blob(path)
+        from .extract import ClassNode
+        from .java_extract import extract_java_classes, extract_java_methods
+        blob = self.blobs.get(path)
+        shard = self._shard(path)
+        try:
+            payload = json.loads(shard.read_text(encoding="utf-8"))
+            if not (
+                payload.get("version") == _JAVA_SNAPSHOT_CACHE_VERSION
+                and payload.get("derivation_version") == JAVA_DERIVATION_VERSION
+                and payload.get("path") == path
+                and payload.get("blob") == blob
+                and "text" not in payload
+            ):
+                raise ValueError("stale Java snapshot shard")
+            result = (
+                tuple(ClassNode(**item) for item in payload["classes"]),
+                tuple(ClassNode(**item) for item in payload["methods"]),
+            )
+            self.loaded_shard_count += 1
+        except (OSError, UnicodeError, json.JSONDecodeError, AttributeError, KeyError, TypeError, ValueError):
+            text = self.texts[path]
+            try:
+                result = (tuple(extract_java_classes(path, text)), tuple(extract_java_methods(path, text)))
+            except ImportError:
+                result = ((), ())
+            self.parsed_source_count += 1
+            serialized = {
+                "version": _JAVA_SNAPSHOT_CACHE_VERSION,
+                "derivation_version": JAVA_DERIVATION_VERSION,
+                "path": path,
+                "blob": blob,
+                "classes": [item.__dict__ for item in result[0]],
+                "methods": [item.__dict__ for item in result[1]],
+            }
+            self._atomic_json(shard, serialized)
+        self._parsed[path] = result
+        return result
+
+    def _atomic_json(self, path: Path, payload: Any) -> None:
+        temporary: Path | None = None
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=path.parent, prefix=".tmp-", delete=False) as handle:
+                temporary = Path(handle.name)
+                json.dump(payload, handle, sort_keys=True, separators=(",", ":"))
+                handle.flush(); os.fsync(handle.fileno())
+            os.replace(temporary, path)
+        except OSError:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+
+    @staticmethod
+    def _valid_manifest_symbol(item: Any, paths: frozenset[str]) -> bool:
+        if not isinstance(item, dict) or item.get("path") not in paths:
+            return False
+        required_strings = ("fqn", "simple_name", "path", "package", "module", "source_set")
+        return all(isinstance(item.get(key), str) for key in required_strings) and isinstance(item.get("generated"), bool)
+
+    def symbol_manifest(self) -> list[dict[str, Any]]:
+        # A compact manifest is another lazy facts cache, so it must obey the
+        # same pinned-source invariant as per-file shards on every access.
+        self._verify_all_pinned_blobs()
+        if self._manifest_symbols is not None:
+            return self._manifest_symbols
+        expected = {path: self.blobs.get(path) for path in self.paths}
+        reusable_blobs: dict[str, Any] = {}
+        reusable_by_path: dict[str, list[dict[str, Any]]] = {}
+        try:
+            payload = json.loads(self.manifest_path.read_text(encoding="utf-8"))
+            if (
+                payload.get("version") == _JAVA_SNAPSHOT_CACHE_VERSION
+                and payload.get("derivation_version") == JAVA_DERIVATION_VERSION
+                and isinstance(payload.get("blobs"), dict)
+                and isinstance(payload.get("symbols"), list)
+                and all(self._valid_manifest_symbol(item, self._path_set) for item in payload["symbols"])
+            ):
+                reusable_blobs = payload["blobs"]
+                for item in payload["symbols"]:
+                    reusable_by_path.setdefault(item["path"], []).append(item)
+                if reusable_blobs == expected:
+                    self._manifest_symbols = payload["symbols"]
+                    return self._manifest_symbols
+        except (OSError, UnicodeError, json.JSONDecodeError, AttributeError):
+            pass
+        package_re = re.compile(r"(?m)^\s*package\s+([A-Za-z_][\w.]*)\s*;")
+        symbols: list[dict[str, Any]] = []
+        model = java_project_model(self.repo)
+        for path in self.paths:
+            if reusable_blobs.get(path) == expected[path] and path in reusable_blobs:
+                symbols.extend(reusable_by_path.get(path, ()))
+                continue
+            text = self.texts.get(path)
+            if text is None:
+                continue
+            package_match = package_re.search(text)
+            package = package_match.group(1) if package_match else ""
+            location = model.source_for(path)
+            for node in self.classes.get(path, ()):
+                if node.node_kind not in {"class", "interface", "enum", "record"} or "." in node.qualname:
+                    continue
+                simple = node.qualname
+                symbols.append({
+                    "fqn": f"{package}.{simple}" if package else simple,
+                    "simple_name": simple, "path": path, "package": package,
+                    "module": location.module if location else "root",
+                    "source_set": location.source_set if location else "unclassified",
+                    "generated": location.generated if location else False,
+                })
+        self._manifest_symbols = symbols
+        self._atomic_json(self.manifest_path, {
+            "version": _JAVA_SNAPSHOT_CACHE_VERSION,
+            "derivation_version": JAVA_DERIVATION_VERSION,
+            "blobs": expected,
+            "symbols": symbols,
+        })
+        return symbols
+
+    def cleanup_stale_shards(self) -> None:
+        if not self.cache_dir.is_dir():
+            return
+        active = {self._shard(path) for path in self.paths}
+        for stale in self.cache_dir.glob("*.json"):
+            if stale.name != "manifest.json" and stale not in active:
+                try: stale.unlink()
+                except OSError: pass
 
 
 class JavaProjectModel:
@@ -61,7 +290,7 @@ class JavaProjectModel:
 
     def _tracked_paths(self) -> list[str]:
         try:
-            return [path for path in self.repo.run("ls-files").splitlines() if path]
+            return self.repo.ls_files()
         except Exception:
             return sorted(
                 str(path.relative_to(self.repo.root)).replace("\\", "/")
@@ -265,9 +494,7 @@ def java_project_model(repo: Any) -> JavaProjectModel:
 
 
 def java_repository_snapshot(repo: Any) -> JavaRepositorySnapshot:
-    """Build and cache repository-wide Java facts once per repo instance."""
-    from .java_extract import extract_java_classes, extract_java_methods
-
+    """Create a pinned lazy Java view without reading or parsing source files."""
     cached = getattr(repo, "_tmf_java_repository_snapshot", None)
     if cached is not None and getattr(repo, "_tmf_java_snapshot_pinned", False):
         return cached
@@ -275,28 +502,12 @@ def java_repository_snapshot(repo: Any) -> JavaRepositorySnapshot:
     paths = tuple(model.java_paths())
     fingerprint = tuple(
         (path, (repo.root / path).stat().st_mtime_ns, (repo.root / path).stat().st_size)
-        for path in paths
-        if (repo.root / path).is_file()
+        for path in paths if (repo.root / path).is_file()
     )
     if cached is not None and cached.fingerprint == fingerprint:
         return cached
-    texts: dict[str, str] = {}
-    classes: dict[str, tuple[Any, ...]] = {}
-    methods: dict[str, tuple[Any, ...]] = {}
-    for path in paths:
-        try:
-            text = repo.read_file(path)
-            texts[path] = text
-            try:
-                classes[path] = tuple(extract_java_classes(path, text))
-                methods[path] = tuple(extract_java_methods(path, text))
-            except ImportError:
-                # Preserve the existing Java parser degradation path: the
-                # source cache remains useful, but no syntax facts are claimed.
-                classes[path] = ()
-                methods[path] = ()
-        except (OSError, UnicodeError):
-            continue
-    snapshot = JavaRepositorySnapshot(paths, texts, classes, methods, fingerprint)
+    blobs = repo.blob_shas(paths) if hasattr(repo, "blob_shas") else {path: repo.blob_sha(path) for path in paths}
+    snapshot = JavaRepositorySnapshot(repo, paths, blobs, fingerprint)
+    snapshot.cleanup_stale_shards()
     setattr(repo, "_tmf_java_repository_snapshot", snapshot)
     return snapshot
