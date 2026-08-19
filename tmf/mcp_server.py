@@ -178,6 +178,7 @@ class McpService:
                 boundary_types={"function", "declaration", "class", "topic"},
                 max_nodes=min(HARD_MAX_NODES, max(2, edge_budget * 2 + 1)),
                 max_edges=min(HARD_MAX_EDGES, edge_budget - len(out)),
+                semantic_boundaries=True,
             )
             for item in fragment["verified_hops"]:
                 endpoints = item["endpoints"]
@@ -207,11 +208,13 @@ class McpService:
         boundary_types: list[str],
         max_nodes: int = HARD_MAX_NODES,
         max_edges: int = HARD_MAX_EDGES,
+        semantic_boundaries: bool = True,
     ) -> dict[str, Any]:
         return bounded_fragment(
             self.repo, self.store, entry=str(entry), relations=relations,
             hop_limit=int(hop_limit), boundary_types=boundary_types,
             max_nodes=int(max_nodes), max_edges=int(max_edges),
+            semantic_boundaries=bool(semantic_boundaries),
         )
 
     def tmf_context(self, question: str, max_chars: int | None = None) -> dict[str, Any]:
@@ -334,7 +337,7 @@ def tools_list() -> list[dict[str, Any]]:
     reverse_props = {"claim_id": {"type": "string"}, "qualname": {"type": "string"}, "path": {"type": "string"}}
     return [
         {"name": "tmf_context", "description": first + "Return one deterministic thin context bundle with anchors and key fresh graph relations." + trust, "inputSchema": schema({"question": {"type": "string"}, "max_chars": {"type": "integer", "minimum": 180}}, ["question"])},
-        {"name": "tmf_fragment", "description": "Return a strictly bounded evidence fragment from the rebuildable endpoint index; a fragment is not a graph." + trust, "inputSchema": schema({"entry": {"type": "string"}, "relations": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "hop_limit": {"type": "integer", "minimum": 0, "maximum": 4}, "boundary_types": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "max_nodes": {"type": "integer", "minimum": 1, "maximum": 64}, "max_edges": {"type": "integer", "minimum": 1, "maximum": 128}}, ["entry", "relations", "hop_limit", "boundary_types"])},
+        {"name": "tmf_fragment", "description": "Return a strictly bounded evidence fragment from the rebuildable endpoint index; a fragment is not a graph." + trust, "inputSchema": schema({"entry": {"type": "string"}, "relations": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "hop_limit": {"type": "integer", "minimum": 0, "maximum": 4}, "boundary_types": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "max_nodes": {"type": "integer", "minimum": 1, "maximum": 64}, "max_edges": {"type": "integer", "minimum": 1, "maximum": 128}, "semantic_boundaries": {"type": "boolean"}}, ["entry", "relations", "hop_limit", "boundary_types"])},
         {"name": "tmf_retrieve", "description": first + "Retrieve thin TMF claims for a lexical query." + trust, "inputSchema": schema({"query": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 50}}, ["query"])},
         {"name": "tmf_explain", "description": "Explain one claim; full=true includes thick body/source-bound details." + trust, "inputSchema": schema({"claim_id": {"type": "string"}, "full": {"type": "boolean"}}, ["claim_id"])},
         {"name": "tmf_callers", "description": "List known callers by claim_id or by qualname plus optional path; ambiguous names return candidates, never a guess." + trust, "inputSchema": schema(reverse_props)},

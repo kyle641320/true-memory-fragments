@@ -1,0 +1,64 @@
+"""Test semantic boundary detection for bounded_fragment."""
+import unittest
+from tmf.boundary_detection import is_semantic_boundary
+from tmf.store import Store
+
+
+class TestSemanticBoundaries(unittest.TestCase):
+    def test_semantic_boundary_detection_with_writes(self):
+        """Verify that methods with writes edges are detected as boundaries."""
+        store = Store(":memory:")
+        
+        # Create a method claim
+        method_id = store.add_claim(
+            claim="Method processOrder in OrderService",
+            kind="structure",
+            scope="declaration",
+            bindings=[],
+            provenance="test",
+            evidence="test",
+            confidence=1.0,
+            body={"qualname": "com.example.OrderService.processOrder"}
+        )
+        
+        # Add a writes edge from this method
+        store.add_claim(
+            claim="processOrder writes to order_table",
+            kind="data_flow",
+            scope="writes",
+            bindings=[],
+            provenance="test",
+            evidence="test",
+            confidence=1.0,
+            body={
+                "edge_kind": "writes",
+                "from_id": method_id,
+                "to_resource": "order_table"
+            }
+        )
+        
+        # This method should be detected as a boundary
+        self.assertTrue(is_semantic_boundary(store, method_id))
+    
+    def test_semantic_boundary_detection_without_edges(self):
+        """Verify that plain methods without persistence edges are not boundaries."""
+        store = Store(":memory:")
+        
+        # Create a plain method with no writes/publishes
+        method_id = store.add_claim(
+            claim="Method calculateTotal in OrderService",
+            kind="structure",
+            scope="declaration",
+            bindings=[],
+            provenance="test",
+            evidence="test",
+            confidence=1.0,
+            body={"qualname": "com.example.OrderService.calculateTotal"}
+        )
+        
+        # No writes/publishes edges - should not be a boundary
+        self.assertFalse(is_semantic_boundary(store, method_id))
+
+
+if __name__ == "__main__":
+    unittest.main()

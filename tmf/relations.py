@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Iterable
 
+from .boundary_detection import is_semantic_boundary
 from .derivation_versions import versions_for_path
 from .freshness import Freshness, check_freshness
 from .git import GitRepo
@@ -125,12 +126,23 @@ def bounded_fragment(
     boundary_types: Iterable[str],
     max_nodes: int = HARD_MAX_NODES,
     max_edges: int = HARD_MAX_EDGES,
+    semantic_boundaries: bool = True,
 ) -> dict[str, Any]:
-    """Return a bounded evidence fragment. This is a query result, not a graph."""
+    """Return a bounded evidence fragment. This is a query result, not a graph.
+    
+    Args:
+        semantic_boundaries: If True, use semantic boundary detection (writes/publishes)
+                           instead of scope-based boundary_types for Java/enterprise code.
+                           Semantic detection identifies persistence and message queue boundaries
+                           by checking indexed writes/publishes_to edges.
+                           Declaration annotations (@Transactional, @Async) are not currently
+                           indexed as reverse edges and cannot be used for boundary detection.
+                           Legacy scope-based detection remains as fallback when disabled.
+    """
     relation_set = {str(kind) for kind in relations}
     boundaries_set = {str(scope) for scope in boundary_types}
-    if not entry or not relation_set or not boundaries_set or hop_limit < 0:
-        raise ValueError("entry, relations, hop_limit, and boundary_types are required and non-empty")
+    if not entry or not relation_set or hop_limit < 0:
+        raise ValueError("entry, relations, and hop_limit are required and non-empty")
     unknown_relations = relation_set.difference(EDGE_ENDPOINT_FIELDS)
     if unknown_relations:
         raise ValueError(f"unsupported relations: {sorted(unknown_relations)}")
@@ -185,7 +197,7 @@ def bounded_fragment(
             if remaining <= 0:
                 stop_reason = "max_edges"
                 break
-            edge_ids = store.index.edge_ids(endpoint, relation_set, remaining + 1)
+            edge_ids = store.index.edge_ids(endpoint, relation_kinds=relation_set, limit=remaining + 1)
             if edge_ids is None:
                 gaps.append({"at": endpoint, "reason": "endpoint_edge_index_missing"})
                 stop_reason = "index_missing"
@@ -242,7 +254,17 @@ def bounded_fragment(
                 
                 for claim_id in new_ids:
                     claim = endpoint_claims[claim_id]
-                    if claim.scope in boundaries_set:
+                    
+                    # Determine if this is a boundary
+                    is_boundary = False
+                    if semantic_boundaries:
+                        # Semantic detection: check for @Transactional, @Async, writes, publishes_to
+                        is_boundary = is_semantic_boundary(store, claim_id)
+                    else:
+                        # Legacy scope-based detection
+                        is_boundary = claim.scope in boundaries_set
+                    
+                    if is_boundary:
                         boundaries.append({**_hint(claim), "reached_at_hop": hop})
                     else:
                         # Async handoff edges don't contribute to synchronous frontier
