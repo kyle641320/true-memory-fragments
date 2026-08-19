@@ -14,6 +14,10 @@ HARD_MAX_NODES = 64
 HARD_MAX_EDGES = 128
 HARD_MAX_HOPS = 4
 
+# Async handoff relations: these represent asynchronous message passing,
+# not synchronous call flow
+ASYNC_RELATIONS = frozenset(["publishes_to", "subscribes_to", "publishes_type", "listens_type"])
+
 
 @dataclass
 class RequestFreshnessCache:
@@ -64,6 +68,50 @@ def _hint(claim: Claim) -> dict[str, Any]:
         "path": claim.bindings[0].path if claim.bindings else None,
         "scope": claim.scope,
         "anchor": anchor,
+    }
+
+
+def _classify_branching(
+    edges: list[tuple[str, str, list[str]]],  # (edge_id, relation_kind, endpoint_ids)
+) -> dict[str, Any]:
+    """
+    Classify routing shape into single/branching/unresolved tri-state.
+    
+    Returns:
+        {
+            "shape": "single" | "branching" | "unresolved",
+            "next_hop_count": int,
+            "polymorphic": bool,  # True if contains override edges
+            "async_handoff": bool,  # True if contains async message edges
+        }
+    """
+    if not edges:
+        return {"shape": "unresolved", "next_hop_count": 0, "polymorphic": False, "async_handoff": False}
+    
+    next_hops = set()
+    has_override = False
+    has_async = False
+    
+    for edge_id, relation_kind, endpoint_ids in edges:
+        if relation_kind == "overrides":
+            has_override = True
+        if relation_kind in ASYNC_RELATIONS:
+            has_async = True
+        next_hops.update(endpoint_ids)
+    
+    count = len(next_hops)
+    if count == 0:
+        shape = "unresolved"
+    elif count == 1:
+        shape = "single"
+    else:
+        shape = "branching"
+    
+    return {
+        "shape": shape,
+        "next_hop_count": count,
+        "polymorphic": has_override,
+        "async_handoff": has_async,
     }
 
 
@@ -124,8 +172,14 @@ def bounded_fragment(
     nodes[entry] = entry_claim
     frontier = [entry]
     seen_edges: set[str] = set()
+    
+    # Track routing shape per hop
+    routing_by_hop: dict[int, dict[str, Any]] = {}
+    
     for hop in range(1, hop_limit + 1):
         next_frontier: list[str] = []
+        hop_edges: list[tuple[str, str, list[str]]] = []  # (edge_id, relation_kind, endpoint_ids)
+        
         for endpoint in frontier:
             remaining = max_edges - len(edges)
             if remaining <= 0:
@@ -170,21 +224,36 @@ def bounded_fragment(
                     stop_reason = "max_nodes"
                     break
                 nodes.update(endpoint_claims)
+                
+                # Classify edge for routing shape analysis
+                is_async = kind in ASYNC_RELATIONS
+                
                 edges.append({
                     "hop": hop,
                     "edge_id": edge_id,
                     "relation_kind": kind,
                     "endpoints": endpoint_ids,
                     "endpoint_hints": {field: _hint(endpoint_claims[value]) for field, value in endpoint_ids.items()},
+                    "async_handoff": is_async,
                 })
+                
+                # Collect for routing shape analysis
+                hop_edges.append((edge_id, kind, list(endpoint_ids.values())))
+                
                 for claim_id in new_ids:
                     claim = endpoint_claims[claim_id]
                     if claim.scope in boundaries_set:
                         boundaries.append({**_hint(claim), "reached_at_hop": hop})
                     else:
-                        next_frontier.append(claim_id)
+                        # Async handoff edges don't contribute to synchronous frontier
+                        if not is_async:
+                            next_frontier.append(claim_id)
             if stop_reason in {"max_nodes", "max_edges"}:
                 break
+        
+        # Analyze routing shape for this hop
+        routing_by_hop[hop] = _classify_branching(hop_edges)
+        
         frontier = sorted(set(next_frontier))
         if stop_reason in {"max_nodes", "max_edges"} or not frontier:
             break
@@ -202,4 +271,5 @@ def bounded_fragment(
         "stale_or_unknown": stale_or_unknown,
         "stop_reason": stop_reason,
         "coverage": coverage,
+        "routing_shape": routing_by_hop,
     }

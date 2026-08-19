@@ -64,7 +64,7 @@ class BoundedRelationTests(unittest.TestCase):
         service = McpService(self.repo)
         fragment = service.tmf_fragment(self.entry, ["calls"], 1, ["function"], 4, 2)
         self.assertEqual(
-            {"entry", "verified_hops", "boundaries", "gaps", "stale_or_unknown", "stop_reason", "coverage"},
+            {"entry", "verified_hops", "boundaries", "gaps", "stale_or_unknown", "stop_reason", "coverage", "routing_shape"},
             set(fragment),
         )
         service.store.index.close()

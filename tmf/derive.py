@@ -505,6 +505,7 @@ def derive_contract_claim(repo: GitRepo, fn: FunctionNode, graph: dict | None = 
     if evidence == "observed":
         return verify_observed_claim(claim, text)
     claim.body["verification"] = {"method": "semantic-contract-sanitizer", "supported": True, "evidence": "inferred"}
+    claim.body["tier"] = "understanding"
     return claim
 
 
@@ -572,6 +573,7 @@ def derive_java_contract_claim(repo: GitRepo, node: ClassNode, graph: dict | Non
     if evidence == "observed":
         return verify_observed_claim(claim, text)
     claim.body["verification"] = {"method": "semantic-contract-sanitizer", "supported": True, "evidence": "inferred"}
+    claim.body["tier"] = "understanding"
     return claim
 
 def derive_config_claim(repo: GitRepo, node: ConfigNode) -> Claim:
