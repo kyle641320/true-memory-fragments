@@ -185,6 +185,24 @@ class Util { void f() {} }
                 {(item["target_id"], item["resolution"]) for item in graph["callees"]},
             )
 
+    def test_generic_method_overload_uses_builtin_object_supertype(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {
+                "base/Preconditions.java": "package base; public class Preconditions { public static <T> T checkNotNull(T reference) { return reference; } public static <T> T checkNotNull(T reference, Object errorMessage) { return reference; } }\n",
+                "app/Example.java": "package app; import static base.Preconditions.checkNotNull; class Example { void validate(String input, String message) { checkNotNull(input, message); } }\n",
+            })
+            warm_repo(repo)
+            validate_id = stable_java_node_claim_id("app/Example.java", "Example.validate", "method")
+            two_arg_id = stable_java_node_claim_id(
+                "base/Preconditions.java", "Preconditions.checkNotNull", "method", "Preconditions.checkNotNull(T,Object)")
+            one_arg_id = stable_java_node_claim_id(
+                "base/Preconditions.java", "Preconditions.checkNotNull", "method", "Preconditions.checkNotNull(T)")
+            graph = Store(repo).get_claim(validate_id).body["graph"]
+            targets = {item["target_id"] for item in graph["callees"]}
+            self.assertIn(two_arg_id, targets)
+            self.assertNotIn(one_arg_id, targets)
+            self.assertEqual([], graph["unresolved_calls"])
+
     def test_direct_parent_and_super_calls_resolve_without_runtime_dispatch_guessing(self):
         with tempfile.TemporaryDirectory() as td:
             repo = init_repo(Path(td), {

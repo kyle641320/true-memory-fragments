@@ -2456,7 +2456,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
     tree = parser.parse(source_bytes)
     root = tree.root_node
     java_classes = extract_java_classes(path, source)
-    explicit_imports, _wildcards = _java_imports(source_bytes, root)
+    explicit_imports, _wildcards, static_imports = _java_imports(source_bytes, root)
     project_index = None
     package = ""
     if repo is not None:
@@ -2575,6 +2575,13 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                 or source_ref.type_arguments or target_ref.type_arguments
                 or source_ref.wildcard or target_ref.wildcard):
             return None
+
+        # Built-in JDK type hierarchy: every reference type extends Object
+        if target_ref.simple_name == "Object" and target_ref.erased in ("Object", "java.lang.Object"):
+            if source_ref.simple_name == "Object" and source_ref.erased in ("Object", "java.lang.Object"):
+                return None  # Same type, not an upcast
+            # Any non-Object reference type is 1 step from Object
+            return 1
 
         def resolve_ref(ref: Any) -> tuple[str, str] | None:
             local = [c for c in java_classes if c.qualname == ref.simple_name]
@@ -2892,6 +2899,23 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                                 callee, parent_reason = unique_method(inherited_parent_methods(class_qual), name, argc, argument_types)
                                 if callee is not None:
                                     add_edge(current_method, callee, "java_direct_parent_method")
+                                elif name in static_imports:
+                                    # Static import fallback: checkNotNull(...) -> Preconditions.checkNotNull
+                                    declaring_class_simple, declaring_class_path = static_imports[name]
+                                    if repo is not None:
+                                        try:
+                                            declaring_source = repo.read_file(declaring_class_path)
+                                            methods = methods_for(declaring_class_path, declaring_source)
+                                            methods = [m for m in methods if m.qualname.endswith("." + name)]
+                                            callee, match_reason = unique_method(methods, name, argc, argument_types)
+                                            if callee is not None:
+                                                add_edge(current_method, callee, "java_static_import_method")
+                                            else:
+                                                add_unresolved(current_method, name, match_reason or "java_static_import_method_overload_mismatch")
+                                        except Exception:
+                                            add_unresolved(current_method, name, "java_static_import_declaring_class_not_found")
+                                    else:
+                                        add_unresolved(current_method, name, "java_static_import_no_repo")
                                 else:
                                     add_unresolved(current_method, name, parent_reason or "java_parent_method_not_found")
                             else:
@@ -3080,7 +3104,7 @@ def resolve_java_field_edges(path: str, source: str, java_methods: list[ClassNod
     source_bytes = source.encode("utf-8")
     tree = parser.parse(source_bytes)
     root = tree.root_node
-    explicit_imports, _wildcards = _java_imports(source_bytes, root)
+    explicit_imports, _wildcards, static_imports = _java_imports(source_bytes, root)
     methods_by_qual = {m.qualname: m for m in java_methods if m.node_kind == "method"}
     fields_by_class = _field_index_by_class(java_fields)
     if inherit_edges is None:
@@ -3341,7 +3365,7 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
     source_bytes = source.encode("utf-8")
     tree = parser.parse(source_bytes)
     root = tree.root_node
-    explicit_imports, wildcard_imports = _java_imports(source_bytes, root)
+    explicit_imports, wildcard_imports, static_imports = _java_imports(source_bytes, root)
     project_index = None
     if repo is not None:
         from .java_index import java_project_index
@@ -3692,22 +3716,48 @@ def _type_list_names(source_bytes: bytes, node: Any | None) -> list[str]:
     return out
 
 
-def _java_imports(source_bytes: bytes, root: Any) -> tuple[dict[str, str], set[str]]:
+def _java_imports(source_bytes: bytes, root: Any) -> tuple[dict[str, str], set[str], dict[str, tuple[str, str]]]:
+    """Parse Java imports.
+    
+    Returns:
+        explicit: {simple_class_name: path_to_class.java}
+        wildcard_packages: {package.name}
+        static_imports: {member_simple_name: (declaring_class_simple_name, declaring_class_path)}
+    """
     explicit: dict[str, str] = {}
     wildcard_packages: set[str] = set()
+    static_imports: dict[str, tuple[str, str]] = {}
+    
     for child in _named_children(root):
         if child.type != "import_declaration":
             continue
         text = _node_text(source_bytes, child).strip()
         body = text[len("import"):].strip().rstrip(";").strip()
-        if body.startswith("static "):
+        is_static = body.startswith("static ")
+        if is_static:
             body = body[len("static "):].strip()
+        
         if body.endswith(".*"):
             wildcard_packages.add(body[:-2])
             continue
-        if body:
+        
+        if not body:
+            continue
+            
+        if is_static:
+            # Static import: body is like "com.google.common.base.Preconditions.checkNotNull"
+            # Split into declaring class and member
+            if "." in body:
+                declaring_class_qualname = body.rsplit(".", 1)[0]
+                member_name = body.rsplit(".", 1)[1]
+                declaring_class_simple = _simple_name(declaring_class_qualname)
+                declaring_class_path = declaring_class_qualname.replace(".", "/") + ".java"
+                static_imports[member_name] = (declaring_class_simple, declaring_class_path)
+        else:
+            # Regular import
             explicit[_simple_name(body)] = body.replace(".", "/") + ".java"
-    return explicit, wildcard_packages
+    
+    return explicit, wildcard_packages, static_imports
 
 
 def _top_level_java_types(path: str, source: str) -> dict[str, list[ClassNode]]:
@@ -3767,7 +3817,7 @@ def resolve_java_inherit_edges(path: str, source: str, java_classes: list[ClassN
     source_bytes = source.encode("utf-8")
     tree = parser.parse(source_bytes)
     root = tree.root_node
-    explicit_imports, wildcard_imports = _java_imports(source_bytes, root)
+    explicit_imports, wildcard_imports, static_imports = _java_imports(source_bytes, root)
     type_nodes = [node for node in java_classes if node.node_kind in {"class", "interface"}]
     by_qual = {node.qualname: node for node in type_nodes}
     same_file_by_simple: dict[str, list[ClassNode]] = {}
