@@ -272,7 +272,7 @@ Four git hooks automatically generate function-level invalidation manifests afte
 - `.git/hooks/post-checkout` — after branch switches
 - `.git/hooks/post-rewrite` — after rebase/amend
 
-These hooks call `scripts/tmf-git-freshness-calibrate.py`, which compares `baseline_rev → HEAD` Python function signature changes and outputs structured invalidation manifests.
+These hooks call `integrations/reflex/scripts/git_calibrate.py`, which compares `baseline_rev → HEAD` Python function signature changes and outputs structured invalidation manifests.
 
 ### OpenClaw Plugin Integration
 
@@ -281,7 +281,7 @@ The `tmf-reflex` OpenClaw plugin intercepts agent tool calls:
 - Checks TMF function-level freshness (2ms per file)
 - Hard-blocks when agent touches a file with stale function claims
 - Returns `requireApproval` with exact changed function names
-- Agent must run `scripts/tmf-local-warm.py` to re-warm that one file
+- Agent must run `integrations/reflex/scripts/local_warm.py` to re-warm that one file
 
 ### SessionStart Cognition Calibration
 
@@ -296,12 +296,12 @@ On new session start, the plugin reads unconsumed invalidation manifests and inj
 
 ### Installation
 
-Reflex hook code lives in `/root/.openclaw/workspace/projects/tmf-reflex-hook`. See that directory's `README.md` and `DESIGN.md` for:
+Reflex integration code lives in `integrations/reflex/`. See that directory's `README.md` and `DESIGN.md` for:
 
-- OpenClaw plugin installation
-- Git hook setup for target repositories
-- Claude Code / Codex harness configuration
-- Health validation tests
+- OpenClaw plugin installation (`openclaw-plugin/`)
+- Git hook setup (`git-hooks/`)
+- Claude Code / Codex harness configuration (`examples/`)
+- Health validation tests (`tests/`)
 
 ## Documentation
 
