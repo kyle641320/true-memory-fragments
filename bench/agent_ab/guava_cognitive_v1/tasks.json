@@ -1,0 +1,110 @@
+{
+  "suite": "guava_cognitive_v1",
+  "schema": "agent_ab.tasks.v1",
+  "protocol": "PROTOCOL.md",
+  "fixture_root": "fixtures",
+  "arms": ["no_tool", "tmf_thin", "tmf_full"],
+  "compile": {
+    "classpath_file": "classpath.txt",
+    "package_dir": "com/google/common/eventbus",
+    "javac_flags": ["-nowarn"]
+  },
+  "tasks": [
+    {
+      "id": "B01",
+      "fixture": "B01",
+      "kind": "impact_reasoning",
+      "question": "In this Guava EventBus fixture, EventBus.post(Object) delegates to Dispatcher.dispatch(Object, Iterator<Subscriber>). If the DeadEvent re-post branch in EventBus.post is removed, which call paths and which concrete Dispatcher subclasses stop being reachable for events that have no subscribers? Name the affected methods and classes.",
+      "ground_truth": {
+        "must_name": [
+          "EventBus.post",
+          "DeadEvent",
+          "SubscriberRegistry.getSubscribers",
+          "Dispatcher.dispatch"
+        ],
+        "must_name_subclasses": [
+          "PerThreadQueuedDispatcher",
+          "LegacyAsyncDispatcher",
+          "ImmediateDispatcher"
+        ],
+        "key_insight": "post() is self-recursive via new DeadEvent(this, event); removing the branch means no-subscriber events are silently dropped instead of re-entering post -> getSubscribers -> dispatch, so DeadEvent subscribers become unreachable while the Dispatcher subclasses remain reachable for normal events.",
+        "anchor": {
+          "file": "EventBus.java",
+          "unique_snippet": "    } else if (!(event instanceof DeadEvent)) {",
+          "verified_unique": true
+        }
+      },
+      "scoring": {
+        "max": 10,
+        "rubric": [
+          "names EventBus.post self-recursion via DeadEvent (3)",
+          "names SubscriberRegistry.getSubscribers as the gate that returns empty (2)",
+          "identifies all three Dispatcher subclasses as polymorphic dispatch targets (3)",
+          "states DeadEvent subscribers become unreachable rather than claiming dispatch breaks entirely (2)"
+        ]
+      }
+    },
+    {
+      "id": "B02",
+      "fixture": "B02",
+      "kind": "compile_repair",
+      "question": "SubscriberRegistry.getSubscribers(Object) has been changed to return List<Subscriber> instead of Iterator<Subscriber>. Fix all callers so the fixture compiles again, without changing the new return type.",
+      "mutation": {
+        "file": "SubscriberRegistry.java",
+        "unique_snippet": "  Iterator<Subscriber> getSubscribers(Object event) {",
+        "verified_unique": true,
+        "applied_by": "make_fixtures.py"
+      },
+      "ground_truth": {
+        "must_touch_files": ["EventBus.java"],
+        "must_not_touch": ["Dispatcher.java", "Subscriber.java"],
+        "must_name": [
+          "SubscriberRegistry.getSubscribers",
+          "EventBus.post",
+          "EventBus",
+          "SubscriberRegistry"
+        ],
+        "key_insight": "EventBus.post is the only in-fixture caller; it needs an .iterator() adaptation or an isEmpty() check instead of hasNext().",
+        "verification": "javac must exit 0 with the fixture classpath"
+      },
+      "scoring": {
+        "max": 10,
+        "rubric": [
+          "fixture compiles (5)",
+          "only EventBus.java touched (3)",
+          "return type of getSubscribers left as List<Subscriber> (2)"
+        ]
+      }
+    },
+    {
+      "id": "B03",
+      "fixture": "B03",
+      "kind": "async_boundary",
+      "question": "AsyncEventBus passes an Executor to EventBus and uses Dispatcher.legacyAsync(). Trace what happens on the calling thread versus the executor thread when post() is called, and explain which part of the dispatch chain crosses the async boundary.",
+      "ground_truth": {
+        "must_name": [
+          "AsyncEventBus",
+          "EventBus.post",
+          "Dispatcher.legacyAsync",
+          "LegacyAsyncDispatcher",
+          "Subscriber.dispatchEvent",
+          "Executor"
+        ],
+        "key_insight": "Enqueueing into the global ConcurrentLinkedQueue and draining it happens on the calling thread inside LegacyAsyncDispatcher.dispatch; the async handoff is inside Subscriber.dispatchEvent, which submits invokeSubscriberMethod to the executor. So ordering of dispatch is caller-thread, but subscriber invocation is executor-thread.",
+        "anchor": {
+          "file": "Dispatcher.java",
+          "unique_snippet": "      EventWithSubscriber e;",
+          "verified_unique": true
+        }
+      },
+      "scoring": {
+        "max": 10,
+        "rubric": [
+          "places the queue drain on the calling thread (3)",
+          "locates the async handoff in Subscriber.dispatchEvent -> executor.execute (4)",
+          "does not claim Dispatcher.dispatch itself is asynchronous (3)"
+        ]
+      }
+    }
+  ]
+}

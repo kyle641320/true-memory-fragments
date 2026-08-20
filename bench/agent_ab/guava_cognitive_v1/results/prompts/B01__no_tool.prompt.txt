@@ -1,0 +1,23 @@
+You are analysing a self-contained Java fixture extracted from Guava's
+com.google.common.eventbus package. Answer using only the fixture.
+
+Fixture root: fixtures/B01/base
+Files available:
+  - AllowConcurrentEvents.java
+  - AsyncEventBus.java
+  - DeadEvent.java
+  - Dispatcher.java
+  - EventBus.java
+  - ParametricNullness.java
+  - Subscribe.java
+  - Subscriber.java
+  - SubscriberExceptionContext.java
+  - SubscriberExceptionHandler.java
+  - SubscriberRegistry.java
+  - package-info.java
+
+QUESTION:
+In this Guava EventBus fixture, EventBus.post(Object) delegates to Dispatcher.dispatch(Object, Iterator<Subscriber>). If the DeadEvent re-post branch in EventBus.post is removed, which call paths and which concrete Dispatcher subclasses stop being reachable for events that have no subscribers? Name the affected methods and classes.
+
+Answer in prose. Name concrete classes and methods explicitly. Do not modify
+any files.

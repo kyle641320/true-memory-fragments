@@ -1,0 +1,163 @@
+You are analysing a self-contained Java fixture extracted from Guava's
+com.google.common.eventbus package. Answer using only the fixture.
+
+Fixture root: fixtures/B02/work
+Files available:
+  - AllowConcurrentEvents.java
+  - AsyncEventBus.java
+  - DeadEvent.java
+  - Dispatcher.java
+  - EventBus.java
+  - ParametricNullness.java
+  - Subscribe.java
+  - Subscriber.java
+  - SubscriberExceptionContext.java
+  - SubscriberExceptionHandler.java
+  - SubscriberRegistry.java
+  - package-info.java
+
+--- Retrieved context (TMF, freshness-labelled locator; source code is
+authoritative and may contradict it) ---
+{
+  "claims": [
+    {
+      "anchor": {
+        "line_end": 139,
+        "line_start": 125,
+        "path": "src/main/java/com/google/common/eventbus/SubscriberRegistry.java",
+        "qualname": "SubscriberRegistry.getSubscribers"
+      },
+      "claim_id": "claim_java_67b9d63388907211",
+      "expand": "tmf_explain",
+      "qualname": "SubscriberRegistry.getSubscribers",
+      "scope": "class",
+      "stub": true
+    }
+  ],
+  "coverage": "complete",
+  "gaps": [],
+  "max_chars": 4000,
+  "question": "SubscriberRegistry.getSubscribers(Object) has been changed to return List<Subscriber> instead of Iterator<Subscriber>. Fix all callers so the fixture compiles again, without changing the new return type.",
+  "relations": [
+    {
+      "coverage": "partial",
+      "edge_id": "claim_edge_14a5ed5544f9a00b",
+      "endpoint_hints": {
+        "callee_id": {
+          "anchor": {
+            "line_end": 63,
+            "line_start": 61,
+            "path": "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+            "qualname": "SubscriberExceptionContext.getSubscriber"
+          },
+          "path": "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+          "qualname": "SubscriberExceptionContext.getSubscriber"
+        },
+        "caller_id": {
+          "anchor": {
+            "line_end": 301,
+            "line_start": 290,
+            "path": "src/main/java/com/google/common/eventbus/EventBus.java",
+            "qualname": "EventBus.LoggingHandler.message"
+          },
+          "path": "src/main/java/com/google/common/eventbus/EventBus.java",
+          "qualname": "EventBus.LoggingHandler.message"
+        }
+      },
+      "endpoints": {
+        "callee_id": "claim_java_338ed1cd70a19268",
+        "caller_id": "claim_java_b4e80c6f52be9c47"
+      },
+      "for": "claim_java_338ed1cd70a19268",
+      "kind": "calls",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_read_edge_4b5b815e7e9189e6",
+      "endpoint_hints": {
+        "declaration_id": {
+          "anchor": {
+            "line_end": 29,
+            "line_start": 29,
+            "path": "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+            "qualname": "SubscriberExceptionContext.subscriber"
+          },
+          "path": "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+          "qualname": "SubscriberExceptionContext.subscriber"
+        },
+        "reader_id": {
+          "anchor": {
+            "line_end": 63,
+            "line_start": 61,
+            "path": "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+            "qualname": "SubscriberExceptionContext.getSubscriber"
+          },
+          "path": "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+          "qualname": "SubscriberExceptionContext.getSubscriber"
+        }
+      },
+      "endpoints": {
+        "declaration_id": "claim_java_dc83bc3542302c4f",
+        "reader_id": "claim_java_338ed1cd70a19268"
+      },
+      "for": "claim_java_338ed1cd70a19268",
+      "kind": "reads",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_type_use_edge_a4591a5585a3ed9a",
+      "endpoint_hints": {
+        "type_id": {
+          "anchor": {
+            "line_end": 146,
+            "line_start": 35,
+            "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+            "qualname": "Subscriber"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+          "qualname": "Subscriber"
+        },
+        "user_id": {
+          "anchor": {
+            "line_end": 172,
+            "line_start": 172,
+            "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "qualname": "Dispatcher.LegacyAsyncDispatcher.EventWithSubscriber.subscriber"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+          "qualname": "Dispatcher.LegacyAsyncDispatcher.EventWithSubscriber.subscriber"
+        }
+      },
+      "endpoints": {
+        "type_id": "claim_java_f1ca060ea6966fdd",
+        "user_id": "claim_java_3d453ab8e0bc6ca1"
+      },
+      "for": "claim_java_3d453ab8e0bc6ca1",
+      "kind": "uses_type",
+      "unresolved": 0
+    }
+  ],
+  "source_fallback_paths": [
+    "src/main/java/com/google/common/eventbus/Dispatcher.java",
+    "src/main/java/com/google/common/eventbus/EventBus.java",
+    "src/main/java/com/google/common/eventbus/Subscriber.java",
+    "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+    "src/main/java/com/google/common/eventbus/SubscriberRegistry.java"
+  ],
+  "truncated": true,
+  "view": "thin_context"
+}
+--- end retrieved context ---
+
+QUESTION:
+SubscriberRegistry.getSubscribers(Object) has been changed to return List<Subscriber> instead of Iterator<Subscriber>. Fix all callers so the fixture compiles again, without changing the new return type.
+
+This is a compile-repair task. Edit files under the fixture root in place.
+Do not change the declared return type of the mutated method. When you are
+done, the fixture must compile with:
+
+  javac -nowarn -cp "$(cat classpath.txt)" -d /tmp/out fixtures/B02/work/*.java
+
+Report which files you modified.

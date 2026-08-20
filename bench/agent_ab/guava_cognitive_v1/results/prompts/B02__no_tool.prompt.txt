@@ -1,0 +1,28 @@
+You are analysing a self-contained Java fixture extracted from Guava's
+com.google.common.eventbus package. Answer using only the fixture.
+
+Fixture root: fixtures/B02/work
+Files available:
+  - AllowConcurrentEvents.java
+  - AsyncEventBus.java
+  - DeadEvent.java
+  - Dispatcher.java
+  - EventBus.java
+  - ParametricNullness.java
+  - Subscribe.java
+  - Subscriber.java
+  - SubscriberExceptionContext.java
+  - SubscriberExceptionHandler.java
+  - SubscriberRegistry.java
+  - package-info.java
+
+QUESTION:
+SubscriberRegistry.getSubscribers(Object) has been changed to return List<Subscriber> instead of Iterator<Subscriber>. Fix all callers so the fixture compiles again, without changing the new return type.
+
+This is a compile-repair task. Edit files under the fixture root in place.
+Do not change the declared return type of the mutated method. When you are
+done, the fixture must compile with:
+
+  javac -nowarn -cp "$(cat classpath.txt)" -d /tmp/out fixtures/B02/work/*.java
+
+Report which files you modified.

@@ -1,0 +1,1 @@
+Modified `fixtures/B02/work/EventBus.java` to handle the `List<Subscriber>` returned by `SubscriberRegistry.getSubscribers(Object)`: it now checks `isEmpty()` and passes `eventSubscribers.iterator()` to the dispatcher. The fixture compiles successfully with the specified `javac` command.

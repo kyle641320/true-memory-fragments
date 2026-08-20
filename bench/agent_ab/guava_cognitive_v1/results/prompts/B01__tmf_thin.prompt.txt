@@ -1,0 +1,159 @@
+You are analysing a self-contained Java fixture extracted from Guava's
+com.google.common.eventbus package. Answer using only the fixture.
+
+Fixture root: fixtures/B01/base
+Files available:
+  - AllowConcurrentEvents.java
+  - AsyncEventBus.java
+  - DeadEvent.java
+  - Dispatcher.java
+  - EventBus.java
+  - ParametricNullness.java
+  - Subscribe.java
+  - Subscriber.java
+  - SubscriberExceptionContext.java
+  - SubscriberExceptionHandler.java
+  - SubscriberRegistry.java
+  - package-info.java
+
+--- Retrieved context (TMF, freshness-labelled locator; source code is
+authoritative and may contradict it) ---
+{
+  "claims": [
+    {
+      "anchor": {
+        "line_end": 124,
+        "line_start": 124,
+        "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+        "qualname": "Dispatcher.PerThreadQueuedDispatcher.Event.subscribers"
+      },
+      "claim_id": "claim_java_492b085181528579",
+      "expand": "tmf_explain",
+      "qualname": "Dispatcher.PerThreadQueuedDispatcher.Event.subscribers",
+      "scope": "declaration",
+      "stub": true
+    }
+  ],
+  "coverage": "complete",
+  "gaps": [],
+  "max_chars": 4000,
+  "question": "In this Guava EventBus fixture, EventBus.post(Object) delegates to Dispatcher.dispatch(Object, Iterator<Subscriber>). If the DeadEvent re-post branch in EventBus.post is removed, which call paths and which concrete Dispatcher subclasses stop being reachable for events that have no subscribers? Name the affected methods and classes.",
+  "relations": [
+    {
+      "coverage": "partial",
+      "edge_id": "claim_read_edge_5f7dbb48d90f45fa",
+      "endpoint_hints": {
+        "declaration_id": {
+          "anchor": {
+            "line_end": 246,
+            "line_start": 246,
+            "path": "src/main/java/com/google/common/eventbus/SubscriberRegistry.java",
+            "qualname": "SubscriberRegistry.MethodIdentifier.name"
+          },
+          "path": "src/main/java/com/google/common/eventbus/SubscriberRegistry.java",
+          "qualname": "SubscriberRegistry.MethodIdentifier.name"
+        },
+        "reader_id": {
+          "anchor": {
+            "line_end": 266,
+            "line_start": 259,
+            "path": "src/main/java/com/google/common/eventbus/SubscriberRegistry.java",
+            "qualname": "SubscriberRegistry.MethodIdentifier.equals"
+          },
+          "path": "src/main/java/com/google/common/eventbus/SubscriberRegistry.java",
+          "qualname": "SubscriberRegistry.MethodIdentifier.equals"
+        }
+      },
+      "endpoints": {
+        "declaration_id": "claim_java_2779a93106db8ca7",
+        "reader_id": "claim_java_014452595fa8d6f4"
+      },
+      "for": "claim_java_2779a93106db8ca7",
+      "kind": "reads",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_read_edge_039e2ca813e1d562",
+      "endpoint_hints": {
+        "declaration_id": {
+          "anchor": {
+            "line_end": 33,
+            "line_start": 33,
+            "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+            "qualname": "DeadEvent.event"
+          },
+          "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+          "qualname": "DeadEvent.event"
+        },
+        "reader_id": {
+          "anchor": {
+            "line_end": 69,
+            "line_start": 66,
+            "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+            "qualname": "DeadEvent.toString"
+          },
+          "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+          "qualname": "DeadEvent.toString"
+        }
+      },
+      "endpoints": {
+        "declaration_id": "claim_java_3a0888692c0f64b9",
+        "reader_id": "claim_java_efe64e95854a3392"
+      },
+      "for": "claim_java_3a0888692c0f64b9",
+      "kind": "reads",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_read_edge_e0b55a46b6228db9",
+      "endpoint_hints": {
+        "declaration_id": {
+          "anchor": {
+            "line_end": 33,
+            "line_start": 33,
+            "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+            "qualname": "DeadEvent.event"
+          },
+          "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+          "qualname": "DeadEvent.event"
+        },
+        "reader_id": {
+          "anchor": {
+            "line_end": 64,
+            "line_start": 62,
+            "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+            "qualname": "DeadEvent.getEvent"
+          },
+          "path": "src/main/java/com/google/common/eventbus/DeadEvent.java",
+          "qualname": "DeadEvent.getEvent"
+        }
+      },
+      "endpoints": {
+        "declaration_id": "claim_java_3a0888692c0f64b9",
+        "reader_id": "claim_java_7a5a48ed7203da2d"
+      },
+      "for": "claim_java_3a0888692c0f64b9",
+      "kind": "reads",
+      "unresolved": 0
+    }
+  ],
+  "source_fallback_paths": [
+    "src/main/java/com/google/common/eventbus/DeadEvent.java",
+    "src/main/java/com/google/common/eventbus/Dispatcher.java",
+    "src/main/java/com/google/common/eventbus/EventBus.java",
+    "src/main/java/com/google/common/eventbus/Subscriber.java",
+    "src/main/java/com/google/common/eventbus/SubscriberExceptionContext.java",
+    "src/main/java/com/google/common/eventbus/SubscriberRegistry.java"
+  ],
+  "truncated": true,
+  "view": "thin_context"
+}
+--- end retrieved context ---
+
+QUESTION:
+In this Guava EventBus fixture, EventBus.post(Object) delegates to Dispatcher.dispatch(Object, Iterator<Subscriber>). If the DeadEvent re-post branch in EventBus.post is removed, which call paths and which concrete Dispatcher subclasses stop being reachable for events that have no subscribers? Name the affected methods and classes.
+
+Answer in prose. Name concrete classes and methods explicitly. Do not modify
+any files.

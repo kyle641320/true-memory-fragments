@@ -1,0 +1,111 @@
+{
+  "suite": "guava_cognitive_v1",
+  "prepared_at": "2026-08-19T14:49:50.720607+00:00",
+  "arms": [
+    "no_tool",
+    "tmf_thin",
+    "tmf_full"
+  ],
+  "degraded": [],
+  "runs": [
+    {
+      "task": "B01",
+      "kind": "impact_reasoning",
+      "arm": "no_tool",
+      "fixture_tree": "fixtures/B01/base",
+      "prompt": "prompts/B01__no_tool.prompt.txt",
+      "retrieval": "prompts/B01__no_tool.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 0,
+      "answer": null
+    },
+    {
+      "task": "B01",
+      "kind": "impact_reasoning",
+      "arm": "tmf_thin",
+      "fixture_tree": "fixtures/B01/base",
+      "prompt": "prompts/B01__tmf_thin.prompt.txt",
+      "retrieval": "prompts/B01__tmf_thin.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 1,
+      "answer": null
+    },
+    {
+      "task": "B01",
+      "kind": "impact_reasoning",
+      "arm": "tmf_full",
+      "fixture_tree": "fixtures/B01/base",
+      "prompt": "prompts/B01__tmf_full.prompt.txt",
+      "retrieval": "prompts/B01__tmf_full.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 8,
+      "answer": null
+    },
+    {
+      "task": "B02",
+      "kind": "compile_repair",
+      "arm": "no_tool",
+      "fixture_tree": "fixtures/B02/work",
+      "prompt": "prompts/B02__no_tool.prompt.txt",
+      "retrieval": "prompts/B02__no_tool.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 0,
+      "answer": null
+    },
+    {
+      "task": "B02",
+      "kind": "compile_repair",
+      "arm": "tmf_thin",
+      "fixture_tree": "fixtures/B02/work",
+      "prompt": "prompts/B02__tmf_thin.prompt.txt",
+      "retrieval": "prompts/B02__tmf_thin.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 1,
+      "answer": null
+    },
+    {
+      "task": "B02",
+      "kind": "compile_repair",
+      "arm": "tmf_full",
+      "fixture_tree": "fixtures/B02/work",
+      "prompt": "prompts/B02__tmf_full.prompt.txt",
+      "retrieval": "prompts/B02__tmf_full.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 5,
+      "answer": null
+    },
+    {
+      "task": "B03",
+      "kind": "async_boundary",
+      "arm": "no_tool",
+      "fixture_tree": "fixtures/B03/base",
+      "prompt": "prompts/B03__no_tool.prompt.txt",
+      "retrieval": "prompts/B03__no_tool.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 0,
+      "answer": null
+    },
+    {
+      "task": "B03",
+      "kind": "async_boundary",
+      "arm": "tmf_thin",
+      "fixture_tree": "fixtures/B03/base",
+      "prompt": "prompts/B03__tmf_thin.prompt.txt",
+      "retrieval": "prompts/B03__tmf_thin.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 1,
+      "answer": null
+    },
+    {
+      "task": "B03",
+      "kind": "async_boundary",
+      "arm": "tmf_full",
+      "fixture_tree": "fixtures/B03/base",
+      "prompt": "prompts/B03__tmf_full.prompt.txt",
+      "retrieval": "prompts/B03__tmf_full.retrieval.json",
+      "retrieval_ok": true,
+      "retrieval_calls": 7,
+      "answer": null
+    }
+  ]
+}

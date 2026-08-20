@@ -1,0 +1,23 @@
+You are analysing a self-contained Java fixture extracted from Guava's
+com.google.common.eventbus package. Answer using only the fixture.
+
+Fixture root: fixtures/B03/base
+Files available:
+  - AllowConcurrentEvents.java
+  - AsyncEventBus.java
+  - DeadEvent.java
+  - Dispatcher.java
+  - EventBus.java
+  - ParametricNullness.java
+  - Subscribe.java
+  - Subscriber.java
+  - SubscriberExceptionContext.java
+  - SubscriberExceptionHandler.java
+  - SubscriberRegistry.java
+  - package-info.java
+
+QUESTION:
+AsyncEventBus passes an Executor to EventBus and uses Dispatcher.legacyAsync(). Trace what happens on the calling thread versus the executor thread when post() is called, and explain which part of the dispatch chain crosses the async boundary.
+
+Answer in prose. Name concrete classes and methods explicitly. Do not modify
+any files.

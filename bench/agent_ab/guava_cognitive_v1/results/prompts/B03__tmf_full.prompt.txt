@@ -1,0 +1,363 @@
+You are analysing a self-contained Java fixture extracted from Guava's
+com.google.common.eventbus package. Answer using only the fixture.
+
+Fixture root: fixtures/B03/base
+Files available:
+  - AllowConcurrentEvents.java
+  - AsyncEventBus.java
+  - DeadEvent.java
+  - Dispatcher.java
+  - EventBus.java
+  - ParametricNullness.java
+  - Subscribe.java
+  - Subscriber.java
+  - SubscriberExceptionContext.java
+  - SubscriberExceptionHandler.java
+  - SubscriberRegistry.java
+  - package-info.java
+
+--- Retrieved context (TMF, freshness-labelled locator; source code is
+authoritative and may contradict it) ---
+### tmf_context
+{
+  "claims": [
+    {
+      "anchor": {
+        "line_end": 168,
+        "line_start": 157,
+        "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+        "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+      },
+      "claim_id": "claim_contract_50f690e22e0bbd01",
+      "expand": "tmf_explain",
+      "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch",
+      "scope": "contract",
+      "stub": true
+    }
+  ],
+  "coverage": "complete",
+  "gaps": [],
+  "max_chars": 6000,
+  "question": "AsyncEventBus passes an Executor to EventBus and uses Dispatcher.legacyAsync(). Trace what happens on the calling thread versus the executor thread when post() is called, and explain which part of the dispatch chain crosses the async boundary.",
+  "relations": [
+    {
+      "coverage": "partial",
+      "edge_id": "claim_read_edge_fc1bfc0f33799fdb",
+      "endpoint_hints": {
+        "declaration_id": {
+          "anchor": {
+            "line_end": 54,
+            "line_start": 54,
+            "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+            "qualname": "Subscriber.executor"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+          "qualname": "Subscriber.executor"
+        },
+        "reader_id": {
+          "anchor": {
+            "line_end": 75,
+            "line_start": 66,
+            "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+            "qualname": "Subscriber.dispatchEvent"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+          "qualname": "Subscriber.dispatchEvent"
+        }
+      },
+      "endpoints": {
+        "declaration_id": "claim_java_316f203403f303b8",
+        "reader_id": "claim_java_96294c99b345c857"
+      },
+      "for": "claim_java_316f203403f303b8",
+      "kind": "reads",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_override_edge_3c3179a40dbc0f8d",
+      "endpoint_hints": {
+        "method_id": {
+          "anchor": {
+            "line_end": 168,
+            "line_start": 157,
+            "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+          "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+        },
+        "overridden_id": {
+          "anchor": {
+            "line_end": 71,
+            "line_start": 71,
+            "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "qualname": "Dispatcher.dispatch"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+          "qualname": "Dispatcher.dispatch"
+        }
+      },
+      "endpoints": {
+        "method_id": "claim_java_51f21648553e63bd",
+        "overridden_id": "claim_java_0b9d8ea44764d316"
+      },
+      "for": "claim_java_51f21648553e63bd",
+      "kind": "overrides",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_read_edge_739596897ff7e9d2",
+      "endpoint_hints": {
+        "declaration_id": {
+          "anchor": {
+            "line_end": 155,
+            "line_start": 155,
+            "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "qualname": "Dispatcher.LegacyAsyncDispatcher.queue"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+          "qualname": "Dispatcher.LegacyAsyncDispatcher.queue"
+        },
+        "reader_id": {
+          "anchor": {
+            "line_end": 168,
+            "line_start": 157,
+            "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+          "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+        }
+      },
+      "endpoints": {
+        "declaration_id": "claim_java_cbe60376655d5f9f",
+        "reader_id": "claim_java_51f21648553e63bd"
+      },
+      "for": "claim_java_51f21648553e63bd",
+      "kind": "reads",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_type_use_edge_84844125995001d4",
+      "endpoint_hints": {
+        "type_id": {
+          "anchor": {
+            "line_end": 146,
+            "line_start": 35,
+            "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+            "qualname": "Subscriber"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Subscriber.java",
+          "qualname": "Subscriber"
+        },
+        "user_id": {
+          "anchor": {
+            "line_end": 168,
+            "line_start": 157,
+            "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+          },
+          "path": "src/main/java/com/google/common/eventbus/Dispatcher.java",
+          "qualname": "Dispatcher.LegacyAsyncDispatcher.dispatch"
+        }
+      },
+      "endpoints": {
+        "type_id": "claim_java_f1ca060ea6966fdd",
+        "user_id": "claim_java_51f21648553e63bd"
+      },
+      "for": "claim_java_51f21648553e63bd",
+      "kind": "uses_type",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_edge_4d114965640df215",
+      "endpoint_hints": {
+        "callee_id": {
+          "anchor": {
+            "line_end": 199,
+            "line_start": 190,
+            "path": "src/main/java/com/google/common/eventbus/EventBus.java",
+            "qualname": "EventBus.EventBus"
+          },
+          "path": "src/main/java/com/google/common/eventbus/EventBus.java",
+          "qualname": "EventBus.EventBus"
+        },
+        "caller_id": {
+          "anchor": {
+            "line_end": 61,
+            "line_start": 59,
+            "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+            "qualname": "AsyncEventBus.AsyncEventBus"
+          },
+          "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+          "qualname": "AsyncEventBus.AsyncEventBus"
+        }
+      },
+      "endpoints": {
+        "callee_id": "claim_java_5a6b5dbe4c11812d",
+        "caller_id": "claim_java_7b5de3258efb386a"
+      },
+      "for": "claim_java_7b5de3258efb386a",
+      "kind": "calls",
+      "unresolved": 0
+    },
+    {
+      "coverage": "partial",
+      "edge_id": "claim_inherit_edge_2752c26df601e61f",
+      "endpoint_hints": {
+        "child_id": {
+          "anchor": {
+            "line_end": 62,
+            "line_start": 26,
+            "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+            "qualname": "AsyncEventBus"
+          },
+          "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+          "qualname": "AsyncEventBus"
+        },
+        "parent_id": {
+          "anchor": {
+            "line_end": 303,
+            "line_start": 153,
+            "path": "src/main/java/com/google/common/eventbus/EventBus.java",
+            "qualname": "EventBus"
+          },
+          "path": "src/main/java/com/google/common/eventbus/EventBus.java",
+          "qualname": "EventBus"
+        }
+      },
+      "endpoints": {
+        "child_id": "claim_java_86f65f3938fed368",
+        "parent_id": "claim_java_a6ff1f34cbc571b8"
+      },
+      "for": "claim_java_86f65f3938fed368",
+      "kind": "inherits",
+      "unresolved": 0
+    }
+  ],
+  "source_fallback_paths": [
+    "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+    "src/main/java/com/google/common/eventbus/Dispatcher.java",
+    "src/main/java/com/google/common/eventbus/EventBus.java",
+    "src/main/java/com/google/common/eventbus/Subscriber.java"
+  ],
+  "truncated": true,
+  "view": "thin_context"
+}
+
+### tmf_subtypes AsyncEventBus
+{
+  "action_hint": "Ambiguous or missing static type; pick a candidate by path/claim_id before continuing. Do not guess.",
+  "addressing": {
+    "candidates": [
+      {
+        "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:26",
+        "claim": "Java class AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+        "id": "claim_java_86f65f3938fed368",
+        "kind": "structure",
+        "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+        "qualname": "AsyncEventBus",
+        "scope": "class"
+      },
+      {
+        "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:59",
+        "claim": "Java constructor AsyncEventBus.AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+        "id": "claim_java_7b5de3258efb386a",
+        "kind": "structure",
+        "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+        "qualname": "AsyncEventBus.AsyncEventBus",
+        "scope": "class"
+      },
+      {
+        "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:49",
+        "claim": "Java constructor AsyncEventBus.AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+        "id": "claim_java_b8ff2a4a1e3fc96f",
+        "kind": "structure",
+        "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+        "qualname": "AsyncEventBus.AsyncEventBus",
+        "scope": "class"
+      },
+      {
+        "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:36",
+        "claim": "Java constructor AsyncEventBus.AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+        "id": "claim_java_dea9e553f64f5740",
+        "kind": "structure",
+        "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+        "qualname": "AsyncEventBus.AsyncEventBus",
+        "scope": "class"
+      }
+    ],
+    "mode": "qualname",
+    "path": null,
+    "qualname": "AsyncEventBus",
+    "status": "ambiguous"
+  },
+  "candidates": [
+    {
+      "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:26",
+      "claim": "Java class AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+      "id": "claim_java_86f65f3938fed368",
+      "kind": "structure",
+      "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+      "qualname": "AsyncEventBus",
+      "scope": "class"
+    },
+    {
+      "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:59",
+      "claim": "Java constructor AsyncEventBus.AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+      "id": "claim_java_7b5de3258efb386a",
+      "kind": "structure",
+      "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+      "qualname": "AsyncEventBus.AsyncEventBus",
+      "scope": "class"
+    },
+    {
+      "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:49",
+      "claim": "Java constructor AsyncEventBus.AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+      "id": "claim_java_b8ff2a4a1e3fc96f",
+      "kind": "structure",
+      "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+      "qualname": "AsyncEventBus.AsyncEventBus",
+      "scope": "class"
+    },
+    {
+      "anchor": "src/main/java/com/google/common/eventbus/AsyncEventBus.java:36",
+      "claim": "Java constructor AsyncEventBus.AsyncEventBus in src/main/java/com/google/common/eventbus/AsyncEventBus.java is a tree-sitter syntactic node bound by worktree file_blob and token-stream hash.",
+      "id": "claim_java_dea9e553f64f5740",
+      "kind": "structure",
+      "path": "src/main/java/com/google/common/eventbus/AsyncEventBus.java",
+      "qualname": "AsyncEventBus.AsyncEventBus",
+      "scope": "class"
+    }
+  ],
+  "status": "ambiguous"
+}
+
+### tmf_subtypes LegacyAsyncDispatcher
+{
+  "action_hint": "No resolved subtype/implementor edges in TMF partial graph; read the source anchor or accept static uncertainty, do not keep searching blindly.",
+  "addressing": {
+    "claim_id": "claim_java_0d99c6a17480ee86",
+    "mode": "qualname",
+    "path": null,
+    "qualname": "LegacyAsyncDispatcher",
+    "status": "resolved"
+  },
+  "coverage": "partial",
+  "implementors": [],
+  "node_id": "claim_java_0d99c6a17480ee86",
+  "note": "Known subtypes from already-derived files only; Java inheritance reverse coverage is partial.",
+  "stale_skipped": 0,
+  "subtypes": []
+}
+--- end retrieved context ---
+
+QUESTION:
+AsyncEventBus passes an Executor to EventBus and uses Dispatcher.legacyAsync(). Trace what happens on the calling thread versus the executor thread when post() is called, and explain which part of the dispatch chain crosses the async boundary.
+
+Answer in prose. Name concrete classes and methods explicitly. Do not modify
+any files.
