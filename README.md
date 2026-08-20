@@ -251,6 +251,58 @@ Returns a bounded call/read graph starting from `entry-claim-id`, expanding up t
 - `stale_or_unknown`: memory failure — must re-read source
 - `stop_reason: max_nodes/max_edges/hop_limit`: working memory full
 
+## Reflex Hook: Git-Aware Staleness Blocking for AI Agents
+
+TMF includes a **reflex hook** integration that gives AI coding agents a biological-style reflex: when an agent is about to act on code understanding while that code has changed, the system **forces it to stop, re-read only the changed part, then proceed**.
+
+This is not a code memory cache — it's a **reflex arc** that intercepts agent tool calls before execution.
+
+### Three Components
+
+- **Sensory organ** = TMF function-level `fn_hash` freshness (2ms precision: which function changed)
+- **Reflex arc** = OpenClaw `before_tool_call` hook / Claude Code PreToolUse harness (agent cannot bypass)
+- **Reflex action** = Hard block + localized single-file re-warm
+
+### Git Hook Auto-Calibration
+
+Four git hooks automatically generate function-level invalidation manifests after code changes:
+
+- `.git/hooks/post-commit` — after local commits
+- `.git/hooks/post-merge` — after `git pull`
+- `.git/hooks/post-checkout` — after branch switches
+- `.git/hooks/post-rewrite` — after rebase/amend
+
+These hooks call `scripts/tmf-git-freshness-calibrate.py`, which compares `baseline_rev → HEAD` Python function signature changes and outputs structured invalidation manifests.
+
+### OpenClaw Plugin Integration
+
+The `tmf-reflex` OpenClaw plugin intercepts agent tool calls:
+
+- Checks TMF function-level freshness (2ms per file)
+- Hard-blocks when agent touches a file with stale function claims
+- Returns `requireApproval` with exact changed function names
+- Agent must run `scripts/tmf-local-warm.py` to re-warm that one file
+
+### SessionStart Cognition Calibration
+
+On new session start, the plugin reads unconsumed invalidation manifests and injects `changed` / `deleted` symbols as "pre-alert" context, preventing agents from relying on stale memory.
+
+### Boundary
+
+- Function-level precision depends on TMF's language coverage (currently Python AST)
+- Files without function-scope claims fall back to pass-through
+- TMF engine remains read-only (reflex hook only uses `freshness` / `derive`)
+- Conservative: TMF unavailable / check errors → pass-through, never blocks valid work
+
+### Installation
+
+Reflex hook code lives in `/root/.openclaw/workspace/projects/tmf-reflex-hook`. See that directory's `README.md` and `DESIGN.md` for:
+
+- OpenClaw plugin installation
+- Git hook setup for target repositories
+- Claude Code / Codex harness configuration
+- Health validation tests
+
 ## Documentation
 
 - [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md) — current experiment ruling
