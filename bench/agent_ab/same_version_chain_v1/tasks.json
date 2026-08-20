@@ -1,0 +1,34 @@
+{
+  "schema": "same_version_chain_v1_tasks",
+  "arms": ["SOURCE_ONLY", "TMF_CLAIMS", "DOC_CONTROL"],
+  "smoke": ["B01", "B02"],
+  "tasks": [
+    {
+      "id": "B01",
+      "title": "rate limiter downstream impact",
+      "phase_a": "Trace the complete call chain from EventBus.post() to actual subscriber method invocation, including AsyncEventBus.",
+      "phase_b": "Add a rate limiter to EventBus.post() that limits each subscriber to 100 events/second.",
+      "anchors": ["EventBus.java", "AsyncEventBus.java", "Dispatcher.java", "Subscriber.java", "SubscriberRegistry.java"],
+      "golden_chain": ["EventBus.post", "SubscriberRegistry.getSubscribers", "Dispatcher.dispatch", "Dispatcher.LegacyAsyncDispatcher.dispatch", "Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod", "Method.invoke"],
+      "trap": "A post-entry-only/global limiter is insufficient; per-subscriber enforcement must cover async dispatch through Dispatcher/Subscriber."
+    },
+    {
+      "id": "B02",
+      "title": "retry logic exception level",
+      "phase_a": "Trace the exception propagation chain from Method.invoke through InvocationTargetException to EventBus.handleSubscriberException.",
+      "phase_b": "Add retry logic for failed subscriber invocations, max 3 retries.",
+      "anchors": ["EventBus.java", "Dispatcher.java", "Subscriber.java"],
+      "golden_chain": ["Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod", "Method.invoke", "InvocationTargetException", "EventBus.handleSubscriberException", "SubscriberExceptionHandler.handleException"],
+      "trap": "Retry must happen around invokeSubscriberMethod before final EventBus.handleSubscriberException; handler should see only final failure."
+    },
+    {
+      "id": "B03",
+      "title": "delivery trace logging",
+      "phase_a": "Trace event delivery from post() to subscriber method invocation, including intermediate dispatcher and dead-event path.",
+      "phase_b": "Add debug logging to trace event delivery from post() to actual subscriber method invocation.",
+      "anchors": ["EventBus.java", "Dispatcher.java", "Subscriber.java", "DeadEvent.java"],
+      "golden_chain": ["EventBus.post", "DeadEvent", "SubscriberRegistry.getSubscribers", "Dispatcher.dispatch", "Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod", "Method.invoke"],
+      "trap": "Do not skip Dispatcher.dispatch or the DeadEvent repost branch."
+    }
+  ]
+}

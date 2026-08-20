@@ -1,0 +1,33 @@
+{
+  "package_dir": "com/google/common/eventbus",
+  "variants": [
+    {
+      "task": "B01",
+      "variant": "mutated",
+      "path": "fixtures/B01/mutated",
+      "mutations": [
+        {
+          "file": "EventBus.java",
+          "find": "    } else if (!(event instanceof DeadEvent)) {"
+        }
+      ],
+      "note": "reference-only: shows the edit the question asks about"
+    },
+    {
+      "task": "B02",
+      "variant": "work",
+      "path": "fixtures/B02/work",
+      "mutations": [
+        {
+          "file": "SubscriberRegistry.java",
+          "find": "  Iterator<Subscriber> getSubscribers(Object event) {"
+        },
+        {
+          "file": "SubscriberRegistry.java",
+          "find": "    return concat(subscriberIterators.iterator());"
+        }
+      ],
+      "note": "agent-editable tree; must compile after repair"
+    }
+  ]
+}

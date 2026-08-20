@@ -1,0 +1,124 @@
+{
+  "schema": "design-intent-fixtures-v1",
+  "source": "/root/.openclaw/workspace/worktrees/guava/guava/src/com/google/common/eventbus",
+  "real_guava_root": "/root/.openclaw/workspace/worktrees/guava",
+  "tasks": [
+    {
+      "task_id": "B01",
+      "base": "fixtures/B01/base",
+      "mutated": "fixtures/B01/mutated",
+      "mutations": [
+        {
+          "file": "Dispatcher.java",
+          "find_sha256": "479ddb86b601d364d6e1b8c39ad90b2914646b789bb9a549649b4ac5de79af91"
+        }
+      ],
+      "base_sha256": {
+        "AllowConcurrentEvents.java": "4b4a3d665e2cfc4f38430ce64f750e9b93c2dbb293cb02871a0f6fa20b2f14d8",
+        "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+        "DeadEvent.java": "abb8f2a6a52cbc80b79159c61c7ec3446b6dae7aca4f51ab25882deb829851b8",
+        "Dispatcher.java": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+        "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+        "ParametricNullness.java": "87a499160c19f70d0e8df4f5cafa51f2887decb2a3c9ffc1d6242271d5395a5f",
+        "Subscribe.java": "ffeeea1bb404a8feb84fce0d6a85e1a2572d2f376c7cfad44ada1ad1f762bfa1",
+        "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+        "SubscriberExceptionContext.java": "af402a921b31a585f249fcf0061bdfb7bd109a8627af7566a32b547879809e47",
+        "SubscriberExceptionHandler.java": "969fb4d6195f9d3b143b8e20590a73f652f310b79ec3c02d6f5d3abc97a3430c",
+        "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+        "package-info.java": "bdef2a80a60a78503206ccd44627a41bd15f51b4851688b41c913fae2cbfd8ef"
+      },
+      "mutated_sha256": {
+        "AllowConcurrentEvents.java": "4b4a3d665e2cfc4f38430ce64f750e9b93c2dbb293cb02871a0f6fa20b2f14d8",
+        "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+        "DeadEvent.java": "abb8f2a6a52cbc80b79159c61c7ec3446b6dae7aca4f51ab25882deb829851b8",
+        "Dispatcher.java": "c4462348dd356b3d01d17c7e1c4b444289b1fb515c94afa42c4a7ef88c0b9106",
+        "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+        "ParametricNullness.java": "87a499160c19f70d0e8df4f5cafa51f2887decb2a3c9ffc1d6242271d5395a5f",
+        "Subscribe.java": "ffeeea1bb404a8feb84fce0d6a85e1a2572d2f376c7cfad44ada1ad1f762bfa1",
+        "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+        "SubscriberExceptionContext.java": "af402a921b31a585f249fcf0061bdfb7bd109a8627af7566a32b547879809e47",
+        "SubscriberExceptionHandler.java": "969fb4d6195f9d3b143b8e20590a73f652f310b79ec3c02d6f5d3abc97a3430c",
+        "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+        "package-info.java": "bdef2a80a60a78503206ccd44627a41bd15f51b4851688b41c913fae2cbfd8ef"
+      }
+    },
+    {
+      "task_id": "B02",
+      "base": "fixtures/B02/base",
+      "mutated": "fixtures/B02/mutated",
+      "mutations": [
+        {
+          "file": "Subscriber.java",
+          "find_sha256": "ec5125103b6fe9f6547ae0d003e0bca7f265f11f4d273f178b6258a4f4d8cf08"
+        }
+      ],
+      "base_sha256": {
+        "AllowConcurrentEvents.java": "4b4a3d665e2cfc4f38430ce64f750e9b93c2dbb293cb02871a0f6fa20b2f14d8",
+        "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+        "DeadEvent.java": "abb8f2a6a52cbc80b79159c61c7ec3446b6dae7aca4f51ab25882deb829851b8",
+        "Dispatcher.java": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+        "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+        "ParametricNullness.java": "87a499160c19f70d0e8df4f5cafa51f2887decb2a3c9ffc1d6242271d5395a5f",
+        "Subscribe.java": "ffeeea1bb404a8feb84fce0d6a85e1a2572d2f376c7cfad44ada1ad1f762bfa1",
+        "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+        "SubscriberExceptionContext.java": "af402a921b31a585f249fcf0061bdfb7bd109a8627af7566a32b547879809e47",
+        "SubscriberExceptionHandler.java": "969fb4d6195f9d3b143b8e20590a73f652f310b79ec3c02d6f5d3abc97a3430c",
+        "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+        "package-info.java": "bdef2a80a60a78503206ccd44627a41bd15f51b4851688b41c913fae2cbfd8ef"
+      },
+      "mutated_sha256": {
+        "AllowConcurrentEvents.java": "4b4a3d665e2cfc4f38430ce64f750e9b93c2dbb293cb02871a0f6fa20b2f14d8",
+        "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+        "DeadEvent.java": "abb8f2a6a52cbc80b79159c61c7ec3446b6dae7aca4f51ab25882deb829851b8",
+        "Dispatcher.java": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+        "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+        "ParametricNullness.java": "87a499160c19f70d0e8df4f5cafa51f2887decb2a3c9ffc1d6242271d5395a5f",
+        "Subscribe.java": "ffeeea1bb404a8feb84fce0d6a85e1a2572d2f376c7cfad44ada1ad1f762bfa1",
+        "Subscriber.java": "1506ac0ae9fdf558446cffc7ca6e8f28f743709d86dd9ef754547f43d374d68a",
+        "SubscriberExceptionContext.java": "af402a921b31a585f249fcf0061bdfb7bd109a8627af7566a32b547879809e47",
+        "SubscriberExceptionHandler.java": "969fb4d6195f9d3b143b8e20590a73f652f310b79ec3c02d6f5d3abc97a3430c",
+        "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+        "package-info.java": "bdef2a80a60a78503206ccd44627a41bd15f51b4851688b41c913fae2cbfd8ef"
+      }
+    },
+    {
+      "task_id": "B03",
+      "base": "fixtures/B03/base",
+      "mutated": "fixtures/B03/mutated",
+      "mutations": [
+        {
+          "file": "Dispatcher.java",
+          "find_sha256": "9535f1f66dbdd9888f24a85c26aaa85d704d8dd4b2a80feaab20d93cd3f7d4db"
+        }
+      ],
+      "base_sha256": {
+        "AllowConcurrentEvents.java": "4b4a3d665e2cfc4f38430ce64f750e9b93c2dbb293cb02871a0f6fa20b2f14d8",
+        "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+        "DeadEvent.java": "abb8f2a6a52cbc80b79159c61c7ec3446b6dae7aca4f51ab25882deb829851b8",
+        "Dispatcher.java": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+        "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+        "ParametricNullness.java": "87a499160c19f70d0e8df4f5cafa51f2887decb2a3c9ffc1d6242271d5395a5f",
+        "Subscribe.java": "ffeeea1bb404a8feb84fce0d6a85e1a2572d2f376c7cfad44ada1ad1f762bfa1",
+        "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+        "SubscriberExceptionContext.java": "af402a921b31a585f249fcf0061bdfb7bd109a8627af7566a32b547879809e47",
+        "SubscriberExceptionHandler.java": "969fb4d6195f9d3b143b8e20590a73f652f310b79ec3c02d6f5d3abc97a3430c",
+        "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+        "package-info.java": "bdef2a80a60a78503206ccd44627a41bd15f51b4851688b41c913fae2cbfd8ef"
+      },
+      "mutated_sha256": {
+        "AllowConcurrentEvents.java": "4b4a3d665e2cfc4f38430ce64f750e9b93c2dbb293cb02871a0f6fa20b2f14d8",
+        "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+        "DeadEvent.java": "abb8f2a6a52cbc80b79159c61c7ec3446b6dae7aca4f51ab25882deb829851b8",
+        "Dispatcher.java": "7c21418ea052b67ea6368e96870a9259c29999f9eb461449b7c936fbc846a554",
+        "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+        "ParametricNullness.java": "87a499160c19f70d0e8df4f5cafa51f2887decb2a3c9ffc1d6242271d5395a5f",
+        "Subscribe.java": "ffeeea1bb404a8feb84fce0d6a85e1a2572d2f376c7cfad44ada1ad1f762bfa1",
+        "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+        "SubscriberExceptionContext.java": "af402a921b31a585f249fcf0061bdfb7bd109a8627af7566a32b547879809e47",
+        "SubscriberExceptionHandler.java": "969fb4d6195f9d3b143b8e20590a73f652f310b79ec3c02d6f5d3abc97a3430c",
+        "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+        "package-info.java": "bdef2a80a60a78503206ccd44627a41bd15f51b4851688b41c913fae2cbfd8ef"
+      }
+    }
+  ]
+}

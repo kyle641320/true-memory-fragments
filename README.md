@@ -1,56 +1,181 @@
 # True Memory Fragments
 
-> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics qualify, but Agent outcome value remains unproven. Cognitive-continuity v1 is **INVALID_PROTOCOL**; v2 stopped at smoke (0/2 adoption). V3 (guava_cognitive_v1) **INVALID_PROTOCOL** — task design did not test core hypothesis. Read the authority page before mixing modes. (TMF)
+> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics qualify, but Agent outcome value remains unproven. Read the authority page before mixing modes. (TMF)
 
-True Memory Fragments is a **cross-session call-chain continuity system** for AI coding agents. It solves the "tunnel vision bug" problem:
+## Bionic Design Philosophy
+
+TMF is designed around how biological memory and cognition actually work. The core premise: **AI and biological thinking are both electrical signal processing** — the memory-cognition-update-pain loop that works for organisms can be directly applied to AI systems.
+
+### 1. Progressive Cognition (渐进认知)
+
+Organisms don't understand things all at once. First encounter creates a coarse impression — "this book is on that shelf" — not every word on every page. Later encounters refine that impression as needed.
+
+**TMF correspondence:**
+- Agent's first pass through a codebase generates relationship claims: `calls`, `reads`, `writes`, inheritance edges, type uses
+- These claims form a **cognitive map**, not a content cache
+- Later tasks query the map to locate what needs closer reading
+- Progressive refinement happens on-demand, not upfront
+
+### 2. Fresh/Stale Comparison (新旧比对)
+
+Every time an organism uses a memory, it compares "current observation" with "remembered impression". Mismatch triggers re-encoding.
+
+**TMF correspondence:**
+- Every claim binds to source blob hash
+- Before using a claim, TMF checks: does the hash still match?
+- Mismatch → claim marked `stale`
+- Agent must re-read source to update
+
+### 3. Pain Reflex — Multi-Alert Forced Attention (痛觉机制)
+
+When an organism acts on stale memory and makes a mistake, pain isn't a gentle suggestion — it's a **strong, repeated neural signal** that forces you to stop.
+
+**TMF correspondence: `bounded_fragment` forced stop**
+
+When querying call chains, if TMF encounters a stale claim:
+
+- **Does not return partial results**
+- **Does not silently warn**
+- **Immediately stops expansion** and returns:
+  - `stale_or_unknown` list (multiple entries for multiple stale claims)
+  - `stop_reason` (explicit: `"entry_stale_or_unknown"`, `"edge_stale_or_unverified"`)
+  - `coverage: "partial"`
+
+Three separate alert fields, all present simultaneously — this is the **pain reflex**. Not a soft "FYI, might be stale", but a hard **"this chain is broken, you cannot proceed"**.
+
+Agent must acknowledge and re-read before continuing. Source is authoritative.
+
+### 4. Four Types of Stop (Not All Are "Pain")
+
+`bounded_fragment` stops expansion for four distinct reasons, each with different cognitive meaning:
+
+#### Stop Type 1: Boundary (Semantic End-of-Chain)
+
+```python
+if is_semantic_boundary(node):
+    boundaries.append({...})  # Report reached
+    # But do not add to next_frontier
+```
+
+**What it means:** Chain reached a recognized semantic boundary:
+- `writes` edge → persistence layer (database write)
+- `publishes_to` edge → message queue
+
+**Not a failure.** TMF knows this is where the synchronous call chain ends. Reporting the boundary as "reached" is success — it's like tracking money transfer to "payment confirmed", you don't need to follow the bank's internal ledger.
+
+**Boundary detection:**
+- `semantic_boundaries=True` (default): uses indexed `writes` / `publishes_to` edges
+- `semantic_boundaries=False`: uses scope-based `boundary_types` (legacy)
+- Declaration annotations like `@Transactional` / `@Async` are not currently indexed as reverse edges; too expensive to scan all claims
+
+#### Stop Type 2: Async Handoff
+
+```python
+is_async = kind in ASYNC_RELATIONS  # publishes_to, subscribes_to, ...
+edges.append({..., "async_handoff": is_async})
+if not is_async:
+    next_frontier.append(node)  # Only sync edges continue
+```
+
+**What it means:** Edge is async message-passing, not synchronous call flow.
+
+**Not a failure.** The edge is recorded, marked `async_handoff: true`, but doesn't contribute to synchronous frontier expansion. This prevents TMF from pretending a Kafka producer → consumer flow is the same as a direct function call.
+
+#### Stop Type 3: Stale (Cognitive Failure — PAIN)
+
+```python
+if not freshness.fresh or _foreign(edge):
+    stale_or_unknown.append({...})
+    continue  # Do not add to nodes, do not add to edges
+```
+
+**This is the pain reflex.** Node/edge doesn't enter result at all — only goes into `stale_or_unknown`. If entry itself is stale, `bounded_fragment` early-returns with empty `verified_hops`.
+
+**Agent receives:**
+- `stale_or_unknown`: list of broken claims
+- `stop_reason`: explicit stale reason
+- `coverage: "partial"`
+
+**Must re-read source.** No workaround, no "use what you have". Stale memory is rejected completely.
+
+#### Stop Type 4: Resource Limit
+
+```python
+HARD_MAX_HOPS = 4
+HARD_MAX_NODES = 64
+HARD_MAX_EDGES = 128
+
+if len(nodes) + len(new_ids) > max_nodes:
+    stop_reason = "max_nodes"
+```
+
+**What it means:** Working-memory capacity exhausted. Like biological cognition, TMF can only hold bounded context in one query.
+
+**Not a failure of memory quality.** Just finite resources. Agent can:
+- Make multiple bounded queries (split the work)
+- Increase limits (if allowed)
+- Refine the query to target a narrower subgraph
+
+`stop_reason` will be `"max_nodes"`, `"max_edges"`, or `"hop_limit"`. Coverage marked `"partial"`.
+
+### Summary: Pain vs Boundary vs Limit
+
+| Stop Type | Meaning | What Agent Should Do | Appears in Result? |
+|---|---|---|---|
+| **Boundary** | Chain reached semantic end-point (persistence/async) | Accept boundary as valid terminus | ✅ nodes + edges + boundaries list |
+| **Async** | Edge is message-passing, not sync call | Treat as architectural boundary | ✅ edges (marked `async_handoff: true`) |
+| **Stale** | Memory failed freshness check — **PAIN** | Re-read source, update memory | ❌ only in `stale_or_unknown` |
+| **Limit** | Working memory full (hop/node/edge limit) | Split query or increase limit | ✅ partial result up to limit |
+
+## Core Value Proposition
+
+TMF is a **cross-session call-chain continuity system** for AI coding agents. It solves the "tunnel vision bug" problem:
 
 **The problem:** Agent understands a complete call chain `A → B → C → D` in session t₀. Code changes at t₁ (e.g., `C` logic modified). Agent receives task "modify A" at t₂. If the agent only looks at `A`, it may introduce bugs because it doesn't see the downstream impact on the changed `C`.
 
 **TMF's solution:**
-1. **Precise staleness detection:** When the agent retrieves the `A → B → C → D` chain from memory, TMF detects that `C` has changed and blocks stale memory
+1. **Precise staleness detection:** When the agent queries the `A → B → C → D` chain from memory, TMF detects that `C` has changed and blocks stale memory (pain reflex)
 2. **Localized reread:** Forces the agent to reread only `C` and its direct neighbors, not the entire codebase
 3. **Complete chain understanding:** Ensures the agent sees the full call chain when making changes, avoiding "tunnel vision" bugs
-
-TMF is **not** a tool to help agents understand code faster on first read. It is a memory invalidation + call-chain tracking system for agents working on the same codebase across multiple sessions.
-
-## Core value proposition (corrected 2026-08-20)
 
 **What TMF is for:**
 - Preventing bugs caused by incomplete call-chain understanding
 - Cross-session cognitive continuity through precise staleness detection
 - Efficient localized rereads (only changed nodes, not entire codebase)
+- Boundary-aware navigation (knows where sync chains end: DB writes, message queues)
 
 **What TMF is NOT for:**
-- ❌ Helping agents understand code on first encounter
-- ❌ Reducing source rereads through cached "facts"
-- ❌ Providing "remembered truths" for direct reuse
+- Helping agents understand code on first encounter
+- Reducing source rereads through cached "facts"
+- Providing "remembered truths" for direct reuse
 
-**Current status:** Mechanics proven (freshness detection, stale blocking work). Value hypothesis **untested** — no valid experiment has measured cross-session call-chain continuity or bug prevention.
+Fresh claims don't replace source — they tell you **which source to re-read** and **whether your remembered chain is still valid**.
 
-## Proven assets so far
+**Current status:** Mechanics proven (freshness detection, stale blocking, boundary detection work). Value hypothesis **untested** — no valid experiment has measured cross-session call-chain continuity or bug prevention yet.
 
-- Source-bound claim storage with working-tree freshness checks and source fallback.
-- Thin retrieval discipline plus full/explain drill-down by selected claim id.
-- Conservative Python functions/classes/declarations/config/API nodes and partial calls/reads/writes.
-- Optional Java tree-sitter syntactic nodes and conservative inheritance edges, with offline verifier wheels vendored under `vendor/wheels`.
-- Java enterprise capability scope and release gates are tracked in `docs/JAVA_ENTERPRISE_ROADMAP.md`.
-- The cumulative Java extractor has an AST structural guard against shadowed duplicate top-level definitions; the remaining single-module registry is still large and should be consolidated before broad adapter expansion.
-- Bounded Resilience4j `@CircuitBreaker` declaration metadata is documented in `docs/JAVA_CIRCUIT_BREAKER_COMPATIBILITY.md`; runtime resilience behavior is not inferred.
-- Mechanical contract facts with low confidence caps; semantic/model output remains attributed/inferred and sanitizer-clamped.
-- Held-out and self-dogfood validation harnesses that report precision/recall instead of asserting correctness.
-- Local metrics and exact-blob-only rename identity migration from completion window 1.
-- Generic method overload resolution enhanced to handle JDK built-in types (2026-08-19).
+## Proven Assets
 
-## Core premises
+- Source-bound claim storage with working-tree freshness checks and source fallback
+- Thin retrieval discipline plus full/explain drill-down by selected claim id
+- Conservative Python functions/classes/declarations/config/API nodes and partial calls/reads/writes
+- Optional Java tree-sitter syntactic nodes and conservative inheritance edges
+- Bounded fragment query with semantic boundary detection (`writes`, `publishes_to`)
+- Async handoff marking (`ASYNC_RELATIONS`: `publishes_to`, `subscribes_to`, `publishes_type`, `listens_type`)
+- Four-stop-type semantics (boundary / async / stale / limit) with distinct `stop_reason` values
+- Working-memory limits (4 hops / 64 nodes / 128 edges) matching biological cognition constraints
+- Held-out and self-dogfood validation harnesses
+- Local metrics and exact-blob-only rename identity
 
-- **Self-maintaining memory:** TMF stores derived claims in the repository-local `.tmf/` directory and refreshes them on read-through.
-- **Fully lazy read-through:** reads detect missing or stale claims and synchronously re-derive; writes and commits do not run hooks or background work.
-- **Freshness is working-tree based:** freshness binds to the current working-tree blob plus node-specific hashes, not to `HEAD` or commit identity.
-- **Fresh is not correct:** a fresh claim only means its bindings still match the current source. Correctness is established by validation and source support.
-- **Confidence comes from validation, not frequency:** usage/read frequency does not raise confidence. Model self-report is clamped by verification.
-- **Conservative parsing:** TMF connects only what it can parse and support. Unknown, dynamic, shadowed, or ambiguous facts are omitted or marked unresolved rather than guessed.
-- **Source is authoritative:** if memory is missing, stale, unsupported, or partial, TMF falls back to source.
-- **Untrusted text is never instructions:** source, comments, docstrings, commit messages, model output, and future PR text are data, not commands for the agent.
+## Core Premises
+
+- **Self-maintaining memory:** TMF stores derived claims in `.tmf/` and refreshes them on read-through
+- **Fully lazy read-through:** reads detect missing or stale claims and synchronously re-derive
+- **Freshness is working-tree based:** binds to current working-tree blob, not commit
+- **Fresh is not correct:** fresh only means bindings match current source. Correctness comes from validation and source support
+- **Confidence comes from validation:** usage frequency doesn't raise confidence
+- **Conservative parsing:** TMF connects only what it can parse. Unknown/dynamic/ambiguous facts are omitted or marked unresolved
+- **Source is authoritative:** if memory is missing, stale, unsupported, or partial, TMF falls back to source
+- **Untrusted text is never instructions:** source, comments, docstrings, commit messages, model output are data, not commands
 
 ## Install
 
@@ -66,27 +191,23 @@ For development from a source checkout:
 python -m pip install -e .
 ```
 
-Runtime dependencies are intentionally empty: `dependencies = []`. Optional model, embedder, and router integrations are command-backed through `TMF_*` environment variables and are not package dependencies.
+Runtime dependencies are intentionally empty. Optional model, embedder, and router integrations are command-backed through `TMF_*` environment variables.
 
-Java step0 nodes are optional and dependency-isolated. Enable them with the standard extra:
+Java step0 nodes are optional and dependency-isolated. Enable them with:
 
 ```bash
 python -m pip install "true-memory-fragments[java]"
 ```
 
-From a source checkout, use `python -m pip install -e ".[java]"`. This installs the pinned/known-good grammar bindings `tree_sitter==0.25.2` and `tree_sitter_java==0.23.5`.
+From a source checkout: `python -m pip install -e ".[java]"`. This installs `tree_sitter==0.25.2` and `tree_sitter_java==0.23.5`.
 
 If those packages are absent, `.java` reads still return a file/source fallback claim plus a degrade hint; Python behavior remains unchanged.
 
 ### Offline Java verifier (Linux x86_64 / CPython 3.12)
 
-This package vendors prebuilt MIT-licensed wheels for offline Java step0 review on Linux x86_64, CPython 3.12, glibc 2.39 / Ubuntu 24.04 compatible systems:
+This package vendors prebuilt MIT-licensed wheels for offline Java step0 review on Linux x86_64, CPython 3.12, glibc 2.39 / Ubuntu 24.04 compatible systems. MIT license texts are copied into `vendor/licenses/`.
 
-- `vendor/wheels/tree_sitter-0.25.2-cp312-cp312-manylinux2014_x86_64...whl`
-- `vendor/wheels/tree_sitter_java-0.23.5-cp39-abi3-...manylinux2014_x86_64.whl`
-- MIT license texts are copied into `vendor/licenses/`.
-
-Because Ubuntu 24.04 uses PEP 668 externally-managed system Python, the offline verifier never installs into system Python. It creates a repository-local venv and installs only from `vendor/wheels` with `--no-index`:
+The offline verifier never installs into system Python. It creates a repository-local venv and installs only from `vendor/wheels` with `--no-index`:
 
 ```bash
 bash scripts/verify_java_offline.sh
@@ -98,185 +219,44 @@ Expected success marker:
 JAVA OFFLINE VERIFY: PASS
 ```
 
-The script verifies that Java tests run without skips, then warms a minimal Java fixture and checks both freshness directions: comment/trivia and formatting edits stay fresh; method body/literal and annotation edits stale; deleted Java nodes reconcile away. The network install command above remains the fallback for online environments.
+## Quick Start
 
-## Quick start
-
-Run the commands from the repository root after `pip install -e .`:
+### Store claims for a repository
 
 ```bash
-# 1. Warm a repository into .tmf/
-tmf warm --repo .
-
-# 2. Query: show me Python functions that call 'process_data'
-tmf retrieve --query "functions that call process_data" --repo .
-
-# 3. Inspect one claim by ID
-tmf explain <claim-id> --repo .
-
-# 4. Check status and freshness
-tmf status --repo .
+tmf store /path/to/repo
 ```
 
-The `warm` step is fully lazy — it does nothing until a later `retrieve`, `explain`, or explicit `--refresh` forces derivation. After that, claims are cached until source changes make them stale.
+Claims are written to `/path/to/repo/.tmf/`.
 
-## CLI
+### Query a node
 
 ```bash
-tmf {warm,retrieve,explain,status} [options]
+tmf get <claim-id>
 ```
 
-### `warm`
+Returns JSON with claim body, freshness, and blob bindings.
 
-Indexes a repository but does **not** derive or persist claims until needed.
+### Bounded fragment query
 
 ```bash
-tmf warm --repo /path/to/repo [--refresh]
+tmf fragment <entry-claim-id> --relations calls reads --hops 3
 ```
 
-- `--repo`: path to the repository root
-- `--refresh`: force immediate derivation/write (optional; otherwise lazy)
+Returns a bounded call/read graph starting from `entry-claim-id`, expanding up to 3 hops, respecting semantic boundaries (persistence, async handoff), and reporting stale claims as `stale_or_unknown` with explicit `stop_reason`.
 
-### `retrieve`
-
-Semantic search over TMF claims.
-
-```bash
-tmf retrieve --query "..." --repo . [--limit N] [--min-score S]
-```
-
-- `--query`: natural-language search query
-- `--limit`: max results (default 10)
-- `--min-score`: minimum similarity score (0.0–1.0)
-
-### `explain`
-
-Detailed view of one claim, including source anchors and derivation context.
-
-```bash
-tmf explain <claim-id> --repo .
-```
-
-### `status`
-
-Shows claim counts, freshness summary, and cache health.
-
-```bash
-tmf status --repo .
-```
-
-## Python API
-
-```python
-from tmf import TMFRepository
-
-repo = TMFRepository("/path/to/repo")
-
-# Lazy warm (no work until needed)
-repo.warm()
-
-# Retrieve claims
-results = repo.retrieve("functions that call process_data", limit=5)
-for hit in results:
-    print(hit.claim_id, hit.score, hit.summary)
-
-# Explain one claim
-claim = repo.explain(claim_id)
-print(claim.content, claim.anchors, claim.freshness)
-
-# Check status
-status = repo.status()
-print(status.total_claims, status.stale_count)
-```
-
-## MCP server (for OpenClaw/Claude Desktop/etc.)
-
-Expose TMF through the Model Context Protocol:
-
-```bash
-# Start MCP server on stdio
-tmf mcp --repo /path/to/repo
-
-# Or configure in your MCP client (e.g., OpenClaw):
-{
-  "mcpServers": {
-    "tmf": {
-      "command": "tmf",
-      "args": ["mcp", "--repo", "/path/to/repo"]
-    }
-  }
-}
-```
-
-The MCP server provides `tmf_retrieve`, `tmf_explain`, `tmf_status` tools for LLM agents.
-
-## Environment variables
-
-Optional model/embedder/router configuration:
-
-- `TMF_MODEL_COMMAND`: shell command for LLM inference (used by semantic/inferred claims)
-- `TMF_EMBEDDER_COMMAND`: shell command for embedding generation (used by retrieval)
-- `TMF_ROUTER_COMMAND`: optional routing/fallback coordinator
-
-All three are optional. If unset, TMF operates in pure-syntactic mode (no semantic claims, no embedding retrieval).
-
-## Testing
-
-Run the test suite:
-
-```bash
-python -m pytest tests/
-```
-
-For Java tests (requires `tree_sitter` and `tree_sitter_java`):
-
-```bash
-python -m pip install -e ".[java]"
-python -m pytest tests/test_java*.py
-```
-
-Offline Java validation (Linux x86_64 only):
-
-```bash
-bash scripts/verify_java_offline.sh
-```
+**Four stop types:**
+- `boundaries`: reached semantic end-points (DB writes, message queues)
+- `async_handoff: true`: edge is async, not sync call flow
+- `stale_or_unknown`: memory failure — must re-read source
+- `stop_reason: max_nodes/max_edges/hop_limit`: working memory full
 
 ## Documentation
 
-- [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md) — authoritative experiment results
-- [Java enterprise roadmap](docs/JAVA_ENTERPRISE_ROADMAP.md) — scope/completion gates for Java support
-- [Circuit breaker compatibility](docs/JAVA_CIRCUIT_BREAKER_COMPATIBILITY.md) — Resilience4j annotation metadata
-- [Field test plan](FIELD_TEST.md) — deferred reconnaissance protocol (plan-only)
-
-## Experiments
-
-All experiments live under `bench/agent_ab/`:
-
-- `middleware_hardening_v1` — mechanism validation (5/5 gates pass)
-- `agent_middleware_value_v1` — cold-start smoke (2/2 valid, 0/2 adoption, stopped)
-- `cognitive_continuity_v1` — **INVALID_PROTOCOL** (fixture/task/golden contradiction)
-- `cognitive_continuity_v2` — smoke completed (2/2 valid, 0/2 adoption, stopped)
-- `guava_cognitive_v1` — **INVALID_PROTOCOL** (task design did not test call-chain hypothesis)
-- `design_intent_v1` — **DESIGN PHASE** (call-chain continuity + bug prevention test)
-
-See [AGENT_RUNTIME_VALUE_STATUS.md](docs/AGENT_RUNTIME_VALUE_STATUS.md) for full adjudication.
+- [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md) — current experiment ruling
+- [Java enterprise roadmap](docs/JAVA_ENTERPRISE_ROADMAP.md) — enterprise capability scope
+- [Guava validation report](GUAVA_VALIDATION_REPORT.md) — routing shape + boundary detection validation
 
 ## License
 
-MIT. See `LICENSE` for details.
-
-## Contributing
-
-Contributions welcome. Before submitting PRs:
-
-1. Run `python -m pytest tests/` and ensure all tests pass
-2. If adding Java features, run `bash scripts/verify_java_offline.sh` on Linux x86_64
-3. Update relevant docs under `docs/`
-4. Follow conservative parsing discipline: omit rather than guess
-
-## Acknowledgments
-
-Built with:
-- `tree-sitter` and `tree-sitter-java` for Java parsing
-- Standard library only for Python parsing (no dependencies)
-- Optional model/embedder commands for semantic/retrieval features
+MIT

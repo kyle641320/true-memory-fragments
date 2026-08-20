@@ -1,0 +1,46 @@
+{
+  "schema": "design-intent-v1-preflight",
+  "pass": true,
+  "errors": [],
+  "tasks": [
+    {
+      "task_id": "B01",
+      "anchors": [
+        "EventBus.java",
+        "SubscriberRegistry.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "mutated_files": [
+        "Dispatcher.java"
+      ],
+      "chain_len": 5
+    },
+    {
+      "task_id": "B02",
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java",
+        "AsyncEventBus.java"
+      ],
+      "mutated_files": [
+        "Subscriber.java"
+      ],
+      "chain_len": 5
+    },
+    {
+      "task_id": "B03",
+      "anchors": [
+        "AsyncEventBus.java",
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "mutated_files": [
+        "Dispatcher.java"
+      ],
+      "chain_len": 5
+    }
+  ]
+}

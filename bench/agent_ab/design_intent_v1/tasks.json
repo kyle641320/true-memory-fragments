@@ -1,0 +1,76 @@
+{
+  "suite": "design_intent_v1",
+  "schema": "tmf.design_intent.tasks.v1",
+  "arms": ["SOURCE_ONLY", "TMF_STALE", "TMF_FRESH"],
+  "smoke": ["B01", "B02"],
+  "real_guava_root": "/root/.openclaw/workspace/worktrees/guava",
+  "eventbus_source": "/root/.openclaw/workspace/worktrees/guava/guava/src/com/google/common/eventbus",
+  "tasks": [
+    {
+      "id": "B01",
+      "priority": "P0",
+      "scenario": "modify_middle_node_downstream_impact",
+      "title": "Dispatcher fan-out changed to first-subscriber-only dispatch",
+      "phase_a_question": "Trace EventBus.post -> Dispatcher.dispatch -> Subscriber.dispatchEvent -> invokeSubscriberMethod. Explain why dispatch fans out to all matching subscribers instead of stopping after one subscriber, and what isolation/performance tradeoff that design makes.",
+      "phase_b_question": "Dispatcher.dispatch was changed so ImmediateDispatcher delivers an event only to the first matching subscriber. Evaluate the impact: what design property was lost, which downstream path is skipped, and what performance/isolation tradeoff was made?",
+      "entry_chain": ["EventBus.post", "SubscriberRegistry.getSubscribers", "Dispatcher.dispatch", "Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod"],
+      "anchors": ["EventBus.java", "SubscriberRegistry.java", "Dispatcher.java", "Subscriber.java"],
+      "mutations": [
+        {
+          "file": "Dispatcher.java",
+          "find": "      while (subscribers.hasNext()) {\n        subscribers.next().dispatchEvent(event);\n      }",
+          "replace": "      if (subscribers.hasNext()) {\n        // design_intent_v1 mutation: no longer fans out to all matching subscribers.\n        subscribers.next().dispatchEvent(event);\n      }"
+        }
+      ],
+      "golden_intent": ["fanout_all_matching_subscribers", "subscriber_decoupling", "downstream_dispatchEvent_then_invoke", "first_subscriber_only_loses_broadcast_semantics"],
+      "rubric": {
+        "design_keywords": ["all matching", "fan", "broadcast", "decoupl", "isolation", "first", "skipped", "dispatchEvent", "invokeSubscriberMethod"],
+        "stale_forbidden_if_unread": ["still fans out", "all subscribers still receive"]
+      }
+    },
+    {
+      "id": "B02",
+      "priority": "P1",
+      "scenario": "rename_leaf_upstream_dependencies",
+      "title": "Subscriber.dispatchEvent renamed without updating dispatchers",
+      "phase_a_question": "Trace EventBus.post through the dispatcher to Subscriber.dispatchEvent. Explain why the async/executor boundary is hidden behind Subscriber.dispatchEvent rather than forcing Dispatcher implementations to know executor details.",
+      "phase_b_question": "Subscriber.dispatchEvent was renamed to enqueueEventForDispatch but dispatcher callers were not updated. Which upstream callers/dependencies are now broken, and what design separation did the old dispatchEvent boundary enforce?",
+      "entry_chain": ["EventBus.post", "Dispatcher.dispatch", "Subscriber.dispatchEvent", "Executor.execute", "Subscriber.invokeSubscriberMethod"],
+      "anchors": ["EventBus.java", "Dispatcher.java", "Subscriber.java", "AsyncEventBus.java"],
+      "mutations": [
+        {
+          "file": "Subscriber.java",
+          "find": "  final void dispatchEvent(Object event) {",
+          "replace": "  final void enqueueEventForDispatch(Object event) {"
+        }
+      ],
+      "golden_intent": ["dispatcher_executor_separation", "upstream_dispatcher_callers_break", "async_boundary_in_subscriber", "EventBus_post_to_Dispatcher_chain"],
+      "rubric": {
+        "design_keywords": ["Dispatcher", "dispatchEvent", "enqueueEventForDispatch", "executor", "boundary", "separation", "EventBus.post", "upstream", "ImmediateDispatcher", "LegacyAsyncDispatcher", "PerThreadQueuedDispatcher"],
+        "stale_forbidden_if_unread": ["dispatchEvent still exists", "no callers need updating"]
+      }
+    },
+    {
+      "id": "B03",
+      "priority": "P2",
+      "scenario": "bug_diagnosis_async_boundary",
+      "title": "Async handoff moved above queue drain",
+      "phase_a_question": "Trace AsyncEventBus.post through Dispatcher.legacyAsync and Subscriber.dispatchEvent. Explain exactly where the async boundary is and why queue drain stays on the posting thread.",
+      "phase_b_question": "A bug report says AsyncEventBus now returns before the legacy dispatch queue is drained. Diagnose which design boundary moved, what ordering guarantee changed, and where to inspect in the chain.",
+      "entry_chain": ["AsyncEventBus.<init>", "EventBus.post", "LegacyAsyncDispatcher.dispatch", "Subscriber.dispatchEvent", "Executor.execute"],
+      "anchors": ["AsyncEventBus.java", "EventBus.java", "Dispatcher.java", "Subscriber.java"],
+      "mutations": [
+        {
+          "file": "Dispatcher.java",
+          "find": "      EventWithSubscriber e;\n      while ((e = queue.poll()) != null) {\n        e.subscriber.dispatchEvent(e.event);\n      }",
+          "replace": "      // design_intent_v1 mutation marker: queue draining semantics changed; inspect async boundary.\n      EventWithSubscriber e;\n      while ((e = queue.poll()) != null) {\n        e.subscriber.dispatchEvent(e.event);\n      }"
+        }
+      ],
+      "golden_intent": ["async_boundary_in_subscriber_dispatchEvent", "legacy_queue_drains_on_posting_thread", "ordering_vs_async_invocation_tradeoff"],
+      "rubric": {
+        "design_keywords": ["AsyncEventBus", "LegacyAsyncDispatcher", "queue", "posting thread", "caller", "Subscriber.dispatchEvent", "executor", "ordering", "boundary"],
+        "stale_forbidden_if_unread": ["nothing changed"]
+      }
+    }
+  ]
+}

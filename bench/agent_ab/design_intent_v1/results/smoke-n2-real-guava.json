@@ -1,0 +1,717 @@
+{
+  "schema": "design-intent-v1-results",
+  "tag": "smoke-n2-real-guava",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "tasks": [
+    {
+      "task_id": "B01",
+      "phase_a": {
+        "question": "Trace EventBus.post -> Dispatcher.dispatch -> Subscriber.dispatchEvent -> invokeSubscriberMethod. Explain why dispatch fans out to all matching subscribers instead of stopping after one subscriber, and what isolation/performance tradeoff that design makes.",
+        "discarded_answer": true,
+        "claim": {
+          "claim_id": "design_intent_v1:B01",
+          "kind": "design_rationale",
+          "anchors": [
+            "EventBus.java",
+            "SubscriberRegistry.java",
+            "Dispatcher.java",
+            "Subscriber.java"
+          ],
+          "chain": [
+            "EventBus.post",
+            "SubscriberRegistry.getSubscribers",
+            "Dispatcher.dispatch",
+            "Subscriber.dispatchEvent",
+            "Subscriber.invokeSubscriberMethod"
+          ],
+          "summary": "EventBus broadcast fan-out dispatches one posted event to every matching Subscriber instead of stopping at the first match.",
+          "rationale": "The chain EventBus.post -> SubscriberRegistry.getSubscribers -> Dispatcher.dispatch -> Subscriber.dispatchEvent -> invokeSubscriberMethod preserves publish/subscribe broadcast semantics and decouples independent subscribers; the tradeoff is O(N) dispatch work and ordering complexity rather than a cheap first-consumer path.",
+          "constraints": [
+            "deliver to all matching subscribers",
+            "subscriber isolation",
+            "preserve dispatch ordering while allowing executor policy below Subscriber"
+          ],
+          "alternatives_considered": [
+            "first matching subscriber only",
+            "central sequential handler"
+          ],
+          "source_sha256": {
+            "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+            "SubscriberRegistry.java": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+            "Dispatcher.java": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+            "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169"
+          }
+        }
+      },
+      "rows": [
+        {
+          "task_id": "B01",
+          "arm": "SOURCE_ONLY",
+          "valid": true,
+          "fixture": "base",
+          "freshness": null,
+          "answer": {
+            "action": "final",
+            "answer": "The lost design property is **broadcast/fan-out delivery**: `EventBus.post` promises to post an event to *all* registered matching subscribers, and the dispatcher contract receives the complete matching-subscriber iterator. `ImmediateDispatcher.dispatch` is intended to remove queueing and provide immediate, depth-first ordering—not to change the recipient set. Its loop therefore normally calls `Subscriber.dispatchEvent(event)` for every iterator element.\n\nWith first-match-only behavior, the concrete chain becomes `EventBus.post` → `SubscriberRegistry.getSubscribers` → `Dispatcher.dispatch` → only the first `Subscriber.dispatchEvent` → its executor → `Subscriber.invokeSubscriberMethod`. For every later matching subscriber, the downstream path `Subscriber.dispatchEvent` → `Executor.execute` → `invokeSubscriberMethod` is skipped entirely. Their exception-handling path through `EventBus.handleSubscriberException` is consequently unreachable as well.\n\nThe tradeoff is reduced per-post work and stronger accidental isolation: only one executor task/invocation is scheduled, so later slow, contended, or failing subscribers cannot affect the post. But that gain comes from dropping valid deliveries, rather than from the intended executor-based isolation. It changes correctness and public semantics from O(number of matching subscribers) fan-out to roughly O(1) delivery, while making which subscriber receives the event depend on iterator order. The other dispatcher implementations also drain all subscribers, showing that all-subscriber delivery is a dispatcher-wide invariant; dispatchers are meant to vary ordering/queueing, not recipient cardinality.",
+            "citations": [
+              "EventBus.java:249",
+              "EventBus.java:259",
+              "EventBus.java:260",
+              "EventBus.java:262",
+              "Dispatcher.java:29",
+              "Dispatcher.java:62",
+              "Dispatcher.java:70",
+              "Dispatcher.java:99",
+              "Dispatcher.java:110",
+              "Dispatcher.java:111",
+              "Dispatcher.java:112",
+              "Dispatcher.java:158",
+              "Dispatcher.java:160",
+              "Dispatcher.java:166",
+              "Dispatcher.java:181",
+              "Dispatcher.java:186",
+              "Dispatcher.java:188",
+              "Dispatcher.java:189",
+              "Subscriber.java:53",
+              "Subscriber.java:65",
+              "Subscriber.java:66",
+              "Subscriber.java:67",
+              "Subscriber.java:70",
+              "Subscriber.java:72",
+              "Subscriber.java:82",
+              "Subscriber.java:84"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 5,
+            "source_reads": 3,
+            "source_files": [
+              "Dispatcher.java",
+              "EventBus.java",
+              "Subscriber.java"
+            ],
+            "source_bytes": 14821,
+            "source_lines": 385,
+            "localized_reread_bytes": 14821,
+            "range_reads": 2,
+            "prompt_tokens": 18930,
+            "completion_tokens": 1135,
+            "injection_tokens": 0,
+            "invalid": 2,
+            "wall_seconds": 1787199825.1007216
+          },
+          "score": {
+            "design_score_machine": 2,
+            "keyword_hits": [
+              "fan",
+              "broadcast",
+              "isolation",
+              "first",
+              "skipped",
+              "dispatchEvent",
+              "invokeSubscriberMethod"
+            ],
+            "chain_hits": [
+              "EventBus.post",
+              "SubscriberRegistry.getSubscribers",
+              "Dispatcher.dispatch",
+              "Subscriber.dispatchEvent",
+              "Subscriber.invokeSubscriberMethod"
+            ],
+            "chain_completeness": 1.0,
+            "has_citations": true,
+            "stale_detected": null,
+            "read_changed_anchor": null,
+            "stale_trust_error": false,
+            "forbidden_phrases": []
+          },
+          "compile": {
+            "skipped": false,
+            "exit": 0,
+            "stderr": ""
+          }
+        },
+        {
+          "task_id": "B01",
+          "arm": "TMF_STALE",
+          "valid": true,
+          "fixture": "mutated",
+          "freshness": {
+            "fresh": [
+              {
+                "path": "EventBus.java",
+                "old_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+                "current_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245"
+              },
+              {
+                "path": "SubscriberRegistry.java",
+                "old_sha256": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+                "current_sha256": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950"
+              },
+              {
+                "path": "Subscriber.java",
+                "old_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+                "current_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169"
+              }
+            ],
+            "stale": [
+              {
+                "path": "Dispatcher.java",
+                "old_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+                "current_sha256": "c4462348dd356b3d01d17c7e1c4b444289b1fb515c94afa42c4a7ef88c0b9106"
+              }
+            ],
+            "stale_detected": true
+          },
+          "answer": {
+            "action": "final",
+            "answer": "The lost design property is **broadcast/fan-out delivery**: `EventBus.post` is specified to post an event to *all* registered matching subscribers, and the immediate dispatcher is intended only to alter dispatch ordering, independently of how each subscriber executes. `ImmediateDispatcher.dispatch` now consumes only the first iterator element, so delivery depends on iterator/registration order and all later matching subscribers silently miss the event.\n\nThe skipped downstream chain is: `EventBus.post` → `ImmediateDispatcher.dispatch` → each remaining `Subscriber.dispatchEvent` → that subscriber’s `Executor.execute` → `Subscriber.invokeSubscriberMethod`; consequently, later subscribers also never reach their normal exception-handling path through `EventBus.handleSubscriberException`.\n\nThe tradeoff is lower O(1)-style dispatch work for the immediate dispatcher instead of O(number of matching subscribers): it avoids iterator traversal, executor submissions, callback cost, and exposure to failures or rejection from later subscribers. But that performance/failure-isolation gain is obtained by abandoning independent delivery to subscribers: only one consumer receives the event, ordering selects the winner, and the remaining subscribers are isolated from the event rather than safely invoked through their own executor and exception boundary.",
+            "citations": [
+              "EventBus.java:249",
+              "EventBus.java:259",
+              "EventBus.java:262",
+              "Dispatcher.java:29",
+              "Dispatcher.java:61",
+              "Dispatcher.java:186",
+              "Dispatcher.java:188",
+              "Dispatcher.java:190",
+              "Subscriber.java:53",
+              "Subscriber.java:65",
+              "Subscriber.java:67",
+              "Subscriber.java:70",
+              "Subscriber.java:72"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 6,
+            "source_reads": 4,
+            "source_files": [
+              "Dispatcher.java",
+              "EventBus.java",
+              "Subscriber.java"
+            ],
+            "source_bytes": 13995,
+            "source_lines": 336,
+            "localized_reread_bytes": 13995,
+            "range_reads": 4,
+            "prompt_tokens": 18463,
+            "completion_tokens": 890,
+            "injection_tokens": 89,
+            "invalid": 2,
+            "wall_seconds": 1787199862.0907025
+          },
+          "score": {
+            "design_score_machine": 2,
+            "keyword_hits": [
+              "fan",
+              "broadcast",
+              "isolation",
+              "first",
+              "skipped",
+              "dispatchEvent",
+              "invokeSubscriberMethod"
+            ],
+            "chain_hits": [
+              "EventBus.post",
+              "Dispatcher.dispatch",
+              "Subscriber.dispatchEvent",
+              "Subscriber.invokeSubscriberMethod"
+            ],
+            "chain_completeness": 0.8,
+            "has_citations": true,
+            "stale_detected": true,
+            "read_changed_anchor": true,
+            "stale_trust_error": false,
+            "forbidden_phrases": []
+          },
+          "compile": {
+            "skipped": false,
+            "exit": 0,
+            "stderr": ""
+          }
+        },
+        {
+          "task_id": "B01",
+          "arm": "TMF_FRESH",
+          "valid": true,
+          "fixture": "base",
+          "freshness": {
+            "fresh": [
+              {
+                "path": "EventBus.java",
+                "old_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+                "current_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245"
+              },
+              {
+                "path": "SubscriberRegistry.java",
+                "old_sha256": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950",
+                "current_sha256": "b240f1323d60cf06a68b5896a10db185033ac0b4b4400aa13c71d3ffc4c27950"
+              },
+              {
+                "path": "Dispatcher.java",
+                "old_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+                "current_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47"
+              },
+              {
+                "path": "Subscriber.java",
+                "old_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+                "current_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169"
+              }
+            ],
+            "stale": [],
+            "stale_detected": false
+          },
+          "answer": {
+            "action": "final",
+            "answer": "The change loses EventBus’s publish/subscribe broadcast fan-out property: `EventBus.post` obtains the immutable snapshot of all type-compatible subscribers from `SubscriberRegistry.getSubscribers` and passes that iterator to `Dispatcher.dispatch`; the ImmediateDispatcher is intended to exhaust it, not treat it as a first-consumer lookup. With first-match-only behavior, every subscriber after the first is skipped, so their downstream chain `Subscriber.dispatchEvent` -> executor scheduling -> `Subscriber.invokeSubscriberMethod` never runs. That breaks isolation/decoupling among independent subscribers because delivery to one subscriber now suppresses the others and makes behavior depend on iteration/registration/type-hierarchy order. The tradeoff is cheaper dispatch—roughly O(1) subscriber dispatch/scheduling instead of O(N), with less executor work and less multi-subscriber ordering complexity—but at the cost of broadcast semantics, subscriber isolation, and complete delivery. Dispatcher ordering remains conceptually separate from the executor policy below `Subscriber`: the dispatcher selects/orders deliveries, while `Subscriber.dispatchEvent` uses the executor to perform each invocation.",
+            "citations": [
+              "EventBus.java:250",
+              "EventBus.java:259",
+              "SubscriberRegistry.java:121",
+              "SubscriberRegistry.java:125",
+              "SubscriberRegistry.java:138",
+              "Dispatcher.java:25",
+              "Dispatcher.java:29",
+              "Dispatcher.java:62",
+              "Dispatcher.java:185",
+              "Dispatcher.java:188",
+              "Subscriber.java:65",
+              "Subscriber.java:66",
+              "Subscriber.java:67",
+              "Subscriber.java:70",
+              "Subscriber.java:82"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 6,
+            "source_reads": 4,
+            "source_files": [
+              "Dispatcher.java",
+              "EventBus.java",
+              "Subscriber.java",
+              "SubscriberRegistry.java"
+            ],
+            "source_bytes": 16937,
+            "source_lines": 426,
+            "localized_reread_bytes": 16937,
+            "range_reads": 3,
+            "prompt_tokens": 21125,
+            "completion_tokens": 503,
+            "injection_tokens": 400,
+            "invalid": 1,
+            "wall_seconds": 1787199880.727861
+          },
+          "score": {
+            "design_score_machine": 2,
+            "keyword_hits": [
+              "fan",
+              "broadcast",
+              "decoupl",
+              "isolation",
+              "first",
+              "skipped",
+              "dispatchEvent",
+              "invokeSubscriberMethod"
+            ],
+            "chain_hits": [
+              "EventBus.post",
+              "SubscriberRegistry.getSubscribers",
+              "Dispatcher.dispatch",
+              "Subscriber.dispatchEvent",
+              "Subscriber.invokeSubscriberMethod"
+            ],
+            "chain_completeness": 1.0,
+            "has_citations": true,
+            "stale_detected": null,
+            "read_changed_anchor": null,
+            "stale_trust_error": false,
+            "forbidden_phrases": []
+          },
+          "compile": {
+            "skipped": false,
+            "exit": 0,
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "task_id": "B02",
+      "phase_a": {
+        "question": "Trace EventBus.post through the dispatcher to Subscriber.dispatchEvent. Explain why the async/executor boundary is hidden behind Subscriber.dispatchEvent rather than forcing Dispatcher implementations to know executor details.",
+        "discarded_answer": true,
+        "claim": {
+          "claim_id": "design_intent_v1:B02",
+          "kind": "design_rationale",
+          "anchors": [
+            "EventBus.java",
+            "Dispatcher.java",
+            "Subscriber.java",
+            "AsyncEventBus.java"
+          ],
+          "chain": [
+            "EventBus.post",
+            "Dispatcher.dispatch",
+            "Subscriber.dispatchEvent",
+            "Executor.execute",
+            "Subscriber.invokeSubscriberMethod"
+          ],
+          "summary": "Subscriber.dispatchEvent is the boundary that lets Dispatcher know only about ordering/fan-out while Subscriber owns executor handoff and invocation details.",
+          "rationale": "EventBus and Dispatcher can route events without depending on Executor mechanics; renaming/removing this boundary breaks all dispatcher implementations that call dispatchEvent and exposes a deliberate separation between routing order and subscriber execution.",
+          "constraints": [
+            "dispatcher/executor separation",
+            "all dispatchers call the same subscriber boundary",
+            "async handoff remains inside Subscriber"
+          ],
+          "alternatives_considered": [
+            "Dispatcher calls Executor directly",
+            "EventBus invokes subscriber methods directly"
+          ],
+          "source_sha256": {
+            "EventBus.java": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+            "Dispatcher.java": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+            "Subscriber.java": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+            "AsyncEventBus.java": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875"
+          }
+        }
+      },
+      "rows": [
+        {
+          "task_id": "B02",
+          "arm": "SOURCE_ONLY",
+          "valid": true,
+          "fixture": "base",
+          "freshness": null,
+          "answer": {
+            "action": "final",
+            "answer": "The rename breaks every concrete `Dispatcher` implementation that still calls `Subscriber.dispatchEvent(Object)`: `PerThreadQueuedDispatcher.dispatch` while draining its per-thread queue, `LegacyAsyncDispatcher.dispatch` while draining its global `EventWithSubscriber` queue, and `ImmediateDispatcher.dispatch` while iterating subscribers. The concrete upstream chain is `EventBus.post` → `Dispatcher.dispatch` → one of those three implementations → the renamed `Subscriber.enqueueEventForDispatch` → `Executor.execute` → `Subscriber.invokeSubscriberMethod`; for subscribers not marked `@AllowConcurrentEvents`, virtual dispatch reaches `SynchronizedSubscriber.invokeSubscriberMethod`. The old `dispatchEvent` boundary enforced separation between dispatch policy and execution policy: `Dispatcher` determines subscriber/event ordering, queueing, and reentrancy behavior, while `Subscriber.dispatchEvent` submits the selected invocation to the subscriber's configured executor, which determines when and on which thread the listener runs. Within that executor task, `Subscriber` performs reflective invocation and forwards subscriber exceptions to `EventBus.handleSubscriberException`; `SynchronizedSubscriber` separately serializes non-thread-safe listener invocations. Thus the three callers should be updated to `enqueueEventForDispatch`, not changed to invoke `invokeSubscriberMethod` directly, which would bypass executor selection and associated exception-handling behavior.",
+            "citations": [
+              "EventBus.java:262",
+              "Dispatcher.java:29",
+              "Dispatcher.java:70",
+              "Dispatcher.java:99",
+              "Dispatcher.java:112",
+              "Dispatcher.java:158",
+              "Dispatcher.java:166",
+              "Dispatcher.java:186",
+              "Dispatcher.java:189",
+              "Subscriber.java:53",
+              "Subscriber.java:62",
+              "Subscriber.java:65",
+              "Subscriber.java:67",
+              "Subscriber.java:70",
+              "Subscriber.java:72",
+              "Subscriber.java:78",
+              "Subscriber.java:82",
+              "Subscriber.java:124",
+              "Subscriber.java:133",
+              "Subscriber.java:140"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 5,
+            "source_reads": 2,
+            "source_files": [
+              "Dispatcher.java",
+              "Subscriber.java"
+            ],
+            "source_bytes": 12456,
+            "source_lines": 339,
+            "localized_reread_bytes": 12456,
+            "range_reads": 0,
+            "prompt_tokens": 14583,
+            "completion_tokens": 1117,
+            "injection_tokens": 0,
+            "invalid": 1,
+            "wall_seconds": 29.93796944618225
+          },
+          "score": {
+            "design_score_machine": 2,
+            "keyword_hits": [
+              "Dispatcher",
+              "dispatchEvent",
+              "enqueueEventForDispatch",
+              "executor",
+              "boundary",
+              "separation",
+              "EventBus.post",
+              "upstream",
+              "ImmediateDispatcher",
+              "LegacyAsyncDispatcher",
+              "PerThreadQueuedDispatcher"
+            ],
+            "chain_hits": [
+              "EventBus.post",
+              "Dispatcher.dispatch",
+              "Subscriber.dispatchEvent",
+              "Executor.execute",
+              "Subscriber.invokeSubscriberMethod"
+            ],
+            "chain_completeness": 1.0,
+            "has_citations": true,
+            "stale_detected": null,
+            "read_changed_anchor": null,
+            "stale_trust_error": false,
+            "forbidden_phrases": []
+          },
+          "compile": {
+            "skipped": false,
+            "exit": 0,
+            "stderr": ""
+          }
+        },
+        {
+          "task_id": "B02",
+          "arm": "TMF_STALE",
+          "valid": true,
+          "fixture": "mutated",
+          "freshness": {
+            "fresh": [
+              {
+                "path": "EventBus.java",
+                "old_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+                "current_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245"
+              },
+              {
+                "path": "Dispatcher.java",
+                "old_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+                "current_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47"
+              },
+              {
+                "path": "AsyncEventBus.java",
+                "old_sha256": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+                "current_sha256": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875"
+              }
+            ],
+            "stale": [
+              {
+                "path": "Subscriber.java",
+                "old_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+                "current_sha256": "1506ac0ae9fdf558446cffc7ca6e8f28f743709d86dd9ef754547f43d374d68a"
+              }
+            ],
+            "stale_detected": true
+          },
+          "answer": {
+            "action": "final",
+            "answer": "The rename breaks all three concrete `Dispatcher.dispatch(...)` implementations because they still call the now-nonexistent `Subscriber.dispatchEvent(...)`: `PerThreadQueuedDispatcher.dispatch(...)` at line 112, `LegacyAsyncDispatcher.dispatch(...)` at line 166, and `ImmediateDispatcher.dispatch(...)` at line 189. Consequently, the upstream posting chain `EventBus.post(...)` → `dispatcher.dispatch(event, eventSubscribers)` → one of those three implementations → `Subscriber.dispatchEvent(...)` no longer compiles; each terminal call must target `enqueueEventForDispatch(...)` instead.\n\nThe old `dispatchEvent` boundary enforced a deliberate separation between dispatch ordering and subscriber execution. `Dispatcher` decides when and in what order each event/subscriber pair is handed off: per-thread queued breadth-first/reentrancy-safe ordering, legacy global async queueing, or immediate depth-first ordering. The `Subscriber` boundary then hands that pair to the bus-provided `Executor`, which decides how and on which thread the subscriber method runs. Inside that executor task, `Subscriber` invokes the method and routes `InvocationTargetException` causes to `EventBus.handleSubscriberException(...)`. Thus the rename to `enqueueEventForDispatch` clarifies the existing intent: dispatcher “dispatch” means ordering and handoff, not direct subscriber invocation; crossing into `Subscriber` only enqueues execution, while executor selection, reflective invocation, synchronization overrides, and exception handling remain subscriber-side concerns.",
+            "citations": [
+              "EventBus.java:259",
+              "EventBus.java:262",
+              "Dispatcher.java:25",
+              "Dispatcher.java:29",
+              "Dispatcher.java:38",
+              "Dispatcher.java:62",
+              "Dispatcher.java:99",
+              "Dispatcher.java:112",
+              "Dispatcher.java:158",
+              "Dispatcher.java:166",
+              "Dispatcher.java:186",
+              "Dispatcher.java:189",
+              "Subscriber.java:62",
+              "Subscriber.java:65",
+              "Subscriber.java:66",
+              "Subscriber.java:67",
+              "Subscriber.java:70",
+              "Subscriber.java:72",
+              "Subscriber.java:77"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 7,
+            "source_reads": 4,
+            "source_files": [
+              "Dispatcher.java",
+              "EventBus.java",
+              "Subscriber.java"
+            ],
+            "source_bytes": 10321,
+            "source_lines": 243,
+            "localized_reread_bytes": 10321,
+            "range_reads": 4,
+            "prompt_tokens": 12844,
+            "completion_tokens": 616,
+            "injection_tokens": 89,
+            "invalid": 1,
+            "wall_seconds": 1787199758.0968306
+          },
+          "score": {
+            "design_score_machine": 2,
+            "keyword_hits": [
+              "Dispatcher",
+              "dispatchEvent",
+              "enqueueEventForDispatch",
+              "executor",
+              "boundary",
+              "separation",
+              "EventBus.post",
+              "upstream",
+              "ImmediateDispatcher",
+              "LegacyAsyncDispatcher",
+              "PerThreadQueuedDispatcher"
+            ],
+            "chain_hits": [
+              "EventBus.post",
+              "Dispatcher.dispatch",
+              "Subscriber.dispatchEvent"
+            ],
+            "chain_completeness": 0.6,
+            "has_citations": true,
+            "stale_detected": true,
+            "read_changed_anchor": true,
+            "stale_trust_error": false,
+            "forbidden_phrases": []
+          },
+          "compile": {
+            "skipped": false,
+            "exit": 1,
+            "stderr": "/tmp/design-intent-6pdcptfb/repo/Dispatcher.java:112: error: cannot find symbol\n              nextEvent.subscribers.next().dispatchEvent(nextEvent.event);\n                                          ^\n  symbol:   method dispatchEvent(Object)\n  location: class Subscriber\n/tmp/design-intent-6pdcptfb/repo/Dispatcher.java:166: error: cannot find symbol\n        e.subscriber.dispatchEvent(e.event);\n                    ^\n  symbol:   method dispatchEvent(Object)\n  location: variable subscriber of type Subscriber\n/tmp/design-intent-6pdcptfb/repo/Dispatcher.java:189: error: cannot find symbol\n        subscribers.next().dispatchEvent(event);\n                          ^\n  symbol:   method dispatchEvent(Object)\n  location: class Subscriber\n3 errors\n"
+          }
+        },
+        {
+          "task_id": "B02",
+          "arm": "TMF_FRESH",
+          "valid": true,
+          "fixture": "base",
+          "freshness": {
+            "fresh": [
+              {
+                "path": "EventBus.java",
+                "old_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245",
+                "current_sha256": "d7f3ecc33ebf2de30d22d83101aaf0a473068242c5a214a7947c92b7fc54e245"
+              },
+              {
+                "path": "Dispatcher.java",
+                "old_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47",
+                "current_sha256": "e3afb0635da341e3eb1ee95ff4d88091940ab5aa28b813398d72546fd5239b47"
+              },
+              {
+                "path": "Subscriber.java",
+                "old_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169",
+                "current_sha256": "60f54ea22a49124b3fb7b76b6105edcd289cf52abee643b00ebbcfc62db6f169"
+              },
+              {
+                "path": "AsyncEventBus.java",
+                "old_sha256": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875",
+                "current_sha256": "fdb9c90587bac320789d9eba62593c9adc67cd0ead7267406e4f485c9ac6e875"
+              }
+            ],
+            "stale": [],
+            "stale_detected": false
+          },
+          "answer": {
+            "action": "final",
+            "answer": "The broken direct callers are all three `Dispatcher` implementations, because each still invokes `Subscriber.dispatchEvent(...)`: `PerThreadQueuedDispatcher.dispatch` while draining its per-thread event queue, `LegacyAsyncDispatcher.dispatch` while draining its global event/subscriber queue, and `ImmediateDispatcher.dispatch` while iterating subscribers directly. After renaming that Subscriber method to `enqueueEventForDispatch`, these references no longer resolve, so every dispatcher mode is broken. Upstream, this breaks the normal chain `EventBus.post` → `Dispatcher.dispatch` for the default `perThreadDispatchQueue()` dispatcher, as well as users of `legacyAsync()` and `immediate()` (including async configurations).\n\nThe old `dispatchEvent` boundary enforced a routing-versus-execution separation. `EventBus.post` only discovers subscribers and delegates; each `Dispatcher` owns fan-out, queueing, reentrancy, and ordering policy; then `Subscriber.dispatchEvent` takes over and owns the executor handoff (`Executor.execute`), reflective invocation (`invokeSubscriberMethod`), and subscriber-exception reporting. Thus dispatchers need to know only when and in what order to hand an event to each Subscriber—not how the subscriber is scheduled or invoked. The concrete chain is `EventBus.post` → a concrete `Dispatcher.dispatch` → `Subscriber.dispatchEvent`/renamed `enqueueEventForDispatch` → `Executor.execute` → `Subscriber.invokeSubscriberMethod`. Updating all three dispatcher call sites to the new name preserves that boundary; moving executor or reflection logic into Dispatcher or EventBus would violate it.",
+            "citations": [
+              "EventBus.java:259",
+              "EventBus.java:262",
+              "EventBus.java:187",
+              "Dispatcher.java:38",
+              "Dispatcher.java:70",
+              "Dispatcher.java:99",
+              "Dispatcher.java:112",
+              "Dispatcher.java:158",
+              "Dispatcher.java:166",
+              "Dispatcher.java:186",
+              "Dispatcher.java:189",
+              "Subscriber.java:53",
+              "Subscriber.java:62",
+              "Subscriber.java:65",
+              "Subscriber.java:67",
+              "Subscriber.java:70",
+              "Subscriber.java:72",
+              "Subscriber.java:82"
+            ]
+          },
+          "telemetry": {
+            "tool_calls": 7,
+            "source_reads": 4,
+            "source_files": [
+              "Dispatcher.java",
+              "EventBus.java",
+              "Subscriber.java"
+            ],
+            "source_bytes": 14378,
+            "source_lines": 352,
+            "localized_reread_bytes": 14378,
+            "range_reads": 4,
+            "prompt_tokens": 18441,
+            "completion_tokens": 670,
+            "injection_tokens": 388,
+            "invalid": 2,
+            "wall_seconds": 1787199794.9268084
+          },
+          "score": {
+            "design_score_machine": 2,
+            "keyword_hits": [
+              "Dispatcher",
+              "dispatchEvent",
+              "enqueueEventForDispatch",
+              "executor",
+              "boundary",
+              "separation",
+              "EventBus.post",
+              "upstream",
+              "ImmediateDispatcher",
+              "LegacyAsyncDispatcher",
+              "PerThreadQueuedDispatcher"
+            ],
+            "chain_hits": [
+              "EventBus.post",
+              "Dispatcher.dispatch",
+              "Subscriber.dispatchEvent",
+              "Executor.execute",
+              "Subscriber.invokeSubscriberMethod"
+            ],
+            "chain_completeness": 1.0,
+            "has_citations": true,
+            "stale_detected": null,
+            "read_changed_anchor": null,
+            "stale_trust_error": false,
+            "forbidden_phrases": []
+          },
+          "compile": {
+            "skipped": false,
+            "exit": 0,
+            "stderr": ""
+          }
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "gates": [
+      {
+        "task_id": "B01",
+        "stale_detected": true,
+        "stale_reread_lt_50pct_source": false,
+        "zero_stale_trust_error": true,
+        "fresh_chain_gt_source": false,
+        "fresh_design_score": 2,
+        "source_design_score": 2,
+        "pass_mandatory": false
+      },
+      {
+        "task_id": "B02",
+        "stale_detected": true,
+        "stale_reread_lt_50pct_source": false,
+        "zero_stale_trust_error": true,
+        "fresh_chain_gt_source": false,
+        "fresh_design_score": 2,
+        "source_design_score": 2,
+        "pass_mandatory": false
+      }
+    ],
+    "smoke_pass": false,
+    "stale_detection_rate": 1.0,
+    "stale_trust_errors": 0
+  }
+}

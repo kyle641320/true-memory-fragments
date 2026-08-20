@@ -1,0 +1,101 @@
+{
+  "task_id": "B01",
+  "arm": "TMF_CLAIMS",
+  "root": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/smoke/B01__TMF_CLAIMS",
+  "claim": {
+    "claim_id": "same_version_chain_v1:B01:phase_a_chain",
+    "task_id": "B01",
+    "kind": "call_chain",
+    "freshness": "fresh_same_version",
+    "anchors": [
+      "EventBus.java",
+      "AsyncEventBus.java",
+      "Dispatcher.java",
+      "Subscriber.java",
+      "SubscriberRegistry.java"
+    ],
+    "golden_chain": [
+      "EventBus.post",
+      "SubscriberRegistry.getSubscribers",
+      "Dispatcher.dispatch",
+      "Dispatcher.LegacyAsyncDispatcher.dispatch",
+      "Subscriber.dispatchEvent",
+      "Subscriber.invokeSubscriberMethod",
+      "Method.invoke"
+    ],
+    "summary": "Trace the complete call chain from EventBus.post() to actual subscriber method invocation, including AsyncEventBus.",
+    "details": [
+      "EventBus.post obtains an Iterator<Subscriber> from SubscriberRegistry.getSubscribers(event).",
+      "EventBus.post delegates delivery to dispatcher.dispatch(event, eventSubscribers).",
+      "AsyncEventBus is not a separate post path; its constructors pass Dispatcher.legacyAsync() and a caller-supplied Executor into EventBus.",
+      "Dispatcher.LegacyAsyncDispatcher.dispatch queues EventWithSubscriber pairs then calls e.subscriber.dispatchEvent(e.event).",
+      "Subscriber.dispatchEvent performs the executor handoff and then calls invokeSubscriberMethod(event).",
+      "Subscriber.invokeSubscriberMethod calls Method.invoke(target, event).",
+      "Therefore per-subscriber behavior such as rate limiting belongs at Subscriber/dispatchEvent/invocation boundary, not only at EventBus.post entry."
+    ]
+  },
+  "doc_control": null,
+  "final": null,
+  "telemetry": {
+    "tool_calls": 1,
+    "source_bytes": 0,
+    "source_reads": 0,
+    "range_reads": 0,
+    "symbol_reads": 0,
+    "source_files": [],
+    "prompt_tokens": 1452,
+    "completion_tokens": 9,
+    "invalid": 0,
+    "wall_seconds": 140.09
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "diffs": {},
+  "audit": {
+    "compile_ok": true,
+    "modified_files": [],
+    "golden_hits": [],
+    "golden_coverage": 0.0,
+    "trap_pass": false,
+    "trap_reason": {
+      "has_subscriber_scope": false,
+      "not_post_only": false,
+      "async_aware": false
+    },
+    "valid_answer": false
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "prompt_tail": "You are a stateless Java coding agent in same_version_chain_v1 Phase B.\nArm: TMF_CLAIMS\nFixture root: /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/smoke/B01__TMF_CLAIMS\nTask: Add a rate limiter to EventBus.post() that limits each subscriber to 100 events/second.\nTrap to consider (not a solution): A post-entry-only/global limiter is insufficient; per-subscriber enforcement must cover async dispatch through Dispatcher/Subscriber.\nSource is authoritative. Edit files under fixture root only. Keep API compatibility where practical.\nUse fine-grained reads before broad reads when possible.\nAvailable actions (respond with JSON; natural language around JSON is tolerated, but JSON is safest):\n{\"action\":\"list\"}\n{\"action\":\"read_range\",\"path\":\"EventBus.java\",\"start\":230,\"end\":270}\n{\"action\":\"read_symbol\",\"path\":\"Subscriber.java\",\"symbol\":\"dispatchEvent\"}\n{\"action\":\"search\",\"query\":\"dispatchEvent\"}\n{\"action\":\"edit\",\"path\":\"Subscriber.java\",\"old\":\"exact old text\",\"new\":\"replacement text\"}\n{\"action\":\"compile\"}\n{\"action\":\"final\",\"answer\":\"what you changed and why\",\"files\":[\"Subscriber.java\"]}\n\n\nFresh Phase A TMF call-chain claims are available and injected below:\n{\n  \"claim_id\": \"same_version_chain_v1:B01:phase_a_chain\",\n  \"task_id\": \"B01\",\n  \"kind\": \"call_chain\",\n  \"freshness\": \"fresh_same_version\",\n  \"anchors\": [\n    \"EventBus.java\",\n    \"AsyncEventBus.java\",\n    \"Dispatcher.java\",\n    \"Subscriber.java\",\n    \"SubscriberRegistry.java\"\n  ],\n  \"golden_chain\": [\n    \"EventBus.post\",\n    \"SubscriberRegistry.getSubscribers\",\n    \"Dispatcher.dispatch\",\n    \"Dispatcher.LegacyAsyncDispatcher.dispatch\",\n    \"Subscriber.dispatchEvent\",\n    \"Subscriber.invokeSubscriberMethod\",\n    \"Method.invoke\"\n  ],\n  \"summary\": \"Trace the complete call chain from EventBus.post() to actual subscriber method invocation, including AsyncEventBus.\",\n  \"details\": [\n    \"EventBus.post obtains an Iterator<Subscriber> from SubscriberRegistry.getSubscribers(event).\",\n    \"EventBus.post delegates delivery to dispatcher.dispatch(event, eventSubscribers).\",\n    \"AsyncEventBus is not a separate post path; its constructors pass Dispatcher.legacyAsync() and a caller-supplied Executor into EventBus.\",\n    \"Dispatcher.LegacyAsyncDispatcher.dispatch queues EventWithSubscriber pairs then calls e.subscriber.dispatchEvent(e.event).\",\n    \"Subscriber.dispatchEvent performs the executor handoff and then calls invokeSubscriberMethod(event).\",\n    \"Subscriber.invokeSubscriberMethod calls Method.invoke(target, event).\",\n    \"Therefore per-subscriber behavior such as rate limiting belongs at Subscriber/dispatchEvent/invocation boundary, not only at EventBus.post entry.\"\n  ]\n}\n\nBegin now.\n",
+      "raw": "{\"action\":\"list\"}{\"action\":\"list\"}",
+      "action": {
+        "action": "list"
+      },
+      "tool_output": {
+        "files": [
+          "AllowConcurrentEvents.java",
+          "AsyncEventBus.java",
+          "DeadEvent.java",
+          "Dispatcher.java",
+          "EventBus.java",
+          "ParametricNullness.java",
+          "Subscribe.java",
+          "Subscriber.java",
+          "SubscriberExceptionContext.java",
+          "SubscriberExceptionHandler.java",
+          "SubscriberRegistry.java",
+          "package-info.java"
+        ]
+      }
+    },
+    {
+      "turn": 1,
+      "broker_error": "broker rejected request (exit 4)"
+    }
+  ]
+}
