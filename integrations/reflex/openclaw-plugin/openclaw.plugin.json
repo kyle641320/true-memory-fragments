@@ -10,6 +10,7 @@
       "mode": {"type": "string", "enum": ["block", "approval"], "default": "block"},
       "python": {"type": "string", "default": "python3"},
       "tmfRoot": {"type": "string", "description": "Optional TMF checkout/package root"},
+      "autoWarm": {"type": "boolean", "default": false, "description": "When true, safely run the TMF local warm recovery command once before requiring the recovery Read."},
       "repos": {"type": "array", "items": {"type": "object", "required": ["repoRoot"], "properties": {"repoRoot": {"type": "string"}, "stateRoot": {"type": "string"}}, "additionalProperties": false}}
     },
     "additionalProperties": false

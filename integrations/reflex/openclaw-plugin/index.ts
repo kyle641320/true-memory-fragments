@@ -13,11 +13,11 @@ const DEFAULT_TTL_MS = 30 * 60 * 1000;
 const MAX_REASON = 1800;
 
 export interface RepoConfig { repoRoot: string; stateRoot?: string; }
-export interface PluginConfig { enabled?: boolean; mode?: "block"|"approval"; python?: string; tmfRoot?: string; repos?: RepoConfig[]; pendingTtlMs?: number; }
+export interface PluginConfig { enabled?: boolean; mode?: "block"|"approval"; python?: string; tmfRoot?: string; repos?: RepoConfig[]; pendingTtlMs?: number; autoWarm?: boolean; }
 interface HookContext { sessionKey?: string; sessionId?: string; runId?: string; toolCallId?: string; }
 interface StalePath { path: string; qualname?: string; current_source_blob: string|null; anchor?: {line_start?: number|null; line_end?: number|null; reliable?: boolean}; }
 interface Collision { schema_version: string; collision_id: string; canonical_repo_root: string; canonical_state_root: string; blocked_action_fingerprint: string; blocked_tool: string; blocked_target_path: string; stale_paths: StalePath[]; recovery_commands?: string[]; reason?: string; session_identity?: string; run_identity?: string|null; }
-interface Pending { collision: Collision; session: string; repoKey: string; createdAt: number; expiresAt: number; notices: number; observed: Set<string>; sourceChanged: boolean; }
+interface Pending { collision: Collision; session: string; repoKey: string; createdAt: number; expiresAt: number; notices: number; observed: Set<string>; sourceChanged: boolean; autoWarmAttempts: number; autoWarmSucceeded: boolean; }
 interface ReadCandidate { pendingKey: string; paths: string[]; blobs: Map<string,string>; }
 interface MutationCandidate { pendingKey: string; fingerprint: string; }
 
@@ -66,11 +66,44 @@ function parseDecision(proc: ReturnType<typeof spawnSync>): any|undefined {
   const line=raw.trim().split("\n").at(-1); if (!line) return undefined;
   try { return JSON.parse(line); } catch { return undefined; }
 }
+function tmfEnv(config:PluginConfig,repo:RepoConfig): NodeJS.ProcessEnv {
+  return {...process.env,TMF_WORKTREE:config.tmfRoot||path.resolve(integrationRoot,"../.."),TMF_STATE_ROOT:canonicalRepo(repo).stateRoot};
+}
 function invokePython(event:any,cwd:string,config:PluginConfig,repo:RepoConfig): {status:number|null; decision:any|undefined} {
   const payload=JSON.stringify({tool_name:String(event.toolName||"").toLowerCase(),tool_input:event.params||{},cwd});
-  const env:NodeJS.ProcessEnv={...process.env,TMF_WORKTREE:config.tmfRoot||path.resolve(integrationRoot,"../.."),TMF_STATE_ROOT:canonicalRepo(repo).stateRoot};
-  const proc=spawnSync(config.python||"python3",[path.join(integrationRoot,"hooks","pre_tool_use.py")],{input:payload,encoding:"utf8",env});
+  const proc=spawnSync(config.python||"python3",[path.join(integrationRoot,"hooks","pre_tool_use.py")],{input:payload,encoding:"utf8",env:tmfEnv(config,repo)});
   return {status:proc.status,decision:parseDecision(proc)};
+}
+function splitCommand(command:string): string[]|undefined {
+  const out:string[]=[], re=/(?:[^\s"']+|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')+/g;
+  for (const match of command.matchAll(re)) {
+    const token=match[0];
+    out.push((token.startsWith('"')&&token.endsWith('"'))||(token.startsWith("'")&&token.endsWith("'")) ? token.slice(1,-1) : token);
+  }
+  return out.length ? out : undefined;
+}
+function safeWarmArgs(command:string|undefined,config:PluginConfig,value:Pending): string[]|undefined {
+  if (!command) return undefined;
+  const args=splitCommand(command); if (!args || args.length!==6) return undefined;
+  const py=config.python||"python3", warmScript=path.join(integrationRoot,"scripts","local_warm.py");
+  if (args[0]!==py && args[0]!=="python3") return undefined;
+  if (path.resolve(args[1])!==warmScript) return undefined;
+  if (path.resolve(args[2])!==path.resolve(value.collision.canonical_repo_root)) return undefined;
+  const rel=args[3].split(path.sep).join("/");
+  if (!value.collision.stale_paths.some(item=>item.path===rel)) return undefined;
+  if (args[4]!=="--state-root") return undefined;
+  return args;
+}
+function autoWarm(config:PluginConfig,value:Pending): boolean {
+  if (!config.autoWarm || value.autoWarmSucceeded) return value.autoWarmSucceeded;
+  if (value.autoWarmAttempts >= 1) return false;
+  value.autoWarmAttempts++;
+  const args=safeWarmArgs(value.collision.recovery_commands?.[0],config,value);
+  if (!args) return false;
+  const proc=spawnSync(args[0],args.slice(1),{cwd:value.collision.canonical_repo_root,encoding:"utf8",env:tmfEnv(config,{repoRoot:value.collision.canonical_repo_root,stateRoot:value.collision.canonical_state_root})});
+  value.autoWarmSucceeded=proc.status===0;
+  if (value.autoWarmSucceeded) value.notices=0;
+  return value.autoWarmSucceeded;
 }
 function block(config:PluginConfig, code:string, pendingValue?:Pending): any {
   const n=pendingValue ? ++pendingValue.notices : 1;
@@ -101,6 +134,8 @@ function rearmSource(value:Pending): void {
   }
   value.sourceChanged=true;
   value.observed.clear();
+  value.autoWarmAttempts=0;
+  value.autoWarmSucceeded=false;
   value.notices=0;
   value.createdAt=Date.now();
   value.expiresAt=value.createdAt+DEFAULT_TTL_MS;
@@ -155,8 +190,11 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
     if (!matches.length) return undefined;
     const state=sameRequiredBlobs(active); if (state==="missing") return block(config,"missing",active); if(state==="changed") { rearmSource(active); return block(config,"source_changed",active); }
     // Warm must be independently current before a Read can become an observation token.
-    const check=invokePython(event,cwd,config,repo);
-    if (check.status===2) return block(config,"need_warm",active);
+    let check=invokePython(event,cwd,config,repo);
+    if (check.status===2) {
+      if (!autoWarm(config,active)) return block(config,"need_warm",active);
+      check=invokePython(event,cwd,config,repo);
+    }
     if (check.status!==0 || check.decision?.decision!=="allow") return block(config,"engine_error",active);
     active.sourceChanged=false;
     if (!matches.every(item=>{
@@ -173,8 +211,11 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
   if (active && dependencyMatch(active,toolName,file)) {
     const state=sameRequiredBlobs(active); if(state==="missing") return block(config,"missing",active); if(state==="changed") { rearmSource(active); return block(config,"source_changed",active); }
     if (active.sourceChanged) return block(config,"need_warm",active);
-    const check=invokePython(event,cwd,config,repo);
-    if (check.status===2) return block(config,"need_warm",active);
+    let check=invokePython(event,cwd,config,repo);
+    if (check.status===2) {
+      if (!autoWarm(config,active)) return block(config,"need_warm",active);
+      check=invokePython(event,cwd,config,repo);
+    }
     if (check.status!==0 || check.decision?.decision!=="allow") return block(config,"engine_error",active);
     const required=new Set(active.collision.stale_paths.map(x=>x.path));
     if ([...required].some(p=>!active.observed.has(p))) return block(config,"need_read",active);
@@ -191,8 +232,24 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
   const collision=check.decision as Collision;
   if (session) {
     collision.session_identity=session; collision.run_identity=event.runId||ctx.runId||null;
-    const now=Date.now(), value:Pending={collision,session,repoKey:repoKey(repo),createdAt:now,expiresAt:now+(config.pendingTtlMs||DEFAULT_TTL_MS),notices:0,observed:new Set(),sourceChanged:false};
+    const now=Date.now(), value:Pending={collision,session,repoKey:repoKey(repo),createdAt:now,expiresAt:now+(config.pendingTtlMs||DEFAULT_TTL_MS),notices:0,observed:new Set(),sourceChanged:false,autoWarmAttempts:0,autoWarmSucceeded:false};
     pending.set(pendingKey(session,repo),value);
+    if (autoWarm(config,value)) {
+      if (toolName==="read") {
+        const matches=value.collision.stale_paths.filter(item=>path.join(value.collision.canonical_repo_root,item.path)===path.resolve(file));
+        if (matches.length && matches.every(item=>{
+          const source=path.join(value.collision.canonical_repo_root,item.path);
+          let totalLines:number|undefined;
+          try { const text=fs.readFileSync(source,"utf8"); totalLines=text.length===0?0:text.split(/\r?\n/).length-(text.endsWith("\n")?1:0); }
+          catch { return false; }
+          return coversAnchor(params,item,totalLines);
+        })) {
+          const ck=callKey(ctx,event); if (ck) reads.set(ck,{pendingKey:pendingKey(session,repo),paths:matches.map(x=>x.path),blobs:new Map(matches.map(x=>[x.path,x.current_source_blob!]))});
+          return undefined;
+        }
+      }
+      return block(config,"need_read",value);
+    }
     return block(config,"need_warm",value);
   }
   return block(config,"need_warm");

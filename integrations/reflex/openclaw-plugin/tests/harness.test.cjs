@@ -26,18 +26,20 @@ def blob(rel):
 def fingerprint(t,x,rel): return hashlib.sha256(stable({'tool_name':t,'path':rel,'input':x}).encode()).hexdigest()
 warm_path=os.path.join(state,'warm')
 warm=os.path.exists(warm_path) and open(warm_path).read().strip()==str(blob('dep.py'))
+warm_script=os.path.join(${JSON.stringify(path.resolve('/root/.openclaw/workspace/worktrees/tmf-java-reflex-guava-fix/integrations/reflex'))},'scripts','local_warm.py')
+fake_warm_script=os.path.join(state,'fake_local_warm.py')
 text=stable(params)
 stale=('quote(' in text and 'USD' not in text) or (tool in ('edit','write') and os.path.abspath(str(params.get('path') or params.get('file_path') or ''))==os.path.join(repo,'dep.py'))
 if stale and not warm:
  rel='app.py' if os.path.abspath(str(params.get('path') or params.get('file_path') or ''))!=os.path.join(repo,'dep.py') else 'dep.py'
- out={'schema_version':'tmf.reflex.collision.v1','decision':'block','collision_id':'c1','canonical_repo_root':repo,'canonical_state_root':state,'blocked_action_fingerprint':fingerprint(tool,params,rel),'blocked_tool':tool,'blocked_target_path':rel,'stale_paths':[{'path':'dep.py','qualname':'quote','current_source_blob':blob('dep.py'),'anchor':${options.unreliableAnchor?"{'line_start':None,'line_end':None,'reliable':False}":"{'line_start':1,'line_end':2,'reliable':True}"}}]}
+ out={'schema_version':'tmf.reflex.collision.v1','decision':'block','collision_id':'c1','canonical_repo_root':repo,'canonical_state_root':state,'blocked_action_fingerprint':fingerprint(tool,params,rel),'blocked_tool':tool,'blocked_target_path':rel,'stale_paths':[{'path':'dep.py','qualname':'quote','current_source_blob':blob('dep.py'),'anchor':${options.unreliableAnchor?"{'line_start':None,'line_end':None,'reliable':False}":"{'line_start':1,'line_end':2,'reliable':True}"}}],'recovery_commands':['python3 '+warm_script+' '+repo+' dep.py --state-root '+state]}
  print(json.dumps(out),file=sys.stderr);sys.exit(2)
 print(json.dumps({'schema_version':'tmf.reflex.decision.v1','decision':'allow'}))
 `);fs.chmodSync(py,0o755);
   return{root,repo,state,py,cleanup(){fs.rmSync(root,{recursive:true,force:true})}};
 }
 function registered(f,extra={}){
-  const handlers={};const api={pluginConfig:{repos:[{repoRoot:f.repo,stateRoot:f.state}],python:f.py,pendingTtlMs:extra.ttl||1800000},config:{},runtime:{agent:{resolveAgentWorkspaceDir:()=>f.repo}},on:(name,fn)=>handlers[name]=fn,session:{workflow:{enqueueNextTurnInjection:async()=>{}}}};
+  const handlers={};const api={pluginConfig:{repos:[{repoRoot:f.repo,stateRoot:f.state}],python:f.py,pendingTtlMs:extra.ttl||1800000,autoWarm:extra.autoWarm||false},config:{},runtime:{agent:{resolveAgentWorkspaceDir:()=>f.repo}},on:(name,fn)=>handlers[name]=fn,session:{workflow:{enqueueNextTurnInjection:async()=>{}}}};
   m.resetState();m.default.register(api);return handlers;
 }
 const ctx=(session='s',id='c1',runId='r')=>({sessionKey:session,toolCallId:id,runId,toolName:'edit'});
@@ -87,6 +89,24 @@ test('production Java claims drive real plugin stale block and dual-gate recover
   assert.deepEqual(m.debugState(),{pending:0,reads:0,mutations:0});
 }finally{f.cleanup()}});
 test('block creates pending; warm fresh without Read remains need_read',async()=>{const f=fixture();try{const h=registered(f);await establish(f,h);assert.equal(m.debugState().pending,1);await warm(f);reason(await h.before_tool_call(stale(f),ctx('s','retry')),'need_read')}finally{f.cleanup()}});
+test('autoWarm production Java collision moves directly to need_read and then corrected edit',()=>{const f=javaProductionFixture();try{
+  const config={...f.config,autoWarm:true};
+  const stale={toolName:'edit',toolCallId:'java-stale',params:{path:f.source,edits:[{oldText:'return value + delta;',newText:'return value + 1;'}]}};
+  const corrected={toolName:'edit',toolCallId:'java-corrected',params:{path:f.source,edits:[{oldText:'return value + delta;',newText:'return Math.addExact(value, delta);'}]}};
+  reason(m.runPreToolUse(stale,f.repo,config,ctx('java-auto','java-stale')),'need_read');
+  const read={toolName:'read',toolCallId:'java-read',params:{path:f.source,offset:1,limit:2000}},readCtx=ctx('java-auto','java-read');
+  assert.equal(m.runPreToolUse(read,f.repo,config,readCtx),undefined);
+  m.runAfterToolCall({...read,result:{content:fs.readFileSync(f.source,'utf8')}},f.repo,config,readCtx);
+  assert.equal(m.runPreToolUse(corrected,f.repo,config,ctx('java-auto','java-corrected')),undefined);
+}finally{f.cleanup()}});
+test('autoWarm lets the first exact recovery Read succeed after a stale collision',()=>{const f=javaProductionFixture();try{
+  const config={...f.config,autoWarm:true};
+  const read={toolName:'read',toolCallId:'java-read-first',params:{path:f.source,offset:1,limit:2000}},readCtx=ctx('java-auto-read','java-read-first');
+  assert.equal(m.runPreToolUse(read,f.repo,config,readCtx),undefined);
+  m.runAfterToolCall({...read,result:{content:fs.readFileSync(f.source,'utf8')}},f.repo,config,readCtx);
+  const corrected={toolName:'edit',toolCallId:'java-corrected',params:{path:f.source,edits:[{oldText:'return value + delta;',newText:'return Math.addExact(value, delta);'}]}};
+  assert.equal(m.runPreToolUse(corrected,f.repo,config,ctx('java-auto-read','java-corrected')),undefined);
+}finally{f.cleanup()}});
 test('successful exact Read unlocks corrected retry and pending is consumed only after success',async()=>{const f=fixture();try{const h=registered(f);await establish(f,h);await warm(f);await successfulRead(f,h);const ev=corrected(f),c=ctx('s','fix');assert.equal(await h.before_tool_call(ev,c),undefined);assert.equal(m.debugState().pending,1);await h.after_tool_call({...ev,result:{ok:true}},c);assert.equal(m.debugState().pending,0)}finally{f.cleanup()}});
 test('production lifecycle accepts OpenClaw string pagination for an exact recovery Read',async()=>{const f=fixture();try{const h=registered(f);await establish(f,h);await warm(f);const ev=readEvent(f,'string-read',{offset:'1',limit:'2000'}),c=ctx('s','string-read');assert.equal(await h.before_tool_call(ev,c),undefined);assert.equal(m.debugState().reads,1);await h.after_tool_call({...ev,result:{content:'current source'}},c);assert.equal(await h.before_tool_call(corrected(f),ctx('s','fix')),undefined)}finally{f.cleanup()}});
 test('production lifecycle permits a demonstrable whole-file Read when parser anchor is unavailable',async()=>{const f=fixture({unreliableAnchor:true});try{const h=registered(f);await establish(f,h);await warm(f);const ev=readEvent(f,'whole-file',{offset:1,limit:2000}),c=ctx('s','whole-file');assert.equal(await h.before_tool_call(ev,c),undefined);await h.after_tool_call({...ev,result:{content:'current source'}},c);assert.equal(await h.before_tool_call(corrected(f),ctx('s','fix')),undefined)}finally{f.cleanup()}});
