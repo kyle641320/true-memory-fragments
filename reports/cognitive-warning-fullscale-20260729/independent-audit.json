@@ -1,0 +1,111 @@
+{
+  "audit_status": "PASS",
+  "n_run_dirs": 160,
+  "n_samples": 160,
+  "n_order": 160,
+  "missing_required_count": 0,
+  "missing_required_sample": [],
+  "order_mismatch_count": 0,
+  "order_mismatches": [],
+  "primary_mismatch_count": 0,
+  "primary_mismatches": [],
+  "frozen_mismatches": {},
+  "prompt_unique_variable_ok": true,
+  "prompt_proof": {
+    "control_task_prompt_sha256": "4b24b1f0ea146dfa0cfdcd21a80662f1390aab4c4ea254c28de7c49b6523fd4a",
+    "model": "aisz/gpt-5.5",
+    "normalized_prompts_equal": true,
+    "production_warning_renderer": "/root/.openclaw/workspace/projects/tmf-reflex-hook/hook/tmf-sessionstart-calibration.py",
+    "production_warning_renderer_sha256": "bb86fa4c0c163a3c8cd1f616cc4125165fa134d61fc74b5d3302a3570c843006",
+    "scoped_control_sha256": "a8724792b3d0f22779435826cd1167ed221aeeb71f707fa46b242a24802ae6cf",
+    "scoped_normalized_prompts_equal": true,
+    "scoped_treatment_sha256": "92adf007036b3ec7796448ff1acfb082ae0b6f579b2e8387e9e0d7cf95719c97",
+    "scoped_treatment_without_warning_sha256": "a8724792b3d0f22779435826cd1167ed221aeeb71f707fa46b242a24802ae6cf",
+    "treatment_task_prompt_sha256": "d0e8352bd9ddd98ee2a22606a4eb6a0fe791e256d81f687a918c08c55523bc3a",
+    "treatment_task_prompt_without_warning_sha256": "4b24b1f0ea146dfa0cfdcd21a80662f1390aab4c4ea254c28de7c49b6523fd4a",
+    "warning_text_sha256": "2ab2bfe029207aaf149604c82e6347e5d6b96e4871c0b21208e208a166f36770"
+  },
+  "by_arm": {
+    "control": {
+      "valid": 80,
+      "stale_error": 80,
+      "non_stale": 0,
+      "correct": 0,
+      "reread_f_runner": 31,
+      "direct_probe_f_runner": 0,
+      "stale_error_rate": 1.0,
+      "reread_rate_runner": 0.3875,
+      "group_stale_error_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "group_valid_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "group_stale_error_std": 0.0
+    },
+    "treatment": {
+      "valid": 80,
+      "stale_error": 8,
+      "non_stale": 72,
+      "correct": 72,
+      "reread_f_runner": 80,
+      "direct_probe_f_runner": 0,
+      "stale_error_rate": 0.1,
+      "reread_rate_runner": 1.0,
+      "group_stale_error_counts": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        0
+      ],
+      "group_valid_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "group_stale_error_std": 0.6324555320336759
+    }
+  },
+  "fisher_two_sided_p": 2.1326174722623323e-12,
+  "absolute_reduction_control_minus_treatment": 0.9,
+  "newcombe_95ci": [
+    0.8033434772528575,
+    0.9484523844326191
+  ],
+  "relative_risk": 0.1,
+  "audit_notes": [
+    "Primary valid/category/stale_error/correct were independently rederived by importing archived risklib/reporting.py from each run directory against the archived tuple-returning eligibility.py and running preregistered behavior cases.",
+    "Secondary reread_f/direct_probe_f are reported from runner score because exact task_started_at was not persisted in metadata; primary effect does not depend on secondary metrics."
+  ]
+}

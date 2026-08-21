@@ -1,0 +1,98 @@
+{
+  "n_planned": 160,
+  "n_valid": 160,
+  "n_invalid": 0,
+  "by_arm": {
+    "control": {
+      "valid": 80,
+      "stale_error": 80,
+      "non_stale": 0,
+      "correct": 0,
+      "reread_f": 31,
+      "direct_probe_f": 0,
+      "stale_error_rate": 1.0,
+      "reread_rate": 0.3875,
+      "group_stale_error_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "group_valid_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "group_stale_error_std": 0.0
+    },
+    "treatment": {
+      "valid": 80,
+      "stale_error": 8,
+      "non_stale": 72,
+      "correct": 72,
+      "reread_f": 80,
+      "direct_probe_f": 0,
+      "stale_error_rate": 0.1,
+      "reread_rate": 1.0,
+      "group_stale_error_counts": [
+        1,
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        2,
+        1,
+        0
+      ],
+      "group_valid_counts": [
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8,
+        8
+      ],
+      "group_stale_error_std": 0.6324555320336759
+    }
+  },
+  "fisher_two_sided_p": 2.1326174722623323e-12,
+  "effect_size": {
+    "absolute_stale_error_reduction_control_minus_treatment": 0.9,
+    "newcombe_95ci_for_control_minus_treatment": [
+      0.8033434772528575,
+      0.9484523844326191
+    ],
+    "relative_risk_treatment_over_control": 0.1
+  },
+  "pre_registered_decisions": {
+    "significant_treatment_lower": true,
+    "both_arms_below_10_percent": false,
+    "control_below_20_percent_trap_strength_insufficient": false,
+    "approx_min_detectable_absolute_reduction_80pct_power_if_needed": null
+  },
+  "invalid_samples": [],
+  "archive_paths": {
+    "runs": "/root/.openclaw/workspace/experiments/tmf-cognitive-warning-fullscale-20260729/runs",
+    "samples": "/root/.openclaw/workspace/experiments/tmf-cognitive-warning-fullscale-20260729/results/samples.json",
+    "prompt_sha256_proof": "/root/.openclaw/workspace/experiments/tmf-cognitive-warning-fullscale-20260729/results/prompt-sha256-proof.json"
+  }
+}
