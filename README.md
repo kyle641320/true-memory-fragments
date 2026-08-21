@@ -153,6 +153,8 @@ Fresh claims don't replace source — they tell you **which source to re-read** 
 
 **Current status:** Mechanics proven (freshness detection, stale blocking, boundary detection work). Value hypothesis **untested** — no valid experiment has measured cross-session call-chain continuity or bug prevention yet.
 
+**Current unreleased Java qualification baseline:** the aggregate runner is `python3 tools/run_java_qualifications.py`; its manifest-governed baseline is **46/46 qualifiers and 731/731 checks**. The full unittest baseline for this unreleased checkpoint is **478/478 tests**. These are local unreleased evidence counts, not a commit, tag, package, publication, runtime framework behavior, or enterprise-wide certification claim.
+
 ## Proven Assets
 
 - Source-bound claim storage with working-tree freshness checks and source fallback
