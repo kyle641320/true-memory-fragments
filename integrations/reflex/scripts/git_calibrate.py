@@ -26,13 +26,22 @@ def _git(repo: Path, *args: str) -> str:
 
 
 def _functions(claims: list[Any]) -> dict[str, Any]:
+    """Extract function/method nodes from claims.
+    
+    Handles both Python functions and Java methods.
+    """
     result = {}
     for claim in claims:
-        if claim.scope != "function" or not claim.bindings:
-            continue
-        qualname = claim.body.get("qualname") or claim.bindings[0].qualname
-        if qualname:
-            result[str(qualname)] = claim
+        # Python functions
+        if claim.scope == "function" and claim.bindings:
+            qualname = claim.body.get("qualname") or claim.bindings[0].qualname
+            if qualname:
+                result[str(qualname)] = claim
+        # Java methods (scope="class" with node_kind="method")
+        elif claim.scope == "class" and claim.body.get("node_kind") == "method" and claim.bindings:
+            qualname = claim.body.get("qualname") or claim.bindings[0].qualname
+            if qualname:
+                result[str(qualname)] = claim
     return result
 
 
@@ -43,7 +52,8 @@ def _hash(claim: Any | None) -> str | None:
 def calibrate(repo_root: Path, old_rev: str, new_rev: str = "HEAD", *, update_cache: bool = True) -> dict[str, Any]:
     repo_root = repo_root.resolve()
     changed = _git(repo_root, "diff", "--name-only", "--diff-filter=ACDMRT", old_rev, new_rev).splitlines()
-    changed = sorted({p for p in changed if Path(p).suffix == ".py"})
+    # Support both Python and Java files
+    changed = sorted({p for p in changed if Path(p).suffix in (".py", ".java")})
     repo, store = GitRepo(repo_root), Store(repo_root)
     entries: list[dict[str, Any]] = []
     scanned: list[str] = []

@@ -4,8 +4,9 @@ import json
 import os
 import signal
 import hashlib
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 from collections import defaultdict
 
 from .derive import derive_claims_for_path
@@ -67,7 +68,57 @@ def _claim_owner_path(claim: Claim) -> str | None:
     return None
 
 
-def _refresh_claim_cache_for_replaced_path(claims_by_path: dict[str, list[Claim]], relpath: str, claims: list[Claim]) -> None:
+@dataclass(frozen=True, slots=True)
+class _ClaimRef:
+    """Minimal claim projection used by warm's path bookkeeping.
+
+    Warm only needs identity, owner path, and binding paths/blobs to schedule
+    derivation, detect pure renames, and reconcile replaced paths.  Retaining
+    whole ``Claim`` objects for that bookkeeping costs roughly 11 KB per claim,
+    so a large repository (Guava: 176k claims) needs about 1.9 GB of resident
+    memory even though the claim JSON on disk is under 1 GB and is never all
+    needed at once.  This projection keeps the same bookkeeping on a few hundred
+    bytes per claim; full claims are reloaded by id only for the rare paths that
+    an actual rename migration rewrites.
+    """
+
+    id: str
+    owner_path: str | None
+    binding_paths: tuple[str, ...]
+    binding_blobs: tuple[tuple[str, str], ...]
+
+    @classmethod
+    def from_claim(cls, claim: Claim) -> "_ClaimRef":
+        blobs: dict[str, str] = {}
+        for binding in claim.bindings:
+            if binding.file_blob:
+                blobs.setdefault(binding.path, binding.file_blob)
+        return cls(
+            id=claim.id,
+            owner_path=_claim_owner_path(claim),
+            binding_paths=tuple(dict.fromkeys(binding.path for binding in claim.bindings)),
+            binding_blobs=tuple(blobs.items()),
+        )
+
+
+def _ref_owner_path(entry: Any) -> str | None:
+    """Owner path for either a projection or a full claim.
+
+    Warm caches hold projections, while freshly derived claims arrive as full
+    ``Claim`` objects, so both shapes reach the shared cache helpers.
+    """
+    if isinstance(entry, _ClaimRef):
+        return entry.owner_path
+    return _claim_owner_path(entry)
+
+
+def _ref_binding_paths(entry: Any) -> tuple[str, ...]:
+    if isinstance(entry, _ClaimRef):
+        return entry.binding_paths
+    return tuple(dict.fromkeys(binding.path for binding in entry.bindings))
+
+
+def _refresh_claim_cache_for_replaced_path(claims_by_path: dict[str, list[Any]], relpath: str, claims: list[Claim]) -> None:
     """Refresh the binding-expanded path cache without scanning the whole cache.
 
     A clean warm grows this cache to hundreds of thousands of claims.  The old
@@ -76,14 +127,17 @@ def _refresh_claim_cache_for_replaced_path(claims_by_path: dict[str, list[Claim]
     owned by ``relpath`` are necessarily present in that path's binding bucket,
     so use that bucket to find the exact old claim ids and remove them only from
     their known binding buckets before adding the replacement claims.
+
+    Replacements are stored as projections so the cache stays bounded on large
+    repositories instead of growing to the full claim graph.
     """
-    old_owned: dict[str, Claim] = {
-        claim.id: claim
-        for claim in claims_by_path.get(relpath, [])
-        if _claim_owner_path(claim) == relpath
+    old_owned: dict[str, Any] = {
+        entry.id: entry
+        for entry in claims_by_path.get(relpath, [])
+        if _ref_owner_path(entry) == relpath
     }
     for claim_id, old_claim in old_owned.items():
-        for binding_path in {binding.path for binding in old_claim.bindings}:
+        for binding_path in _ref_binding_paths(old_claim):
             bucket = claims_by_path.get(binding_path)
             if bucket is None:
                 continue
@@ -93,15 +147,16 @@ def _refresh_claim_cache_for_replaced_path(claims_by_path: dict[str, list[Claim]
             else:
                 claims_by_path.pop(binding_path, None)
     for claim in claims:
-        for binding_path in {binding.path for binding in claim.bindings}:
+        ref = _ClaimRef.from_claim(claim)
+        for binding_path in ref.binding_paths:
             bucket = claims_by_path.setdefault(binding_path, [])
             # Normally the old owner removal above already removed this id.  The
             # guard also keeps the cache sound for unusual shared-id fixtures.
-            if all(existing.id != claim.id for existing in bucket):
-                bucket.append(claim)
+            if all(existing.id != ref.id for existing in bucket):
+                bucket.append(ref)
 
 
-def _replace_path_claims_cached(store: Store, relpath: str, claims: list[Claim], claims_by_path: dict[str, list[Claim]]) -> None:
+def _replace_path_claims_cached(store: Store, relpath: str, claims: list[Claim], claims_by_path: dict[str, list[Any]]) -> None:
     """Replace claims owned by relpath without repeatedly scanning the whole store.
 
     Store.reconcile_* remains the public/simple path, but warm already has a
@@ -112,12 +167,12 @@ def _replace_path_claims_cached(store: Store, relpath: str, claims: list[Claim],
     """
     current_ids = {claim.id for claim in claims}
     candidate_ids: set[str] = set()
-    for claim in claims_by_path.get(relpath, []):
-        owner = _claim_owner_path(claim)
-        if claim.id in current_ids:
+    for entry in claims_by_path.get(relpath, []):
+        owner = _ref_owner_path(entry)
+        if entry.id in current_ids:
             continue
         if owner == relpath:
-            candidate_ids.add(claim.id)
+            candidate_ids.add(entry.id)
     for claim_id in candidate_ids:
         store.delete_claim(claim_id)
     _put_claims(store, claims)
@@ -408,33 +463,46 @@ def load_complete_reverse_index(repo_root: str | Path) -> dict[str, Any] | None:
 
 
 
-def _claims_by_path_from_claims(claims: list[Claim]) -> dict[str, list[Claim]]:
-    by_path: dict[str, list[Claim]] = defaultdict(list)
+def _claims_by_path_from_claims(claims: Iterable[Claim] | Iterable[_ClaimRef]) -> dict[str, list[Any]]:
+    by_path: dict[str, list[Any]] = defaultdict(list)
     for claim in claims:
-        for binding in claim.bindings:
-            by_path[binding.path].append(claim)
+        entry = claim if isinstance(claim, _ClaimRef) else _ClaimRef.from_claim(claim)
+        for binding_path in entry.binding_paths:
+            by_path[binding_path].append(entry)
     return dict(by_path)
 
 
-def _claim_paths(store: Store, claims: list[Claim] | None = None) -> set[str]:
+def _claim_refs(store: Store) -> list[_ClaimRef]:
+    """Stream stored claims into bounded projections.
+
+    Claim JSON stays authoritative on disk; only one full claim is alive at a
+    time here, so peak memory tracks the largest single claim rather than the
+    whole store.
+    """
+    return [_ClaimRef.from_claim(claim) for claim in store.iter_claims()]
+
+
+def _claim_paths(store: Store, claims: Iterable[Any] | None = None) -> set[str]:
     paths: set[str] = set()
     source = claims if claims is not None else store.iter_claims()
     for claim in source:
-        for binding in claim.bindings:
-            paths.add(binding.path)
+        paths.update(_ref_binding_paths(claim))
     return paths
 
 
-def _detect_unique_blob_renames(repo: GitRepo, store: Store, current_paths: list[str], existing_claims: list[Claim] | None = None, claims_by_path: dict[str, list[Claim]] | None = None) -> dict[str, str]:
+def _detect_unique_blob_renames(repo: GitRepo, store: Store, current_paths: list[str], existing_claims: list[Any] | None = None, claims_by_path: dict[str, list[Any]] | None = None) -> dict[str, str]:
     current = set(current_paths)
-    existing = existing_claims if existing_claims is not None else list(store.iter_claims())
+    existing = existing_claims if existing_claims is not None else _claim_refs(store)
     by_path = claims_by_path if claims_by_path is not None else _claims_by_path_from_claims(existing)
     old_missing = sorted(path for path in _claim_paths(store, existing) if path not in current and repo.blob_sha(path) is None)
+    old_missing_set = set(old_missing)
     previous_blobs: dict[str, str] = {}
-    for claim in existing:
-        for binding in claim.bindings:
-            if binding.path in old_missing and binding.file_blob:
-                previous_blobs.setdefault(binding.path, binding.file_blob)
+    for entry in existing:
+        for binding_path, blob in (entry.binding_blobs if isinstance(entry, _ClaimRef) else tuple(
+            (b.path, b.file_blob) for b in entry.bindings if b.file_blob
+        )):
+            if binding_path in old_missing_set:
+                previous_blobs.setdefault(binding_path, blob)
     by_blob_new: dict[str, list[str]] = {}
     for path in current_paths:
         blob = repo.blob_sha(path)
@@ -463,25 +531,35 @@ def _detect_unique_blob_renames(repo: GitRepo, store: Store, current_paths: list
     return renames
 
 
-def _delete_claims_for_missing_paths(repo: GitRepo, store: Store, current_paths: list[str], migrated_old_paths: set[str], existing_claims: list[Claim] | None = None, claims_by_path: dict[str, list[Claim]] | None = None) -> int:
+def _delete_claims_for_missing_paths(repo: GitRepo, store: Store, current_paths: list[str], migrated_old_paths: set[str], existing_claims: list[Any] | None = None, claims_by_path: dict[str, list[Any]] | None = None) -> int:
     current = set(current_paths)
-    existing = existing_claims if existing_claims is not None else list(store.iter_claims())
+    existing = existing_claims if existing_claims is not None else _claim_refs(store)
     by_path = claims_by_path if claims_by_path is not None else _claims_by_path_from_claims(existing)
     deleted = 0
     for old_path in sorted(path for path in _claim_paths(store, existing) if path not in current and repo.blob_sha(path) is None and path not in migrated_old_paths):
-        claims = list(by_path.get(old_path, []))
-        for claim in claims:
-            if store.delete_claim(claim.id):
+        entries = list(by_path.get(old_path, []))
+        for entry in entries:
+            if store.delete_claim(entry.id):
                 deleted += 1
-        if claims:
-            log_event(repo.root, "rename_mass_invalidation", node_id=old_path, count=len(claims), reason="old_path_missing_not_unique_pure_rename")
+        if entries:
+            log_event(repo.root, "rename_mass_invalidation", node_id=old_path, count=len(entries), reason="old_path_missing_not_unique_pure_rename")
     return deleted
 
 
-def _apply_rename_migrations(repo: GitRepo, store: Store, renames: dict[str, str], claims_by_path: dict[str, list[Claim]] | None = None) -> int:
+def _apply_rename_migrations(repo: GitRepo, store: Store, renames: dict[str, str], claims_by_path: dict[str, list[Any]] | None = None) -> int:
     migrated = 0
     for old_path, new_path in renames.items():
-        affected = list(claims_by_path.get(old_path, [])) if claims_by_path is not None else [claim for claim in store.iter_claims() if any(b.path == old_path for b in claim.bindings)]
+        # Rename migration is the one warm step that must rewrite claim bodies,
+        # so reload the affected claims by id.  This is bounded by the renamed
+        # path's own claims rather than the whole store.
+        if claims_by_path is not None:
+            affected = [
+                claim
+                for entry in claims_by_path.get(old_path, [])
+                if (claim := store.get_claim(entry.id)) is not None
+            ]
+        else:
+            affected = [claim for claim in store.iter_claims() if any(b.path == old_path for b in claim.bindings)]
         if not affected:
             continue
         id_map = build_rename_id_map(affected, old_path, new_path)
@@ -582,7 +660,7 @@ def warm_repo(repo_root: str | Path) -> dict[str, Any]:
         }
         same_path_inventory = set(previous) == set(paths)
         pristine_clean = not previous and not failed_files and not any(store.claims_dir.glob("*.json"))
-        claims_by_path: dict[str, list[Claim]] | None = None
+        claims_by_path: dict[str, list[Any]] | None = None
         if pristine_clean:
             force_derive = set()
             renames = {}
@@ -596,7 +674,7 @@ def warm_repo(repo_root: str | Path) -> dict[str, Any]:
             renamed_claims = 0
             deleted_missing_claims = 0
         else:
-            existing_claims = list(store.iter_claims())
+            existing_claims = _claim_refs(store)
             claims_by_path = _claims_by_path_from_claims(existing_claims)
             force_derive = set(paths) if integrity_repair else _dependent_force_derive_paths(
                 store, changed_paths, set(paths)
@@ -606,13 +684,13 @@ def warm_repo(repo_root: str | Path) -> dict[str, Any]:
             renames = _detect_unique_blob_renames(repo, store, paths, existing_claims, claims_by_path)
             renamed_claims = _apply_rename_migrations(repo, store, renames, claims_by_path)
             if renamed_claims:
-                existing_claims = list(store.iter_claims())
+                existing_claims = _claim_refs(store)
                 claims_by_path = _claims_by_path_from_claims(existing_claims)
             deleted_missing_claims = _delete_claims_for_missing_paths(
                 repo, store, paths, set(renames), existing_claims, claims_by_path
             )
             if deleted_missing_claims:
-                existing_claims = list(store.iter_claims())
+                existing_claims = _claim_refs(store)
                 claims_by_path = _claims_by_path_from_claims(existing_claims)
         warmed_files: dict[str, str | None] = {}
         derived = 0

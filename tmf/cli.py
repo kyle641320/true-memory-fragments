@@ -11,6 +11,7 @@ from .git import GitRepo
 from .retrieve import refresh_path, retrieve_path, retrieve_text, reverse_callers
 from .warm import warm_repo
 from .contract_warm import warm_contracts
+from .batch_warm import batch_warm
 from .store import Store
 from .metrics import stats as metrics_stats
 from .validation import run_heldout_validation, run_self_validation
@@ -97,6 +98,13 @@ def cmd_warm(args: argparse.Namespace) -> int:
         print(json.dumps(warm_contracts(args.repo, command=args.contract_command, limit=args.limit, sample_limit=args.sample_limit), ensure_ascii=False, indent=2))
     else:
         print(json.dumps(warm_repo(args.repo), ensure_ascii=False, indent=2))
+    return 0
+
+
+def cmd_batch_warm(args: argparse.Namespace) -> int:
+    state_root = Path(args.state_root) if args.state_root else None
+    result = batch_warm(Path(args.repo), state_root=state_root, batch_size=args.batch_size)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0
 
 
@@ -208,6 +216,12 @@ def build_parser() -> argparse.ArgumentParser:
     warm.add_argument("--limit", type=int, help="optional max functions to process this run")
     warm.add_argument("--sample-limit", type=int, default=20, help="number of contract samples with embedded source spans to write")
     warm.set_defaults(func=cmd_warm)
+
+    batch_warm = sub.add_parser("batch-warm", help="memory-bounded warm: index repo in batches to avoid OOM")
+    batch_warm.add_argument("--repo", default=".")
+    batch_warm.add_argument("--batch-size", type=int, default=50, help="files per batch (default: 50)")
+    batch_warm.add_argument("--state-root", help="optional state root directory")
+    batch_warm.set_defaults(func=cmd_batch_warm)
 
     mcp = sub.add_parser("mcp", help="run a minimal MCP stdio server")
     mcp.add_argument("--repo", default=".")
