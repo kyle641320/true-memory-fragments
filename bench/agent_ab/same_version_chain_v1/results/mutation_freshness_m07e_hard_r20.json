@@ -1,0 +1,4954 @@
+{
+  "schema": "mutation_freshness_m07",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event), as required by the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 2114,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 10401,
+        "completion_tokens": 502,
+        "invalid": 1,
+        "wall_seconds": 60.591,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after phase preparation and immediately before methodInvoke(event), following the explicit current in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 2122,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 10119,
+        "completion_tokens": 550,
+        "invalid": 1,
+        "wall_seconds": 35.779,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately after argument preparation and immediately before methodInvoke(event), preserving the current invariant.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 1545,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2281,
+        "completion_tokens": 240,
+        "invalid": 0,
+        "wall_seconds": 26.543,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 2,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), preserving the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 2656,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6434,
+        "completion_tokens": 225,
+        "invalid": 0,
+        "wall_seconds": 43.986,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r2.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 2,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in HookFixture.invokeReflectively, immediately after argument preparation and before methodInvoke(event), as required by the current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6123,
+        "completion_tokens": 471,
+        "invalid": 0,
+        "wall_seconds": 44.34,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r2.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 2,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 1545,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 4147,
+        "completion_tokens": 406,
+        "invalid": 0,
+        "wall_seconds": 50.891,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r2.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 3,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event), as required by the current invariant. Tests and compilation pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 3016,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3940,
+        "completion_tokens": 385,
+        "invalid": 0,
+        "wall_seconds": 49.058,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r3.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 3,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in HookFixture.invokeReflectively, immediately before methodInvoke(event), following the explicit current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 2507,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7139,
+        "completion_tokens": 513,
+        "invalid": 1,
+        "wall_seconds": 38.968,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r3.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 3,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), matching the current invariant. Compilation and tests completed successfully.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 1185,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2281,
+        "completion_tokens": 214,
+        "invalid": 0,
+        "wall_seconds": 15.315,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r3.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 4,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 8479,
+        "completion_tokens": 296,
+        "invalid": 1,
+        "wall_seconds": 32.197,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r4.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 4,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), following the current in-source invariant. Compile and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 1185,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 4094,
+        "completion_tokens": 217,
+        "invalid": 0,
+        "wall_seconds": 45.592,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r4.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 4,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 18,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6876,
+        "completion_tokens": 434,
+        "invalid": 0,
+        "wall_seconds": 62.127,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r4.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 5,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in HookFixture.invokeReflectively, immediately before methodInvoke(event), per the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 17,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 11251,
+        "completion_tokens": 469,
+        "invalid": 1,
+        "wall_seconds": 48.947,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r5.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 5,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in HookFixture.invokeReflectively, after phase preparation and immediately before methodInvoke(event), as required by the current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 10053,
+        "completion_tokens": 466,
+        "invalid": 1,
+        "wall_seconds": 35.562,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r5.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 5,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current invariant. Compilation succeeded and all tests passed.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 17,
+        "source_bytes": 2436,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7157,
+        "completion_tokens": 520,
+        "invalid": 0,
+        "wall_seconds": 59.743,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r5.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 6,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 3021,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3812,
+        "completion_tokens": 338,
+        "invalid": 0,
+        "wall_seconds": 31.487,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r6.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 6,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call into invokeReflectively, immediately after phase preparation and before methodInvoke(event), following the current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 2114,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 4675,
+        "completion_tokens": 506,
+        "invalid": 0,
+        "wall_seconds": 31.756,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r6.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 6,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event). Compile and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 8946,
+        "completion_tokens": 285,
+        "invalid": 1,
+        "wall_seconds": 36.556,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r6.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 7,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), preserving the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6400,
+        "completion_tokens": 325,
+        "invalid": 0,
+        "wall_seconds": 33.334,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r7.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 7,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately after phase preparation and before methodInvoke(event), following the explicit current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 2121,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 13984,
+        "completion_tokens": 701,
+        "invalid": 1,
+        "wall_seconds": 34.881,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r7.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 7,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 4192,
+        "completion_tokens": 378,
+        "invalid": 0,
+        "wall_seconds": 42.172,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r7.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 8,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one `hook()` call in `HookFixture.invokeReflectively`, immediately before `methodInvoke(event)` per the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 1185,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6025,
+        "completion_tokens": 267,
+        "invalid": 1,
+        "wall_seconds": 30.358,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r8.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 8,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), following the current explicit invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 2951,
+        "source_reads": 6,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 5732,
+        "completion_tokens": 472,
+        "invalid": 0,
+        "wall_seconds": 40.945,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r8.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 8,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 1185,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6022,
+        "completion_tokens": 212,
+        "invalid": 0,
+        "wall_seconds": 28.966,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r8.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 9,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 2510,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 5418,
+        "completion_tokens": 410,
+        "invalid": 0,
+        "wall_seconds": 46.414,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r9.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 9,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately after argument preparation and before methodInvoke(event), as required by the current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 2121,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 10467,
+        "completion_tokens": 465,
+        "invalid": 1,
+        "wall_seconds": 37.088,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r9.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 9,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7241,
+        "completion_tokens": 252,
+        "invalid": 0,
+        "wall_seconds": 54.097,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r9.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 10,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 26,
+        "source_bytes": 2656,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 12590,
+        "completion_tokens": 601,
+        "invalid": 0,
+        "wall_seconds": 83.415,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r10.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 10,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), following the current source invariant. Tests and compilation pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 2563,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 11799,
+        "completion_tokens": 417,
+        "invalid": 0,
+        "wall_seconds": 44.031,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r10.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 10,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), per the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 1545,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3919,
+        "completion_tokens": 311,
+        "invalid": 0,
+        "wall_seconds": 37.091,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r10.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 11,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 17,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 5307,
+        "completion_tokens": 554,
+        "invalid": 0,
+        "wall_seconds": 51.223,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r11.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 11,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2050,
+        "completion_tokens": 166,
+        "invalid": 0,
+        "wall_seconds": 15.798,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": true,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r11.raw.json",
+      "diff_bytes": 176
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 11,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 28,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7483,
+        "completion_tokens": 730,
+        "invalid": 0,
+        "wall_seconds": 63.469,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r11.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 12,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in HookFixture.invokeReflectively, after argument preparation and immediately before methodInvoke(event), as required by the in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 8372,
+        "completion_tokens": 455,
+        "invalid": 1,
+        "wall_seconds": 58.97,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "read_range",
+            "error": "invalid path"
+          },
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r12.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 12,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately after argument preparation and before methodInvoke(event), following the explicit current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 2194,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6732,
+        "completion_tokens": 668,
+        "invalid": 0,
+        "wall_seconds": 45.354,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r12.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 12,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), per the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6641,
+        "completion_tokens": 238,
+        "invalid": 0,
+        "wall_seconds": 23.786,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r12.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 13,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after phase preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 2463,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 5999,
+        "completion_tokens": 431,
+        "invalid": 1,
+        "wall_seconds": 57.527,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r13.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 13,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), following the current explicit in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 9373,
+        "completion_tokens": 251,
+        "invalid": 1,
+        "wall_seconds": 47.446,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r13.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 13,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current in-source invariant.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 17,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2312,
+        "completion_tokens": 475,
+        "invalid": 0,
+        "wall_seconds": 48.512,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r13.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 14,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively immediately before methodInvoke(event), preserving the documented invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 24,
+        "source_bytes": 3021,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2751,
+        "completion_tokens": 592,
+        "invalid": 0,
+        "wall_seconds": 45.357,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r14.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 14,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), as required by the current in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 3011,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 13179,
+        "completion_tokens": 279,
+        "invalid": 2,
+        "wall_seconds": 33.908,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 2,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r14.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 14,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event), per the current invariant. Compile and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 2573,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6358,
+        "completion_tokens": 267,
+        "invalid": 0,
+        "wall_seconds": 42.632,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r14.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 15,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2075,
+        "completion_tokens": 195,
+        "invalid": 0,
+        "wall_seconds": 36.162,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": true,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r15.raw.json",
+      "diff_bytes": 266
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 15,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately after phase preparation and before methodInvoke(event), following the explicit current-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 2114,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 11492,
+        "completion_tokens": 606,
+        "invalid": 1,
+        "wall_seconds": 31.281,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r15.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 15,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7241,
+        "completion_tokens": 250,
+        "invalid": 0,
+        "wall_seconds": 29.512,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r15.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 16,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event), preserving the current invariant.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 3423,
+        "source_reads": 6,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2132,
+        "completion_tokens": 379,
+        "invalid": 0,
+        "wall_seconds": 43.226,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r16.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 16,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in HookFixture.invokeReflectively immediately before methodInvoke(event), following the current in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 2499,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7460,
+        "completion_tokens": 505,
+        "invalid": 1,
+        "wall_seconds": 36.452,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r16.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 16,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 23,
+        "source_bytes": 3558,
+        "source_reads": 6,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 13158,
+        "completion_tokens": 695,
+        "invalid": 0,
+        "wall_seconds": 70.719,
+        "successful_edits": 2,
+        "passed_tests": 3,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r16.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 17,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately after argument preparation and before methodInvoke(event), as required by the current invariant. Tests and compilation pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 28,
+        "source_bytes": 2560,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3358,
+        "completion_tokens": 821,
+        "invalid": 0,
+        "wall_seconds": 69.333,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r17.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 17,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, immediately before methodInvoke(event), following the current explicit in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 1537,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 4803,
+        "completion_tokens": 254,
+        "invalid": 1,
+        "wall_seconds": 31.01,
+        "successful_edits": 1,
+        "passed_tests": 2,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r17.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 17,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 5721,
+        "completion_tokens": 207,
+        "invalid": 0,
+        "wall_seconds": 21.249,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r17.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 18,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event), preserving the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3705,
+        "completion_tokens": 343,
+        "invalid": 0,
+        "wall_seconds": 53.567,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r18.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 18,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call to invokeReflectively, immediately before methodInvoke(event), as required by the current in-source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 17,
+        "source_bytes": 2653,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3985,
+        "completion_tokens": 690,
+        "invalid": 0,
+        "wall_seconds": 36.733,
+        "successful_edits": 2,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r18.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 18,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event), matching the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 3185,
+        "source_reads": 7,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7399,
+        "completion_tokens": 459,
+        "invalid": 0,
+        "wall_seconds": 35.998,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r18.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 19,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests completed successfully.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 2536,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1650,
+        "completion_tokens": 260,
+        "invalid": 0,
+        "wall_seconds": 18.918,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r19.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 19,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 17,
+        "source_bytes": 3031,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 11963,
+        "completion_tokens": 770,
+        "invalid": 0,
+        "wall_seconds": 46.53,
+        "successful_edits": 2,
+        "passed_tests": 2,
+        "rejected_finals": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r19.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 19,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 2573,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 7950,
+        "completion_tokens": 247,
+        "invalid": 0,
+        "wall_seconds": 22.914,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r19.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "SOURCE_ONLY",
+      "rep": 20,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event), as required by the current invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3147,
+        "completion_tokens": 248,
+        "invalid": 0,
+        "wall_seconds": 25.219,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__SOURCE_ONLY__r20.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 20,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after phase preparation and immediately before methodInvoke(event), following the current source invariant. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 3493,
+        "source_reads": 7,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 13199,
+        "completion_tokens": 476,
+        "invalid": 1,
+        "wall_seconds": 40.406,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__STALE_DOC_CONTROL__r20.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07",
+      "arm": "TMF_STALE_GATED",
+      "rep": 20,
+      "final_gate": "hard",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 2536,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 5075,
+        "completion_tokens": 255,
+        "invalid": 0,
+        "wall_seconds": 32.649,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07e_hard_r20/M07__TMF_STALE_GATED__r20.raw.json",
+      "diff_bytes": 298
+    }
+  ],
+  "summary": {
+    "mode": "mutation_freshness_m07",
+    "runs": 60,
+    "final_gate": "hard",
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 20,
+        "raw_pass": 18,
+        "semantic_evaluable": 18,
+        "semantic_adjusted_pass": 18,
+        "compile_ok": 20,
+        "stale_claim_withheld": 0,
+        "wrong_wrapper_site": 1,
+        "primary": {
+          "pass": 18,
+          "edit_protocol_fail": 1,
+          "no_final": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 20,
+        "raw_pass": 18,
+        "semantic_evaluable": 18,
+        "semantic_adjusted_pass": 18,
+        "compile_ok": 20,
+        "stale_claim_withheld": 0,
+        "wrong_wrapper_site": 1,
+        "primary": {
+          "pass": 18,
+          "no_final": 1,
+          "edit_protocol_fail": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 20,
+        "raw_pass": 19,
+        "semantic_evaluable": 19,
+        "semantic_adjusted_pass": 19,
+        "compile_ok": 20,
+        "stale_claim_withheld": 20,
+        "wrong_wrapper_site": 0,
+        "primary": {
+          "pass": 19,
+          "edit_protocol_fail": 1
+        }
+      }
+    }
+  }
+}

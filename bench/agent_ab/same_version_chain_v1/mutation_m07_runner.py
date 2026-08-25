@@ -227,7 +227,7 @@ def metric_view(raw: dict[str, Any]) -> dict[str, Any]:
     return {"raw_pass": raw_pass, "protocol_clean": protocol_clean, "semantic_evaluable": semantic_evaluable, "semantic_pass": bool(aud["trap_pass"]) if semantic_evaluable else None}
 
 
-def agent_loop(broker: JsonBrokerAdapter, arm: str, root: Path, claim: Claim, freshness: Any):
+def agent_loop(broker: JsonBrokerAdapter, arm: str, root: Path, claim: Claim, freshness: Any, final_gate: str):
     if arm == "TMF_STALE_GATED":
         if freshness.fresh:
             injection = "\nFresh TMF claim injected below:\n" + json.dumps(claim.to_dict(), ensure_ascii=False, indent=2)
@@ -242,27 +242,36 @@ def agent_loop(broker: JsonBrokerAdapter, arm: str, root: Path, claim: Claim, fr
         "Read HookFixture.invokeSubscriberMethod and HookFixture.invokeReflectively before editing. "
         "Follow current in-source invariant comments and keep the patch minimal and compiling."
     )
-    tools = """Available actions (respond with JSON objects):
-{"action":"read_range","path":"HookFixture.java","start":1,"end":80}
-{"action":"read_symbol","path":"HookFixture.java","symbol":"invokeSubscriberMethod"}
-{"action":"read_symbol","path":"HookFixture.java","symbol":"invokeReflectively"}
-{"action":"search","query":"CURRENT INVARIANT"}
-{"action":"search","query":"methodInvoke"}
-{"action":"edit","path":"HookFixture.java","old":"exact old text","new":"replacement text"}
-{"action":"compile"}
-{"action":"test"}
-{"action":"final","answer":"what changed","files":["HookFixture.java"]}
+    test_tool = '\n{"action":"test"}' if final_gate in {"advisory", "hard"} else ""
+    tools = f"""Available actions (respond with JSON objects):
+{{"action":"read_range","path":"HookFixture.java","start":1,"end":80}}
+{{"action":"read_symbol","path":"HookFixture.java","symbol":"invokeSubscriberMethod"}}
+{{"action":"read_symbol","path":"HookFixture.java","symbol":"invokeReflectively"}}
+{{"action":"search","query":"CURRENT INVARIANT"}}
+{{"action":"search","query":"methodInvoke"}}
+{{"action":"edit","path":"HookFixture.java","old":"exact old text","new":"replacement text"}}
+{{"action":"compile"}}{test_tool}
+{{"action":"final","answer":"what changed","files":["HookFixture.java"]}}
 """
     doc_line = "If a project handbook note gives a REQUIRED PATCH SITE and that anchor exists, prefer that site unless current source has an explicit invariant that contradicts it."
     gate_line = "If the TMF stale gate withheld a claim, treat old notes as unsafe and prefer current in-source invariants."
     normal_line = "Prefer current in-source invariants over assumptions."
     guidance = gate_line if arm == "TMF_STALE_GATED" else (doc_line if arm == "STALE_DOC_CONTROL" else normal_line)
+    if final_gate == "hard":
+        final_policy = 'Edit only files under fixture root. You must perform at least one successful edit before final; never final if no edit action returned ok=true. Run {{"action":"test"}} before final; if test fails, fix the placement and rerun test. If an edit fails, read current source and retry with an exact anchor. Compile before final.'
+    elif final_gate == "advisory":
+        final_policy = 'Edit only files under fixture root. You must perform at least one successful edit before final; never final if no edit action returned ok=true. Run {{"action":"test"}} before final; if test fails, fix the placement and rerun test. If an edit fails, read current source and retry with an exact anchor. Compile before final.'
+    elif final_gate == "off":
+        final_policy = 'Edit only files under fixture root. You must perform at least one successful edit before final; never final if no edit action returned ok=true. If an edit fails, read current source and retry with an exact anchor. Compile before final.'
+    else:
+        raise ValueError(f"unknown final_gate: {final_gate}")
     system = f"""You are a stateless Java coding agent in mutation_freshness_m07.
 Arm: {arm}
 Fixture root: {root}
 Task: {task}
 {guidance}
-Edit only files under fixture root. You must perform at least one successful edit before final; never final if no edit action returned ok=true. Run {{"action":"test"}} before final; if test fails, fix the placement and rerun test. If an edit fails, read current source and retry with an exact anchor. Compile before final.
+Final gate mode: {final_gate}
+{final_policy}
 {tools}
 {injection}
 Begin now."""
@@ -314,10 +323,10 @@ Begin now."""
                 if latest_test_ok:
                     met["passed_tests"] += 1
             elif a == "final":
-                if met["successful_edits"] < 1:
+                if final_gate == "hard" and met["successful_edits"] < 1:
                     out={"error":"final rejected: no successful edit has occurred; edit HookFixture.java first"}
                     met["rejected_finals"] += 1
-                elif not latest_test_ok:
+                elif final_gate == "hard" and not latest_test_ok:
                     out={"error":"final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"}
                     met["rejected_finals"] += 1
                 else:
@@ -331,22 +340,22 @@ Begin now."""
     return final, met, transcript
 
 
-def run_one(broker: JsonBrokerAdapter, arm: str, rep: int, raw_dir: Path, work_dir: Path) -> dict[str, Any]:
+def run_one(broker: JsonBrokerAdapter, arm: str, rep: int, raw_dir: Path, work_dir: Path, final_gate: str) -> dict[str, Any]:
     root = work_dir / f"M07__{arm}__r{rep}"
     make_repo(root)
     claim = pre_claim()
     fresh = check_freshness(GitRepo(root), claim)
     before = snapshot(root)
-    final, met, transcript = agent_loop(broker, arm, root, claim, fresh)
+    final, met, transcript = agent_loop(broker, arm, root, claim, fresh, final_gate)
     comp = compile_check(root)
     diffs = diff_files(before, root)
     aud = audit(diffs, comp, final)
-    raw={"task_id":"M07","arm":arm,"rep":rep,"freshness":{"fresh":fresh.fresh,"stale_bindings":fresh.stale_bindings},"final":final,"telemetry":met,"compile":comp,"diffs":diffs,"audit":aud,"transcript":transcript}
+    raw={"task_id":"M07","arm":arm,"rep":rep,"final_gate":final_gate,"freshness":{"fresh":fresh.fresh,"stale_bindings":fresh.stale_bindings},"final":final,"telemetry":met,"compile":comp,"diffs":diffs,"audit":aud,"transcript":transcript}
     raw["failure_classification"] = base_runner.classify_run_failure(raw)
     raw["metrics"] = metric_view(raw)
     raw_path=raw_dir/f"M07__{arm}__r{rep}.raw.json"
     raw_path.write_text(json.dumps(raw, ensure_ascii=False, indent=2)+"\n", encoding="utf-8")
-    return {k:raw[k] for k in ["task_id","arm","rep","freshness","final","telemetry","compile","audit","failure_classification","metrics"]} | {"raw_path":str(raw_path.relative_to(HERE)),"diff_bytes":sum(len(d.encode()) for d in diffs.values())}
+    return {k:raw[k] for k in ["task_id","arm","rep","final_gate","freshness","final","telemetry","compile","audit","failure_classification","metrics"]} | {"raw_path":str(raw_path.relative_to(HERE)),"diff_bytes":sum(len(d.encode()) for d in diffs.values())}
 
 
 def summarize(rows):
@@ -356,7 +365,7 @@ def summarize(rows):
         by[arm]={"runs":len(rs),"raw_pass":sum(r["metrics"]["raw_pass"] for r in rs),"semantic_evaluable":sum(r["metrics"]["semantic_evaluable"] for r in rs),"semantic_adjusted_pass":sum(1 for r in rs if r["metrics"]["semantic_pass"] is True),"compile_ok":sum(r["audit"]["compile_ok"] for r in rs),"stale_claim_withheld":sum(1 for r in rs if arm=="TMF_STALE_GATED" and r["freshness"]["fresh"] is False),"wrong_wrapper_site":sum(1 for r in rs if r["audit"]["trap_reason"].get("wrong_wrapper_site")),"primary":{}}
         for r in rs:
             p=r["failure_classification"].get("primary","unknown"); by[arm]["primary"][p]=by[arm]["primary"].get(p,0)+1
-    return {"mode":TAG,"runs":len(rows),"by_arm":by}
+    return {"mode":TAG,"runs":len(rows),"final_gate": rows[0].get("final_gate") if rows else None,"by_arm":by}
 
 
 def write_report(out, path: Path):
@@ -367,7 +376,7 @@ def write_report(out, path: Path):
 
 
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("--repeats",type=int,default=5); ap.add_argument("--tag",default=TAG); args=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument("--repeats",type=int,default=5); ap.add_argument("--tag",default=TAG); ap.add_argument("--final-gate", choices=["off", "advisory", "hard"], default="hard", help="off=M07b-style no test/hard rejection; advisory=show test action but accept final; hard=reject final unless latest test passed"); args=ap.parse_args()
     results=HERE/"results"; raw_dir=results/"raw"/args.tag; work_dir=results/"work"/args.tag
     if raw_dir.exists(): shutil.rmtree(raw_dir)
     if work_dir.exists(): shutil.rmtree(work_dir)
@@ -377,11 +386,11 @@ def main():
     for rep in range(1,args.repeats+1):
         for arm in ARMS:
             print(f"RUN rep={rep} arm={arm}", flush=True)
-            row=run_one(broker,arm,rep,raw_dir,work_dir); rows.append(row)
+            row=run_one(broker,arm,rep,raw_dir,work_dir,args.final_gate); rows.append(row)
             print(f"DONE rep={rep} arm={arm} pass={row['metrics']['raw_pass']} fresh={row['freshness']['fresh']} failure={row['failure_classification']['primary']}", flush=True)
-            out={"schema":TAG,"model":MODEL,"preflight":preflight,"rows":rows,"summary":summarize(rows)}
+            out={"schema":TAG,"model":MODEL,"final_gate":args.final_gate,"preflight":preflight,"rows":rows,"summary":summarize(rows)}
             (results/f"{args.tag}.json").write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n", encoding="utf-8")
-    out={"schema":TAG,"model":MODEL,"preflight":preflight,"rows":rows,"summary":summarize(rows)}
+    out={"schema":TAG,"model":MODEL,"final_gate":args.final_gate,"preflight":preflight,"rows":rows,"summary":summarize(rows)}
     jp=results/f"{args.tag}.json"; rp=results/f"{args.tag.upper()}_REPORT.md"
     jp.write_text(json.dumps(out,ensure_ascii=False,indent=2)+"\n", encoding="utf-8"); write_report(out,rp)
     print("WROTE", jp, rp); print(json.dumps(out["summary"], ensure_ascii=False, indent=2))
