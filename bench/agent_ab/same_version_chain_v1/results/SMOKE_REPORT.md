@@ -5,12 +5,12 @@ Runs: 1
 Valid answers: 1/1
 Compile OK: 1/1
 Trap passes: 1/1
-Differentiation by task: `{"B11": false}`
+Differentiation by task: `{"B13": false}`
 
 ## Rows
 
-- B11 / TMF_CLAIMS: valid=True compile=True trap=True coverage=0.143 files=['Dispatcher.java'] bytes_read=12406 calls=12 wall=26.215s raw=results/raw/boundary_precision_B11_TMF_CLAIMS_v2/B11__TMF_CLAIMS.raw.json
-  - trap_reason={"dispatcher_changed": true, "hookish": true, "before_subscriber_dispatchEvent_or_full_helper": true, "replaced_dispatch_sites": 3, "not_subscriber_only": true, "not_eventbus_only": true}
+- B13 / DOC_CONTROL: valid=True compile=True trap=True coverage=0.667 files=['Subscriber.java'] bytes_read=6289 calls=9 wall=33.497s raw=results/raw/boundary_precision_repeat_r3_B13_DOC_CONTROL/B13__DOC_CONTROL.raw.json
+  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_invokeSubscriberMethod_after_MethodInvoke": true, "not_catch_path": true, "not_outer_dispatchEvent": true}
 
 ## Gate
 

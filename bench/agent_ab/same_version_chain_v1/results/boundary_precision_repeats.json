@@ -1,0 +1,2382 @@
+{
+  "schema": "boundary_precision_repeats_v1",
+  "n_rows": 63,
+  "arms": {
+    "DOC_CONTROL": {
+      "pass": 17,
+      "n": 21,
+      "pass_rate": 0.8095238095238095,
+      "valid_rate": 0.8571428571428571,
+      "compile_rate": 0.9047619047619048,
+      "trap_rate": 0.9047619047619048
+    },
+    "SOURCE_ONLY": {
+      "pass": 14,
+      "n": 21,
+      "pass_rate": 0.6666666666666666,
+      "valid_rate": 0.7619047619047619,
+      "compile_rate": 0.9047619047619048,
+      "trap_rate": 0.7142857142857143
+    },
+    "TMF_CLAIMS": {
+      "pass": 15,
+      "n": 21,
+      "pass_rate": 0.7142857142857143,
+      "valid_rate": 0.8095238095238095,
+      "compile_rate": 0.9047619047619048,
+      "trap_rate": 0.7142857142857143
+    }
+  },
+  "tasks": {
+    "B07": {
+      "SOURCE_ONLY": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "TMF_CLAIMS": {
+        "pass": 2,
+        "n": 3,
+        "pass_rate": 0.6666666666666666
+      },
+      "DOC_CONTROL": {
+        "pass": 2,
+        "n": 3,
+        "pass_rate": 0.6666666666666666
+      }
+    },
+    "B08": {
+      "SOURCE_ONLY": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "TMF_CLAIMS": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "DOC_CONTROL": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      }
+    },
+    "B09": {
+      "SOURCE_ONLY": {
+        "pass": 1,
+        "n": 3,
+        "pass_rate": 0.3333333333333333
+      },
+      "TMF_CLAIMS": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "DOC_CONTROL": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      }
+    },
+    "B10": {
+      "SOURCE_ONLY": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "TMF_CLAIMS": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "DOC_CONTROL": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      }
+    },
+    "B11": {
+      "SOURCE_ONLY": {
+        "pass": 0,
+        "n": 3,
+        "pass_rate": 0.0
+      },
+      "TMF_CLAIMS": {
+        "pass": 2,
+        "n": 3,
+        "pass_rate": 0.6666666666666666
+      },
+      "DOC_CONTROL": {
+        "pass": 2,
+        "n": 3,
+        "pass_rate": 0.6666666666666666
+      }
+    },
+    "B12": {
+      "SOURCE_ONLY": {
+        "pass": 1,
+        "n": 3,
+        "pass_rate": 0.3333333333333333
+      },
+      "TMF_CLAIMS": {
+        "pass": 1,
+        "n": 3,
+        "pass_rate": 0.3333333333333333
+      },
+      "DOC_CONTROL": {
+        "pass": 2,
+        "n": 3,
+        "pass_rate": 0.6666666666666666
+      }
+    },
+    "B13": {
+      "SOURCE_ONLY": {
+        "pass": 3,
+        "n": 3,
+        "pass_rate": 1.0
+      },
+      "TMF_CLAIMS": {
+        "pass": 1,
+        "n": 3,
+        "pass_rate": 0.3333333333333333
+      },
+      "DOC_CONTROL": {
+        "pass": 2,
+        "n": 3,
+        "pass_rate": 0.6666666666666666
+      }
+    }
+  },
+  "pairwise": {
+    "TMF_CLAIMS_vs_SOURCE_ONLY": {
+      "tmf_better_tasks": 2,
+      "ties": 3,
+      "tmf_worse_tasks": 2,
+      "details": {
+        "B07": {
+          "tmf": 0.6666666666666666,
+          "other": 1.0,
+          "outcome": "tmf_worse"
+        },
+        "B08": {
+          "tmf": 1.0,
+          "other": 1.0,
+          "outcome": "tie"
+        },
+        "B09": {
+          "tmf": 1.0,
+          "other": 0.3333333333333333,
+          "outcome": "tmf_better"
+        },
+        "B10": {
+          "tmf": 1.0,
+          "other": 1.0,
+          "outcome": "tie"
+        },
+        "B11": {
+          "tmf": 0.6666666666666666,
+          "other": 0.0,
+          "outcome": "tmf_better"
+        },
+        "B12": {
+          "tmf": 0.3333333333333333,
+          "other": 0.3333333333333333,
+          "outcome": "tie"
+        },
+        "B13": {
+          "tmf": 0.3333333333333333,
+          "other": 1.0,
+          "outcome": "tmf_worse"
+        }
+      }
+    },
+    "TMF_CLAIMS_vs_DOC_CONTROL": {
+      "tmf_better_tasks": 0,
+      "ties": 5,
+      "tmf_worse_tasks": 2,
+      "details": {
+        "B07": {
+          "tmf": 0.6666666666666666,
+          "other": 0.6666666666666666,
+          "outcome": "tie"
+        },
+        "B08": {
+          "tmf": 1.0,
+          "other": 1.0,
+          "outcome": "tie"
+        },
+        "B09": {
+          "tmf": 1.0,
+          "other": 1.0,
+          "outcome": "tie"
+        },
+        "B10": {
+          "tmf": 1.0,
+          "other": 1.0,
+          "outcome": "tie"
+        },
+        "B11": {
+          "tmf": 0.6666666666666666,
+          "other": 0.6666666666666666,
+          "outcome": "tie"
+        },
+        "B12": {
+          "tmf": 0.3333333333333333,
+          "other": 0.6666666666666666,
+          "outcome": "tmf_worse"
+        },
+        "B13": {
+          "tmf": 0.3333333333333333,
+          "other": 0.6666666666666666,
+          "outcome": "tmf_worse"
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "rep": 1,
+      "task_id": "B07",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B07_DOC_CONTROL/B07__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 735,
+        "completion_tokens": 369,
+        "invalid": 0,
+        "wall_seconds": 29.179
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B07",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B07_SOURCE_ONLY/B07__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 8586,
+        "source_reads": 5,
+        "range_reads": 3,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 12918,
+        "completion_tokens": 723,
+        "invalid": 0,
+        "wall_seconds": 52.13
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B07",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B07_TMF_CLAIMS/B07__TMF_CLAIMS.raw.json",
+      "valid": false,
+      "compile": false,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": false,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 897,
+        "completion_tokens": 304,
+        "invalid": 0,
+        "wall_seconds": 27.566
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B07",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B07_DOC_CONTROL/B07__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 9699,
+        "source_reads": 6,
+        "range_reads": 4,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 21820,
+        "completion_tokens": 758,
+        "invalid": 1,
+        "wall_seconds": 46.591
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B07",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B07_SOURCE_ONLY/B07__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 4790,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 10316,
+        "completion_tokens": 414,
+        "invalid": 1,
+        "wall_seconds": 36.826
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B07",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B07_TMF_CLAIMS/B07__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 616,
+        "source_reads": 1,
+        "range_reads": 0,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 897,
+        "completion_tokens": 252,
+        "invalid": 0,
+        "wall_seconds": 20.685
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B07",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B07_DOC_CONTROL/B07__DOC_CONTROL.raw.json",
+      "valid": false,
+      "compile": false,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": false,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 735,
+        "completion_tokens": 278,
+        "invalid": 0,
+        "wall_seconds": 22.107
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B07",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B07_SOURCE_ONLY/B07__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 11658,
+        "source_reads": 4,
+        "range_reads": 3,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 1373,
+        "completion_tokens": 410,
+        "invalid": 0,
+        "wall_seconds": 22.471
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B07",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B07_TMF_CLAIMS/B07__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 897,
+        "completion_tokens": 285,
+        "invalid": 0,
+        "wall_seconds": 20.618
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B08",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B08_DOC_CONTROL/B08__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6752,
+        "source_reads": 3,
+        "range_reads": 1,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 7354,
+        "completion_tokens": 423,
+        "invalid": 1,
+        "wall_seconds": 34.734
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B08",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B08_SOURCE_ONLY/B08__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 5700,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 4233,
+        "completion_tokens": 373,
+        "invalid": 0,
+        "wall_seconds": 34.674
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B08",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B08_TMF_CLAIMS/B08__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 916,
+        "completion_tokens": 278,
+        "invalid": 0,
+        "wall_seconds": 28.3
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B08",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B08_DOC_CONTROL/B08__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 13690,
+        "source_reads": 6,
+        "range_reads": 3,
+        "symbol_reads": 3,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 1983,
+        "completion_tokens": 415,
+        "invalid": 0,
+        "wall_seconds": 42.327
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B08",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B08_SOURCE_ONLY/B08__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 570,
+        "completion_tokens": 342,
+        "invalid": 0,
+        "wall_seconds": 19.008
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B08",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B08_TMF_CLAIMS/B08__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 7738,
+        "source_reads": 4,
+        "range_reads": 2,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 3756,
+        "completion_tokens": 394,
+        "invalid": 0,
+        "wall_seconds": 25.472
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B08",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B08_DOC_CONTROL/B08__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 762,
+        "completion_tokens": 363,
+        "invalid": 0,
+        "wall_seconds": 22.874
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B08",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B08_SOURCE_ONLY/B08__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 570,
+        "completion_tokens": 331,
+        "invalid": 0,
+        "wall_seconds": 21.643
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B08",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B08_TMF_CLAIMS/B08__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 916,
+        "completion_tokens": 300,
+        "invalid": 0,
+        "wall_seconds": 30.69
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B09",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B09_DOC_CONTROL/B09__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 8592,
+        "source_reads": 5,
+        "range_reads": 3,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 11778,
+        "completion_tokens": 578,
+        "invalid": 0,
+        "wall_seconds": 43.354
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B09",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B09_SOURCE_ONLY/B09__SOURCE_ONLY.raw.json",
+      "valid": false,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": false,
+        "hookish": true,
+        "catch_before_handleSubscriberException": false,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 7503,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 576,
+        "completion_tokens": 313,
+        "invalid": 0,
+        "wall_seconds": 20.855
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B09",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B09_TMF_CLAIMS/B09__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 18692,
+        "source_reads": 6,
+        "range_reads": 4,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 6894,
+        "completion_tokens": 403,
+        "invalid": 0,
+        "wall_seconds": 31.482
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B09",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B09_DOC_CONTROL/B09__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 8301,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 799,
+        "completion_tokens": 357,
+        "invalid": 0,
+        "wall_seconds": 25.091
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B09",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B09_SOURCE_ONLY/B09__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 576,
+        "completion_tokens": 373,
+        "invalid": 0,
+        "wall_seconds": 25.817
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B09",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B09_TMF_CLAIMS/B09__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 974,
+        "completion_tokens": 392,
+        "invalid": 0,
+        "wall_seconds": 32.811
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B09",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B09_DOC_CONTROL/B09__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 799,
+        "completion_tokens": 321,
+        "invalid": 0,
+        "wall_seconds": 36.499
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B09",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B09_SOURCE_ONLY/B09__SOURCE_ONLY.raw.json",
+      "valid": false,
+      "compile": false,
+      "trap": true,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 9236,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 576,
+        "completion_tokens": 412,
+        "invalid": 0,
+        "wall_seconds": 34.404
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B09",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B09_TMF_CLAIMS/B09__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 8129,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 974,
+        "completion_tokens": 390,
+        "invalid": 0,
+        "wall_seconds": 30.424
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B10",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B10_DOC_CONTROL/B10__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 3060,
+        "source_reads": 1,
+        "range_reads": 1,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 715,
+        "completion_tokens": 268,
+        "invalid": 0,
+        "wall_seconds": 26.95
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B10",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B10_SOURCE_ONLY/B10__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 10422,
+        "source_reads": 5,
+        "range_reads": 5,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 14205,
+        "completion_tokens": 639,
+        "invalid": 0,
+        "wall_seconds": 47.271
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B10",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B10_TMF_CLAIMS/B10__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 14443,
+        "source_reads": 8,
+        "range_reads": 8,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 24629,
+        "completion_tokens": 712,
+        "invalid": 1,
+        "wall_seconds": 48.429
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B10",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B10_DOC_CONTROL/B10__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 6350,
+        "source_reads": 3,
+        "range_reads": 3,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 715,
+        "completion_tokens": 318,
+        "invalid": 0,
+        "wall_seconds": 35.828
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B10",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B10_SOURCE_ONLY/B10__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 15044,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 548,
+        "completion_tokens": 242,
+        "invalid": 0,
+        "wall_seconds": 34.255
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B10",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B10_TMF_CLAIMS/B10__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 4353,
+        "source_reads": 2,
+        "range_reads": 2,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 858,
+        "completion_tokens": 256,
+        "invalid": 0,
+        "wall_seconds": 17.479
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B10",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B10_DOC_CONTROL/B10__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6663,
+        "source_reads": 3,
+        "range_reads": 3,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 715,
+        "completion_tokens": 288,
+        "invalid": 0,
+        "wall_seconds": 18.986
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B10",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B10_SOURCE_ONLY/B10__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 17444,
+        "source_reads": 4,
+        "range_reads": 3,
+        "symbol_reads": 1,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 13415,
+        "completion_tokens": 300,
+        "invalid": 0,
+        "wall_seconds": 43.464
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B10",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B10_TMF_CLAIMS/B10__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 3097,
+        "source_reads": 1,
+        "range_reads": 1,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 9806,
+        "completion_tokens": 300,
+        "invalid": 1,
+        "wall_seconds": 33.911
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B11",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B11_DOC_CONTROL/B11__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": false,
+        "replaced_dispatch_sites": 3,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 8466,
+        "source_reads": 1,
+        "range_reads": 1,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 878,
+        "completion_tokens": 434,
+        "invalid": 0,
+        "wall_seconds": 38.504
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B11",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B11_SOURCE_ONLY/B11__SOURCE_ONLY.raw.json",
+      "valid": false,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "dispatcher_changed": false,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": false,
+        "replaced_dispatch_sites": 0,
+        "not_subscriber_only": false,
+        "not_eventbus_only": false
+      },
+      "files": [],
+      "telemetry": {
+        "tool_calls": 6,
+        "source_bytes": 13719,
+        "source_reads": 2,
+        "range_reads": 2,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 1314,
+        "completion_tokens": 166,
+        "invalid": 0,
+        "wall_seconds": 42.584
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B11",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B11_TMF_CLAIMS/B11__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": true,
+        "replaced_dispatch_sites": 2,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 9031,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 1056,
+        "completion_tokens": 475,
+        "invalid": 0,
+        "wall_seconds": 29.055
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B11",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B11_DOC_CONTROL/B11__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": true,
+        "replaced_dispatch_sites": 3,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 8466,
+        "source_reads": 1,
+        "range_reads": 1,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 878,
+        "completion_tokens": 439,
+        "invalid": 0,
+        "wall_seconds": 28.12
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B11",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B11_SOURCE_ONLY/B11__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": false,
+        "replaced_dispatch_sites": 3,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 22453,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 610,
+        "completion_tokens": 507,
+        "invalid": 0,
+        "wall_seconds": 47.0
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B11",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B11_TMF_CLAIMS/B11__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": true,
+        "replaced_dispatch_sites": 2,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 14981,
+        "source_reads": 2,
+        "range_reads": 2,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 1056,
+        "completion_tokens": 475,
+        "invalid": 0,
+        "wall_seconds": 29.412
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B11",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B11_DOC_CONTROL/B11__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": true,
+        "replaced_dispatch_sites": 2,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 16932,
+        "source_reads": 2,
+        "range_reads": 2,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 878,
+        "completion_tokens": 476,
+        "invalid": 0,
+        "wall_seconds": 29.047
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B11",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B11_SOURCE_ONLY/B11__SOURCE_ONLY.raw.json",
+      "valid": false,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": false,
+        "replaced_dispatch_sites": 2,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 25864,
+        "source_reads": 3,
+        "range_reads": 3,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 5636,
+        "completion_tokens": 442,
+        "invalid": 0,
+        "wall_seconds": 39.761
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B11",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B11_TMF_CLAIMS/B11__TMF_CLAIMS.raw.json",
+      "valid": false,
+      "compile": false,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": false,
+        "replaced_dispatch_sites": 0,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 21711,
+        "source_reads": 3,
+        "range_reads": 3,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 6996,
+        "completion_tokens": 407,
+        "invalid": 0,
+        "wall_seconds": 34.238
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B12",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B12_DOC_CONTROL/B12__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": true,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 12657,
+        "source_reads": 5,
+        "range_reads": 4,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 12142,
+        "completion_tokens": 480,
+        "invalid": 0,
+        "wall_seconds": 54.333
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B12",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B12_SOURCE_ONLY/B12__SOURCE_ONLY.raw.json",
+      "valid": false,
+      "compile": false,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": false,
+        "direct_hook_before_checkNotNull_expr_is_too_early": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 11042,
+        "source_reads": 4,
+        "range_reads": 2,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 570,
+        "completion_tokens": 466,
+        "invalid": 0,
+        "wall_seconds": 44.138
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B12",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B12_TMF_CLAIMS/B12__TMF_CLAIMS.raw.json",
+      "valid": false,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": false,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": false,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 8691,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 862,
+        "completion_tokens": 289,
+        "invalid": 0,
+        "wall_seconds": 17.971
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B12",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B12_DOC_CONTROL/B12__DOC_CONTROL.raw.json",
+      "valid": false,
+      "compile": true,
+      "trap": true,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": true,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 14532,
+        "source_reads": 7,
+        "range_reads": 5,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 19553,
+        "completion_tokens": 555,
+        "invalid": 0,
+        "wall_seconds": 56.468
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B12",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B12_SOURCE_ONLY/B12__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": true,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 570,
+        "completion_tokens": 535,
+        "invalid": 0,
+        "wall_seconds": 48.635
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B12",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B12_TMF_CLAIMS/B12__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": true,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 6289,
+        "source_reads": 3,
+        "range_reads": 1,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 862,
+        "completion_tokens": 337,
+        "invalid": 0,
+        "wall_seconds": 43.599
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B12",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B12_DOC_CONTROL/B12__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": true,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6289,
+        "source_reads": 3,
+        "range_reads": 1,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 7681,
+        "completion_tokens": 524,
+        "invalid": 0,
+        "wall_seconds": 31.188
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B12",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B12_SOURCE_ONLY/B12__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": false,
+        "direct_hook_before_checkNotNull_expr_is_too_early": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 6289,
+        "source_reads": 3,
+        "range_reads": 1,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 570,
+        "completion_tokens": 271,
+        "invalid": 0,
+        "wall_seconds": 24.699
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B12",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B12_TMF_CLAIMS/B12__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": false,
+        "direct_hook_before_checkNotNull_expr_is_too_early": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 5188,
+        "source_reads": 4,
+        "range_reads": 2,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 17914,
+        "completion_tokens": 441,
+        "invalid": 1,
+        "wall_seconds": 51.697
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B13",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B13_DOC_CONTROL/B13__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 15071,
+        "source_reads": 7,
+        "range_reads": 5,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 23519,
+        "completion_tokens": 840,
+        "invalid": 1,
+        "wall_seconds": 42.543
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B13",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B13_SOURCE_ONLY/B13__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 12415,
+        "source_reads": 4,
+        "range_reads": 3,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 5935,
+        "completion_tokens": 379,
+        "invalid": 1,
+        "wall_seconds": 24.876
+      }
+    },
+    {
+      "rep": 1,
+      "task_id": "B13",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B13_TMF_CLAIMS/B13__TMF_CLAIMS.raw.json",
+      "valid": false,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": false,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": false,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 934,
+        "completion_tokens": 366,
+        "invalid": 0,
+        "wall_seconds": 31.047
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B13",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B13_DOC_CONTROL/B13__DOC_CONTROL.raw.json",
+      "valid": false,
+      "compile": false,
+      "trap": true,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 750,
+        "completion_tokens": 269,
+        "invalid": 0,
+        "wall_seconds": 30.698
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B13",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B13_SOURCE_ONLY/B13__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 577,
+        "completion_tokens": 268,
+        "invalid": 0,
+        "wall_seconds": 24.714
+      }
+    },
+    {
+      "rep": 2,
+      "task_id": "B13",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r2_B13_TMF_CLAIMS/B13__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "pass": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": false,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 934,
+        "completion_tokens": 273,
+        "invalid": 0,
+        "wall_seconds": 31.486
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B13",
+      "arm": "DOC_CONTROL",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B13_DOC_CONTROL/B13__DOC_CONTROL.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6289,
+        "source_reads": 3,
+        "range_reads": 1,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 3859,
+        "completion_tokens": 289,
+        "invalid": 0,
+        "wall_seconds": 33.497
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B13",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B13_SOURCE_ONLY/B13__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 6289,
+        "source_reads": 3,
+        "range_reads": 1,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 577,
+        "completion_tokens": 320,
+        "invalid": 0,
+        "wall_seconds": 21.14
+      }
+    },
+    {
+      "rep": 3,
+      "task_id": "B13",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B13_TMF_CLAIMS/B13__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "pass": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 7371,
+        "source_reads": 4,
+        "range_reads": 2,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 5002,
+        "completion_tokens": 358,
+        "invalid": 0,
+        "wall_seconds": 27.613
+      }
+    }
+  ]
+}

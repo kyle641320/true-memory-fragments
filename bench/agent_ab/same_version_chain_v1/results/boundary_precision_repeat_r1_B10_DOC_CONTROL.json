@@ -1,0 +1,85 @@
+{
+  "schema": "same_version_chain_v1_results",
+  "mode": "smoke",
+  "tag": "boundary_precision_repeat_r1_B10_DOC_CONTROL",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "B10",
+      "arm": "DOC_CONTROL",
+      "final": {
+        "action": "final",
+        "answer": "Added one private no-op hook in EventBus.java and invoked it exactly once at the no-subscriber decision boundary, immediately before reposting the event as a DeadEvent. The hook is not invoked for normal dispatch, at post entry, or when the original event is already a DeadEvent.",
+        "files": [
+          "EventBus.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 3060,
+        "source_reads": 1,
+        "range_reads": 1,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 715,
+        "completion_tokens": 268,
+        "invalid": 0,
+        "wall_seconds": 26.95
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "compile_ok": true,
+        "modified_files": [
+          "EventBus.java"
+        ],
+        "golden_hits": [
+          "DeadEvent",
+          "Dispatcher.dispatch"
+        ],
+        "golden_coverage": 0.4,
+        "trap_pass": true,
+        "trap_reason": {
+          "eventbus_changed": true,
+          "hookish": true,
+          "before_dead_event_repost": true,
+          "not_post_entry": true,
+          "not_subscriber_or_dispatcher_only": true
+        },
+        "valid_answer": true
+      },
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B10_DOC_CONTROL/B10__DOC_CONTROL.raw.json",
+      "diff_bytes": 399
+    }
+  ],
+  "summary": {
+    "mode": "smoke",
+    "runs": 1,
+    "valid_answers": 1,
+    "compile_ok": 1,
+    "trap_passes": 1,
+    "differentiation_by_task": {
+      "B10": false
+    },
+    "zero_harness_errors": true,
+    "smoke_gate": {
+      "at_least_2_of_3_valid_per_task": false,
+      "trap_tests_distinguish_some_task": false,
+      "zero_harness_runtime_errors": true
+    }
+  }
+}

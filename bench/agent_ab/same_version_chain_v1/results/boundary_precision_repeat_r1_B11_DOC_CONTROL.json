@@ -1,0 +1,85 @@
+{
+  "schema": "same_version_chain_v1_results",
+  "mode": "smoke",
+  "tag": "boundary_precision_repeat_r1_B11_DOC_CONTROL",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "B11",
+      "arm": "DOC_CONTROL",
+      "final": {
+        "action": "final",
+        "answer": "Updated Dispatcher.java to define one no-op dispatcher-to-subscriber handoff hook and a shared dispatch helper. All three concrete dispatcher implementations—PerThreadQueuedDispatcher, LegacyAsyncDispatcher, and ImmediateDispatcher—now route delivery through that helper, which invokes the hook immediately before Subscriber.dispatchEvent(event).",
+        "files": [
+          "Dispatcher.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 8466,
+        "source_reads": 1,
+        "range_reads": 1,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 878,
+        "completion_tokens": 434,
+        "invalid": 0,
+        "wall_seconds": 38.504
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "compile_ok": true,
+        "modified_files": [
+          "Dispatcher.java"
+        ],
+        "golden_hits": [
+          "Subscriber.dispatchEvent"
+        ],
+        "golden_coverage": 0.143,
+        "trap_pass": false,
+        "trap_reason": {
+          "dispatcher_changed": true,
+          "hookish": true,
+          "before_subscriber_dispatchEvent_or_full_helper": false,
+          "replaced_dispatch_sites": 3,
+          "not_subscriber_only": true,
+          "not_eventbus_only": true
+        },
+        "valid_answer": true
+      },
+      "raw_path": "results/raw/boundary_precision_repeat_r1_B11_DOC_CONTROL/B11__DOC_CONTROL.raw.json",
+      "diff_bytes": 1495
+    }
+  ],
+  "summary": {
+    "mode": "smoke",
+    "runs": 1,
+    "valid_answers": 1,
+    "compile_ok": 1,
+    "trap_passes": 0,
+    "differentiation_by_task": {
+      "B11": false
+    },
+    "zero_harness_errors": true,
+    "smoke_gate": {
+      "at_least_2_of_3_valid_per_task": false,
+      "trap_tests_distinguish_some_task": false,
+      "zero_harness_runtime_errors": true
+    }
+  }
+}

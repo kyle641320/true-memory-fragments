@@ -1,0 +1,85 @@
+{
+  "schema": "same_version_chain_v1_results",
+  "mode": "smoke",
+  "tag": "boundary_precision_repeat_r3_B09_SOURCE_ONLY",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "B09",
+      "arm": "SOURCE_ONLY",
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.dispatchEvent so InvocationTargetException failures invoke a single no-op recordSubscriberInvocationFailure(event, e) hook immediately before bus.handleSubscriberException(...). Successful invocations do not call the hook, and the hook is not called before invokeSubscriberMethod(event).",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 9236,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 576,
+        "completion_tokens": 412,
+        "invalid": 0,
+        "wall_seconds": 34.404
+      },
+      "compile": {
+        "ok": false,
+        "exit": 1,
+        "stderr": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/boundary_precision_repeat_r3_B09_SOURCE_ONLY/B09__SOURCE_ONLY/Subscriber.java:72: error: cannot find symbol\n            recordSubscriberInvocationFailure(event, e);\n            ^\n  symbol:   method recordSubscriberInvocationFailure(Object,InvocationTargetException)\n  location: class Subscriber\n1 error\n",
+        "stdout": ""
+      },
+      "audit": {
+        "compile_ok": false,
+        "modified_files": [
+          "Subscriber.java"
+        ],
+        "golden_hits": [
+          "Subscriber.dispatchEvent",
+          "InvocationTargetException"
+        ],
+        "golden_coverage": 0.333,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "hookish": true,
+          "catch_before_handleSubscriberException": true,
+          "not_before_invoke": true,
+          "not_eventbus_only": true
+        },
+        "valid_answer": false
+      },
+      "raw_path": "results/raw/boundary_precision_repeat_r3_B09_SOURCE_ONLY/B09__SOURCE_ONLY.raw.json",
+      "diff_bytes": 331
+    }
+  ],
+  "summary": {
+    "mode": "smoke",
+    "runs": 1,
+    "valid_answers": 0,
+    "compile_ok": 0,
+    "trap_passes": 1,
+    "differentiation_by_task": {
+      "B09": false
+    },
+    "zero_harness_errors": true,
+    "smoke_gate": {
+      "at_least_2_of_3_valid_per_task": false,
+      "trap_tests_distinguish_some_task": false,
+      "zero_harness_runtime_errors": true
+    }
+  }
+}
