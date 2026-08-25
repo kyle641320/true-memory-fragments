@@ -1,0 +1,1163 @@
+{
+  "schema": "mutation_freshness_v2",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "M02",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java with one private no-op hook and one invocation placed at the concrete reflective boundary: after the event is checked with checkNotNull(event) and immediately before Method.invoke receives the checked argument.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 13429,
+        "source_reads": 4,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 1193,
+        "completion_tokens": 456,
+        "invalid": 0,
+        "wall_seconds": 75.613
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": true
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 745
+    },
+    {
+      "task_id": "M02",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define exactly one no-op beforeReflectiveInvoke hook and call it exactly once at the current reflective invocation boundary. The event is first validated with checkNotNull, then the hook runs immediately before method.invoke receives the checked argument. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 7649,
+        "source_reads": 5,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 15604,
+        "completion_tokens": 604,
+        "invalid": 0,
+        "wall_seconds": 58.641
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 584
+    },
+    {
+      "task_id": "M02",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one no-op `beforeMethodInvoke()` hook in `Subscriber.java` and called it exactly once at the current reflective invocation boundary: after `checkNotNull(event)` prepares the checked argument and immediately before `method.invoke(target, checkedEvent)`. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 6,
+        "source_bytes": 6047,
+        "source_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 8488,
+        "completion_tokens": 259,
+        "invalid": 0,
+        "wall_seconds": 25.441
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 576
+    },
+    {
+      "task_id": "M02",
+      "arm": "SOURCE_ONLY",
+      "rep": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define exactly one no-op hook and call it exactly once at the current reflective invocation boundary. The event is first validated with checkNotNull(event), then the hook runs immediately before method.invoke(target, checkedEvent). Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6047,
+        "source_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 7130,
+        "completion_tokens": 295,
+        "invalid": 0,
+        "wall_seconds": 39.786
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__SOURCE_ONLY__r2.raw.json",
+      "diff_bytes": 684
+    },
+    {
+      "task_id": "M02",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added one private no-op hook in Subscriber.java and invoked it exactly once immediately before the current concrete method.invoke(target, event) call. The checked event is still prepared via checkNotNull(event) before reaching this hook, so the hook marks the actual reflective invocation boundary rather than the earlier wrapper/helper call.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 932,
+        "source_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 667,
+        "completion_tokens": 279,
+        "invalid": 0,
+        "wall_seconds": 50.729
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": false,
+          "hoisted_hook_inside_invokeReflectively": false,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "semantic_boundary_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__STALE_DOC_CONTROL__r2.raw.json",
+      "diff_bytes": 421
+    },
+    {
+      "task_id": "M02",
+      "arm": "TMF_STALE_GATED",
+      "rep": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated the current reflective invocation boundary in Subscriber.java. The event is now checked with checkNotNull first, then the single no-op recordBeforeSubscriberInvoke hook is called immediately before method.invoke receives the checked argument. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6174,
+        "source_reads": 3,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 9867,
+        "completion_tokens": 299,
+        "invalid": 0,
+        "wall_seconds": 36.136
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__TMF_STALE_GATED__r2.raw.json",
+      "diff_bytes": 596
+    },
+    {
+      "task_id": "M02",
+      "arm": "SOURCE_ONLY",
+      "rep": 3,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one no-op hook, `beforeSubscriberMethodInvoke()`, and called it exactly once in `invokeReflectively()` after `checkNotNull(event)` prepares the checked argument and immediately before the concrete `method.invoke(target, checkedEvent)` call. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 11669,
+        "source_reads": 3,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 18477,
+        "completion_tokens": 375,
+        "invalid": 1,
+        "wall_seconds": 26.987
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__SOURCE_ONLY__r3.raw.json",
+      "diff_bytes": 713
+    },
+    {
+      "task_id": "M02",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 3,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define exactly one no-op hook, beforeSubscriberMethodInvoke(), and call it exactly once in invokeReflectively after checkNotNull(event) prepares the argument and immediately before method.invoke(target, checkedEvent). Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 11526,
+        "source_reads": 4,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 19638,
+        "completion_tokens": 402,
+        "invalid": 2,
+        "wall_seconds": 37.13
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 2,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__STALE_DOC_CONTROL__r3.raw.json",
+      "diff_bytes": 596
+    },
+    {
+      "task_id": "M02",
+      "arm": "TMF_STALE_GATED",
+      "rep": 3,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define one no-op hook and call it exactly once at the current reflective invocation boundary: after checkNotNull(event) prepares the checked argument and immediately before method.invoke(target, checkedEvent). Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2156,
+        "source_reads": 3,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 6674,
+        "completion_tokens": 286,
+        "invalid": 0,
+        "wall_seconds": 32.466
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__TMF_STALE_GATED__r3.raw.json",
+      "diff_bytes": 596
+    },
+    {
+      "task_id": "M02",
+      "arm": "SOURCE_ONLY",
+      "rep": 4,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define exactly one no-op beforeReflectiveInvoke() hook and call it exactly once after checkNotNull(event) prepares the checked argument, immediately before method.invoke(target, checkedEvent). Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 3691,
+        "source_reads": 4,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 5823,
+        "completion_tokens": 395,
+        "invalid": 0,
+        "wall_seconds": 77.098
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": true
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__SOURCE_ONLY__r4.raw.json",
+      "diff_bytes": 752
+    },
+    {
+      "task_id": "M02",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 4,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java with exactly one no-op hook and one call at the current reflective invocation boundary. The event is first validated with checkNotNull(event), then the hook runs immediately before method.invoke(target, checkedEvent).",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 3192,
+        "source_reads": 4,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 2474,
+        "completion_tokens": 332,
+        "invalid": 0,
+        "wall_seconds": 37.61
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__STALE_DOC_CONTROL__r4.raw.json",
+      "diff_bytes": 818
+    },
+    {
+      "task_id": "M02",
+      "arm": "TMF_STALE_GATED",
+      "rep": 4,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one no-op hook definition, `beforeSubscriberInvoke()`, in Subscriber.java and called it exactly once after `checkNotNull(event)` prepares the checked argument and immediately before the concrete `method.invoke(target, checkedEvent)` call. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 2671,
+        "source_reads": 3,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 9940,
+        "completion_tokens": 397,
+        "invalid": 1,
+        "wall_seconds": 29.615
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__TMF_STALE_GATED__r4.raw.json",
+      "diff_bytes": 584
+    },
+    {
+      "task_id": "M02",
+      "arm": "SOURCE_ONLY",
+      "rep": 5,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define one no-op beforeMethodInvoke hook and call it exactly once at the current reflective invocation boundary. The event is first validated with checkNotNull and stored, then the hook runs immediately before method.invoke receives the checked argument. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 13045,
+        "source_reads": 5,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 15270,
+        "completion_tokens": 454,
+        "invalid": 0,
+        "wall_seconds": 60.436
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__SOURCE_ONLY__r5.raw.json",
+      "diff_bytes": 693
+    },
+    {
+      "task_id": "M02",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 5,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java to define exactly one no-op beforeReflectiveInvoke hook and call it exactly once at the current reflective invocation boundary. The event is first validated with checkNotNull(event), then the hook runs immediately before method.invoke(target, checkedEvent). Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 2738,
+        "source_reads": 4,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 8534,
+        "completion_tokens": 528,
+        "invalid": 0,
+        "wall_seconds": 61.404
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__STALE_DOC_CONTROL__r5.raw.json",
+      "diff_bytes": 584
+    },
+    {
+      "task_id": "M02",
+      "arm": "TMF_STALE_GATED",
+      "rep": 5,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java with exactly one no-op beforeMethodInvoke() hook and exactly one call. The event is validated with checkNotNull(event) first, then the hook records the immediate pre-invocation boundary directly before method.invoke(target, checkedEvent). Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 1541,
+        "source_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 7060,
+        "completion_tokens": 374,
+        "invalid": 1,
+        "wall_seconds": 35.998
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "helper_changed": true,
+          "hoisted_hook_inside_invokeReflectively": true,
+          "direct_hook_before_checkNotNull_expr_in_helper_too_early": false,
+          "stale_hook_before_invokeReflectively_wrong": false,
+          "stale_doc_anchor_attempt": false
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true
+      },
+      "raw_path": "results/raw/mutation_freshness_v2/M02__TMF_STALE_GATED__r5.raw.json",
+      "diff_bytes": 576
+    }
+  ],
+  "summary": {
+    "mode": "mutation_freshness_v2",
+    "runs": 15,
+    "metric_notes": {
+      "raw_pass": "valid final + compile OK + trap pass",
+      "protocol_clean": "excludes edit/no-effect/compile/parse protocol failures",
+      "semantic_adjusted_pass": "trap pass among protocol-clean semantic-evaluable runs only"
+    },
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 5,
+        "raw_pass": 5,
+        "protocol_clean": 3,
+        "semantic_evaluable": 3,
+        "semantic_adjusted_pass": 3,
+        "compile_ok": 5,
+        "trap_pass": 5,
+        "fresh_claim_injected": 0,
+        "stale_claim_withheld": 0,
+        "stale_doc_wrong_old_site": 0,
+        "stale_doc_anchor_attempt": 2,
+        "primary": {
+          "pass": 5
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 5,
+        "raw_pass": 4,
+        "protocol_clean": 2,
+        "semantic_evaluable": 2,
+        "semantic_adjusted_pass": 2,
+        "compile_ok": 5,
+        "trap_pass": 4,
+        "fresh_claim_injected": 0,
+        "stale_claim_withheld": 0,
+        "stale_doc_wrong_old_site": 0,
+        "stale_doc_anchor_attempt": 0,
+        "primary": {
+          "pass": 4,
+          "edit_protocol_fail": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 5,
+        "raw_pass": 5,
+        "protocol_clean": 5,
+        "semantic_evaluable": 5,
+        "semantic_adjusted_pass": 5,
+        "compile_ok": 5,
+        "trap_pass": 5,
+        "fresh_claim_injected": 0,
+        "stale_claim_withheld": 5,
+        "stale_doc_wrong_old_site": 0,
+        "stale_doc_anchor_attempt": 0,
+        "primary": {
+          "pass": 5
+        }
+      }
+    }
+  }
+}
