@@ -1,7 +1,7 @@
 {
   "schema": "same_version_chain_v1_results",
   "mode": "smoke",
-  "tag": "smoke",
+  "tag": "b07-execution-start-boundary-20260825T011125",
   "model": "gpt-5.6-sol",
   "preflight": {
     "protocol": "tmf-agent-broker-v1",
@@ -17,24 +17,24 @@
       "arm": "SOURCE_ONLY",
       "final": {
         "action": "final",
-        "answer": "Updated Subscriber.java with exactly one no-op onSubscriberExecutionStarted() hook and exactly one invocation inside the executor lambda, immediately before invokeSubscriberMethod(event). This captures subscriber execution start rather than posting, enqueueing, or scheduling time. Compilation passes.",
+        "answer": "Added a protected no-op `onSubscriberExecutionStart(Object event)` hook in `Subscriber`. The hook is invoked inside the executor lambda, immediately before `invokeSubscriberMethod(event)`, so it observes actual subscriber execution rather than posting, enqueueing, or scheduling.",
         "files": [
           "Subscriber.java"
         ]
       },
       "telemetry": {
-        "tool_calls": 10,
-        "source_bytes": 6766,
-        "source_reads": 3,
-        "range_reads": 1,
-        "symbol_reads": 2,
+        "tool_calls": 14,
+        "source_bytes": 15495,
+        "source_reads": 6,
+        "range_reads": 3,
+        "symbol_reads": 3,
         "source_files": [
           "Subscriber.java"
         ],
-        "prompt_tokens": 516,
-        "completion_tokens": 312,
+        "prompt_tokens": 1181,
+        "completion_tokens": 505,
         "invalid": 0,
-        "wall_seconds": 24.59
+        "wall_seconds": 50.149
       },
       "compile": {
         "ok": true,
@@ -61,41 +61,35 @@
         },
         "valid_answer": true
       },
-      "raw_path": "results/raw/smoke/B07__SOURCE_ONLY.raw.json",
-      "diff_bytes": 687
+      "raw_path": "results/raw/b07-execution-start-boundary-20260825T011125/B07__SOURCE_ONLY.raw.json",
+      "diff_bytes": 743
     },
     {
       "task_id": "B07",
       "arm": "TMF_CLAIMS",
-      "final": {
-        "action": "final",
-        "answer": "Updated Subscriber.java with exactly one no-op subscriberExecutionStarted() hook and exactly one call to it inside the executor lambda, immediately before invokeSubscriberMethod(event). Compilation passed.",
-        "files": [
-          "Subscriber.java"
-        ]
-      },
+      "final": null,
       "telemetry": {
-        "tool_calls": 15,
-        "source_bytes": 13092,
-        "source_reads": 7,
-        "range_reads": 5,
-        "symbol_reads": 2,
+        "tool_calls": 22,
+        "source_bytes": 13953,
+        "source_reads": 5,
+        "range_reads": 4,
+        "symbol_reads": 1,
         "source_files": [
           "Subscriber.java"
         ],
-        "prompt_tokens": 11552,
-        "completion_tokens": 634,
+        "prompt_tokens": 11815,
+        "completion_tokens": 1368,
         "invalid": 0,
-        "wall_seconds": 52.226
+        "wall_seconds": 76.275
       },
       "compile": {
-        "ok": true,
-        "exit": 0,
-        "stderr": "",
+        "ok": false,
+        "exit": 1,
+        "stderr": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/b07-execution-start-boundary-20260825T011125/B07__TMF_CLAIMS/Subscriber.java:88: error: method onSubscriberExecutionStart(Object) is already defined in class Subscriber\n  void onSubscriberExecutionStart(Object event) {\n       ^\n1 error\n",
         "stdout": ""
       },
       "audit": {
-        "compile_ok": true,
+        "compile_ok": false,
         "modified_files": [
           "Subscriber.java"
         ],
@@ -103,42 +97,43 @@
           "executor.execute"
         ],
         "golden_coverage": 0.167,
-        "trap_pass": true,
+        "trap_pass": false,
         "trap_reason": {
           "subscriber_changed": true,
           "hookish": true,
-          "inside_lambda_before_invoke": true,
+          "inside_lambda_before_invoke": false,
           "not_before_executor_execute": true,
           "not_post_or_dispatcher_only": true
         },
-        "valid_answer": true
+        "valid_answer": false
       },
-      "raw_path": "results/raw/smoke/B07__TMF_CLAIMS.raw.json",
-      "diff_bytes": 574
+      "raw_path": "results/raw/b07-execution-start-boundary-20260825T011125/B07__TMF_CLAIMS.raw.json",
+      "diff_bytes": 1036
     },
     {
       "task_id": "B07",
       "arm": "DOC_CONTROL",
       "final": {
         "action": "final",
-        "answer": "Added exactly one no-op `onSubscriberExecutionStart()` hook in `Subscriber.java` and invoked it exactly once inside the executor lambda, immediately before `invokeSubscriberMethod(event)`. Verified there is one definition and one call, and compilation passes.",
+        "answer": "Added a no-op `onSubscriberExecutionStart(Object event)` hook in `Subscriber`. It is invoked inside the executor lambda immediately before `invokeSubscriberMethod(event)`, so it marks execution start rather than posting, dispatch queueing, or executor scheduling.",
         "files": [
           "Subscriber.java"
         ]
       },
       "telemetry": {
-        "tool_calls": 14,
-        "source_bytes": 9097,
+        "tool_calls": 11,
+        "source_bytes": 15710,
         "source_reads": 6,
         "range_reads": 4,
         "symbol_reads": 2,
         "source_files": [
+          "EventBus.java",
           "Subscriber.java"
         ],
-        "prompt_tokens": 10371,
-        "completion_tokens": 725,
+        "prompt_tokens": 10040,
+        "completion_tokens": 457,
         "invalid": 0,
-        "wall_seconds": 61.482
+        "wall_seconds": 64.991
       },
       "compile": {
         "ok": true,
@@ -155,33 +150,33 @@
           "executor.execute"
         ],
         "golden_coverage": 0.167,
-        "trap_pass": true,
+        "trap_pass": false,
         "trap_reason": {
           "subscriber_changed": true,
           "hookish": true,
-          "inside_lambda_before_invoke": true,
+          "inside_lambda_before_invoke": false,
           "not_before_executor_execute": true,
           "not_post_or_dispatcher_only": true
         },
         "valid_answer": true
       },
-      "raw_path": "results/raw/smoke/B07__DOC_CONTROL.raw.json",
-      "diff_bytes": 561
+      "raw_path": "results/raw/b07-execution-start-boundary-20260825T011125/B07__DOC_CONTROL.raw.json",
+      "diff_bytes": 625
     }
   ],
   "summary": {
     "mode": "smoke",
     "runs": 3,
-    "valid_answers": 3,
-    "compile_ok": 3,
-    "trap_passes": 2,
+    "valid_answers": 2,
+    "compile_ok": 2,
+    "trap_passes": 0,
     "differentiation_by_task": {
-      "B07": true
+      "B07": false
     },
     "zero_harness_errors": true,
     "smoke_gate": {
       "at_least_2_of_3_valid_per_task": true,
-      "trap_tests_distinguish_some_task": true,
+      "trap_tests_distinguish_some_task": false,
       "zero_harness_runtime_errors": true
     }
   }

@@ -1,26 +1,20 @@
 # SMOKE_REPORT
 
 Mode: smoke
-Runs: 6
-Valid answers: 5/6
-Compile OK: 6/6
-Trap passes: 4/6
-Differentiation by task: `{"B01": true, "B02": false}`
+Runs: 3
+Valid answers: 3/3
+Compile OK: 3/3
+Trap passes: 2/3
+Differentiation by task: `{"B07": true}`
 
 ## Rows
 
-- B01 / SOURCE_ONLY: valid=True compile=True trap=False coverage=0.0 files=['Subscriber.java'] bytes_read=9093 calls=9 wall=138.772s raw=results/raw/smoke/B01__SOURCE_ONLY.raw.json
-  - trap_reason={"has_subscriber_scope": true, "not_post_only": true, "async_aware": false}
-- B01 / TMF_CLAIMS: valid=False compile=True trap=False coverage=0.0 files=[] bytes_read=0 calls=1 wall=140.09s raw=results/raw/smoke/B01__TMF_CLAIMS.raw.json
-  - trap_reason={"has_subscriber_scope": false, "not_post_only": false, "async_aware": false}
-- B01 / DOC_CONTROL: valid=True compile=True trap=True coverage=0.143 files=['Subscriber.java'] bytes_read=6083 calls=5 wall=239.986s raw=results/raw/smoke/B01__DOC_CONTROL.raw.json
-  - trap_reason={"has_subscriber_scope": true, "not_post_only": true, "async_aware": true}
-- B02 / SOURCE_ONLY: valid=True compile=True trap=True coverage=0.5 files=['Subscriber.java'] bytes_read=616 calls=5 wall=101.843s raw=results/raw/smoke/B02__SOURCE_ONLY.raw.json
-  - trap_reason={"subscriber_changed": true, "retry_loop": true, "final_handler_preserved": true, "not_eventbus_only": true}
-- B02 / TMF_CLAIMS: valid=True compile=True trap=True coverage=0.5 files=['Subscriber.java'] bytes_read=616 calls=4 wall=51.696s raw=results/raw/smoke/B02__TMF_CLAIMS.raw.json
-  - trap_reason={"subscriber_changed": true, "retry_loop": true, "final_handler_preserved": true, "not_eventbus_only": true}
-- B02 / DOC_CONTROL: valid=True compile=True trap=True coverage=0.333 files=['Subscriber.java'] bytes_read=2623 calls=5 wall=61.828s raw=results/raw/smoke/B02__DOC_CONTROL.raw.json
-  - trap_reason={"subscriber_changed": true, "retry_loop": true, "final_handler_preserved": true, "not_eventbus_only": true}
+- B07 / SOURCE_ONLY: valid=True compile=True trap=False coverage=0.167 files=['Subscriber.java'] bytes_read=6766 calls=10 wall=24.59s raw=results/raw/smoke/B07__SOURCE_ONLY.raw.json
+  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_lambda_before_invoke": false, "not_before_executor_execute": true, "not_post_or_dispatcher_only": true}
+- B07 / TMF_CLAIMS: valid=True compile=True trap=True coverage=0.167 files=['Subscriber.java'] bytes_read=13092 calls=15 wall=52.226s raw=results/raw/smoke/B07__TMF_CLAIMS.raw.json
+  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_lambda_before_invoke": true, "not_before_executor_execute": true, "not_post_or_dispatcher_only": true}
+- B07 / DOC_CONTROL: valid=True compile=True trap=True coverage=0.167 files=['Subscriber.java'] bytes_read=9097 calls=14 wall=61.482s raw=results/raw/smoke/B07__DOC_CONTROL.raw.json
+  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_lambda_before_invoke": true, "not_before_executor_execute": true, "not_post_or_dispatcher_only": true}
 
 ## Gate
 

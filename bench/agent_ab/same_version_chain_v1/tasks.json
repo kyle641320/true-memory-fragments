@@ -1,15 +1,36 @@
 {
   "schema": "same_version_chain_v1_tasks",
-  "arms": ["SOURCE_ONLY", "TMF_CLAIMS", "DOC_CONTROL"],
-  "smoke": ["B01", "B02"],
+  "arms": [
+    "SOURCE_ONLY",
+    "TMF_CLAIMS",
+    "DOC_CONTROL"
+  ],
+  "smoke": [
+    "B01",
+    "B02"
+  ],
   "tasks": [
     {
       "id": "B01",
       "title": "rate limiter downstream impact",
       "phase_a": "Trace the complete call chain from EventBus.post() to actual subscriber method invocation, including AsyncEventBus.",
       "phase_b": "Add a rate limiter to EventBus.post() that limits each subscriber to 100 events/second.",
-      "anchors": ["EventBus.java", "AsyncEventBus.java", "Dispatcher.java", "Subscriber.java", "SubscriberRegistry.java"],
-      "golden_chain": ["EventBus.post", "SubscriberRegistry.getSubscribers", "Dispatcher.dispatch", "Dispatcher.LegacyAsyncDispatcher.dispatch", "Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod", "Method.invoke"],
+      "anchors": [
+        "EventBus.java",
+        "AsyncEventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java",
+        "SubscriberRegistry.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "SubscriberRegistry.getSubscribers",
+        "Dispatcher.dispatch",
+        "Dispatcher.LegacyAsyncDispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke"
+      ],
       "trap": "A post-entry-only/global limiter is insufficient; per-subscriber enforcement must cover async dispatch through Dispatcher/Subscriber."
     },
     {
@@ -17,8 +38,19 @@
       "title": "retry logic exception level",
       "phase_a": "Trace the exception propagation chain from Method.invoke through InvocationTargetException to EventBus.handleSubscriberException.",
       "phase_b": "Add retry logic for failed subscriber invocations, max 3 retries.",
-      "anchors": ["EventBus.java", "Dispatcher.java", "Subscriber.java"],
-      "golden_chain": ["Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod", "Method.invoke", "InvocationTargetException", "EventBus.handleSubscriberException", "SubscriberExceptionHandler.handleException"],
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke",
+        "InvocationTargetException",
+        "EventBus.handleSubscriberException",
+        "SubscriberExceptionHandler.handleException"
+      ],
       "trap": "Retry must happen around invokeSubscriberMethod before final EventBus.handleSubscriberException; handler should see only final failure."
     },
     {
@@ -26,9 +58,104 @@
       "title": "delivery trace logging",
       "phase_a": "Trace event delivery from post() to subscriber method invocation, including intermediate dispatcher and dead-event path.",
       "phase_b": "Add debug logging to trace event delivery from post() to actual subscriber method invocation.",
-      "anchors": ["EventBus.java", "Dispatcher.java", "Subscriber.java", "DeadEvent.java"],
-      "golden_chain": ["EventBus.post", "DeadEvent", "SubscriberRegistry.getSubscribers", "Dispatcher.dispatch", "Subscriber.dispatchEvent", "Subscriber.invokeSubscriberMethod", "Method.invoke"],
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java",
+        "DeadEvent.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "DeadEvent",
+        "SubscriberRegistry.getSubscribers",
+        "Dispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke"
+      ],
       "trap": "Do not skip Dispatcher.dispatch or the DeadEvent repost branch."
+    },
+    {
+      "id": "B04",
+      "title": "subscriber invocation attempt counter",
+      "phase_a": "Trace where an event is actually invoked on a subscriber method, distinguishing dispatch/enqueue from actual method invocation.",
+      "phase_b": "Add lightweight counting of subscriber method invocation attempts. Count actual attempts around invokeSubscriberMethod, not EventBus.post calls or dispatcher enqueue operations.",
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "Dispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke"
+      ],
+      "trap": "Counting at EventBus.post or Dispatcher.dispatch counts delivery/enqueue, not actual subscriber method invocation attempts. The counter belongs in Subscriber around invokeSubscriberMethod."
+    },
+    {
+      "id": "B05",
+      "title": "subscriber success hook placement",
+      "phase_a": "Trace successful subscriber delivery from EventBus.post to Method.invoke and distinguish success from exception handling.",
+      "phase_b": "Add a no-op success hook that runs only after a subscriber method invocation succeeds. It must not run on InvocationTargetException failures before EventBus.handleSubscriberException.",
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "Dispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke",
+        "EventBus.handleSubscriberException"
+      ],
+      "trap": "A post-level or dispatcher-level hook would fire before actual subscriber success. The hook belongs after invokeSubscriberMethod succeeds and before leaving the subscriber execution lambda."
+    },
+    {
+      "id": "B06",
+      "title": "async dispatch handoff boundary",
+      "phase_a": "Trace the AsyncEventBus dispatch path from EventBus.post through Dispatcher.dispatch to actual subscriber handoff, distinguishing posting, queuing, and execution.",
+      "phase_b": "Add a no-op hook that records when a subscriber event is actually handed off for execution. It must not run when EventBus.post merely starts or when Dispatcher only enqueues.",
+      "anchors": [
+        "EventBus.java",
+        "AsyncEventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "SubscriberRegistry.getSubscribers",
+        "Dispatcher.dispatch",
+        "Dispatcher.LegacyAsyncDispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke"
+      ],
+      "trap": "A post-entry or enqueue-time hook is wrong; the hook belongs at the actual subscriber handoff / execution boundary."
+    },
+    {
+      "id": "B07",
+      "title": "executor lambda execution-start boundary",
+      "phase_a": "Trace the path from EventBus.post through Dispatcher.dispatch and Subscriber.dispatchEvent to the executor lambda that actually begins subscriber execution.",
+      "phase_b": "Add exactly one no-op hook that records the exact moment subscriber execution begins inside the executor lambda, immediately before invokeSubscriberMethod(event). Define the hook only once in Subscriber.java, do not create duplicate definitions, and do not leave any partial/duplicate insertion behind. It must not run when EventBus.post starts, when Dispatcher enqueues, or before executor.execute(...) is called.",
+      "anchors": [
+        "EventBus.java",
+        "AsyncEventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "Dispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "executor.execute",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke"
+      ],
+      "trap": "A hook before executor.execute(...) records scheduling/enqueue, not execution start. The only correct boundary is inside the executor lambda immediately before invokeSubscriberMethod(event), and the hook must be defined exactly once with no duplicate methods."
     }
   ]
 }

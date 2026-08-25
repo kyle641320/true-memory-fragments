@@ -47,8 +47,15 @@ def tok(s: str) -> int:
 
 def safe(root: Path, rel: str) -> Path | None:
     rel = rel.strip().lstrip("/")
-    p = (root / rel).resolve()
-    return p if (p == root or root in p.parents) and p.is_file() else None
+    # Model outputs sometimes put code snippets or prose in the path field.
+    # Treat those as invalid tool inputs, not harness-fatal filesystem paths.
+    if not rel or len(rel) > 240 or "\n" in rel or "\r" in rel or "\\x00" in rel:
+        return None
+    try:
+        p = (root / rel).resolve()
+        return p if (p == root or root in p.parents) and p.is_file() else None
+    except OSError:
+        return None
 
 
 def line_index(text: str, needle: str) -> int | None:
@@ -131,6 +138,41 @@ def build_chain_claim(task: dict[str, Any]) -> ChainClaim:
             "EventBus.handleSubscriberException delegates to SubscriberExceptionHandler.handleException and logs if that handler fails.",
             "Retry must happen before the final handleSubscriberException call, around invokeSubscriberMethod, otherwise handler semantics or exception level are wrong.",
         ]
+    elif tid == "B04":
+        details = [
+            "EventBus.post is the public entrypoint and may dispatch to many subscribers or repost DeadEvent.",
+            "Dispatcher.dispatch controls iteration/enqueueing but does not itself invoke subscriber methods.",
+            "Each Dispatcher eventually calls Subscriber.dispatchEvent(event) for a concrete subscriber.",
+            "Subscriber.dispatchEvent performs the executor handoff and calls invokeSubscriberMethod(event).",
+            "invokeSubscriberMethod calls Method.invoke on the actual subscriber method.",
+            "An invocation-attempt counter belongs around invokeSubscriberMethod / Method.invoke, not at EventBus.post or Dispatcher.dispatch.",
+        ]
+    elif tid == "B05":
+        details = [
+            "EventBus.post and Dispatcher.dispatch happen before actual subscriber method success is known.",
+            "Subscriber.dispatchEvent performs the executor handoff and then calls invokeSubscriberMethod(event).",
+            "invokeSubscriberMethod calls Method.invoke on the target subscriber method.",
+            "If invokeSubscriberMethod throws InvocationTargetException, dispatchEvent calls bus.handleSubscriberException(e.getCause(), context(event)).",
+            "A success-only hook belongs immediately after invokeSubscriberMethod(event) returns normally and must not run in the InvocationTargetException failure path.",
+        ]
+    elif tid == "B06":
+        details = [
+            "EventBus.post only looks up subscribers and delegates delivery to Dispatcher.dispatch.",
+            "Dispatcher.PerThreadQueuedDispatcher and Dispatcher.LegacyAsyncDispatcher both mediate ordering/queuing before subscriber handoff.",
+            "Dispatcher.LegacyAsyncDispatcher enqueues EventWithSubscriber pairs and then calls Subscriber.dispatchEvent for each pair.",
+            "Subscriber.dispatchEvent performs the executor handoff before invokeSubscriberMethod(event).",
+            "invokeSubscriberMethod calls Method.invoke on the actual subscriber method.",
+            "A dispatch-handoff hook belongs at the point where the subscriber is actually handed off for execution, not at EventBus.post or queue insertion.",
+        ]
+    elif tid == "B07":
+        details = [
+            "EventBus.post is only the public entrypoint; it does not start subscriber method execution.",
+            "Dispatcher.dispatch may queue/order deliveries before execution starts.",
+            "Subscriber.dispatchEvent calls executor.execute with a lambda; code before executor.execute is still scheduling/handoff, not execution start.",
+            "Subscriber execution starts inside the executor lambda.",
+            "The exact execution-start boundary is immediately inside the executor lambda, before invokeSubscriberMethod(event).",
+            "A hook before executor.execute(...) is wrong for execution-start instrumentation.",
+        ]
     else:
         details = [
             "EventBus.post logs/starts at the public post entry.",
@@ -200,10 +242,26 @@ def apply_edit(root: Path, act: dict[str, Any]) -> dict[str, Any]:
         old = str(act["old"])
         new = str(act["new"])
         count = text.count(old)
-        if count != 1:
-            return {"error": f"old text match count {count}, expected 1"}
-        p.write_text(text.replace(old, new), encoding="utf-8")
-        return {"ok": True, "path": p.name, "mode": "replace", "bytes_delta": len(new) - len(old)}
+        if count == 1:
+            p.write_text(text.replace(old, new), encoding="utf-8")
+            return {"ok": True, "path": p.name, "mode": "replace", "bytes_delta": len(new) - len(old)}
+        if count == 0:
+            old_lines = old.splitlines()
+            new_lines = new.splitlines()
+            src_lines = text.splitlines()
+            matches = []
+            if old_lines:
+                for i in range(0, len(src_lines) - len(old_lines) + 1):
+                    window = src_lines[i : i + len(old_lines)]
+                    if all(a.strip() == b.strip() for a, b in zip(window, old_lines)):
+                        matches.append(i)
+            if len(matches) == 1:
+                start = matches[0]
+                end = start + len(old_lines)
+                src_lines[start:end] = new_lines
+                p.write_text("\n".join(src_lines) + ("\n" if text.endswith("\n") else ""), encoding="utf-8")
+                return {"ok": True, "path": p.name, "mode": "replace_fuzzy_lines", "bytes_delta": len(new) - len(old)}
+        return {"error": f"old text match count {count}, expected 1"}
     if all(k in act for k in ["start", "end", "new"]):
         lines = text.splitlines()
         start = max(1, int(act["start"]))
@@ -298,6 +356,9 @@ Task: {task['phase_b']}
 Trap to consider (not a solution): {task['trap']}
 Source is authoritative. Edit files under fixture root only. Keep API compatibility where practical.
 Use fine-grained reads before broad reads when possible.
+If any edit action returns an error, immediately read the relevant current source range and choose a new exact anchor; do not continue as if the edit succeeded.
+If compile fails after an edit, read the failing file around the reported line, fix the compile error, compile again, and do not final until compile passes.
+For hook-insertion tasks, verify the final file has exactly one hook definition and exactly one hook call before final.
 {tools}
 {injection}
 Begin now."""
@@ -316,70 +377,79 @@ Begin now."""
             transcript.append({"turn": turn, "broker_error": str(e)})
             break
         met["completion_tokens"] += tok(raw)
-        act = parse_action(raw)
-        transcript.append({"turn": turn, "prompt_tail": prompt[-5000:], "raw": raw, "action": act})
-        if not act:
+        acts = parse_actions(raw)
+        transcript.append({"turn": turn, "prompt_tail": prompt[-5000:], "raw": raw, "actions": acts, "action": acts[0] if acts else None})
+        if not acts:
             met["invalid"] += 1
             hist += ["AGENT:" + raw, "SYSTEM: I could not parse a JSON action. Continue with one of the documented JSON actions; do not restart."]
             continue
-        met["tool_calls"] += 1
-        a = act.get("action")
-        if a == "list":
-            out = {"files": sorted(p.name for p in root.glob("*.java"))}
-        elif a == "search":
-            q = str(act.get("query", "")).lower()
-            hits = []
-            for p in sorted(root.glob("*.java")):
-                for i, line in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
-                    if q and q in line.lower():
-                        hits.append(f"{p.name}:{i}:{line}")
-            out = {"hits": hits[:80]}
-        elif a == "read_range":
-            p = safe(root, str(act.get("path", "")))
-            if not p:
-                out = {"error": "invalid path"}
-            else:
-                lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
-                st = max(1, int(act.get("start", 1)))
-                en = min(len(lines), int(act.get("end", st + 80)))
-                content = read_numbered(p, st, en)
-                b = len(content.encode())
-                met["source_bytes"] += b; met["source_reads"] += 1; met["range_reads"] += 1; met["source_files"].append(p.name)
-                out = {"path": p.name, "start": st, "end": en, "content": content}
-        elif a == "read_symbol":
-            p = safe(root, str(act.get("path", "")))
-            sym = str(act.get("symbol", ""))
-            if not p:
-                out = {"error": "invalid path"}
-            else:
-                rng = find_symbol_range(p, sym)
-                if not rng:
-                    out = {"error": "symbol not found"}
+        turn_outputs = []
+        stop_after_turn = False
+        for act in acts:
+            met["tool_calls"] += 1
+            a = act.get("action")
+            if a == "list":
+                out = {"files": sorted(p.name for p in root.glob("*.java"))}
+            elif a == "search":
+                q = str(act.get("query", "")).lower()
+                hits = []
+                for p in sorted(root.glob("*.java")):
+                    for i, line in enumerate(p.read_text(encoding="utf-8", errors="replace").splitlines(), 1):
+                        if q and q in line.lower():
+                            hits.append(f"{p.name}:{i}:{line}")
+                out = {"hits": hits[:80]}
+            elif a == "read_range":
+                p = safe(root, str(act.get("path", "")))
+                if not p:
+                    out = {"error": "invalid path"}
                 else:
-                    content = read_numbered(p, rng[0], rng[1])
+                    lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+                    st = max(1, int(act.get("start", 1)))
+                    en = min(len(lines), int(act.get("end", st + 80)))
+                    content = read_numbered(p, st, en)
                     b = len(content.encode())
-                    met["source_bytes"] += b; met["source_reads"] += 1; met["symbol_reads"] += 1; met["source_files"].append(p.name)
-                    out = {"path": p.name, "symbol": sym, "start": rng[0], "end": rng[1], "content": content}
-        elif a == "read":
-            p = safe(root, str(act.get("path", "")))
-            if not p:
-                out = {"error": "invalid path"}
+                    met["source_bytes"] += b; met["source_reads"] += 1; met["range_reads"] += 1; met["source_files"].append(p.name)
+                    out = {"path": p.name, "start": st, "end": en, "content": content}
+            elif a == "read_symbol":
+                p = safe(root, str(act.get("path", "")))
+                sym = str(act.get("symbol", ""))
+                if not p:
+                    out = {"error": "invalid path"}
+                else:
+                    rng = find_symbol_range(p, sym)
+                    if not rng:
+                        out = {"error": "symbol not found"}
+                    else:
+                        content = read_numbered(p, rng[0], rng[1])
+                        b = len(content.encode())
+                        met["source_bytes"] += b; met["source_reads"] += 1; met["symbol_reads"] += 1; met["source_files"].append(p.name)
+                        out = {"path": p.name, "symbol": sym, "start": rng[0], "end": rng[1], "content": content}
+            elif a == "read":
+                p = safe(root, str(act.get("path", "")))
+                if not p:
+                    out = {"error": "invalid path"}
+                else:
+                    content = read_numbered(p)
+                    b = len(content.encode())
+                    met["source_bytes"] += b; met["source_reads"] += 1; met["source_files"].append(p.name)
+                    out = {"path": p.name, "content": content}
+            elif a == "edit":
+                out = apply_edit(root, act)
+            elif a == "compile":
+                out = compile_check(root)
+            elif a == "final":
+                final = act
+                stop_after_turn = True
+                break
             else:
-                content = read_numbered(p)
-                b = len(content.encode())
-                met["source_bytes"] += b; met["source_reads"] += 1; met["source_files"].append(p.name)
-                out = {"path": p.name, "content": content}
-        elif a == "edit":
-            out = apply_edit(root, act)
-        elif a == "compile":
-            out = compile_check(root)
-        elif a == "final":
-            final = act
+                out = {"error": "unknown action"}
+            turn_outputs.append({"action": act, "tool_output": out})
+        transcript[-1]["tool_outputs"] = turn_outputs
+        if turn_outputs:
+            transcript[-1]["tool_output"] = turn_outputs[-1]["tool_output"]
+            hist += ["AGENT:" + raw, "TOOL:" + json.dumps(turn_outputs, ensure_ascii=False)[:12000]]
+        if stop_after_turn:
             break
-        else:
-            out = {"error": "unknown action"}
-        transcript[-1]["tool_output"] = out
-        hist += ["AGENT:" + raw, "TOOL:" + json.dumps(out, ensure_ascii=False)[:12000]]
     met["wall_seconds"] = round(time.time() - start_time, 3)
     met["source_files"] = sorted(set(met["source_files"]))
     return final, met, transcript
@@ -411,13 +481,44 @@ def audit_task(task: dict[str, Any], diffs: dict[str, str], compile_result: dict
         no_eventbus_only = not (set(diffs.keys()) <= {"EventBus.java"})
         trap_pass = subscriber_changed and retry_loop and final_handler and no_eventbus_only
         reason = {"subscriber_changed": subscriber_changed, "retry_loop": retry_loop, "final_handler_preserved": final_handler, "not_eventbus_only": no_eventbus_only}
-    else:
+    elif tid == "B03":
         logs = any(x in combined for x in ["logger", "log(", "fine", "debug"])
         has_dispatcher = "Dispatcher.java" in diffs or "dispatcher.dispatch" in combined
         has_dead = "deadevent" in combined
         has_subscriber = "Subscriber.java" in diffs or "dispatchEvent" in all_diff or "invokesubscribermethod" in combined
         trap_pass = logs and has_dispatcher and has_dead and has_subscriber
         reason = {"logs": logs, "dispatcher_covered": has_dispatcher, "dead_event_covered": has_dead, "subscriber_covered": has_subscriber}
+    elif tid == "B06":
+        subscriber_changed = "Subscriber.java" in diffs
+        async_aware = "AsyncEventBus.java" in diffs or "Dispatcher.java" in diffs or "dispatcher.dispatch" in combined or "legacyasync" in combined
+        handoff_hook = any(x in combined for x in ["handoff", "dispatch-handoff", "handed off", "execution", "invoke"])
+        not_post_only = not (set(diffs.keys()) <= {"EventBus.java"})
+        trap_pass = subscriber_changed and async_aware and handoff_hook and not_post_only
+        reason = {"subscriber_changed": subscriber_changed, "async_aware": async_aware, "handoff_hook": handoff_hook, "not_post_only": not_post_only}
+    elif tid == "B07":
+        sub_diff = diffs.get("Subscriber.java", "")
+        subscriber_changed = bool(sub_diff)
+        hookish = any(x in combined for x in ["execution", "start", "hook", "record", "begin"])
+        before_invoke_add = bool(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|begin|start|execution|onSubscriberExecutionStart)[^\n]*\n[ \t]+invokeSubscriberMethod\(event\);", sub_diff, re.IGNORECASE))
+        before_execute = bool(re.search(r"final void dispatchEvent\(Object event\).*?\+\s*[^\n]*(?:hook|record|begin|start|execution)[^\n]*\n\s*executor\.execute", sub_diff, re.IGNORECASE | re.DOTALL))
+        not_post_or_dispatcher_only = not (set(diffs.keys()) <= {"EventBus.java", "Dispatcher.java"})
+        trap_pass = subscriber_changed and hookish and before_invoke_add and not before_execute and not_post_or_dispatcher_only
+        reason = {"subscriber_changed": subscriber_changed, "hookish": hookish, "inside_lambda_before_invoke": before_invoke_add, "not_before_executor_execute": not before_execute, "not_post_or_dispatcher_only": not_post_or_dispatcher_only}
+    elif tid == "B04":
+        subscriber_changed = "Subscriber.java" in diffs
+        attempt_counting = any(x in combined for x in ["attempt", "count", "counter", "increment", "invocation"])
+        around_invocation = "invokesubscribermethod" in combined or "method.invoke" in combined
+        not_post_or_dispatcher_only = not (set(diffs.keys()) <= {"EventBus.java", "Dispatcher.java"})
+        trap_pass = subscriber_changed and attempt_counting and around_invocation and not_post_or_dispatcher_only
+        reason = {"subscriber_changed": subscriber_changed, "attempt_counting": attempt_counting, "around_invocation": around_invocation, "not_post_or_dispatcher_only": not_post_or_dispatcher_only}
+    else:  # B05
+        subscriber_changed = "Subscriber.java" in diffs
+        success_hook = any(x in combined for x in ["success", "succeeded", "onsuccess", "recordsubscriber", "hook"])
+        after_invocation = "invokesubscribermethod" in combined or "method.invoke" in combined
+        failure_path_preserved = "handlesubscriberexception" in combined or "handleSubscriberException" in all_diff
+        not_post_or_dispatcher_only = not (set(diffs.keys()) <= {"EventBus.java", "Dispatcher.java"})
+        trap_pass = subscriber_changed and success_hook and after_invocation and failure_path_preserved and not_post_or_dispatcher_only
+        reason = {"subscriber_changed": subscriber_changed, "success_hook": success_hook, "after_invocation": after_invocation, "failure_path_preserved": failure_path_preserved, "not_post_or_dispatcher_only": not_post_or_dispatcher_only}
     return {
         "compile_ok": bool(compile_result.get("ok")),
         "modified_files": sorted(diffs.keys()),
@@ -512,9 +613,11 @@ def main() -> int:
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--full", action="store_true")
     ap.add_argument("--task")
+    ap.add_argument("--arm", choices=ARMS)
     ap.add_argument("--tag", default=None)
     args = ap.parse_args()
     ids = [args.task] if args.task else (TASKS_DOC["smoke"] if args.smoke or not args.full else [t["id"] for t in TASKS_DOC["tasks"]])
+    arms = [args.arm] if args.arm else ARMS
     mode = "full" if args.full else "smoke"
     tag = args.tag or ("full" if args.full else "smoke")
     results = HERE / "results"
@@ -528,7 +631,7 @@ def main() -> int:
     preflight = broker.preflight().__dict__
     rows = []
     for tid in ids:
-        for arm in ARMS:
+        for arm in arms:
             print(f"RUN {tid} {arm}", flush=True)
             row = run_one(broker, tid, arm, raw_dir, work_dir)
             rows.append(row)
