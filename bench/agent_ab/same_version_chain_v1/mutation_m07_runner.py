@@ -221,10 +221,19 @@ def audit(diffs: dict[str,str], comp: dict[str,Any], final: dict[str,Any] | None
 def metric_view(raw: dict[str, Any]) -> dict[str, Any]:
     cats = set(raw.get("failure_classification", {}).get("categories", []))
     aud = raw["audit"]
+    post = raw.get("post_test") or {}
     raw_pass = bool(aud["valid_answer"] and aud["compile_ok"] and aud["trap_pass"])
     protocol_clean = not bool(cats & {"no_effect_false_completion", "compile_fail", "parse_or_invalid"}) and aud["valid_answer"] and aud["compile_ok"] and bool(raw.get("diffs"))
     semantic_evaluable = protocol_clean
-    return {"raw_pass": raw_pass, "protocol_clean": protocol_clean, "semantic_evaluable": semantic_evaluable, "semantic_pass": bool(aud["trap_pass"]) if semantic_evaluable else None}
+    task_result_pass = bool(post.get("ok") and raw.get("diffs"))
+    return {
+        "raw_pass": raw_pass,
+        "protocol_clean": protocol_clean,
+        "semantic_evaluable": semantic_evaluable,
+        "semantic_pass": bool(aud["trap_pass"]) if semantic_evaluable else None,
+        "task_result_pass": task_result_pass,
+        "post_test_ok": bool(post.get("ok")),
+    }
 
 
 def agent_loop(broker: JsonBrokerAdapter, arm: str, root: Path, claim: Claim, freshness: Any, final_gate: str):
@@ -348,9 +357,10 @@ def run_one(broker: JsonBrokerAdapter, arm: str, rep: int, raw_dir: Path, work_d
     before = snapshot(root)
     final, met, transcript = agent_loop(broker, arm, root, claim, fresh, final_gate)
     comp = compile_check(root)
+    post_test = deterministic_test(root)
     diffs = diff_files(before, root)
     aud = audit(diffs, comp, final)
-    raw={"task_id":"M07","arm":arm,"rep":rep,"final_gate":final_gate,"freshness":{"fresh":fresh.fresh,"stale_bindings":fresh.stale_bindings},"final":final,"telemetry":met,"compile":comp,"diffs":diffs,"audit":aud,"transcript":transcript}
+    raw={"task_id":"M07","arm":arm,"rep":rep,"final_gate":final_gate,"freshness":{"fresh":fresh.fresh,"stale_bindings":fresh.stale_bindings},"final":final,"telemetry":met,"compile":comp,"post_test":post_test,"diffs":diffs,"audit":aud,"transcript":transcript}
     raw["failure_classification"] = base_runner.classify_run_failure(raw)
     raw["metrics"] = metric_view(raw)
     raw_path=raw_dir/f"M07__{arm}__r{rep}.raw.json"
@@ -362,7 +372,7 @@ def summarize(rows):
     by={}
     for arm in ARMS:
         rs=[r for r in rows if r["arm"]==arm]
-        by[arm]={"runs":len(rs),"raw_pass":sum(r["metrics"]["raw_pass"] for r in rs),"semantic_evaluable":sum(r["metrics"]["semantic_evaluable"] for r in rs),"semantic_adjusted_pass":sum(1 for r in rs if r["metrics"]["semantic_pass"] is True),"compile_ok":sum(r["audit"]["compile_ok"] for r in rs),"stale_claim_withheld":sum(1 for r in rs if arm=="TMF_STALE_GATED" and r["freshness"]["fresh"] is False),"wrong_wrapper_site":sum(1 for r in rs if r["audit"]["trap_reason"].get("wrong_wrapper_site")),"primary":{}}
+        by[arm]={"runs":len(rs),"raw_pass":sum(r["metrics"]["raw_pass"] for r in rs),"task_result_pass":sum(r["metrics"].get("task_result_pass", False) for r in rs),"post_test_ok":sum(r["metrics"].get("post_test_ok", False) for r in rs),"semantic_evaluable":sum(r["metrics"]["semantic_evaluable"] for r in rs),"semantic_adjusted_pass":sum(1 for r in rs if r["metrics"]["semantic_pass"] is True),"compile_ok":sum(r["audit"]["compile_ok"] for r in rs),"stale_claim_withheld":sum(1 for r in rs if arm=="TMF_STALE_GATED" and r["freshness"]["fresh"] is False),"wrong_wrapper_site":sum(1 for r in rs if r["audit"]["trap_reason"].get("wrong_wrapper_site")),"primary":{}}
         for r in rs:
             p=r["failure_classification"].get("primary","unknown"); by[arm]["primary"][p]=by[arm]["primary"].get(p,0)+1
     return {"mode":TAG,"runs":len(rows),"final_gate": rows[0].get("final_gate") if rows else None,"by_arm":by}
@@ -371,7 +381,7 @@ def summarize(rows):
 def write_report(out, path: Path):
     lines=["# Mutation Freshness M07 Report","","Deterministic synthetic fixture: old claim binds to pre-mutation wrapper; mutation moves prepared reflective boundary into helper while stale wrapper anchor remains compilable.","","```json",json.dumps(out["summary"],ensure_ascii=False,indent=2),"```","","## Rows"]
     for r in out["rows"]:
-        lines.append(f"- rep {r['rep']} {r['arm']}: raw={r['metrics']['raw_pass']} semantic={r['metrics']['semantic_pass']} compile={r['audit']['compile_ok']} fresh={r['freshness']['fresh']} failure={r['failure_classification']['primary']} reason={json.dumps(r['audit']['trap_reason'], ensure_ascii=False)} raw_path={r['raw_path']}")
+        lines.append(f"- rep {r['rep']} {r['arm']}: raw={r['metrics']['raw_pass']} task_result={r['metrics'].get('task_result_pass')} semantic={r['metrics']['semantic_pass']} compile={r['audit']['compile_ok']} fresh={r['freshness']['fresh']} failure={r['failure_classification']['primary']} reason={json.dumps(r['audit']['trap_reason'], ensure_ascii=False)} raw_path={r['raw_path']}")
     path.write_text("\n".join(lines)+"\n", encoding="utf-8")
 
 

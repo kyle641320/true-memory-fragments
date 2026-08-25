@@ -88,3 +88,8 @@ Use M07d as a secondary engineering result:
 ## M07e correction note
 
 Later R20 rerun (`MUTATION_FRESHNESS_M07E_R20_REVIEW.md`) confirmed that TMF off-gate raw failures should be separated from semantic failures. In M07e off R20, TMF raw pass was `17/20`, but the three raw failures were edit protocol / no-effect false completions with zero successful edits and no diff. TMF freshness withholding was `20/20`, wrong-wrapper placement was `0/20`, and semantic-evaluable pass was `17/17`.
+
+
+## Result-oriented follow-up note
+
+Later M07e hard R20 analysis separated raw/final-protocol pass from task-result pass. In hard mode, TMF raw was `19/20`, but the sole raw failure had already produced the correct helper-site diff and merely stopped before `test` + `final`; task-result pass was therefore `20/20`. SOURCE and STALE_DOC hard-mode task-result pass were each `19/20`.

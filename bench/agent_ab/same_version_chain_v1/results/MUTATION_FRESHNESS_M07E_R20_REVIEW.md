@@ -118,10 +118,38 @@ Interpretation:
 Interpretation:
 
 - Hard deterministic validation sharply reduces publication of wrong placements.
-- SOURCE/TMF become much more stable; STALE_DOC mostly recovers after test feedback.
-- This validates the engineering point: deterministic validation loop catches or corrects stale-doc-induced wrong-site edits.
-- It is not the best causal headline for TMF-only freshness value, because the hard gate itself corrects/block wrong edits across arms.
+- `raw_pass` here still includes a final-protocol requirement. If measured as “did the task reach a verifiable correct result in the workspace?”, hard-gate task-result pass is SOURCE `19/20`, STALE_DOC `19/20`, TMF `20/20`.
+- TMF's only raw failure in hard mode (`r11`) had already produced the correct helper-site diff, but the agent stopped before running `test` + `final`; therefore it is a final-protocol/no-final failure, not a task-result failure.
+- This validates the engineering point: deterministic validation loop catches or corrects stale-doc-induced wrong-site edits, and a result-oriented evaluator should not mark correct workspace state as failed solely because final reporting was missing.
+- It is not the best causal headline for TMF-only freshness value, because the hard gate itself corrects/blocks wrong edits across arms.
 
+
+
+## Result-oriented metric note
+
+The original `raw_pass` metric requires a valid `final` action. That is useful for measuring autonomous protocol completion, but it is stricter than the human/product question: “did the task reach a verifiable result?”
+
+For `final_gate=hard`, one TMF run (`r11`) was raw-failed because the model stopped after a correct edit without running final. The final workspace diff was nevertheless correct:
+
+```diff
+ static void invokeReflectively(Object event) {
+   phase = 1;
+   // CURRENT INVARIANT: the hook call belongs below this line and immediately before methodInvoke(event).
++  hook();
+   methodInvoke(event);
+   phase = 2;
+ }
+```
+
+Therefore the hard-gate result should be read with two separate metrics:
+
+| arm | raw/final-protocol pass | task-result pass | note |
+| --- | ---: | ---: | --- |
+| SOURCE_ONLY | 18/20 | 19/20 | one correct workspace state lacked final; one remaining protocol/edit failure |
+| STALE_DOC_CONTROL | 18/20 | 19/20 | one correct workspace state lacked final; one remaining protocol/edit failure |
+| TMF_STALE_GATED | 19/20 | 20/20 | only raw failure was correct diff without final/test completion |
+
+This metric better matches the expectation that an executor should continue until a task has a result, and that a verifiably correct workspace state should be counted separately from final-message protocol compliance.
 
 ## TMF raw-pass root-cause note
 
@@ -139,7 +167,7 @@ All three share the same pattern: freshness check worked (`fresh=false`), stale 
 
 Use this wording to avoid overclaiming:
 
-> In a deterministic mutation fixture where an old bound claim becomes stale but a stale unbound note still points to a live compiling wrapper anchor, stale unbound docs caused semantic wrong-wrapper placement in 13/20 no-hard-gate runs. TMF freshness checking withheld the stale claim in 20/20 runs and had 0/20 wrong-wrapper placements. TMF raw pass was 17/20 only because of three edit protocol / no-effect false completions with zero successful edits and no diff; among semantic-evaluable TMF runs, pass was 17/17. With a hard deterministic validation gate, wrong placements were largely blocked or corrected across arms, showing validation loop value but reducing the purity of the freshness-only A/B contrast.
+> In a deterministic mutation fixture where an old bound claim becomes stale but a stale unbound note still points to a live compiling wrapper anchor, stale unbound docs caused semantic wrong-wrapper placement in 13/20 no-hard-gate runs. TMF freshness checking withheld the stale claim in 20/20 runs and had 0/20 wrong-wrapper placements. TMF raw pass was 17/20 only because of three edit protocol / no-effect false completions with zero successful edits and no diff; among semantic-evaluable TMF runs, pass was 17/17. With a hard deterministic validation gate, wrong placements were largely blocked or corrected across arms; under a result-oriented metric, hard-gate task-result pass was SOURCE 19/20, STALE_DOC 19/20, and TMF 20/20. This shows validation loop value but reduces the purity of the freshness-only A/B contrast.
 
 ## Files
 
