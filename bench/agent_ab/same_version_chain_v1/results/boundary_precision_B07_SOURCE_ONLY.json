@@ -1,0 +1,84 @@
+{
+  "schema": "same_version_chain_v1_results",
+  "mode": "smoke",
+  "tag": "boundary_precision_B07_SOURCE_ONLY",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "B07",
+      "arm": "SOURCE_ONLY",
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java with exactly one no-op onSubscriberExecutionStart() hook and exactly one invocation inside the executor lambda, immediately before invokeSubscriberMethod(event). This captures subscriber execution start rather than scheduling or enqueue time. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 7272,
+        "source_reads": 4,
+        "range_reads": 3,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 17242,
+        "completion_tokens": 645,
+        "invalid": 0,
+        "wall_seconds": 51.723
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "audit": {
+        "compile_ok": true,
+        "modified_files": [
+          "Subscriber.java"
+        ],
+        "golden_hits": [
+          "executor.execute"
+        ],
+        "golden_coverage": 0.167,
+        "trap_pass": true,
+        "trap_reason": {
+          "subscriber_changed": true,
+          "hookish": true,
+          "inside_lambda_before_invoke": true,
+          "not_before_executor_execute": true,
+          "not_post_or_dispatcher_only": true
+        },
+        "valid_answer": true
+      },
+      "raw_path": "results/raw/boundary_precision_B07_SOURCE_ONLY/B07__SOURCE_ONLY.raw.json",
+      "diff_bytes": 637
+    }
+  ],
+  "summary": {
+    "mode": "smoke",
+    "runs": 1,
+    "valid_answers": 1,
+    "compile_ok": 1,
+    "trap_passes": 1,
+    "differentiation_by_task": {
+      "B07": false
+    },
+    "zero_harness_errors": true,
+    "smoke_gate": {
+      "at_least_2_of_3_valid_per_task": false,
+      "trap_tests_distinguish_some_task": false,
+      "zero_harness_runtime_errors": true
+    }
+  }
+}

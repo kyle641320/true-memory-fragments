@@ -65,3 +65,67 @@ Wrote `results/smoke.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smo
 ## Run smoke
 
 Wrote `results/smoke.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 3, "valid_answers": 3, "compile_ok": 3, "trap_passes": 2, "differentiation_by_task": {"B07": true}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": true, "trap_tests_distinguish_some_task": true, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B08_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B08_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B08": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B08_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B08_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B08": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B09_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B09_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B09": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B09_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B09_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B09": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B10_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B10_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B10": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B10_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B10_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B10": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B11_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B11_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B11": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B11_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B11_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B11": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B12_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B12_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B12": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B12_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B12_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B12": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B13_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B13_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B13": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B13_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B13_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B13": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B07_SOURCE_ONLY
+
+Wrote `results/boundary_precision_B07_SOURCE_ONLY.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B07": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B07_TMF_CLAIMS
+
+Wrote `results/boundary_precision_B07_TMF_CLAIMS.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B07": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B11_SOURCE_ONLY_v2
+
+Wrote `results/boundary_precision_B11_SOURCE_ONLY_v2.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 0, "differentiation_by_task": {"B11": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}
+
+## Run boundary_precision_B11_TMF_CLAIMS_v2
+
+Wrote `results/boundary_precision_B11_TMF_CLAIMS_v2.json` and `results/SMOKE_REPORT.md`. Summary: {"mode": "smoke", "runs": 1, "valid_answers": 1, "compile_ok": 1, "trap_passes": 1, "differentiation_by_task": {"B11": false}, "zero_harness_errors": true, "smoke_gate": {"at_least_2_of_3_valid_per_task": false, "trap_tests_distinguish_some_task": false, "zero_harness_runtime_errors": true}}

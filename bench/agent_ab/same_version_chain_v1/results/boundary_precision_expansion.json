@@ -1,0 +1,471 @@
+{
+  "schema": "boundary_precision_expansion_v1",
+  "tasks": [
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B11",
+    "B12",
+    "B13"
+  ],
+  "wins": {
+    "TMF_only": 2,
+    "both": 5,
+    "source_only": 0,
+    "neither": 0
+  },
+  "rows": [
+    {
+      "task_id": "B07",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B07_SOURCE_ONLY/B07__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 7272,
+        "source_reads": 4,
+        "range_reads": 3,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 17242,
+        "completion_tokens": 645,
+        "invalid": 0,
+        "wall_seconds": 51.723
+      }
+    },
+    {
+      "task_id": "B07",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B07_TMF_CLAIMS/B07__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_lambda_before_invoke": true,
+        "not_before_executor_execute": true,
+        "not_post_or_dispatcher_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 6637,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 1929,
+        "completion_tokens": 345,
+        "invalid": 0,
+        "wall_seconds": 25.486
+      }
+    },
+    {
+      "task_id": "B08",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B08_SOURCE_ONLY/B08__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 7237,
+        "source_reads": 4,
+        "range_reads": 1,
+        "symbol_reads": 3,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 522,
+        "completion_tokens": 355,
+        "invalid": 0,
+        "wall_seconds": 41.746
+      }
+    },
+    {
+      "task_id": "B08",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B08_TMF_CLAIMS/B08__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "after_invoke_success_boundary": true,
+        "not_before_invoke": true,
+        "not_in_failure_catch": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 868,
+        "completion_tokens": 428,
+        "invalid": 0,
+        "wall_seconds": 64.536
+      }
+    },
+    {
+      "task_id": "B09",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B09_SOURCE_ONLY/B09__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 7011,
+        "source_reads": 3,
+        "range_reads": 2,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 7214,
+        "completion_tokens": 660,
+        "invalid": 0,
+        "wall_seconds": 45.419
+      }
+    },
+    {
+      "task_id": "B09",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B09_TMF_CLAIMS/B09__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "catch_before_handleSubscriberException": true,
+        "not_before_invoke": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6083,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 926,
+        "completion_tokens": 310,
+        "invalid": 0,
+        "wall_seconds": 24.915
+      }
+    },
+    {
+      "task_id": "B10",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B10_SOURCE_ONLY/B10__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 6193,
+        "source_reads": 3,
+        "range_reads": 3,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 500,
+        "completion_tokens": 309,
+        "invalid": 0,
+        "wall_seconds": 25.774
+      }
+    },
+    {
+      "task_id": "B10",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B10_TMF_CLAIMS/B10__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "eventbus_changed": true,
+        "hookish": true,
+        "before_dead_event_repost": true,
+        "not_post_entry": true,
+        "not_subscriber_or_dispatcher_only": true
+      },
+      "files": [
+        "EventBus.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 15769,
+        "source_reads": 3,
+        "range_reads": 3,
+        "symbol_reads": 0,
+        "source_files": [
+          "EventBus.java"
+        ],
+        "prompt_tokens": 810,
+        "completion_tokens": 348,
+        "invalid": 0,
+        "wall_seconds": 31.321
+      }
+    },
+    {
+      "task_id": "B11",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B11_SOURCE_ONLY_v2/B11__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": false,
+        "replaced_dispatch_sites": 2,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true,
+        "helper_recurses_instead_of_calling_subscriber_dispatchEvent": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 15850,
+        "source_reads": 2,
+        "range_reads": 2,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 608,
+        "completion_tokens": 535,
+        "invalid": 0,
+        "wall_seconds": 47.21
+      }
+    },
+    {
+      "task_id": "B11",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B11_TMF_CLAIMS_v2/B11__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "dispatcher_changed": true,
+        "hookish": true,
+        "before_subscriber_dispatchEvent_or_full_helper": true,
+        "replaced_dispatch_sites": 3,
+        "not_subscriber_only": true,
+        "not_eventbus_only": true
+      },
+      "files": [
+        "Dispatcher.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 12406,
+        "source_reads": 2,
+        "range_reads": 2,
+        "symbol_reads": 0,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 1054,
+        "completion_tokens": 417,
+        "invalid": 0,
+        "wall_seconds": 26.215
+      }
+    },
+    {
+      "task_id": "B12",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B12_SOURCE_ONLY/B12__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": false,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": false,
+        "direct_hook_before_checkNotNull_expr_is_too_early": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 522,
+        "completion_tokens": 308,
+        "invalid": 0,
+        "wall_seconds": 26.776
+      }
+    },
+    {
+      "task_id": "B12",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B12_TMF_CLAIMS/B12__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "hoisted_nullcheck_then_hook_then_MethodInvoke": true,
+        "direct_hook_before_checkNotNull_expr_is_too_early": false,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5878,
+        "source_reads": 2,
+        "range_reads": 1,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 9713,
+        "completion_tokens": 331,
+        "invalid": 1,
+        "wall_seconds": 73.062
+      }
+    },
+    {
+      "task_id": "B13",
+      "arm": "SOURCE_ONLY",
+      "raw_path": "results/raw/boundary_precision_B13_SOURCE_ONLY/B13__SOURCE_ONLY.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 8398,
+        "source_reads": 4,
+        "range_reads": 2,
+        "symbol_reads": 2,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 529,
+        "completion_tokens": 334,
+        "invalid": 0,
+        "wall_seconds": 26.611
+      }
+    },
+    {
+      "task_id": "B13",
+      "arm": "TMF_CLAIMS",
+      "raw_path": "results/raw/boundary_precision_B13_TMF_CLAIMS/B13__TMF_CLAIMS.raw.json",
+      "valid": true,
+      "compile": true,
+      "trap": true,
+      "reason": {
+        "subscriber_changed": true,
+        "hookish": true,
+        "inside_invokeSubscriberMethod_after_MethodInvoke": true,
+        "not_catch_path": true,
+        "not_outer_dispatchEvent": true
+      },
+      "files": [
+        "Subscriber.java"
+      ],
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 13122,
+        "source_reads": 4,
+        "range_reads": 3,
+        "symbol_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 12341,
+        "completion_tokens": 438,
+        "invalid": 1,
+        "wall_seconds": 28.644
+      }
+    }
+  ]
+}

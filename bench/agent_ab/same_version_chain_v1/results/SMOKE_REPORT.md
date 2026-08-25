@@ -1,27 +1,23 @@
 # SMOKE_REPORT
 
 Mode: smoke
-Runs: 3
-Valid answers: 3/3
-Compile OK: 3/3
-Trap passes: 2/3
-Differentiation by task: `{"B07": true}`
+Runs: 1
+Valid answers: 1/1
+Compile OK: 1/1
+Trap passes: 1/1
+Differentiation by task: `{"B11": false}`
 
 ## Rows
 
-- B07 / SOURCE_ONLY: valid=True compile=True trap=False coverage=0.167 files=['Subscriber.java'] bytes_read=6766 calls=10 wall=24.59s raw=results/raw/smoke/B07__SOURCE_ONLY.raw.json
-  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_lambda_before_invoke": false, "not_before_executor_execute": true, "not_post_or_dispatcher_only": true}
-- B07 / TMF_CLAIMS: valid=True compile=True trap=True coverage=0.167 files=['Subscriber.java'] bytes_read=13092 calls=15 wall=52.226s raw=results/raw/smoke/B07__TMF_CLAIMS.raw.json
-  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_lambda_before_invoke": true, "not_before_executor_execute": true, "not_post_or_dispatcher_only": true}
-- B07 / DOC_CONTROL: valid=True compile=True trap=True coverage=0.167 files=['Subscriber.java'] bytes_read=9097 calls=14 wall=61.482s raw=results/raw/smoke/B07__DOC_CONTROL.raw.json
-  - trap_reason={"subscriber_changed": true, "hookish": true, "inside_lambda_before_invoke": true, "not_before_executor_execute": true, "not_post_or_dispatcher_only": true}
+- B11 / TMF_CLAIMS: valid=True compile=True trap=True coverage=0.143 files=['Dispatcher.java'] bytes_read=12406 calls=12 wall=26.215s raw=results/raw/boundary_precision_B11_TMF_CLAIMS_v2/B11__TMF_CLAIMS.raw.json
+  - trap_reason={"dispatcher_changed": true, "hookish": true, "before_subscriber_dispatchEvent_or_full_helper": true, "replaced_dispatch_sites": 3, "not_subscriber_only": true, "not_eventbus_only": true}
 
 ## Gate
 
 ```json
 {
-  "at_least_2_of_3_valid_per_task": true,
-  "trap_tests_distinguish_some_task": true,
+  "at_least_2_of_3_valid_per_task": false,
+  "trap_tests_distinguish_some_task": false,
   "zero_harness_runtime_errors": true
 }
 ```

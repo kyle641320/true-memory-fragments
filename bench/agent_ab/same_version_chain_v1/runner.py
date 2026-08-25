@@ -173,6 +173,58 @@ def build_chain_claim(task: dict[str, Any]) -> ChainClaim:
             "The exact execution-start boundary is immediately inside the executor lambda, before invokeSubscriberMethod(event).",
             "A hook before executor.execute(...) is wrong for execution-start instrumentation.",
         ]
+    elif tid == "B08":
+        details = [
+            "Subscriber.dispatchEvent performs executor.execute with a lambda around subscriber work.",
+            "Inside the lambda, invokeSubscriberMethod(event) calls Method.invoke on the target subscriber method.",
+            "If invokeSubscriberMethod(event) returns normally, the subscriber invocation has succeeded.",
+            "If invokeSubscriberMethod(event) throws InvocationTargetException, dispatchEvent catches it and calls bus.handleSubscriberException(e.getCause(), context(event)).",
+            "A success-after-invoke hook belongs immediately after invokeSubscriberMethod(event) returns normally, before leaving the executor lambda.",
+            "A hook before invokeSubscriberMethod(event) or in the catch path is not success-only.",
+        ]
+    elif tid == "B09":
+        details = [
+            "Subscriber.dispatchEvent wraps invokeSubscriberMethod(event) in a try/catch inside executor.execute.",
+            "invokeSubscriberMethod(event) calls Method.invoke and propagates InvocationTargetException for subscriber-thrown failures.",
+            "The catch block in Subscriber.dispatchEvent receives InvocationTargetException before EventBus.handleSubscriberException runs.",
+            "bus.handleSubscriberException(e.getCause(), context(event)) converts the failure into the configured SubscriberExceptionHandler path.",
+            "A failure-boundary hook belongs in Subscriber.dispatchEvent's InvocationTargetException catch block immediately before bus.handleSubscriberException(...).",
+            "A hook before invokeSubscriberMethod(event) is not failure-only; a hook inside EventBus.handleSubscriberException is later than the Subscriber boundary.",
+        ]
+    elif tid == "B10":
+        details = [
+            "EventBus.post obtains subscribers from SubscriberRegistry.getSubscribers(event).",
+            "If the iterator has subscribers, EventBus.post delegates normal delivery to dispatcher.dispatch(event, eventSubscribers).",
+            "If no subscribers are found and the event is not already a DeadEvent, EventBus.post creates and reposts new DeadEvent(this, event).",
+            "The no-subscriber repost decision boundary is inside that guarded branch immediately before post(new DeadEvent(this, event)).",
+            "A hook at EventBus.post entry fires for all events; a hook in normal dispatch misses the no-subscriber decision.",
+        ]
+    elif tid == "B11":
+        details = [
+            "EventBus.post delegates delivery to Dispatcher.dispatch(event, subscribers).",
+            "Dispatcher has three concrete handoff sites that call Subscriber.dispatchEvent and all are part of the boundary.",
+            "PerThreadQueuedDispatcher hands off with nextEvent.subscribers.next().dispatchEvent(nextEvent.event).",
+            "LegacyAsyncDispatcher hands off with e.subscriber.dispatchEvent(e.event).",
+            "ImmediateDispatcher hands off with subscribers.next().dispatchEvent(event).",
+            "Subscriber.dispatchEvent is already after the dispatcher handoff and then performs executor.execute/invokeSubscriberMethod.",
+            "A correct implementation must cover all three concrete Dispatcher handoff sites, either by adding hook calls at each site or routing all three sites through one helper that records the hook immediately before subscriber.dispatchEvent(event).",
+            "A handoff hook belongs immediately before concrete Dispatcher calls to subscriber.dispatchEvent(event), not at EventBus.post, queue insertion, or inside Subscriber.",
+        ]
+    elif tid == "B12":
+        details = [
+            "Subscriber.dispatchEvent schedules a lambda and calls invokeSubscriberMethod(event); this is outside the reflective call boundary.",
+            "Subscriber.invokeSubscriberMethod performs the final call to method.invoke(target, checkNotNull(event)).",
+            "The immediate pre-call boundary is inside invokeSubscriberMethod directly before the Method.invoke expression.",
+            "Hooks before executor.execute, before invokeSubscriberMethod(event), or in Dispatcher/EventBus are too early.",
+        ]
+    elif tid == "B13":
+        details = [
+            "Subscriber.invokeSubscriberMethod calls method.invoke(target, checkNotNull(event)) inside a try block.",
+            "IllegalArgumentException and IllegalAccessException are converted to Error in catch blocks.",
+            "InvocationTargetException with Error cause is unwrapped and thrown as Error; other InvocationTargetException is rethrown.",
+            "Normal return from Method.invoke is only known immediately after the Method.invoke line returns inside the try block.",
+            "A hook in dispatchEvent after invokeSubscriberMethod(event) is later than the reflective call boundary; a hook in catches is failure/error path, not normal return.",
+        ]
     else:
         details = [
             "EventBus.post logs/starts at the public post entry.",
@@ -358,7 +410,7 @@ Source is authoritative. Edit files under fixture root only. Keep API compatibil
 Use fine-grained reads before broad reads when possible.
 If any edit action returns an error, immediately read the relevant current source range and choose a new exact anchor; do not continue as if the edit succeeded.
 If compile fails after an edit, read the failing file around the reported line, fix the compile error, compile again, and do not final until compile passes.
-For hook-insertion tasks, verify the final file has exactly one hook definition and exactly one hook call before final.
+For hook-insertion tasks, verify the final file has exactly one hook definition. Hook call coverage must match the task boundary: single-boundary tasks should have one call, but multi-site boundaries may use either calls at every concrete site or a single shared helper reached by every concrete site.
 {tools}
 {injection}
 Begin now."""
@@ -504,6 +556,67 @@ def audit_task(task: dict[str, Any], diffs: dict[str, str], compile_result: dict
         not_post_or_dispatcher_only = not (set(diffs.keys()) <= {"EventBus.java", "Dispatcher.java"})
         trap_pass = subscriber_changed and hookish and before_invoke_add and not before_execute and not_post_or_dispatcher_only
         reason = {"subscriber_changed": subscriber_changed, "hookish": hookish, "inside_lambda_before_invoke": before_invoke_add, "not_before_executor_execute": not before_execute, "not_post_or_dispatcher_only": not_post_or_dispatcher_only}
+    elif tid == "B08":
+        sub_diff = diffs.get("Subscriber.java", "")
+        subscriber_changed = bool(sub_diff)
+        hookish = any(x in combined for x in ["success", "succeed", "hook", "record", "after"])
+        after_invoke_add = bool(re.search(r"(?m)invokeSubscriberMethod\(event\);\n\+\s*[^\n]*(?:hook|record|success|succeed|after|onSubscriberInvocationSuccess)[^\n]*", sub_diff, re.IGNORECASE))
+        before_invoke_add = bool(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|success|succeed|after)[^\n]*\n[ \t]+invokeSubscriberMethod\(event\);", sub_diff, re.IGNORECASE))
+        catch_blocks = re.findall(r"(?s)catch \(InvocationTargetException[^)]*\) \{(.*?)\n[ \t]*\}", sub_diff, re.IGNORECASE)
+        catch_hook = any(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|success|succeed)", block, re.IGNORECASE) for block in catch_blocks)
+        trap_pass = subscriber_changed and hookish and after_invoke_add and not before_invoke_add and not catch_hook
+        reason = {"subscriber_changed": subscriber_changed, "hookish": hookish, "after_invoke_success_boundary": after_invoke_add, "not_before_invoke": not before_invoke_add, "not_in_failure_catch": not catch_hook}
+    elif tid == "B09":
+        sub_diff = diffs.get("Subscriber.java", "")
+        subscriber_changed = bool(sub_diff)
+        hookish = any(x in combined for x in ["failure", "exception", "hook", "record"])
+        before_handler = bool(re.search(r"(?s)catch \(InvocationTargetException[^}]*?\+\s*[^\n]*(?:hook|record|failure|exception|onSubscriberInvocationFailure)[^\n]*\n\+?[ \t]*bus\.handleSubscriberException", sub_diff, re.IGNORECASE))
+        before_invoke = bool(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|failure|exception)[^\n]*\n[ \t]+invokeSubscriberMethod\(event\);", sub_diff, re.IGNORECASE))
+        eventbus_changed = "EventBus.java" in diffs and not subscriber_changed
+        trap_pass = subscriber_changed and hookish and before_handler and not before_invoke and not eventbus_changed
+        reason = {"subscriber_changed": subscriber_changed, "hookish": hookish, "catch_before_handleSubscriberException": before_handler, "not_before_invoke": not before_invoke, "not_eventbus_only": not eventbus_changed}
+    elif tid == "B10":
+        ev_diff = diffs.get("EventBus.java", "")
+        eventbus_changed = bool(ev_diff)
+        hookish = any(x in combined for x in ["dead", "no subscriber", "nosubscriber", "hook", "record", "repost"])
+        before_dead_post = bool(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|dead|subscriber|repost|onDeadEventRepost)[^\n]*\n[ \t]+post\(new DeadEvent\(this, event\)\);", ev_diff, re.IGNORECASE))
+        post_entry = bool(re.search(r"void post\(Object event\).*?\+\s*[^\n]*(?:hook|record|dead|subscriber|repost)", ev_diff, re.IGNORECASE | re.DOTALL)) and not before_dead_post
+        subscriber_or_dispatcher_only = set(diffs.keys()) <= {"Subscriber.java", "Dispatcher.java"}
+        trap_pass = eventbus_changed and hookish and before_dead_post and not post_entry and not subscriber_or_dispatcher_only
+        reason = {"eventbus_changed": eventbus_changed, "hookish": hookish, "before_dead_event_repost": before_dead_post, "not_post_entry": not post_entry, "not_subscriber_or_dispatcher_only": not subscriber_or_dispatcher_only}
+    elif tid == "B11":
+        disp_diff = diffs.get("Dispatcher.java", "")
+        dispatcher_changed = bool(disp_diff)
+        hookish = any(x in combined for x in ["handoff", "dispatch", "hook", "record", "subscriber"])
+        before_dispatch_event = bool(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|handoff|dispatch|subscriber)[^\n]*\n[ \t]*(?:subscriber|e\.subscriber)\.dispatchEvent\(", disp_diff, re.IGNORECASE))
+        helper_wraps_dispatch = bool(re.search(r"(?s)\+\s*private static void [^{]+\{[^}]*recordDispatcherToSubscriberHandoff[^}]*subscriber\.dispatchEvent\(event\);", disp_diff, re.IGNORECASE))
+        replaced_dispatch_sites = len(re.findall(r"(?m)^-\s*(?:subscribers\.next\(\)|nextEvent\.subscribers\.next\(\)|e\.subscriber)\.dispatchEvent\(", disp_diff))
+        subscriber_only = set(diffs.keys()) <= {"Subscriber.java"}
+        eventbus_only = set(diffs.keys()) <= {"EventBus.java"}
+        full_dispatcher_coverage = before_dispatch_event or (helper_wraps_dispatch and replaced_dispatch_sites >= 3)
+        trap_pass = dispatcher_changed and hookish and full_dispatcher_coverage and not subscriber_only and not eventbus_only
+        reason = {"dispatcher_changed": dispatcher_changed, "hookish": hookish, "before_subscriber_dispatchEvent_or_full_helper": full_dispatcher_coverage, "replaced_dispatch_sites": replaced_dispatch_sites, "not_subscriber_only": not subscriber_only, "not_eventbus_only": not eventbus_only}
+    elif tid == "B12":
+        sub_diff = diffs.get("Subscriber.java", "")
+        subscriber_changed = bool(sub_diff)
+        hookish = any(x in combined for x in ["method", "invoke", "hook", "record", "before", "pre"])
+        hook_before_direct_method_invoke = bool(re.search(r"(?m)^\+\s*[^\n]*(?:hook|record|method|invoke|before|pre)[^\n]*\n[ \t]*method\.invoke\(target, checkNotNull\(event\)\);", sub_diff, re.IGNORECASE))
+        hoisted_nullcheck_then_hook_then_invoke = bool(re.search(r"(?m)^\+\s*(?:Object|[A-Za-z_][A-Za-z0-9_<>]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*=\s*checkNotNull\(event\);\n\+\s*[^\n]*(?:hook|record|method|invoke|before|pre)[^\n]*\n\+?\s*method\.invoke\(target,\s*\1\);", sub_diff, re.IGNORECASE))
+        # Directly adding a hook before method.invoke(target, checkNotNull(event)) is still before checkNotNull(event) is evaluated,
+        # so it is too early for the immediate reflective-call boundary. Hoisting checkNotNull before the hook is acceptable.
+        immediate_pre_reflective_call = hoisted_nullcheck_then_hook_then_invoke
+        outside_dispatch = bool(re.search(r"dispatchEvent\(Object event\).*?\+\s*[^\n]*(?:hook|record|method|invoke|before|pre)", sub_diff, re.IGNORECASE | re.DOTALL)) and not immediate_pre_reflective_call
+        trap_pass = subscriber_changed and hookish and immediate_pre_reflective_call and not outside_dispatch
+        reason = {"subscriber_changed": subscriber_changed, "hookish": hookish, "hoisted_nullcheck_then_hook_then_MethodInvoke": hoisted_nullcheck_then_hook_then_invoke, "direct_hook_before_checkNotNull_expr_is_too_early": hook_before_direct_method_invoke, "not_outer_dispatchEvent": not outside_dispatch}
+    elif tid == "B13":
+        sub_diff = diffs.get("Subscriber.java", "")
+        subscriber_changed = bool(sub_diff)
+        hookish = any(x in combined for x in ["normal", "return", "success", "method", "invoke", "hook", "record", "after"])
+        after_method_invoke = bool(re.search(r"(?m)method\.invoke\(target, checkNotNull\(event\)\);\n\+\s*[^\n]*(?:hook|record|normal|return|success|after|method|invoke)[^\n]*", sub_diff, re.IGNORECASE))
+        catch_hook = bool(re.search(r"(?s)catch \([^)]*\) \{[^}]*?\+\s*[^\n]*(?:hook|record|normal|return|success)", sub_diff, re.IGNORECASE))
+        outer_dispatch = bool(re.search(r"dispatchEvent\(Object event\).*?invokeSubscriberMethod\(event\);\n\+\s*[^\n]*(?:hook|record|normal|return|success|after)", sub_diff, re.IGNORECASE | re.DOTALL))
+        trap_pass = subscriber_changed and hookish and after_method_invoke and not catch_hook and not outer_dispatch
+        reason = {"subscriber_changed": subscriber_changed, "hookish": hookish, "inside_invokeSubscriberMethod_after_MethodInvoke": after_method_invoke, "not_catch_path": not catch_hook, "not_outer_dispatchEvent": not outer_dispatch}
     elif tid == "B04":
         subscriber_changed = "Subscriber.java" in diffs
         attempt_counting = any(x in combined for x in ["attempt", "count", "counter", "increment", "invocation"])

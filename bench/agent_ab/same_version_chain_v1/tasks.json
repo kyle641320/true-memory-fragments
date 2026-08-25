@@ -156,6 +156,128 @@
         "Method.invoke"
       ],
       "trap": "A hook before executor.execute(...) records scheduling/enqueue, not execution start. The only correct boundary is inside the executor lambda immediately before invokeSubscriberMethod(event), and the hook must be defined exactly once with no duplicate methods."
+    },
+    {
+      "id": "B08",
+      "title": "subscriber success-after-invoke boundary",
+      "phase_a": "Trace the exact boundary between subscriber invocation returning normally and subscriber dispatch completion.",
+      "phase_b": "Add exactly one no-op hook that records subscriber invocation success immediately after invokeSubscriberMethod(event) returns normally inside the executor lambda. Define the hook only once in Subscriber.java, call it exactly once, and do not call it before invokeSubscriberMethod(event), before executor.execute(...), or in the InvocationTargetException failure path.",
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "Dispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "executor.execute",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke",
+        "EventBus.handleSubscriberException"
+      ],
+      "trap": "A hook before invokeSubscriberMethod(event), before executor.execute(...), or in the catch/handleSubscriberException path does not represent successful invocation completion. The only correct success boundary is immediately after invokeSubscriberMethod(event) returns normally inside the executor lambda."
+    },
+    {
+      "id": "B09",
+      "title": "subscriber failure-before-handler boundary",
+      "phase_a": "Trace the exact boundary where subscriber invocation failure is converted from InvocationTargetException into EventBus.handleSubscriberException.",
+      "phase_b": "Add exactly one no-op hook that records subscriber invocation failure after invokeSubscriberMethod(event) throws InvocationTargetException but immediately before bus.handleSubscriberException(e.getCause(), context(event)) runs. Define the hook only once in Subscriber.java, call it exactly once, and do not call it on successful invocations or before invokeSubscriberMethod(event).",
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java",
+        "SubscriberExceptionHandler.java"
+      ],
+      "golden_chain": [
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke",
+        "InvocationTargetException",
+        "EventBus.handleSubscriberException",
+        "SubscriberExceptionHandler.handleException"
+      ],
+      "trap": "A hook before invokeSubscriberMethod(event) fires for successes and failures; a hook inside EventBus.handleSubscriberException is too late and loses the Subscriber dispatch boundary. The correct failure boundary is inside Subscriber.dispatchEvent catch block immediately before bus.handleSubscriberException(...)."
+    },
+    {
+      "id": "B10",
+      "title": "dead-event repost boundary",
+      "phase_a": "Trace the no-subscriber branch in EventBus.post, distinguishing the original post entry from DeadEvent repost creation.",
+      "phase_b": "Add exactly one no-op hook that records the moment EventBus decides to repost a DeadEvent because no subscribers were found. Define the hook only once in EventBus.java, call it exactly once immediately before post(new DeadEvent(this, event)), and do not call it at EventBus.post entry, during normal subscriber dispatch, or when the event is already a DeadEvent.",
+      "anchors": [
+        "EventBus.java",
+        "DeadEvent.java",
+        "SubscriberRegistry.java",
+        "Dispatcher.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "SubscriberRegistry.getSubscribers",
+        "DeadEvent",
+        "EventBus.post",
+        "Dispatcher.dispatch"
+      ],
+      "trap": "A hook at EventBus.post entry fires for every event; a hook after dispatch fires for normal subscriber paths. The correct no-subscriber boundary is the guarded branch immediately before post(new DeadEvent(this, event))."
+    },
+    {
+      "id": "B11",
+      "title": "dispatcher-to-subscriber handoff boundary",
+      "phase_a": "Trace Dispatcher implementations until the concrete point where a queued EventWithSubscriber is handed to Subscriber.dispatchEvent.",
+      "phase_b": "Add a no-op hook that records the dispatcher-to-subscriber handoff immediately before Dispatcher implementations call subscriber.dispatchEvent(event). Define the hook only once in Dispatcher.java. Cover all concrete handoff sites: PerThreadQueuedDispatcher, LegacyAsyncDispatcher, and ImmediateDispatcher. You may either add hook calls at every concrete site or route every concrete site through one shared helper that records the hook immediately before subscriber.dispatchEvent(event). Do not call it at EventBus.post entry, queue insertion only, or inside Subscriber.dispatchEvent.",
+      "anchors": [
+        "EventBus.java",
+        "Dispatcher.java",
+        "Subscriber.java"
+      ],
+      "golden_chain": [
+        "EventBus.post",
+        "Dispatcher.dispatch",
+        "Dispatcher.PerThreadQueuedDispatcher.dispatch",
+        "Dispatcher.LegacyAsyncDispatcher.dispatch",
+        "Dispatcher.ImmediateDispatcher.dispatch",
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod"
+      ],
+      "trap": "A hook at EventBus.post is too early, queue insertion is not handoff, and Subscriber.dispatchEvent is already after dispatcher handoff. Covering only one Dispatcher implementation is incomplete; all three concrete handoff sites must be covered."
+    },
+    {
+      "id": "B12",
+      "title": "method-invoke immediate pre-call boundary",
+      "phase_a": "Trace the final boundary inside Subscriber.invokeSubscriberMethod where the reflective Method.invoke call actually starts, distinguishing outer dispatch and null-check/argument preparation.",
+      "phase_b": "Add exactly one no-op hook that records the immediate moment before the reflective subscriber method call begins. Define the hook only once in Subscriber.java and call it exactly once immediately before method.invoke(target, checkNotNull(event)) inside invokeSubscriberMethod. Do not call it in dispatchEvent, before executor.execute(...), before invokeSubscriberMethod(event), or before checkNotNull(event) is evaluated as part of the Method.invoke argument.",
+      "anchors": [
+        "Subscriber.java",
+        "EventBus.java",
+        "Dispatcher.java"
+      ],
+      "golden_chain": [
+        "Subscriber.dispatchEvent",
+        "executor.execute",
+        "Subscriber.invokeSubscriberMethod",
+        "checkNotNull",
+        "Method.invoke"
+      ],
+      "trap": "A hook in dispatchEvent or before invokeSubscriberMethod(event) is too early. The correct immediate pre-call boundary is inside Subscriber.invokeSubscriberMethod immediately before the Method.invoke expression."
+    },
+    {
+      "id": "B13",
+      "title": "method-invoke normal-return boundary",
+      "phase_a": "Trace the final boundary inside Subscriber.invokeSubscriberMethod where the reflective Method.invoke call returns normally, distinguishing success from IllegalArgumentException, IllegalAccessException, InvocationTargetException, and Error propagation.",
+      "phase_b": "Add exactly one no-op hook that records normal return from the reflective subscriber method call. Define the hook only once in Subscriber.java and call it exactly once immediately after method.invoke(target, checkNotNull(event)) returns normally inside invokeSubscriberMethod. Do not call it in dispatchEvent, in catch blocks, before method.invoke(...), or on InvocationTargetException/Error paths.",
+      "anchors": [
+        "Subscriber.java",
+        "EventBus.java",
+        "Dispatcher.java"
+      ],
+      "golden_chain": [
+        "Subscriber.dispatchEvent",
+        "Subscriber.invokeSubscriberMethod",
+        "Method.invoke",
+        "IllegalArgumentException",
+        "IllegalAccessException",
+        "InvocationTargetException"
+      ],
+      "trap": "A hook after invokeSubscriberMethod(event) in dispatchEvent is outside the reflective call boundary and may miss exception-level semantics. A hook in catch blocks is not normal return. The correct boundary is immediately after Method.invoke returns normally inside Subscriber.invokeSubscriberMethod."
     }
   ]
 }
