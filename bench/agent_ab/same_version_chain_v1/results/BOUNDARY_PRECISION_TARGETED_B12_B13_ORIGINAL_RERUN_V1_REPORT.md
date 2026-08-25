@@ -1,5 +1,14 @@
 # BOUNDARY_PRECISION_TARGETED_B12_B13_ORIGINAL_RERUN_V1_REPORT
 
+
+## Interpretation warning
+
+Do **not** interpret the raw TMF_CLAIMS pass rate as TMF semantic value. Later raw-transcript review found the TMF_CLAIMS raw failures in the B12/B13 original rerun were agent/edit protocol or source-shape failures, not TMF semantic boundary failures.
+
+For B12/B13 original rerun, the adjusted TMF interpretation is: raw pass `7/10`, protocol-clean raw pass `6/6`, semantic-known `7 pass / 0 fail`. SOURCE_ONLY and DOC_CONTROL each had one genuine B12 semantic boundary failure.
+
+See `BOUNDARY_PRECISION_B12_B13_CONCLUSION.md`, `TMF_ADJUSTED_SEMANTIC_REVIEW_B12_B13_ORIGINAL_RERUN.md`, and `NON_TMF_FAILURE_REVIEW_B12_B13_ORIGINAL_RERUN.md` before drawing conclusions.
+
 Mode: targeted_B12_B13
 Runs: 30
 Valid answers: 26/30

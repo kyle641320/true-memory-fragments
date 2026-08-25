@@ -1,5 +1,10 @@
 # TMF Adjusted Semantic Review — B12/B13 Original Rerun
 
+
+## Executive conclusion
+
+The TMF_CLAIMS raw failures in the original B12/B13 rerun are **not TMF semantic failures**. They are agent/edit protocol or source-shape failures. The adjusted semantic-known score for TMF_CLAIMS is `7 pass / 0 fail`; SOURCE_ONLY and DOC_CONTROL each have one genuine B12 semantic boundary failure.
+
 Scope: original B12/B13 task and TMF claim wording, 5 repeats × 3 arms × 2 tasks.
 
 Purpose: answer whether TMF failures in the original rerun are TMF semantic failures or execution/protocol failures.
