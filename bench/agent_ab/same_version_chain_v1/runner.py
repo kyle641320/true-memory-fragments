@@ -643,6 +643,70 @@ def audit_task(task: dict[str, Any], diffs: dict[str, str], compile_result: dict
     }
 
 
+
+def classify_run_failure(raw: dict[str, Any]) -> dict[str, Any]:
+    """Classify pass=false causes without conflating protocol/tool noise with semantic misses."""
+    audit = raw.get("audit", {})
+    transcript = raw.get("transcript", [])
+    diffs = raw.get("diffs", {})
+    final = raw.get("final")
+    compile_ok = bool(audit.get("compile_ok"))
+    valid = bool(audit.get("valid_answer"))
+    trap = bool(audit.get("trap_pass"))
+
+    edit_errors: list[dict[str, Any]] = []
+    compile_tool_failures: list[dict[str, Any]] = []
+    parse_or_invalid_turns = 0
+    unknown_tool_errors: list[dict[str, Any]] = []
+    for tr in transcript:
+        if not tr.get("actions"):
+            parse_or_invalid_turns += 1
+        for item in tr.get("tool_outputs") or []:
+            act = item.get("action", {})
+            out = item.get("tool_output", {})
+            action_name = act.get("action")
+            if isinstance(out, dict) and out.get("error"):
+                err = {"turn": tr.get("turn"), "action": action_name, "error": out.get("error")}
+                if action_name == "edit":
+                    edit_errors.append(err)
+                else:
+                    unknown_tool_errors.append(err)
+            if action_name == "compile" and isinstance(out, dict) and out.get("ok") is False:
+                compile_tool_failures.append({"turn": tr.get("turn"), "exit": out.get("exit"), "stderr_tail": str(out.get("stderr", ""))[-500:]})
+
+    categories: list[str] = []
+    if edit_errors:
+        categories.append("edit_protocol_fail")
+    if not compile_ok:
+        categories.append("compile_fail")
+    if final is not None and not diffs and compile_ok:
+        categories.append("no_effect_false_completion")
+    if final is None:
+        categories.append("no_final")
+    if valid and compile_ok and not trap:
+        categories.append("semantic_boundary_fail")
+    if (not valid) and compile_ok and trap:
+        categories.append("finalization_or_validator_inconsistency")
+    if parse_or_invalid_turns:
+        categories.append("parse_or_invalid_action_noise")
+    if unknown_tool_errors:
+        categories.append("tool_error_noise")
+    if not categories and not (valid and trap and compile_ok):
+        categories.append("uncategorized_fail")
+
+    primary = "pass" if (valid and trap and compile_ok) else categories[0]
+    return {
+        "pass": bool(valid and trap and compile_ok),
+        "primary": primary,
+        "categories": categories,
+        "edit_errors": edit_errors,
+        "compile_tool_failures": compile_tool_failures,
+        "parse_or_invalid_turns": parse_or_invalid_turns,
+        "tool_errors": unknown_tool_errors,
+        "has_final": final is not None,
+        "has_diff": bool(diffs),
+    }
+
 def run_one(broker: JsonBrokerAdapter, task_id: str, arm: str, raw_dir: Path, work_dir: Path) -> dict[str, Any]:
     task = TASKS[task_id]
     claim = build_chain_claim(task)
@@ -654,9 +718,10 @@ def run_one(broker: JsonBrokerAdapter, task_id: str, arm: str, raw_dir: Path, wo
     diffs = diff_files(before, root)
     aud = audit_task(task, diffs, comp, final)
     raw = {"task_id": task_id, "arm": arm, "root": str(root), "claim": claim.to_dict() if arm == "TMF_CLAIMS" else None, "doc_control": doc_control_text(claim) if arm == "DOC_CONTROL" else None, "final": final, "telemetry": met, "compile": comp, "diffs": diffs, "audit": aud, "transcript": transcript}
+    raw["failure_classification"] = classify_run_failure(raw)
     raw_path = raw_dir / f"{task_id}__{arm}.raw.json"
     raw_path.write_text(json.dumps(raw, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    return {k: raw[k] for k in ["task_id", "arm", "final", "telemetry", "compile", "audit"]} | {"raw_path": str(raw_path.relative_to(HERE)), "diff_bytes": sum(len(d.encode()) for d in diffs.values())}
+    return {k: raw[k] for k in ["task_id", "arm", "final", "telemetry", "compile", "audit", "failure_classification"]} | {"raw_path": str(raw_path.relative_to(HERE)), "diff_bytes": sum(len(d.encode()) for d in diffs.values())}
 
 
 def summarize(rows: list[dict[str, Any]], mode: str) -> dict[str, Any]:
@@ -670,6 +735,24 @@ def summarize(rows: list[dict[str, Any]], mode: str) -> dict[str, Any]:
     for tid, rs in by_task.items():
         vals = {r["arm"]: r["audit"]["trap_pass"] for r in rs}
         differentiation[tid] = len(set(vals.values())) > 1
+
+    failure_primary_by_arm: dict[str, dict[str, int]] = {}
+    failure_categories_by_arm: dict[str, dict[str, int]] = {}
+    failure_examples_by_arm: dict[str, dict[str, list[str]]] = {}
+    for r in rows:
+        fc = r.get("failure_classification") or {}
+        arm = r["arm"]
+        primary = str(fc.get("primary", "unknown"))
+        failure_primary_by_arm.setdefault(arm, {})[primary] = failure_primary_by_arm.setdefault(arm, {}).get(primary, 0) + 1
+        if primary != "pass":
+            failure_examples_by_arm.setdefault(arm, {}).setdefault(primary, []).append(r["task_id"])
+        for cat in fc.get("categories", []):
+            failure_categories_by_arm.setdefault(arm, {})[cat] = failure_categories_by_arm.setdefault(arm, {}).get(cat, 0) + 1
+
+    protocol_noise_categories = {"edit_protocol_fail", "compile_fail", "no_effect_false_completion", "no_final", "parse_or_invalid_action_noise", "tool_error_noise"}
+    protocol_noise_runs = sum(1 for r in rows if protocol_noise_categories.intersection(set((r.get("failure_classification") or {}).get("categories", []))))
+    semantic_fail_runs = sum(1 for r in rows if "semantic_boundary_fail" in set((r.get("failure_classification") or {}).get("categories", [])))
+
     return {
         "mode": mode,
         "runs": len(rows),
@@ -677,11 +760,16 @@ def summarize(rows: list[dict[str, Any]], mode: str) -> dict[str, Any]:
         "compile_ok": compile_ok,
         "trap_passes": traps,
         "differentiation_by_task": differentiation,
-        "zero_harness_errors": True,
+        "failure_primary_by_arm": failure_primary_by_arm,
+        "failure_categories_by_arm": failure_categories_by_arm,
+        "failure_examples_by_arm": failure_examples_by_arm,
+        "protocol_noise_runs": protocol_noise_runs,
+        "semantic_boundary_fail_runs": semantic_fail_runs,
+        "zero_harness_errors": protocol_noise_runs == 0,
         "smoke_gate": {
             "at_least_2_of_3_valid_per_task": all(sum(1 for r in rs if r["audit"]["valid_answer"]) >= 2 for rs in by_task.values()),
             "trap_tests_distinguish_some_task": any(differentiation.values()),
-            "zero_harness_runtime_errors": True,
+            "zero_harness_runtime_errors": protocol_noise_runs == 0,
         },
     }
 
@@ -696,7 +784,29 @@ def write_report(out: dict[str, Any], report_path: Path) -> None:
         f"Valid answers: {s['valid_answers']}/{s['runs']}",
         f"Compile OK: {s['compile_ok']}/{s['runs']}",
         f"Trap passes: {s['trap_passes']}/{s['runs']}",
+        f"Protocol-noise runs: {s['protocol_noise_runs']}/{s['runs']}",
+        f"Semantic boundary-fail runs: {s['semantic_boundary_fail_runs']}/{s['runs']}",
         f"Differentiation by task: `{json.dumps(s['differentiation_by_task'], ensure_ascii=False)}`",
+        "",
+        "## Failure classification",
+        "",
+        "Primary bucket by arm:",
+        "",
+        "```json",
+        json.dumps(s["failure_primary_by_arm"], ensure_ascii=False, indent=2),
+        "```",
+        "",
+        "All categories by arm:",
+        "",
+        "```json",
+        json.dumps(s["failure_categories_by_arm"], ensure_ascii=False, indent=2),
+        "```",
+        "",
+        "Examples by primary non-pass bucket:",
+        "",
+        "```json",
+        json.dumps(s["failure_examples_by_arm"], ensure_ascii=False, indent=2),
+        "```",
         "",
         "## Rows",
         "",
@@ -704,8 +814,11 @@ def write_report(out: dict[str, Any], report_path: Path) -> None:
     for r in out["rows"]:
         a = r["audit"]
         t = r["telemetry"]
-        lines.append(f"- {r['task_id']} / {r['arm']}: valid={a['valid_answer']} compile={a['compile_ok']} trap={a['trap_pass']} coverage={a['golden_coverage']} files={a['modified_files']} bytes_read={t['source_bytes']} calls={t['tool_calls']} wall={t['wall_seconds']}s raw={r['raw_path']}")
+        fc = r.get("failure_classification", {})
+        lines.append(f"- {r['task_id']} / {r['arm']}: valid={a['valid_answer']} compile={a['compile_ok']} trap={a['trap_pass']} failure={fc.get('primary')} coverage={a['golden_coverage']} files={a['modified_files']} bytes_read={t['source_bytes']} calls={t['tool_calls']} wall={t['wall_seconds']}s raw={r['raw_path']}")
         lines.append(f"  - trap_reason={json.dumps(a['trap_reason'], ensure_ascii=False)}")
+        if fc.get("categories"):
+            lines.append(f"  - failure_categories={json.dumps(fc.get('categories'), ensure_ascii=False)}")
     lines += [
         "",
         "## Gate",
