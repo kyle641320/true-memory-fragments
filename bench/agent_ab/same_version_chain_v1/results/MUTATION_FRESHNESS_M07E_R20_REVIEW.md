@@ -65,7 +65,8 @@ Interpretation:
 - This strongly confirms the M07b headline at larger N.
 - Stale unbound docs lured the agent to the live wrong wrapper in `13/20` runs.
 - TMF stale gate withheld the stale claim in `20/20` runs and had `0/20` wrong-wrapper placements.
-- TMF raw/semantic-adjusted pass is higher than SOURCE and STALE_DOC despite protocol noise: `17/20 raw`, `17/17 semantic-adjusted`.
+- TMF `17/20 raw` is not a semantic/freshness failure rate. The 3 raw failures are edit protocol / no-effect false completions: the agent attempted nonexistent exact anchors, all edits failed, no diff was produced, then it finalized anyway.
+- TMF semantic-evaluable pass is therefore `17/17`; stale claim withholding is `20/20`; wrong-wrapper placement is `0/20`.
 - SOURCE_ONLY remains noisy (`8/20 edit_protocol_fail`), so headline should not be “source alone is bad”; headline is “stale unbound docs are harmful; freshness-bound stale withholding avoids that specific wrong-wrapper failure mode.”
 
 ### final_gate=hard (`mutation_freshness_m07e_hard_r20`)
@@ -121,11 +122,24 @@ Interpretation:
 - This validates the engineering point: deterministic validation loop catches or corrects stale-doc-induced wrong-site edits.
 - It is not the best causal headline for TMF-only freshness value, because the hard gate itself corrects/block wrong edits across arms.
 
+
+## TMF raw-pass root-cause note
+
+`TMF_STALE_GATED` under `final_gate=off` has `17/20` raw pass, but the three failures are not TMF semantic boundary failures:
+
+| rep | primary | freshness | withheld | diff | successful edits | root cause |
+| --- | --- | --- | --- | --- | --- | --- |
+| r2 | `edit_protocol_fail` | stale | yes | none | 0 | attempted nonexistent exact anchor `return invokeReflectively(method, subscriber, event);`, then false-finalized |
+| r3 | `edit_protocol_fail` | stale | yes | none | 0 | attempted nonexistent Guava-style anchors `method.invoke(target, event);` / `method.invoke(subscriber, event);`, then false-finalized |
+| r10 | `edit_protocol_fail` | stale | yes | none | 0 | attempted several nonexistent `method.invoke(...)` anchors, then false-finalized |
+
+All three share the same pattern: freshness check worked (`fresh=false`), stale claim was withheld, no wrong-wrapper edit was made, compilation stayed OK only because the file was unchanged, and the agent falsely finalized after failed edits. Therefore these count as raw/protocol failures, not TMF semantic failures.
+
 ## Recommended claim wording
 
 Use this wording to avoid overclaiming:
 
-> In a deterministic mutation fixture where an old bound claim becomes stale but a stale unbound note still points to a live compiling wrapper anchor, stale unbound docs caused semantic wrong-wrapper placement in 13/20 no-hard-gate runs. TMF freshness checking withheld the stale claim in 20/20 runs and had 0/20 wrong-wrapper placements, with all semantic-evaluable TMF runs passing (17/17). With a hard deterministic validation gate, wrong placements were largely blocked or corrected across arms, showing validation loop value but reducing the purity of the freshness-only A/B contrast.
+> In a deterministic mutation fixture where an old bound claim becomes stale but a stale unbound note still points to a live compiling wrapper anchor, stale unbound docs caused semantic wrong-wrapper placement in 13/20 no-hard-gate runs. TMF freshness checking withheld the stale claim in 20/20 runs and had 0/20 wrong-wrapper placements. TMF raw pass was 17/20 only because of three edit protocol / no-effect false completions with zero successful edits and no diff; among semantic-evaluable TMF runs, pass was 17/17. With a hard deterministic validation gate, wrong placements were largely blocked or corrected across arms, showing validation loop value but reducing the purity of the freshness-only A/B contrast.
 
 ## Files
 

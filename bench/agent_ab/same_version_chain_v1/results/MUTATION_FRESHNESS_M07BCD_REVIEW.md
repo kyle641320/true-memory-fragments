@@ -83,3 +83,8 @@ Use M07d as a secondary engineering result:
 - M07c JSON/report: `results/mutation_freshness_m07c.json`, `results/MUTATION_FRESHNESS_M07C_REPORT.md`
 - M07d JSON/report: `results/mutation_freshness_m07d.json`, `results/MUTATION_FRESHNESS_M07D_REPORT.md`
 - Comparative review: this file.
+
+
+## M07e correction note
+
+Later R20 rerun (`MUTATION_FRESHNESS_M07E_R20_REVIEW.md`) confirmed that TMF off-gate raw failures should be separated from semantic failures. In M07e off R20, TMF raw pass was `17/20`, but the three raw failures were edit protocol / no-effect false completions with zero successful edits and no diff. TMF freshness withholding was `20/20`, wrong-wrapper placement was `0/20`, and semantic-evaluable pass was `17/17`.
