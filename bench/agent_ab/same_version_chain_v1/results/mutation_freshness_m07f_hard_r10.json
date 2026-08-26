@@ -1,0 +1,3162 @@
+{
+  "schema": "mutation_freshness_m07f",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "result_loop": true,
+  "max_turns": 5,
+  "max_no_progress": 2,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one `hook()` call in `invokeReflectively`, after argument preparation and immediately before `methodInvoke(event)`. Compiled and tested the updated fixture.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 25,
+        "source_bytes": 3180,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3008,
+        "completion_tokens": 662,
+        "invalid": 0,
+        "wall_seconds": 85.496,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "read_range",
+            "error": "invalid path"
+          },
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 2114,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1987,
+        "completion_tokens": 419,
+        "invalid": 0,
+        "wall_seconds": 26.558,
+        "successful_edits": 2,
+        "passed_tests": 0,
+        "rejected_finals": 1,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Inserted exactly one hook() call in invokeReflectively after argument preparation and immediately before methodInvoke(event).",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 2267,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1953,
+        "completion_tokens": 365,
+        "invalid": 0,
+        "wall_seconds": 47.394,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 2,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 2656,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3202,
+        "completion_tokens": 288,
+        "invalid": 1,
+        "wall_seconds": 36.321,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 2
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 2,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r2.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 2,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call from the stale wrapper site into invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 2573,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1878,
+        "completion_tokens": 440,
+        "invalid": 0,
+        "wall_seconds": 34.996,
+        "successful_edits": 2,
+        "passed_tests": 2,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r2.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 2,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1679,
+        "completion_tokens": 233,
+        "invalid": 0,
+        "wall_seconds": 29.855,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r2.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 3,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 3011,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2266,
+        "completion_tokens": 247,
+        "invalid": 0,
+        "wall_seconds": 39.736,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 2
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r3.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 3,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 4286,
+        "source_reads": 7,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 6929,
+        "completion_tokens": 576,
+        "invalid": 1,
+        "wall_seconds": 88.859,
+        "successful_edits": 3,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 0,
+        "continue_nudges": 4
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 4,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r3.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 3,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 4,
+        "source_bytes": 1623,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 3466,
+        "completion_tokens": 399,
+        "invalid": 2,
+        "wall_seconds": 35.938,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 0,
+        "continue_nudges": 4
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 2,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r3.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 4,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call inside invokeReflectively, immediately before methodInvoke(event), after argument preparation.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2001,
+        "completion_tokens": 363,
+        "invalid": 0,
+        "wall_seconds": 75.732,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r4.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 4,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 3011,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2351,
+        "completion_tokens": 250,
+        "invalid": 0,
+        "wall_seconds": 34.365,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 2
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r4.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 4,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 2218,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2307,
+        "completion_tokens": 373,
+        "invalid": 0,
+        "wall_seconds": 80.81,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 1,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r4.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 5,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call from the stale invokeSubscriberMethod wrapper site into invokeReflectively, immediately after argument preparation and directly before methodInvoke(event).",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 2656,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2183,
+        "completion_tokens": 447,
+        "invalid": 0,
+        "wall_seconds": 63.443,
+        "successful_edits": 3,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r5.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 5,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call to the correct helper boundary inside invokeReflectively, immediately after argument preparation and before methodInvoke(event). Removed the stale wrapper-site call. Compilation and all tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1791,
+        "completion_tokens": 416,
+        "invalid": 0,
+        "wall_seconds": 25.484,
+        "successful_edits": 3,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r5.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 5,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one `hook()` call inside `invokeReflectively`, after argument preparation and immediately before `methodInvoke(event)`. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 3011,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2422,
+        "completion_tokens": 403,
+        "invalid": 0,
+        "wall_seconds": 28.604,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r5.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 6,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call inside invokeReflectively, immediately before methodInvoke(event), preserving the required prepared phase and leaving the wrapper unchanged. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 21,
+        "source_bytes": 2656,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2747,
+        "completion_tokens": 586,
+        "invalid": 0,
+        "wall_seconds": 82.556,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "read_range",
+            "error": "invalid path"
+          },
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r6.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 6,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 2114,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2111,
+        "completion_tokens": 440,
+        "invalid": 0,
+        "wall_seconds": 25.356,
+        "successful_edits": 2,
+        "passed_tests": 0,
+        "rejected_finals": 1,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r6.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 6,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 5,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1462,
+        "completion_tokens": 216,
+        "invalid": 0,
+        "wall_seconds": 25.677,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r6.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 7,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added the hook invocation in `invokeReflectively` after argument preparation and immediately before `methodInvoke(event)`. Compilation and tests were run.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 2098,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1521,
+        "completion_tokens": 238,
+        "invalid": 0,
+        "wall_seconds": 30.392,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r7.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 7,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1814,
+        "completion_tokens": 395,
+        "invalid": 0,
+        "wall_seconds": 37.086,
+        "successful_edits": 2,
+        "passed_tests": 0,
+        "rejected_finals": 1,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r7.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 7,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 3180,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1847,
+        "completion_tokens": 347,
+        "invalid": 0,
+        "wall_seconds": 60.645,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r7.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 8,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call from the stale wrapper site into invokeReflectively, immediately after argument preparation and before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 18,
+        "source_bytes": 2202,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2149,
+        "completion_tokens": 549,
+        "invalid": 0,
+        "wall_seconds": 53.203,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r8.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 8,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call to the correct reflective invocation site inside invokeReflectively, immediately after argument preparation and immediately before methodInvoke(event). Removed the stale wrapper-level call from invokeSubscriberMethod. Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 2114,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 2003,
+        "completion_tokens": 450,
+        "invalid": 0,
+        "wall_seconds": 36.737,
+        "successful_edits": 3,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r8.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 8,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added the hook invocation after argument preparation and immediately before `methodInvoke`, preserving the required ordering invariant. Compilation and tests were run.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 3011,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 980,
+        "completion_tokens": 333,
+        "invalid": 0,
+        "wall_seconds": 86.123,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 0,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r8.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 9,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added the hook invocation after argument preparation and immediately before methodInvoke(event), preserving the required ordering invariant. Compiled and tested the workspace.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 2622,
+        "source_reads": 5,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1710,
+        "completion_tokens": 322,
+        "invalid": 0,
+        "wall_seconds": 51.999,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 0,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r9.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 9,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call from the stale invokeSubscriberMethod wrapper site into invokeReflectively, immediately after argument preparation and directly before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 15,
+        "source_bytes": 2202,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1783,
+        "completion_tokens": 556,
+        "invalid": 0,
+        "wall_seconds": 39.59,
+        "successful_edits": 2,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r9.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 9,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in invokeReflectively, after argument preparation and immediately before methodInvoke(event). Compilation and tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 14,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1961,
+        "completion_tokens": 366,
+        "invalid": 0,
+        "wall_seconds": 55.09,
+        "successful_edits": 1,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred; edit HookFixture.java first"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r9.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "SOURCE_ONLY",
+      "rep": 10,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 4,
+        "source_bytes": 1623,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1688,
+        "completion_tokens": 185,
+        "invalid": 0,
+        "wall_seconds": 17.637,
+        "successful_edits": 1,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 1,
+        "continue_nudges": 2
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__SOURCE_ONLY__r10.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 10,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Moved the single hook() call to the correct helper site in invokeReflectively, immediately after argument preparation and before methodInvoke(event). Removed the incorrect wrapper-site call. Compilation and all tests pass.",
+        "files": [
+          "HookFixture.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 1743,
+        "source_reads": 3,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 1752,
+        "completion_tokens": 398,
+        "invalid": 0,
+        "wall_seconds": 30.034,
+        "successful_edits": 3,
+        "passed_tests": 1,
+        "rejected_finals": 1,
+        "auto_result_stop": 0,
+        "continue_nudges": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "tool_error_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: deterministic test has not passed after the latest edit; run test, fix any placement errors, rerun test"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__STALE_DOC_CONTROL__r10.raw.json",
+      "diff_bytes": 298
+    },
+    {
+      "task_id": "M07f",
+      "arm": "TMF_STALE_GATED",
+      "rep": 10,
+      "final_gate": "hard",
+      "result_loop": true,
+      "max_turns": 5,
+      "max_no_progress": 2,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 4,
+        "source_bytes": 2536,
+        "source_reads": 4,
+        "source_files": [
+          "HookFixture.java"
+        ],
+        "prompt_tokens": 4812,
+        "completion_tokens": 512,
+        "invalid": 3,
+        "wall_seconds": 31.27,
+        "successful_edits": 0,
+        "passed_tests": 0,
+        "rejected_finals": 0,
+        "auto_result_stop": 0,
+        "continue_nudges": 4
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": false,
+        "placement": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 0
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "missing hook inside invokeReflectively immediately before methodInvoke(event); expected exactly one hook() call, found 0"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": false,
+          "hook_defs_added": 0,
+          "hook_calls_added": 0
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final",
+        "categories": [
+          "no_final",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 3,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": false
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": false,
+        "post_test_ok": false
+      },
+      "raw_path": "results/raw/mutation_freshness_m07f_hard_r10/M07__TMF_STALE_GATED__r10.raw.json",
+      "diff_bytes": 0
+    }
+  ],
+  "summary": {
+    "mode": "mutation_freshness_m07f",
+    "runs": 30,
+    "final_gate": "hard",
+    "result_loop": true,
+    "max_turns": 5,
+    "max_no_progress": 2,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 10,
+        "raw_pass": 7,
+        "task_result_pass": 10,
+        "post_test_ok": 10,
+        "semantic_evaluable": 7,
+        "semantic_adjusted_pass": 7,
+        "compile_ok": 10,
+        "stale_claim_withheld": 0,
+        "wrong_wrapper_site": 0,
+        "primary": {
+          "pass": 7,
+          "no_final": 3
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 10,
+        "raw_pass": 5,
+        "task_result_pass": 10,
+        "post_test_ok": 10,
+        "semantic_evaluable": 5,
+        "semantic_adjusted_pass": 5,
+        "compile_ok": 10,
+        "stale_claim_withheld": 0,
+        "wrong_wrapper_site": 0,
+        "primary": {
+          "no_final": 4,
+          "pass": 5,
+          "edit_protocol_fail": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 10,
+        "raw_pass": 4,
+        "task_result_pass": 9,
+        "post_test_ok": 9,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "compile_ok": 10,
+        "stale_claim_withheld": 10,
+        "wrong_wrapper_site": 0,
+        "primary": {
+          "pass": 4,
+          "no_final": 4,
+          "edit_protocol_fail": 2
+        }
+      }
+    }
+  }
+}
