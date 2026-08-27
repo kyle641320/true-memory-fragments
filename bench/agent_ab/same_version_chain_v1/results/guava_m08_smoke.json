@@ -1,0 +1,416 @@
+{
+  "schema": "guava_m08_feature_stale",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "max_turns": 8,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "GUAVA_M08",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 8,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated Subscriber.java so the event is validated/prepared first, hook() runs exactly once immediately before the reflective Method.invoke call, and the hook is not triggered during scheduling, wrapper dispatch, or exception handling. Added a minimal no-op hook implementation. Compilation passes.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 30,
+        "source_bytes": 13008,
+        "source_reads": 8,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 26961,
+        "completion_tokens": 1071,
+        "invalid": 1,
+        "wall_seconds": 113.042,
+        "successful_edits": 2,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise",
+          "duplicate_edit_suppressed"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 2,
+            "action": "edit",
+            "error": "duplicate edit ignored; only one edit is allowed per turn"
+          }
+        ],
+        "compile_tool_failures": [
+          {
+            "turn": 2,
+            "exit": 1,
+            "stderr_tail": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/guava_m08_smoke/GUAVA_M08__SOURCE_ONLY__r1/Subscriber.java:99: error: cannot find symbol\n    hook();\n    ^\n  symbol:   method hook()\n  location: class Subscriber\n1 error\n"
+          },
+          {
+            "turn": 2,
+            "exit": 1,
+            "stderr_tail": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/guava_m08_smoke/GUAVA_M08__SOURCE_ONLY__r1/Subscriber.java:99: error: cannot find symbol\n    hook();\n    ^\n  symbol:   method hook()\n  location: class Subscriber\n1 error\n"
+          }
+        ],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/guava_m08_smoke/GUAVA_M08__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 433
+    },
+    {
+      "task_id": "GUAVA_M08",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 8,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added a minimal no-op hook in Subscriber and invoked it exactly once in invokeSubscriberMethod after validating the event argument and immediately before the reflective invocation helper. Removed duplicate validation from the helper so no work occurs between hook() and Method.invoke. Compilation succeeds.",
+        "files": [
+          "Subscriber.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 22,
+        "source_bytes": 21271,
+        "source_reads": 6,
+        "source_files": [
+          "EventBus.java",
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 19070,
+        "completion_tokens": 957,
+        "invalid": 0,
+        "wall_seconds": 109.204,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": false,
+        "placement": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": true,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "missing hook after checkNotNull(event) and immediately before method.invoke(target, checkedEvent) inside invokeMethodReflectively; hook is at stale wrapper site in invokeSubscriberMethod"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": true,
+          "hook_defs": 1,
+          "hook_calls": 1,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "semantic_boundary_fail",
+          "duplicate_edit_suppressed"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          },
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "duplicate edit ignored; only one edit is allowed per turn"
+          }
+        ],
+        "compile_tool_failures": [
+          {
+            "turn": 1,
+            "exit": 1,
+            "stderr_tail": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/guava_m08_smoke/GUAVA_M08__STALE_DOC_CONTROL__r1/Subscriber.java:85: error: cannot find symbol\n      hook();\n      ^\n  symbol:   method hook()\n  location: class Subscriber\n1 error\n"
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": false,
+        "task_result_pass": false,
+        "post_test_ok": false
+      },
+      "raw_path": "results/raw/guava_m08_smoke/GUAVA_M08__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 907
+    },
+    {
+      "task_id": "GUAVA_M08",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 8,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Subscriber.java:Subscriber.invokeSubscriberMethod: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 5687,
+        "source_reads": 1,
+        "source_files": [
+          "Subscriber.java"
+        ],
+        "prompt_tokens": 14661,
+        "completion_tokens": 277,
+        "invalid": 2,
+        "wall_seconds": 50.216,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_helper_site": true,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final_after_success",
+        "categories": [
+          "no_final_after_success",
+          "parse_or_invalid_action_noise"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 2,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "result_ok_but_raw_failed": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/guava_m08_smoke/GUAVA_M08__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 433
+    }
+  ],
+  "summary": {
+    "mode": "guava_m08_feature_stale",
+    "runs": 3,
+    "final_gate": "hard",
+    "max_turns": 8,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 0,
+        "semantic_adjusted_pass": 0,
+        "compile_ok": 1,
+        "stale_claim_withheld": 0,
+        "wrong_wrapper_site": 0,
+        "duplicate_edit_suppressed": 1,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 1,
+        "raw_pass": 0,
+        "task_result_pass": 0,
+        "post_test_ok": 0,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 0,
+        "compile_ok": 1,
+        "stale_claim_withheld": 0,
+        "wrong_wrapper_site": 1,
+        "duplicate_edit_suppressed": 1,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "edit_protocol_fail": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 1,
+        "raw_pass": 0,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 0,
+        "semantic_adjusted_pass": 0,
+        "compile_ok": 1,
+        "stale_claim_withheld": 1,
+        "wrong_wrapper_site": 0,
+        "duplicate_edit_suppressed": 0,
+        "result_ok_but_raw_failed": 1,
+        "primary": {
+          "no_final_after_success": 1
+        }
+      }
+    }
+  }
+}

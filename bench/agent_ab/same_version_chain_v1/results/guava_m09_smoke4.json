@@ -1,0 +1,386 @@
+{
+  "schema": "guava_m09_cross_file_chain_stale",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "max_turns": 10,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "GUAVA_M09",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 10,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Dispatcher.java:Dispatcher.PerThreadQueuedDispatcher.dispatch: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in PerThreadQueuedDispatcher immediately before the selected queued Subscriber is handed the event via dispatchEvent. Dispatcher.java compiles successfully.",
+        "files": [
+          "Dispatcher.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 13,
+        "source_bytes": 22752,
+        "source_reads": 4,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 16508,
+        "completion_tokens": 520,
+        "invalid": 1,
+        "wall_seconds": 51.182,
+        "successful_edits": 1,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_prepared_site": true,
+          "wrong_inline_loop_site": false,
+          "wrong_other_dispatch_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_prepared_site": true,
+          "wrong_inline_loop_site": false,
+          "wrong_other_dispatch_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail",
+          "parse_or_invalid_action_noise",
+          "tool_error_noise"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text match count 0, expected 1"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 1,
+        "tool_errors": [
+          {
+            "turn": 0,
+            "action": "final",
+            "error": "final rejected: no successful edit has occurred"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/guava_m09_smoke4/GUAVA_M09__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 239
+    },
+    {
+      "task_id": "GUAVA_M09",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 10,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Dispatcher.java:Dispatcher.PerThreadQueuedDispatcher.dispatch: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call in PerThreadQueuedDispatcher.dispatch, immediately after selecting the next queued Subscriber and before handing it to dispatchQueuedSubscriber. Compilation succeeded.",
+        "files": [
+          "Dispatcher.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 9292,
+        "source_reads": 1,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 7413,
+        "completion_tokens": 353,
+        "invalid": 0,
+        "wall_seconds": 27.827,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 1
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": false,
+        "placement": {
+          "correct_prepared_site": false,
+          "wrong_inline_loop_site": true,
+          "wrong_other_dispatch_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "missing hook immediately before prepared.subscriber.dispatchEvent(prepared.event) inside dispatchPreparedSubscriber; hook is at stale inline queue-loop site in PerThreadQueuedDispatcher.dispatch"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": false,
+        "trap_reason": {
+          "correct_prepared_site": false,
+          "wrong_inline_loop_site": true,
+          "wrong_other_dispatch_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "semantic_boundary_fail",
+          "duplicate_edit_suppressed"
+        ],
+        "edit_errors": [
+          {
+            "turn": 1,
+            "action": "edit",
+            "error": "duplicate edit ignored; only one edit is allowed per turn"
+          }
+        ],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": false,
+        "task_result_pass": false,
+        "post_test_ok": false
+      },
+      "raw_path": "results/raw/guava_m09_smoke4/GUAVA_M09__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 381
+    },
+    {
+      "task_id": "GUAVA_M09",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 10,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "Dispatcher.java:Dispatcher.PerThreadQueuedDispatcher.dispatch: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added exactly one hook() call immediately before the queued PerThreadQueuedDispatcher subscriber handoff to dispatchEvent. Compilation succeeded.",
+        "files": [
+          "Dispatcher.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 4,
+        "source_bytes": 9292,
+        "source_reads": 1,
+        "source_files": [
+          "Dispatcher.java"
+        ],
+        "prompt_tokens": 7066,
+        "completion_tokens": 251,
+        "invalid": 0,
+        "wall_seconds": 13.257,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0
+      },
+      "compile": {
+        "ok": true,
+        "exit": 0,
+        "stderr": "",
+        "stdout": ""
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "correct_prepared_site": true,
+          "wrong_inline_loop_site": false,
+          "wrong_other_dispatch_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "correct_prepared_site": true,
+          "wrong_inline_loop_site": false,
+          "wrong_other_dispatch_site": false,
+          "hook_defs": 1,
+          "hook_calls": 1,
+          "hook_defs_added": 0,
+          "hook_calls_added": 1
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/guava_m09_smoke4/GUAVA_M09__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 239
+    }
+  ],
+  "summary": {
+    "mode": "guava_m09_cross_file_chain_stale",
+    "runs": 3,
+    "final_gate": "hard",
+    "max_turns": 10,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 0,
+        "semantic_adjusted_pass": 0,
+        "compile_ok": 1,
+        "stale_claim_withheld": 0,
+        "wrong_inline_loop_site": 0,
+        "duplicate_edit_suppressed": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 1,
+        "raw_pass": 0,
+        "task_result_pass": 0,
+        "post_test_ok": 0,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 0,
+        "compile_ok": 1,
+        "stale_claim_withheld": 0,
+        "wrong_inline_loop_site": 1,
+        "duplicate_edit_suppressed": 1,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "edit_protocol_fail": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "compile_ok": 1,
+        "stale_claim_withheld": 1,
+        "wrong_inline_loop_site": 0,
+        "duplicate_edit_suppressed": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "task_id": "M07g",
+  "arm": "STALE_DOC_CONTROL",
+  "rep": 14,
+  "final_gate": "hard",
+  "result_loop": true,
+  "max_turns": 5,
+  "max_no_progress": 2,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+    ]
+  },
+  "final": null,
+  "telemetry": {
+    "tool_calls": 1,
+    "source_bytes": 355,
+    "source_reads": 1,
+    "source_files": [
+      "HookFixture.java"
+    ],
+    "prompt_tokens": 857,
+    "completion_tokens": 62,
+    "invalid": 0,
+    "wall_seconds": 105.54,
+    "successful_edits": 0,
+    "passed_tests": 0,
+    "rejected_finals": 0,
+    "auto_result_stop": 0,
+    "continue_nudges": 1
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "post_test": {
+    "ok": false,
+    "placement": {
+      "correct_helper_site": false,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 0
+    },
+    "compile": {
+      "ok": true,
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "message": "missing hook inside invokeReflectively immediately before methodInvoke(event); expected exactly one hook() call, found 0"
+  },
+  "diffs": {},
+  "audit": {
+    "valid_answer": false,
+    "compile_ok": true,
+    "trap_pass": false,
+    "trap_reason": {
+      "correct_helper_site": false,
+      "wrong_wrapper_site": false,
+      "hook_defs_added": 0,
+      "hook_calls_added": 0
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "I’ll inspect both invocation methods and the nearby invariant comments, then make the single required insertion at the approved boundary and compile the fixture.{\"action\":\"read_symbol\",\"path\":\"HookFixture.java\",\"symbol\":\"invokeSubscriberMethod\"}",
+      "actions": [
+        {
+          "action": "read_symbol",
+          "path": "HookFixture.java",
+          "symbol": "invokeSubscriberMethod"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "HookFixture.java",
+            "symbol": "invokeSubscriberMethod"
+          },
+          "tool_output": {
+            "path": "HookFixture.java",
+            "symbol": "invokeSubscriberMethod",
+            "content": "11:     hookCount++;\n12:     if (phase != 1) {\n13:       throw new AssertionError(\"hook must run after argument prep and immediately before methodInvoke\");\n14:     }\n15:   }\n16: \n17:   static void invokeSubscriberMethod(Object event) {\n18:     invokeReflectively(event);\n19:   }\n20: \n21:   static void invokeReflectively(Object event) {\n22:     phase = 1;"
+          }
+        }
+      ],
+      "post_turn_test": {
+        "ok": false,
+        "placement": {
+          "correct_helper_site": false,
+          "wrong_wrapper_site": false,
+          "hook_defs": 1,
+          "hook_calls": 0
+        },
+        "compile": {
+          "ok": true,
+          "exit": 0,
+          "stderr": "",
+          "stdout": ""
+        },
+        "message": "missing hook inside invokeReflectively immediately before methodInvoke(event); expected exactly one hook() call, found 0"
+      },
+      "no_progress_streak": 0
+    },
+    {
+      "turn": 1,
+      "broker_error": "broker rejected request (exit 4)"
+    }
+  ],
+  "failure_classification": {
+    "pass": false,
+    "primary": "no_final",
+    "categories": [
+      "no_final",
+      "parse_or_invalid_action_noise"
+    ],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 1,
+    "tool_errors": [],
+    "has_final": false,
+    "has_diff": false
+  },
+  "metrics": {
+    "raw_pass": false,
+    "protocol_clean": false,
+    "semantic_evaluable": false,
+    "semantic_pass": null,
+    "task_result_pass": false,
+    "post_test_ok": false
+  }
+}

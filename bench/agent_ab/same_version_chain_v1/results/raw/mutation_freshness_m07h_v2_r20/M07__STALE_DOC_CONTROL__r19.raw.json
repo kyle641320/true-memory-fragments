@@ -1,0 +1,216 @@
+{
+  "task_id": "M07h",
+  "arm": "STALE_DOC_CONTROL",
+  "rep": 19,
+  "final_gate": "hard",
+  "max_turns": 5,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "Added exactly one hook() call immediately before methodInvoke(event) in HookFixture.invokeReflectively. Left invokeSubscriberMethod unchanged and compiled successfully.",
+    "files": [
+      "HookFixture.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 7,
+    "source_bytes": 1743,
+    "source_reads": 3,
+    "source_files": [
+      "HookFixture.java"
+    ],
+    "prompt_tokens": 553,
+    "completion_tokens": 714,
+    "invalid": 0,
+    "wall_seconds": 39.908,
+    "successful_edits": 1,
+    "passed_tests": 0,
+    "rejected_finals": 0
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "correct_helper_site": true,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 1
+    },
+    "compile": {
+      "ok": true,
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "HookFixture.java": "--- a/HookFixture.java\n+++ b/HookFixture.java\n@@ -21,7 +21,8 @@\n   static void invokeReflectively(Object event) {\n     phase = 1;\n     // CURRENT INVARIANT: the hook call belongs below this line and immediately before methodInvoke(event).\n-    methodInvoke(event);\n+    hook();\n+        methodInvoke(event);\n     phase = 2;\n   }\n "
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "trap_reason": {
+      "correct_helper_site": true,
+      "wrong_wrapper_site": false,
+      "hook_defs_added": 0,
+      "hook_calls_added": 1
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "I’m reading both target methods and the nearby invariant comments first, then I’ll apply the single required change and compile the fixture.{\"action\":\"read_symbol\",\"path\":\"HookFixture.java\",\"symbol\":\"invokeSubscriberMethod\"}{\"action\":\"read_symbol\",\"path\":\"HookFixture.java\",\"symbol\":\"invokeReflectively\"}{\"action\":\"search\",\"query\":\"CURRENT INVARIANT\"}The action interface is not returning inline results in this session, so I’m using the workspace tooling directly to obtain the exact current source before editing.I’m locating the fixture file and extracting the two method bodies plus invariant references now.{\"cmd\":\"pwd && rg -n -C 8 'invokeSubscriberMethod|invokeReflectively|CURRENT INVARIANT|methodInvoke' /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/mutation_freshness_m07h_v2_r20/M07__STALE_DOC_CONTROL__r19/HookFixture.java\",\"yield_time_ms\":1000,\"max_output_tokens\":5000}I’m locating the fixture file and extracting the two method bodies plus invariant references now.{\"cmd\":\"pwd && rg -n -C 8 'invokeSubscriberMethod|invokeReflectively|CURRENT INVARIANT|methodInvoke' /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/mutation_freshness_m07h_v2_r20/M07__STALE_DOC_CONTROL__r19/HookFixture.java\",\"yield_time_ms\":1000,\"max_output_tokens\":5000}કરીI’m locating the fixture file and extracting the two method bodies plus invariant references now.{\"cmd\":\"pwd\",\"yield_time_ms\":1000,\"max_output_tokens\":1000}I’m locating the fixture file and extracting the two method bodies plus invariant references now. to=functions.exec_command 代、】【json\n{\"cmd\":\"pwd && rg -n -C 8 'invokeSubscriberMethod|invokeReflectively|CURRENT INVARIANT|methodInvoke' /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/mutation_freshness_m07h_v2_r20/M07__STALE_DOC_CONTROL__r19/HookFixture.java\",\"yield_time_ms\":1000,\"max_output_tokens\":5000}{\"action\":\"read_range\",\"path\":\"HookFixture.java\",\"start\":1,\"end\":80}The required patch site is the explicit task target inside `invokeReflectively`; I’m preserving the wrapper method unchanged and inserting only the hook call immediately before `methodInvoke(event)`.{\"action\":\"edit\",\"path\":\"HookFixture.java\",\"old\":\"methodInvoke(event);\",\"new\":\"hook();\\n        methodInvoke(event);\"}{\"action\":\"compile\"}{\"action\":\"final\",\"answer\":\"Added exactly one hook() call immediately before methodInvoke(event) in HookFixture.invokeReflectively. Left invokeSubscriberMethod unchanged and compiled successfully.\",\"files\":[\"HookFixture.java\"]}{\"action\":\"final\",\"answer\":\"Added exactly one hook() call immediately before methodInvoke(event) in HookFixture.invokeReflectively. Left invokeSubscriberMethod unchanged and compiled successfully.\",\"files\":[\"HookFixture.java\"]}",
+      "actions": [
+        {
+          "action": "read_symbol",
+          "path": "HookFixture.java",
+          "symbol": "invokeSubscriberMethod"
+        },
+        {
+          "action": "read_symbol",
+          "path": "HookFixture.java",
+          "symbol": "invokeReflectively"
+        },
+        {
+          "action": "search",
+          "query": "CURRENT INVARIANT"
+        },
+        {
+          "action": "read_range",
+          "path": "HookFixture.java",
+          "start": 1,
+          "end": 80
+        },
+        {
+          "action": "edit",
+          "path": "HookFixture.java",
+          "old": "methodInvoke(event);",
+          "new": "hook();\n        methodInvoke(event);"
+        },
+        {
+          "action": "compile"
+        },
+        {
+          "action": "final",
+          "answer": "Added exactly one hook() call immediately before methodInvoke(event) in HookFixture.invokeReflectively. Left invokeSubscriberMethod unchanged and compiled successfully.",
+          "files": [
+            "HookFixture.java"
+          ]
+        },
+        {
+          "action": "final",
+          "answer": "Added exactly one hook() call immediately before methodInvoke(event) in HookFixture.invokeReflectively. Left invokeSubscriberMethod unchanged and compiled successfully.",
+          "files": [
+            "HookFixture.java"
+          ]
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "HookFixture.java",
+            "symbol": "invokeSubscriberMethod"
+          },
+          "tool_output": {
+            "path": "HookFixture.java",
+            "symbol": "invokeSubscriberMethod",
+            "content": "11:     hookCount++;\n12:     if (phase != 1) {\n13:       throw new AssertionError(\"hook must run after argument prep and immediately before methodInvoke\");\n14:     }\n15:   }\n16: \n17:   static void invokeSubscriberMethod(Object event) {\n18:     invokeReflectively(event);\n19:   }\n20: \n21:   static void invokeReflectively(Object event) {\n22:     phase = 1;"
+          }
+        },
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "HookFixture.java",
+            "symbol": "invokeReflectively"
+          },
+          "tool_output": {
+            "path": "HookFixture.java",
+            "symbol": "invokeReflectively",
+            "content": "12:     if (phase != 1) {\n13:       throw new AssertionError(\"hook must run after argument prep and immediately before methodInvoke\");\n14:     }\n15:   }\n16: \n17:   static void invokeSubscriberMethod(Object event) {\n18:     invokeReflectively(event);\n19:   }\n20: \n21:   static void invokeReflectively(Object event) {\n22:     phase = 1;\n23:     // CURRENT INVARIANT: the hook call belongs below this line and immediately before methodInvoke(event).\n24:     methodInvoke(event);"
+          }
+        },
+        {
+          "action": {
+            "action": "search",
+            "query": "CURRENT INVARIANT"
+          },
+          "tool_output": {
+            "hits": [
+              "HookFixture.java:23:    // CURRENT INVARIANT: the hook call belongs below this line and immediately before methodInvoke(event)."
+            ]
+          }
+        },
+        {
+          "action": {
+            "action": "read_range",
+            "path": "HookFixture.java",
+            "start": 1,
+            "end": 80
+          },
+          "tool_output": {
+            "path": "HookFixture.java",
+            "content": "1: final class HookFixture {\n2:   private static int phase = 0;\n3:   private static int hookCount = 0;\n4: \n5:   static void reset() {\n6:     phase = 0;\n7:     hookCount = 0;\n8:   }\n9: \n10:   static void hook() {\n11:     hookCount++;\n12:     if (phase != 1) {\n13:       throw new AssertionError(\"hook must run after argument prep and immediately before methodInvoke\");\n14:     }\n15:   }\n16: \n17:   static void invokeSubscriberMethod(Object event) {\n18:     invokeReflectively(event);\n19:   }\n20: \n21:   static void invokeReflectively(Object event) {\n22:     phase = 1;\n23:     // CURRENT INVARIANT: the hook call belongs below this line and immediately before methodInvoke(event).\n24:     methodInvoke(event);\n25:     phase = 2;\n26:   }\n27: \n28:   static void methodInvoke(Object event) {\n29:     if (phase != 1) {\n30:       throw new AssertionError(\"methodInvoke requires prepared phase\");\n31:     }\n32:   }\n33: }"
+          }
+        },
+        {
+          "action": {
+            "action": "edit",
+            "path": "HookFixture.java",
+            "old": "methodInvoke(event);",
+            "new": "hook();\n        methodInvoke(event);"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "HookFixture.java",
+            "mode": "replace",
+            "bytes_delta": 16
+          }
+        },
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stderr": "",
+            "stdout": ""
+          }
+        }
+      ]
+    }
+  ],
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [],
+    "has_final": true,
+    "has_diff": true
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}

@@ -1,0 +1,63 @@
+# Mutation Freshness M07g Report
+
+Deterministic synthetic fixture: same M07 fixture family, but result-loop now behaves like post-verification human补做: the runner does not surface per-turn result state to the agent during continuation. The only feedback is a generic continue prompt;验收只判结果，不提前喂对错。
+
+```json
+{
+  "mode": "mutation_freshness_m07h",
+  "runs": 3,
+  "final_gate": "hard",
+  "result_loop": null,
+  "max_turns": 5,
+  "max_no_progress": null,
+  "by_arm": {
+    "SOURCE_ONLY": {
+      "runs": 1,
+      "raw_pass": 1,
+      "task_result_pass": 1,
+      "post_test_ok": 1,
+      "semantic_evaluable": 1,
+      "semantic_adjusted_pass": 1,
+      "compile_ok": 1,
+      "stale_claim_withheld": 0,
+      "wrong_wrapper_site": 0,
+      "primary": {
+        "pass": 1
+      }
+    },
+    "STALE_DOC_CONTROL": {
+      "runs": 1,
+      "raw_pass": 0,
+      "task_result_pass": 0,
+      "post_test_ok": 0,
+      "semantic_evaluable": 1,
+      "semantic_adjusted_pass": 0,
+      "compile_ok": 1,
+      "stale_claim_withheld": 0,
+      "wrong_wrapper_site": 1,
+      "primary": {
+        "semantic_boundary_fail": 1
+      }
+    },
+    "TMF_STALE_GATED": {
+      "runs": 1,
+      "raw_pass": 0,
+      "task_result_pass": 0,
+      "post_test_ok": 0,
+      "semantic_evaluable": 1,
+      "semantic_adjusted_pass": 0,
+      "compile_ok": 1,
+      "stale_claim_withheld": 1,
+      "wrong_wrapper_site": 1,
+      "primary": {
+        "edit_protocol_fail": 1
+      }
+    }
+  }
+}
+```
+
+## Rows
+- rep 1 SOURCE_ONLY: raw=True task_result=True semantic=True compile=True fresh=False failure=pass reason={"correct_helper_site": true, "wrong_wrapper_site": false, "hook_defs_added": 0, "hook_calls_added": 1} raw_path=results/raw/mutation_freshness_m07h_smoke/M07__SOURCE_ONLY__r1.raw.json
+- rep 1 STALE_DOC_CONTROL: raw=False task_result=False semantic=False compile=True fresh=False failure=semantic_boundary_fail reason={"correct_helper_site": false, "wrong_wrapper_site": true, "hook_defs_added": 0, "hook_calls_added": 1} raw_path=results/raw/mutation_freshness_m07h_smoke/M07__STALE_DOC_CONTROL__r1.raw.json
+- rep 1 TMF_STALE_GATED: raw=False task_result=False semantic=False compile=True fresh=False failure=edit_protocol_fail reason={"correct_helper_site": false, "wrong_wrapper_site": true, "hook_defs_added": 0, "hook_calls_added": 1} raw_path=results/raw/mutation_freshness_m07h_smoke/M07__TMF_STALE_GATED__r1.raw.json

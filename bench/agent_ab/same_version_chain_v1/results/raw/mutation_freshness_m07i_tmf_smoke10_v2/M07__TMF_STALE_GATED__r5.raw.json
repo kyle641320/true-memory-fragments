@@ -1,0 +1,90 @@
+{
+  "task_id": "M07h",
+  "arm": "TMF_STALE_GATED",
+  "rep": 5,
+  "final_gate": "hard",
+  "max_turns": 5,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+    ]
+  },
+  "final": null,
+  "telemetry": {
+    "tool_calls": 0,
+    "source_bytes": 0,
+    "source_reads": 0,
+    "source_files": [],
+    "prompt_tokens": 529,
+    "completion_tokens": 0,
+    "invalid": 0,
+    "wall_seconds": 0.0,
+    "successful_edits": 0,
+    "passed_tests": 0,
+    "rejected_finals": 0
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "post_test": {
+    "ok": false,
+    "placement": {
+      "correct_helper_site": false,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 0
+    },
+    "compile": {
+      "ok": true,
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "message": "missing hook inside invokeReflectively immediately before methodInvoke(event); expected exactly one hook() call, found 0"
+  },
+  "diffs": {},
+  "audit": {
+    "valid_answer": false,
+    "compile_ok": true,
+    "trap_pass": false,
+    "trap_reason": {
+      "correct_helper_site": false,
+      "wrong_wrapper_site": false,
+      "hook_defs_added": 0,
+      "hook_calls_added": 0
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "broker_error": "broker preflight is required before assignment"
+    }
+  ],
+  "failure_classification": {
+    "pass": false,
+    "primary": "no_final",
+    "categories": [
+      "no_final",
+      "parse_or_invalid_action_noise"
+    ],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 1,
+    "tool_errors": [],
+    "has_final": false,
+    "has_diff": false
+  },
+  "metrics": {
+    "raw_pass": false,
+    "protocol_clean": false,
+    "semantic_evaluable": false,
+    "semantic_pass": null,
+    "task_result_pass": false,
+    "post_test_ok": false
+  }
+}

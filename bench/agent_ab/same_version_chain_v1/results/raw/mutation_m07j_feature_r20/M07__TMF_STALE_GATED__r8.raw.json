@@ -1,0 +1,206 @@
+{
+  "task_id": "M07h",
+  "arm": "TMF_STALE_GATED",
+  "rep": 8,
+  "final_gate": "hard",
+  "max_turns": 6,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "HookFixture.java:HookFixture.invokeSubscriberMethod: java_hash mismatch"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "Added a single hook() call at the actual invocation boundary in invokeReflectively(), after phase/argument preparation and immediately before methodInvoke(). Compilation succeeds.",
+    "files": [
+      "HookFixture.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 5,
+    "source_bytes": 1602,
+    "source_reads": 2,
+    "source_files": [
+      "HookFixture.java"
+    ],
+    "prompt_tokens": 3950,
+    "completion_tokens": 174,
+    "invalid": 0,
+    "wall_seconds": 17.311,
+    "successful_edits": 1,
+    "passed_tests": 0,
+    "rejected_finals": 0,
+    "duplicate_edit_suppressed": 0,
+    "broker_preflight_recovered": 0
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "correct_helper_site": true,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 1
+    },
+    "compile": {
+      "ok": true,
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "HookFixture.java": "--- a/HookFixture.java\n+++ b/HookFixture.java\n@@ -20,6 +20,7 @@\n \n   static void invokeReflectively(Object event) {\n     phase = 1;\n+    hook();\n     methodInvoke(event);\n     phase = 2;\n   }"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "trap_reason": {
+      "correct_helper_site": true,
+      "wrong_wrapper_site": false,
+      "hook_defs_added": 0,
+      "hook_calls_added": 1
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"read_range\",\"path\":\"HookFixture.java\",\"start\":1,\"end\":120}{\"action\":\"read_range\",\"path\":\"HookFixture.java\",\"start\":1,\"end\":120}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "HookFixture.java",
+          "start": 1,
+          "end": 120
+        },
+        {
+          "action": "read_range",
+          "path": "HookFixture.java",
+          "start": 1,
+          "end": 120
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "HookFixture.java",
+            "start": 1,
+            "end": 120
+          },
+          "tool_output": {
+            "path": "HookFixture.java",
+            "content": "1: final class HookFixture {\n2:   private static int phase = 0;\n3:   private static int hookCount = 0;\n4: \n5:   static void reset() {\n6:     phase = 0;\n7:     hookCount = 0;\n8:   }\n9: \n10:   static void hook() {\n11:     hookCount++;\n12:     if (phase != 1) {\n13:       throw new AssertionError(\"hook must run after argument prep and immediately before methodInvoke\");\n14:     }\n15:   }\n16: \n17:   static void invokeSubscriberMethod(Object event) {\n18:     invokeReflectively(event);\n19:   }\n20: \n21:   static void invokeReflectively(Object event) {\n22:     phase = 1;\n23:     methodInvoke(event);\n24:     phase = 2;\n25:   }\n26: \n27:   static void methodInvoke(Object event) {\n28:     if (phase != 1) {\n29:       throw new AssertionError(\"methodInvoke requires prepared phase\");\n30:     }\n31:   }\n32: }"
+          }
+        },
+        {
+          "action": {
+            "action": "read_range",
+            "path": "HookFixture.java",
+            "start": 1,
+            "end": 120
+          },
+          "tool_output": {
+            "path": "HookFixture.java",
+            "content": "1: final class HookFixture {\n2:   private static int phase = 0;\n3:   private static int hookCount = 0;\n4: \n5:   static void reset() {\n6:     phase = 0;\n7:     hookCount = 0;\n8:   }\n9: \n10:   static void hook() {\n11:     hookCount++;\n12:     if (phase != 1) {\n13:       throw new AssertionError(\"hook must run after argument prep and immediately before methodInvoke\");\n14:     }\n15:   }\n16: \n17:   static void invokeSubscriberMethod(Object event) {\n18:     invokeReflectively(event);\n19:   }\n20: \n21:   static void invokeReflectively(Object event) {\n22:     phase = 1;\n23:     methodInvoke(event);\n24:     phase = 2;\n25:   }\n26: \n27:   static void methodInvoke(Object event) {\n28:     if (phase != 1) {\n29:       throw new AssertionError(\"methodInvoke requires prepared phase\");\n30:     }\n31:   }\n32: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"edit\",\"path\":\"HookFixture.java\",\"old\":\"  static void invokeReflectively(Object event) {\\n    phase = 1;\\n    methodInvoke(event);\\n    phase = 2;\\n  }\",\"new\":\"  static void invokeReflectively(Object event) {\\n    phase = 1;\\n    hook();\\n    methodInvoke(event);\\n    phase = 2;\\n  }\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "HookFixture.java",
+          "old": "  static void invokeReflectively(Object event) {\n    phase = 1;\n    methodInvoke(event);\n    phase = 2;\n  }",
+          "new": "  static void invokeReflectively(Object event) {\n    phase = 1;\n    hook();\n    methodInvoke(event);\n    phase = 2;\n  }"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "HookFixture.java",
+            "old": "  static void invokeReflectively(Object event) {\n    phase = 1;\n    methodInvoke(event);\n    phase = 2;\n  }",
+            "new": "  static void invokeReflectively(Object event) {\n    phase = 1;\n    hook();\n    methodInvoke(event);\n    phase = 2;\n  }"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "HookFixture.java",
+            "mode": "replace",
+            "bytes_delta": 12
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stderr": "",
+            "stdout": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"final\",\"answer\":\"Added a single hook() call at the actual invocation boundary in invokeReflectively(), after phase/argument preparation and immediately before methodInvoke(). Compilation succeeds.\",\"files\":[\"HookFixture.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "Added a single hook() call at the actual invocation boundary in invokeReflectively(), after phase/argument preparation and immediately before methodInvoke(). Compilation succeeds.",
+          "files": [
+            "HookFixture.java"
+          ]
+        }
+      ],
+      "tool_outputs": []
+    }
+  ],
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [],
+    "has_final": true,
+    "has_diff": true,
+    "duplicate_edit_suppressed": 0,
+    "broker_preflight_recovered": 0,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}
