@@ -294,9 +294,14 @@ Begin now."""
                 met["auto_result_stop"] += 1
                 transcript.append({"turn":turn,"auto_stop":"task_result_pass","post_test":current_result})
                 break
-            # Generic continuation only: no new evidence, no placement instruction.
+            # Generic continuation only: no new evidence, no placement instruction, no result feedback.
             # Keep action schema visible; otherwise this measures tool-protocol amnesia, not task completion.
-            prompt = "Continue. The task is not complete yet. Use the available tools and finish when the workspace has the requested result.\n" + tools + "\n" + ("\n".join(hist[-18:]) if hist else "")
+            prompt = (
+                "Continue. Return ONLY JSON action objects. No prose. Finish the workspace result.\n"
+                + tools
+                + "\n"
+                + ("\n".join(hist[-18:]) if hist else "")
+            )
             met["continue_nudges"] += 1
         else:
             prompt=system+"\n"+("\n".join(hist[-18:]) if hist else "")
@@ -311,7 +316,7 @@ Begin now."""
         if not acts:
             met["invalid"] += 1
             if result_loop:
-                hist += ["AGENT:"+raw]
+                hist += ["AGENT:"+raw, "SYSTEM: RETURN ONLY JSON ACTION OBJECTS. No prose."]
             else:
                 hist += ["AGENT:"+raw, "SYSTEM: respond with one JSON action."]
             continue
