@@ -1,0 +1,847 @@
+{
+  "mode": "GUAVA_M10_PREREAD_R50_independent_audit",
+  "raw_count": 200,
+  "existing_report_read": "results/GUAVA_M10_PREREAD_R50_REPORT.md",
+  "by_arm": {
+    "SOURCE_ONLY": {
+      "runs": 50,
+      "raw_pass": 40,
+      "task_result_pass": 41,
+      "post_test_ok": 41,
+      "semantic_evaluable": 20,
+      "semantic_pass": 20,
+      "compile_ok": 50,
+      "compile_fail": 0,
+      "wrong_inline_loop_site": 0,
+      "wrong_other_dispatch_site": 0,
+      "correct_prepared_site": 41,
+      "no_final_has_final_false": 10,
+      "no_final_primary": 2,
+      "no_final_after_success_primary": 1,
+      "edit_protocol_fail_primary": 7,
+      "semantic_boundary_fail_primary": 0,
+      "result_ok_but_raw_failed": 1,
+      "duplicate_edit_suppressed_total": 14,
+      "duplicate_edit_suppressed_runs": 14,
+      "tool_calls_total": 824,
+      "source_reads_total": 120,
+      "source_bytes_total": 707518,
+      "tool_calls_avg": 16.48,
+      "source_reads_avg": 2.4,
+      "source_bytes_avg": 14150.36,
+      "tool_calls_median": 16.5,
+      "source_reads_median": 2.0,
+      "source_bytes_median": 9908.0,
+      "no_tool_use_runs": 2,
+      "stale_claim_withheld_raw_explicit": 0,
+      "freshness_stale_bindings_runs": 50,
+      "primary": {
+        "pass": 40,
+        "edit_protocol_fail": 7,
+        "no_final_after_success": 1,
+        "no_final": 2
+      },
+      "categories": {
+        "edit_protocol_fail": 45,
+        "tool_error_noise": 43,
+        "duplicate_edit_suppressed": 14,
+        "no_final": 9,
+        "parse_or_invalid_action_noise": 30,
+        "no_final_after_success": 1
+      }
+    },
+    "PREREAD_STALE_SOURCE": {
+      "runs": 50,
+      "raw_pass": 2,
+      "task_result_pass": 2,
+      "post_test_ok": 2,
+      "semantic_evaluable": 10,
+      "semantic_pass": 0,
+      "compile_ok": 50,
+      "compile_fail": 0,
+      "wrong_inline_loop_site": 43,
+      "wrong_other_dispatch_site": 0,
+      "correct_prepared_site": 3,
+      "no_final_has_final_false": 6,
+      "no_final_primary": 1,
+      "no_final_after_success_primary": 0,
+      "edit_protocol_fail_primary": 32,
+      "semantic_boundary_fail_primary": 15,
+      "result_ok_but_raw_failed": 0,
+      "duplicate_edit_suppressed_total": 15,
+      "duplicate_edit_suppressed_runs": 10,
+      "tool_calls_total": 626,
+      "source_reads_total": 131,
+      "source_bytes_total": 188836,
+      "tool_calls_avg": 12.52,
+      "source_reads_avg": 2.62,
+      "source_bytes_avg": 3776.72,
+      "tool_calls_median": 12.0,
+      "source_reads_median": 2.0,
+      "source_bytes_median": 3445.0,
+      "no_tool_use_runs": 1,
+      "stale_claim_withheld_raw_explicit": 0,
+      "freshness_stale_bindings_runs": 50,
+      "primary": {
+        "semantic_boundary_fail": 15,
+        "edit_protocol_fail": 32,
+        "pass": 2,
+        "no_final": 1
+      },
+      "categories": {
+        "semantic_boundary_fail": 42,
+        "parse_or_invalid_action_noise": 40,
+        "tool_error_noise": 42,
+        "edit_protocol_fail": 33,
+        "duplicate_edit_suppressed": 10,
+        "no_final": 6
+      }
+    },
+    "STALE_DOC_CONTROL": {
+      "runs": 50,
+      "raw_pass": 0,
+      "task_result_pass": 0,
+      "post_test_ok": 0,
+      "semantic_evaluable": 16,
+      "semantic_pass": 0,
+      "compile_ok": 50,
+      "compile_fail": 0,
+      "wrong_inline_loop_site": 45,
+      "wrong_other_dispatch_site": 0,
+      "correct_prepared_site": 0,
+      "no_final_has_final_false": 7,
+      "no_final_primary": 4,
+      "no_final_after_success_primary": 0,
+      "edit_protocol_fail_primary": 42,
+      "semantic_boundary_fail_primary": 4,
+      "result_ok_but_raw_failed": 0,
+      "duplicate_edit_suppressed_total": 13,
+      "duplicate_edit_suppressed_runs": 9,
+      "tool_calls_total": 831,
+      "source_reads_total": 108,
+      "source_bytes_total": 455430,
+      "tool_calls_avg": 16.62,
+      "source_reads_avg": 2.16,
+      "source_bytes_avg": 9108.6,
+      "tool_calls_median": 17.0,
+      "source_reads_median": 1.5,
+      "source_bytes_median": 5743.0,
+      "no_tool_use_runs": 4,
+      "stale_claim_withheld_raw_explicit": 0,
+      "freshness_stale_bindings_runs": 50,
+      "primary": {
+        "edit_protocol_fail": 42,
+        "semantic_boundary_fail": 4,
+        "no_final": 4
+      },
+      "categories": {
+        "edit_protocol_fail": 42,
+        "semantic_boundary_fail": 43,
+        "tool_error_noise": 39,
+        "parse_or_invalid_action_noise": 34,
+        "duplicate_edit_suppressed": 9,
+        "no_final": 7
+      }
+    },
+    "TMF_STALE_GATED": {
+      "runs": 50,
+      "raw_pass": 42,
+      "task_result_pass": 42,
+      "post_test_ok": 42,
+      "semantic_evaluable": 34,
+      "semantic_pass": 34,
+      "compile_ok": 50,
+      "compile_fail": 0,
+      "wrong_inline_loop_site": 0,
+      "wrong_other_dispatch_site": 0,
+      "correct_prepared_site": 42,
+      "no_final_has_final_false": 8,
+      "no_final_primary": 2,
+      "no_final_after_success_primary": 0,
+      "edit_protocol_fail_primary": 6,
+      "semantic_boundary_fail_primary": 0,
+      "result_ok_but_raw_failed": 0,
+      "duplicate_edit_suppressed_total": 20,
+      "duplicate_edit_suppressed_runs": 17,
+      "tool_calls_total": 668,
+      "source_reads_total": 102,
+      "source_bytes_total": 586304,
+      "tool_calls_avg": 13.36,
+      "source_reads_avg": 2.04,
+      "source_bytes_avg": 11726.08,
+      "tool_calls_median": 14.0,
+      "source_reads_median": 2.0,
+      "source_bytes_median": 9292.0,
+      "no_tool_use_runs": 2,
+      "stale_claim_withheld_raw_explicit": 0,
+      "freshness_stale_bindings_runs": 50,
+      "primary": {
+        "pass": 42,
+        "edit_protocol_fail": 6,
+        "no_final": 2
+      },
+      "categories": {
+        "edit_protocol_fail": 42,
+        "tool_error_noise": 40,
+        "duplicate_edit_suppressed": 17,
+        "no_final": 8,
+        "parse_or_invalid_action_noise": 16
+      }
+    }
+  },
+  "samples": [
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__SOURCE_ONLY__r1.raw.json",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "note": "SOURCE_ONLY pass: 先误试旧inline，随后读到新helper并改到 dispatchPreparedSubscriber。",
+      "primary": "pass",
+      "raw_pass": true,
+      "task_result_pass": true,
+      "post_test_ok": true,
+      "semantic_evaluable": true,
+      "semantic_pass": true,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": true,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_reads": 1,
+        "source_bytes": 9292,
+        "successful_edits": 1,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call at the final per-thread queued-dispatch handoff, immediately before subscriber-owned dispatch begins. Compilation succeeded.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "list",
+            "search:hook()",
+            "read_range:src/com/google/common/eventbus/Dispatcher.java",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "edit:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "compile",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "final:Added a single hook() call at the per-thread queued dis"
+          ],
+          "key_excerpt": "{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"read_range\",\"path\":\"src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"edit\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"old\":\"            nextEvent.subscribers.next().dispatchEvent(nextEvent.event);\",\"new\":\"            hook();\\n            nextEvent.subscribers.next().dispatchEvent("
+        },
+        {
+          "turn": 1,
+          "actions": [
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":1,\"end\":220}"
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "edit:Dispatcher.java",
+            "compile"
+          ],
+          "key_excerpt": "{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"    private void dispatchPreparedSubscriber(EventWithPreparedSubscriber prepared) {\\n      prepared.subscriber.dispatchEvent(prepared.event);\\n    }\",\"new\":\"    private void dispatchPreparedSubscriber(EventWithPreparedSubscriber prepared) {\\n      hook();\\n      prepared.subscriber.dispatchEvent(prepared.event);\\n    }\"}{\"action\":\"compile\"}"
+        },
+        {
+          "turn": 3,
+          "actions": [
+            "final:Added exactly one hook() call at the final per-thread q"
+          ],
+          "key_excerpt": "{\"action\":\"final\",\"answer\":\"Added exactly one hook() call at the final per-thread queued-dispatch handoff, immediately before subscriber-owned dispatch begins. Compilation succeeded.\",\"files\":[\"Dispatcher.java\"]}"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__SOURCE_ONLY__r13.raw.json",
+      "arm": "SOURCE_ONLY",
+      "rep": 13,
+      "note": "SOURCE_ONLY fail: invalid path/旧inline编辑失败，未产生有效diff/final。",
+      "primary": "edit_protocol_fail",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 0
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_reads": 1,
+        "source_bytes": 3485,
+        "successful_edits": 0,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": false,
+      "result_ok_but_raw_failed": false,
+      "final_answer": null,
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "list",
+            "search:void hook(",
+            "search:hook()",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "search:PerThreadQueuedDispatcher",
+            "read_symbol:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "edit:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "compile"
+          ],
+          "key_excerpt": "{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"void hook(\"}{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"search\",\"query\":\"PerThreadQueuedDispatcher\"}{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"symbol\":\"PerThreadQueuedDispatcher\"}{\"action\":\"edit\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"old\":\"          while (nextEvent.subscribers"
+        },
+        {
+          "turn": 1,
+          "actions": [
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":60,\"end\":145}"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__SOURCE_ONLY__r40.raw.json",
+      "arm": "SOURCE_ONLY",
+      "rep": 40,
+      "note": "SOURCE_ONLY result_ok_but_raw_failed/no_final_after_success: 后续改对但final协议缺失。",
+      "primary": "no_final_after_success",
+      "raw_pass": false,
+      "task_result_pass": true,
+      "post_test_ok": true,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": true,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 20,
+        "source_reads": 2,
+        "source_bytes": 9908,
+        "successful_edits": 1,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 1
+      },
+      "has_final": false,
+      "result_ok_but_raw_failed": true,
+      "final_answer": null,
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "search:hook()",
+            "list",
+            "search:Dispatcher",
+            "read_range:guava/src/com/google/common/eventbus/EventBus.java",
+            "read_range:src/com/google/common/eventbus/EventBus.java",
+            "search:dispatchQueuedEvents",
+            "read_symbol:guava/src/com/google/common/eventbus/EventBus.java",
+            "edit:guava/src/com/google/common/eventbus/EventBus.java"
+          ],
+          "key_excerpt": "{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"Dispatcher\"}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/EventBus.java\",\"start\":1,\"end\":260}{\"action\":\"read_range\",\"path\":\"src/com/google/common/eventbus/EventBus.java\",\"start\":1,\"end\":260}{\"action\":\"search\",\"query\":\"dispatchQueuedEvents\"}{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/EventBus.java\",\"symbol\":\"dispatchQueuedEvents\"}{\"action\":\"edit\",\"path\":\"guava/src/com/go"
+        },
+        {
+          "turn": 1,
+          "actions": [
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":1,\"end\":240}"
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "edit:Dispatcher.java",
+            "compile",
+            "search:hook();",
+            "read_range:Dispatcher.java",
+            "compile",
+            "edit:Dispatcher.java",
+            "compile"
+          ],
+          "key_excerpt": "{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"    private void dispatchPreparedSubscriber(EventWithPreparedSubscriber prepared) {\\n      prepared.subscriber.dispatchEvent(prepared.event);\\n    }\",\"new\":\"    private void dispatchPreparedSubscriber(EventWithPreparedSubscriber prepared) {\\n      hook();\\n      prepared.subscriber.dispatchEvent(prepared.event);\\n    }\"} | {\"action\":\"search\",\"query\":\"hook();\"} | {\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":119,\"end\":136}"
+        },
+        {
+          "turn": 3,
+          "actions": [],
+          "key_excerpt": "Implemented the instrumentation in `Dispatcher.java`. | - Added exactly one `hook()` call at the final per-thread queued-dispatch boundary, immediately before `Subscriber.dispatchEvent(...)`."
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__PREREAD_STALE_SOURCE__r1.raw.json",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "note": "PREREAD_STALE_SOURCE wrong_inline semantic fail: stale preread 指向旧queue loop。",
+      "primary": "semantic_boundary_fail",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": true,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_reads": 2,
+        "source_bytes": 3607,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call in the PerThreadQueuedDispatcher queue-drain loop, immediately before handing the selected subscriber to subscriber-owned execution. Compilation succeeds.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "read_symbol:guava/src/com/google/common/eventbus/Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"symbol\":\"PerThreadQueuedDispatcher.dispatch\"}"
+        },
+        {
+          "turn": 1,
+          "actions": [],
+          "key_excerpt": "Unable to complete the requested edit because the provided fixture path was not available to the editing tool, and no successful edit could be performed."
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "list"
+          ],
+          "key_excerpt": ""
+        },
+        {
+          "turn": 3,
+          "actions": [
+            "read_symbol:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_symbol\",\"path\":\"Dispatcher.java\",\"symbol\":\"PerThreadQueuedDispatcher.dispatch\"}"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__PREREAD_STALE_SOURCE__r10.raw.json",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 10,
+      "note": "PREREAD_STALE_SOURCE wrong_inline + edit protocol fail: 重复/错误编辑噪声掩盖语义边界错。",
+      "primary": "edit_protocol_fail",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": true,
+      "semantic_pass": false,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": true,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 17,
+        "source_reads": 2,
+        "source_bytes": 1690,
+        "successful_edits": 1,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 2
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call at the queued per-thread dispatcher handoff immediately before subscriber dispatch, and compiled successfully.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "read_symbol:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "search:while (nextEvent.subscribers.hasNext())",
+            "list",
+            "search:hook()",
+            "edit:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "compile",
+            "final:Added a single hook() call in PerThreadQueuedDispatcher"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":70,\"end\":140}{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"symbol\":\"PerThreadQueuedDispatcher.dispatch\"}{\"action\":\"search\",\"query\":\"while (nextEvent.subscribers.hasNext())\"}{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"edit\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"old\":\"            while (nextEvent.subscribers.hasNext()) {\\"
+        },
+        {
+          "turn": 1,
+          "actions": [
+            "read_range:Dispatcher.java",
+            "read_range:Dispatcher.java",
+            "search:while (nextEvent.subscribers.hasNext())",
+            "edit:Dispatcher.java",
+            "edit:Dispatcher.java",
+            "compile",
+            "edit:Dispatcher.java",
+            "compile"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":100,\"end\":118}{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":100,\"end\":118}{\"action\":\"search\",\"query\":\"while (nextEvent.subscribers.hasNext())\"}{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"            while (nextEvent.subscribers.hasNext()) {\",\"new\":\"            while (nextEvent.subscribers.hasNext()) {\\n              hook();\"}{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"            while (nextEvent.subscribers.hasNext()) {"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__PREREAD_STALE_SOURCE__r24.raw.json",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 24,
+      "note": "PREREAD_STALE_SOURCE rare pass: 从无效路径恢复后读源码定位到新prepared helper。",
+      "primary": "pass",
+      "raw_pass": true,
+      "task_result_pass": true,
+      "post_test_ok": true,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": true,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_reads": 2,
+        "source_bytes": 5870,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call at the final per-thread queued dispatcher handoff immediately before subscriber execution. Compilation succeeded.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":60,\"end\":145}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":60,\"end\":145}"
+        },
+        {
+          "turn": 1,
+          "actions": [],
+          "key_excerpt": "Unable to complete the requested edit because the provided source path was invalid and no successful edit could be performed."
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "list"
+          ],
+          "key_excerpt": ""
+        },
+        {
+          "turn": 3,
+          "actions": [
+            "read_range:Dispatcher.java",
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":70,\"end\":140}{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":70,\"end\":140}"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__STALE_DOC_CONTROL__r1.raw.json",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "note": "STALE_DOC_CONTROL wrong_inline + protocol fail: 控制文档稳定诱导旧loop插桩。",
+      "primary": "edit_protocol_fail",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": true,
+      "semantic_pass": false,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": true,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 18,
+        "source_reads": 1,
+        "source_bytes": 3041,
+        "successful_edits": 1,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call in Dispatcher.PerThreadQueuedDispatcher.dispatch, immediately before the queued subscriber handoff to dispatchQueuedSubscriber(...). Compilation succeeded.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "search:class PerThreadQueuedDispatcher",
+            "list",
+            "search:PerThreadQueuedDispatcher",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "search:hook()",
+            "read_symbol:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "search:dispatchQueuedSubscriber",
+            "edit:guava/src/com/google/common/eventbus/Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"search\",\"query\":\"class PerThreadQueuedDispatcher\"}{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"PerThreadQueuedDispatcher\"}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"symbol\":\"PerThreadQueuedDispatcher.dispatch\"}{\"action\":\"search\",\"query\":\"dispatchQueuedSubscriber\"}{\"action\":\"edit\",\"path\":\"guava/src/com/g"
+        },
+        {
+          "turn": 1,
+          "actions": [
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":65,\"end\":140}Unable to complete the requested edit."
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "edit:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"            while (nextEvent.subscribers.hasNext()) {\\n              Subscriber nextSubscriber = nextEvent.subscribers.next();\\n              dispatchQueuedSubscriber(nextEvent.event, nextSubscriber);\\n            }\",\"new\":\"            while (nextEvent.subscribers.hasNext()) {\\n              Subscriber nextSubscriber = nextEvent.subscribers.next();\\n              hook();\\n              dispatchQueuedSubscriber(nextEvent.event, nextSubscriber);\\n  "
+        },
+        {
+          "turn": 3,
+          "actions": [
+            "compile"
+          ],
+          "key_excerpt": "- Added exactly one `hook()` call inside the nested queue-drain loop. | - Positioned it immediately before `dispatchQueuedSubscriber(...)`, at the final framework-controlled handoff boundary. | Modified file: `Dispatcher.java`"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__STALE_DOC_CONTROL__r2.raw.json",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 2,
+      "note": "STALE_DOC_CONTROL primary semantic_boundary_fail: 有效编辑但位置仍是旧loop。",
+      "primary": "semantic_boundary_fail",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": true,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 5,
+        "source_reads": 1,
+        "source_bytes": 9292,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call in PerThreadQueuedDispatcher.dispatch, immediately before the queued subscriber handoff. Compilation succeeded.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "list"
+          ],
+          "key_excerpt": ""
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":1,\"end\":260}"
+        },
+        {
+          "turn": 3,
+          "actions": [
+            "edit:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"            while (nextEvent.subscribers.hasNext()) {\\n              Subscriber nextSubscriber = nextEvent.subscribers.next();\\n              dispatchQueuedSubscriber(nextEvent.event, nextSubscriber);\\n            }\",\"new\":\"            while (nextEvent.subscribers.hasNext()) {\\n              Subscriber nextSubscriber = nextEvent.subscribers.next();\\n              hook();\\n              dispatchQueuedSubscriber(nextEvent.event, nextSubscriber);\\n  "
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__STALE_DOC_CONTROL__r40.raw.json",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 40,
+      "note": "STALE_DOC_CONTROL no_final/no tool use: 零工具调用、无final、无hook call。",
+      "primary": "no_final",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 0
+      },
+      "telemetry": {
+        "tool_calls": 0,
+        "source_reads": 0,
+        "source_bytes": 0,
+        "successful_edits": 0,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": false,
+      "result_ok_but_raw_failed": false,
+      "final_answer": null,
+      "transcript_clues": []
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__TMF_STALE_GATED__r1.raw.json",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "note": "TMF_STALE_GATED pass: stale binding存在但未给出旧边界，源码读后选prepared helper。",
+      "primary": "pass",
+      "raw_pass": true,
+      "task_result_pass": true,
+      "post_test_ok": true,
+      "semantic_evaluable": true,
+      "semantic_pass": true,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": true,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 1
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_reads": 2,
+        "source_bytes": 8872,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 1
+      },
+      "has_final": true,
+      "result_ok_but_raw_failed": false,
+      "final_answer": "Added exactly one hook() call at the final per-thread queued-dispatch handoff immediately before subscriber-owned execution. Compilation succeeded.",
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "list",
+            "search:class PerThreadQueuedDispatcher",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "search:hook()",
+            "read_range:guava/src/main/java/com/google/common/eventbus/Dispatcher.java",
+            "read_range:src/com/google/common/eventbus/Dispatcher.java",
+            "edit:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "compile"
+          ],
+          "key_excerpt": "{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"class PerThreadQueuedDispatcher\"}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"read_range\",\"path\":\"guava/src/main/java/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":240}{\"action\":\"read_range\",\"path\":\"src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"edit\",\"path\":\"guava/src/com/google/common/eventbus/Dispa"
+        },
+        {
+          "turn": 1,
+          "actions": [
+            "read_range:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":1,\"end\":180}"
+        },
+        {
+          "turn": 2,
+          "actions": [
+            "edit:Dispatcher.java",
+            "compile",
+            "read_range:Dispatcher.java",
+            "edit:Dispatcher.java"
+          ],
+          "key_excerpt": "{\"action\":\"edit\",\"path\":\"Dispatcher.java\",\"old\":\"    private void dispatchPreparedSubscriber(EventWithPreparedSubscriber prepared) {\\n      prepared.subscriber.dispatchEvent(prepared.event);\\n    }\",\"new\":\"    private void dispatchPreparedSubscriber(EventWithPreparedSubscriber prepared) {\\n      hook();\\n      prepared.subscriber.dispatchEvent(prepared.event);\\n    }\"}{\"action\":\"compile\"}{\"action\":\"read_range\",\"path\":\"Dispatcher.java\",\"start\":119,\"end\":138}{\"action\":\"edit\",\"path\":\"Dispatcher.jav"
+        },
+        {
+          "turn": 3,
+          "actions": [
+            "final:Added exactly one hook() call at the final per-thread q"
+          ],
+          "key_excerpt": "{\"action\":\"final\",\"answer\":\"Added exactly one hook() call at the final per-thread queued-dispatch handoff immediately before subscriber-owned execution. Compilation succeeded.\",\"files\":[\"Dispatcher.java\"]}"
+        }
+      ]
+    },
+    {
+      "raw_path": "results/raw/guava_m10_preread_r50/GUAVA_M10__TMF_STALE_GATED__r13.raw.json",
+      "arm": "TMF_STALE_GATED",
+      "rep": 13,
+      "note": "TMF_STALE_GATED fail: 不是stale语义错，而是invalid-path编辑协议失败且无final。",
+      "primary": "edit_protocol_fail",
+      "raw_pass": false,
+      "task_result_pass": false,
+      "post_test_ok": false,
+      "semantic_evaluable": false,
+      "semantic_pass": null,
+      "compile_ok": true,
+      "placement": {
+        "correct_prepared_site": false,
+        "wrong_inline_loop_site": false,
+        "wrong_other_dispatch_site": false,
+        "hook_defs": 1,
+        "hook_calls": 0
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_reads": 0,
+        "source_bytes": 0,
+        "successful_edits": 0,
+        "rejected_finals": 1,
+        "duplicate_edit_suppressed": 0
+      },
+      "has_final": false,
+      "result_ok_but_raw_failed": false,
+      "final_answer": null,
+      "transcript_clues": [
+        {
+          "turn": 0,
+          "actions": [
+            "list",
+            "search:class PerThreadQueuedDispatcher",
+            "read_range:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "search:hook()",
+            "read_symbol:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "edit:guava/src/com/google/common/eventbus/Dispatcher.java",
+            "compile",
+            "final:Added a single hook() call in PerThreadQueuedDispatcher"
+          ],
+          "key_excerpt": "{\"action\":\"list\"}{\"action\":\"search\",\"query\":\"class PerThreadQueuedDispatcher\"}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"start\":1,\"end\":260}{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"symbol\":\"PerThreadQueuedDispatcher\"}{\"action\":\"edit\",\"path\":\"guava/src/com/google/common/eventbus/Dispatcher.java\",\"old\":\"              nextEvent.subscribers.next().dispatchEvent(nextEvent.event"
+        }
+      ]
+    }
+  ],
+  "cross_arm_findings": {
+    "source_only_vs_tmf_stale_gated": "TMF_STALE_GATED raw 42/50 vs SOURCE_ONLY 40/50，差2次；两臂均wrong_inline_loop_site=0、compile_fail=0，主要失败都是edit_protocol/no_final，而非语义边界。TMF不是少读源码导致的表面提升：其source_reads/source_bytes更少（102/586304 vs 120/707518）但semantic_evaluable/pass更多（34 vs 20），且未出现旧inline误放。",
+    "preread_and_stale_doc_collapse": "PREREAD_STALE_SOURCE raw 2/50、STALE_DOC_CONTROL 0/50，核心是stale context诱导旧inline loop位置：wrong_inline_loop_site分别43/50、45/50；compile全过，不能归因编译失败。大量primary edit_protocol_fail是协议层失败与错误路径/重复编辑噪声，不能简单算作TMF语义失败；但categories中semantic_boundary_fail分别42/43，说明绝大多数有hook call时位置错。",
+    "stale_claim_withheld_location": "独立raw聚合未发现每条raw内显式stale_claim_withheld布尔字段；raw只在freshness.stale_bindings记录版本/hash mismatch字符串。原报告TMF_STALE_GATED stale_claim_withheld=50应来自runner/arm级聚合或实验配置语义，而不是raw JSON同名字段直接求和。"
+  }
+}

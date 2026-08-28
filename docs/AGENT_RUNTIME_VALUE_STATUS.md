@@ -1,6 +1,6 @@
 # Authoritative Agent runtime value status
 
-**Single authoritative experiment ruling — 2026-08-20, frozen mechanism base `45ab3e4`.** Read this page before interpreting any older A/B report. Older reports preserve their original observations; they are not interchangeable because they test different delivery modes.
+**Single authoritative experiment ruling — updated 2026-08-28.** Read this page before interpreting any older A/B report. Older reports preserve their original observations; they are not interchangeable because they test different delivery modes. The 2026-08-28 `GUAVA_M10_PREREAD_R50` result supersedes the older blanket "Agent-outcome-unproven" wording only for one narrow value class: stale-context safety.
 
 ## Current ruling
 
@@ -13,12 +13,13 @@
 | `cognitive_continuity_v1` | **INVALID_PROTOCOL**; 0/2 has no evidentiary force | Fixture/task/golden contradiction and non-TMF model-authored memory contamination. Preserve, never regrade or attribute to product. |
 | `cognitive_continuity_v2` resumed smoke | **2/2 valid pairs**; SOURCE 2/2 success, TMF 2/2 success, qualified adoption **0/2**; STOP | Runtime recovered; the old blocked audit is retained but superseded. B01 had structural claim coverage yet repeated 1 read/91 bytes; B03 had no task coverage and repeated 2 reads/102 bytes. The frozen adoption gate prohibits a full run. |
 | `guava_cognitive_v1` | **INVALID_PROTOCOL**; task design does not test core hypothesis | PROTOCOL.md promised call-chain tasks; tasks.json executed impact analysis and compile repair. Neither tests call-chain continuity or tunnel-vision bug prevention. Preserve, never regrade or attribute to product. |
+| `GUAVA_M10_PREREAD_R50` | **POSITIVE, scoped stale-context safety evidence**: SOURCE_ONLY 40/50 raw, TMF_STALE_GATED 42/50 raw, PREREAD_STALE_SOURCE 2/50 raw, STALE_DOC_CONTROL 0/50 raw; stale arms wrong-inline 43/50 and 45/50, TMF wrong-inline 0/50 | Proves stale claims/docs can severely pollute boundary selection and TMF stale-gating can prevent that pollution on this real-Guava fixture. Does not prove broad productivity/speed/token savings; SOURCE_ONLY and TMF were close, and raw fails include protocol/no-final noise. |
 
 ### Product decision
 
 **Do not recommend TMF_MIDDLEWARE for production on an Agent-value, speed, token, or reread-reduction claim.** It may be used only as an experimental safety/navigation mechanism where users explicitly accept unproven outcome value and count injection cost. Continue to recommend source-authoritative fallback and the hard freshness/stale gate as a qualified mechanism, not as a productivity win.
 
-Evidence level is **mechanism-qualified / Agent-outcome-unproven**. Cognitive v1 invalid. Cognitive v2 stopped at smoke (0/2 adoption). Cognitive v3 (guava_cognitive_v1) invalid. Stable adoption, Python/Java breadth, semantic outcome, and net economic value remain unproved.
+Evidence level is **mechanism-qualified / stale-context-safety-positive / broad Agent-outcome-limited**. Cognitive v1 invalid. Cognitive v2 stopped at smoke (0/2 adoption). Cognitive v3 (guava_cognitive_v1) invalid. `GUAVA_M10_PREREAD_R50` is valid scoped positive evidence that stale-gating prevents stale boundary pollution, but stable adoption, Python/Java breadth beyond this fixture, productivity, and net economic value remain unproved.
 
 ## Core hypothesis (corrected 2026-08-20)
 
@@ -45,7 +46,7 @@ TMF is designed to solve the **"tunnel vision bug" problem**:
 - Phase B: Code changes one node in chain at t₁, agent receives modification task at t₂
 - Measurement: Does TMF (1) detect staleness, (2) force localized reread, (3) prevent tunnel-vision bugs?
 
-**No experiment has validly tested this hypothesis yet.**
+`GUAVA_M10_PREREAD_R50` validly tests one subclaim: when old memory/documentation points at a stale boundary, TMF stale-gating prevents that stale boundary from being injected and avoids wrong-site edits. It does not fully test the broader Phase A→B cross-session continuity/productivity hypothesis.
 
 ## Why existing experiments don't test the core hypothesis
 
@@ -124,6 +125,6 @@ To test TMF's core hypothesis:
 
 ## Summary
 
-TMF's middleware mechanics work (freshness detection, stale blocking, localized reread). But the core value hypothesis — that TMF enables cross-session call-chain continuity and prevents tunnel-vision bugs — remains **untested**. All attempts either measured the wrong thing or had invalid protocols.
+TMF's middleware mechanics work (freshness detection, stale blocking, localized reread). `GUAVA_M10_PREREAD_R50` adds scoped Agent-outcome evidence: stale context caused severe wrong-boundary edits in preread/doc controls, while TMF stale-gating avoided that stale pollution and returned behavior near SOURCE_ONLY. The broader product hypothesis — durable cross-session call-chain continuity with net productivity/economic value — remains only partially tested and needs replication.
 
 **Next step:** Design and execute valid experiment (`design_intent_v1`) that tests call-chain continuity and bug prevention.

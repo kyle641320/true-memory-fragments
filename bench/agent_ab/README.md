@@ -26,3 +26,15 @@ not something offline CI or the benchmark may synthesize. Repository reads,
 TMF calls, source-line budgets, filesystem isolation, and transcript evidence
 remain responsibilities of the isolated arm runner. A broker completion alone
 is never evidence of a valid A/B arm.
+
+## GUAVA_M10_PREREAD_R50 — scoped stale-context safety evidence (2026-08-28)
+
+Formal 4-arm real-Guava run under `same_version_chain_v1` with 50 repeats per arm (200 raw runs).
+
+Artifacts:
+- Runner report: `same_version_chain_v1/results/GUAVA_M10_PREREAD_R50_REPORT.md`
+- Independent audit: `same_version_chain_v1/results/GUAVA_M10_PREREAD_R50_INDEPENDENT_AUDIT.md`
+- Machine summary: `same_version_chain_v1/results/GUAVA_M10_PREREAD_R50_INDEPENDENT_AUDIT.json`
+- Raw transcripts: `same_version_chain_v1/results/raw/guava_m10_preread_r50/`
+
+Headline: stale pre-read/doc controls collapsed by anchoring the agent to an obsolete inline queue-drain boundary (`wrong_inline_loop_site` 43/50 and 45/50). `TMF_STALE_GATED` avoided wrong-inline placements (0/50) and raw-passed 42/50, close to SOURCE_ONLY 40/50. Interpret raw pass rates with attribution: SOURCE_ONLY/TMF failures are mostly protocol/no-final noise, not semantic boundary failures; stale arms contain both true stale-boundary failures and protocol noise. This is positive evidence for stale-context safety, not broad productivity or token-saving proof.

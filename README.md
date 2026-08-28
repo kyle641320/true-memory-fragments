@@ -1,6 +1,6 @@
 # True Memory Fragments
 
-> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics qualify, but Agent outcome value remains unproven. Read the authority page before mixing modes. (TMF)
+> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics qualify, and GUAVA_M10_PREREAD_R50 provides positive evidence for stale-context safety: stale claims/docs can catastrophically mislead agents, while TMF stale-gating blocks that stale boundary pollution. Broader Agent outcome/productivity value remains limited to this class until replicated. Read the authority page before mixing modes. (TMF)
 
 ## Bionic Design Philosophy
 
@@ -151,7 +151,7 @@ TMF is a **cross-session call-chain continuity system** for AI coding agents. It
 
 Fresh claims don't replace source — they tell you **which source to re-read** and **whether your remembered chain is still valid**.
 
-**Current status:** Mechanics proven (freshness detection, stale blocking, boundary detection work). Value hypothesis **untested** — no valid experiment has measured cross-session call-chain continuity or bug prevention yet.
+**Current status:** Mechanics proven (freshness detection, stale blocking, boundary detection work). Agent outcome value is now **partially proven for stale-context safety** by `GUAVA_M10_PREREAD_R50`: stale pre-read/doc arms were strongly pulled to the obsolete inline queue loop, while TMF stale-gating withheld the stale boundary and avoided wrong-inline placements. This does **not** yet prove broad productivity, speed, token savings, or all cross-session bug-prevention value.
 
 **Current unreleased Java qualification baseline:** the aggregate runner is `python3 tools/run_java_qualifications.py`; its manifest-governed baseline is **46/46 qualifiers and 731/731 checks**. The full unittest baseline for this unreleased checkpoint is **478/478 tests**. These are local unreleased evidence counts, not a commit, tag, package, publication, runtime framework behavior, or enterprise-wide certification claim.
 
