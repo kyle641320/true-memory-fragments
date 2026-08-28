@@ -1,0 +1,335 @@
+{
+  "task_id": "CDC_M12",
+  "arm": "SOURCE_ONLY",
+  "rep": 1,
+  "final_gate": "hard",
+  "max_turns": 14,
+  "stale_claim_present": false,
+  "stale_claim_fresh": false,
+  "stale_claim_withheld": false,
+  "withheld_claim_id": null,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "src/main/java/com/example/projection/ProductProjectionConsumer.java:ProductProjectionConsumer.onEvent: java_hash mismatch"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "Added compare-and-set checkpoint advancement, ignored stale events before search updates, retained tombstone deletion, and advanced checkpoints only after successful search-index operations without using unconditional saveVersion.",
+    "files": [
+      "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+      "src/main/java/com/example/projection/ProductProjectionConsumer.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 9,
+    "source_bytes": 6850,
+    "source_reads": 4,
+    "source_files": [
+      "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+      "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+      "src/main/java/com/example/projection/SearchIndexClient.java",
+      "src/test/java/com/example/projection/ProductProjectionContractTest.java"
+    ],
+    "prompt_tokens": 20065,
+    "completion_tokens": 570,
+    "invalid": 0,
+    "wall_seconds": 51.619,
+    "successful_edits": 2,
+    "rejected_finals": 0,
+    "duplicate_edit_suppressed": 0,
+    "extra_actions_ignored": 1,
+    "post_test_pass_observed": true
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "uses_legacy_save": false,
+      "has_cas_method": true,
+      "uses_latest_version": true,
+      "uses_cas_advance": true,
+      "has_stale_guard": true,
+      "advances_after_projection": false
+    },
+    "test": {
+      "ok": true,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "src/main/java/com/example/projection/ProductProjectionConsumer.java": "--- a/src/main/java/com/example/projection/ProductProjectionConsumer.java\n+++ b/src/main/java/com/example/projection/ProductProjectionConsumer.java\n@@ -10,8 +10,14 @@\n     }\n \n     public void onEvent(ProductChangeEvent event) {\n+        long currentVersion = checkpointRepository.latestVersion(event.getProductId());\n+        if (event.getVersion() <= currentVersion) {\n+            return;\n+        }\n+\n         projectEventToSearchIndex(event);\n-        checkpointRepository.saveVersion(event.getProductId(), event.getVersion());\n+        checkpointRepository.advanceVersionIfNewer(\n+                event.getProductId(), event.getVersion(), currentVersion);\n     }\n \n     private void projectEventToSearchIndex(ProductChangeEvent event) {",
+    "src/main/java/com/example/projection/ProjectionCheckpointRepository.java": "--- a/src/main/java/com/example/projection/ProjectionCheckpointRepository.java\n+++ b/src/main/java/com/example/projection/ProjectionCheckpointRepository.java\n@@ -3,5 +3,7 @@\n public interface ProjectionCheckpointRepository {\n     long latestVersion(String productId);\n \n+    boolean advanceVersionIfNewer(String productId, long newVersion, long expectedCurrentVersion);\n+\n     void saveVersion(String productId, long version);\n }"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "trap_reason": {
+      "uses_legacy_save": false,
+      "has_cas_method": true,
+      "uses_latest_version": true,
+      "uses_cas_advance": true,
+      "has_stale_guard": true,
+      "advances_after_projection": false,
+      "post_message": "PASS"
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "README.md",
+              "pom.xml",
+              "src/main/java/com/example/projection/ProductChangeEvent.java",
+              "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+              "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+              "src/main/java/com/example/projection/SearchDocument.java",
+              "src/main/java/com/example/projection/SearchIndexClient.java",
+              "src/test/java/com/example/projection/ProductProjectionContractTest.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/projection/ProductProjectionConsumer.java\",\"start\":1,\"end\":240}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "start": 1,
+          "end": 240
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+            "start": 1,
+            "end": 240
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+            "content": "1: package com.example.projection;\n2: \n3: public class ProductProjectionConsumer {\n4:     private final SearchIndexClient searchIndexClient;\n5:     private final ProjectionCheckpointRepository checkpointRepository;\n6: \n7:     public ProductProjectionConsumer(SearchIndexClient searchIndexClient, ProjectionCheckpointRepository checkpointRepository) {\n8:         this.searchIndexClient = searchIndexClient;\n9:         this.checkpointRepository = checkpointRepository;\n10:     }\n11: \n12:     public void onEvent(ProductChangeEvent event) {\n13:         projectEventToSearchIndex(event);\n14:         checkpointRepository.saveVersion(event.getProductId(), event.getVersion());\n15:     }\n16: \n17:     private void projectEventToSearchIndex(ProductChangeEvent event) {\n18:         if (event.isDeleted()) {\n19:             searchIndexClient.delete(event.getProductId());\n20:         } else {\n21:             searchIndexClient.upsert(new SearchDocument(event.getProductId(), event.getName(), event.getVersion()));\n22:         }\n23:     }\n24: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/test/java/com/example/projection/ProductProjectionContractTest.java\",\"start\":1,\"end\":300}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/test/java/com/example/projection/ProductProjectionContractTest.java",
+          "start": 1,
+          "end": 300
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/test/java/com/example/projection/ProductProjectionContractTest.java",
+            "start": 1,
+            "end": 300
+          },
+          "tool_output": {
+            "path": "src/test/java/com/example/projection/ProductProjectionContractTest.java",
+            "content": "1: package com.example.projection;\n2: \n3: import static org.junit.jupiter.api.Assertions.*;\n4: \n5: import java.lang.reflect.Method;\n6: import java.util.ArrayList;\n7: import java.util.HashMap;\n8: import java.util.List;\n9: import java.util.Map;\n10: import org.junit.jupiter.api.Test;\n11: \n12: class ProductProjectionContractTest {\n13:     @Test\n14:     void checkpointRepositorySupportsCompareAndSetVersionAdvance() throws Exception {\n15:         Method method = ProjectionCheckpointRepository.class.getMethod(\n16:                 \"advanceVersionIfNewer\", String.class, long.class, long.class);\n17:         assertEquals(boolean.class, method.getReturnType());\n18:     }\n19: \n20:     @Test\n21:     void staleEventIsIgnoredAndDoesNotOverwriteSearchDocument() {\n22:         CapturingSearchIndex search = new CapturingSearchIndex();\n23:         CapturingCheckpoint checkpoint = new CapturingCheckpoint(Map.of(\"p-1\", 7L));\n24:         ProductProjectionConsumer consumer = new ProductProjectionConsumer(search, checkpoint);\n25: \n26:         consumer.onEvent(new ProductChangeEvent(\"p-1\", 6L, \"old-name\", false));\n27: \n28:         assertTrue(search.upserts.isEmpty(), \"stale events must not upsert old documents\");\n29:         assertTrue(search.deletes.isEmpty(), \"stale events must not delete newer documents\");\n30:         assertEquals(7L, checkpoint.latestVersion(\"p-1\"));\n31:         assertEquals(0, checkpoint.legacySaveCalls, \"consumer must not use unconditional checkpoint save\");\n32:     }\n33: \n34:     @Test\n35:     void newerEventUpsertsOnceAndAdvancesVersionAfterSuccess() {\n36:         CapturingSearchIndex search = new CapturingSearchIndex();\n37:         CapturingCheckpoint checkpoint = new CapturingCheckpoint(Map.of(\"p-1\", 7L));\n38:         ProductProjectionConsumer consumer = new ProductProjectionConsumer(search, checkpoint);\n39: \n40:         consumer.onEvent(new ProductChangeEvent(\"p-1\", 8L, \"new-name\", false));\n41: \n42:         assertEquals(1, search.upserts.size());\n43:         assertEquals(\"new-name\", search.upserts.get(0).getName());\n44:         assertEquals(8L, checkpoint.latestVersion(\"p-1\"));\n45:         assertEquals(1, checkpoint.casCalls);\n46:         assertEquals(0, checkpoint.legacySaveCalls);\n47:     }\n48: \n49:     @Test\n50:     void tombstoneDeletesDocumentAndAdvancesVersion() {\n51:         CapturingSearchIndex search = new CapturingSearchIndex();\n52:         CapturingCheckpoint checkpoint = new CapturingCheckpoint(Map.of(\"p-1\", 7L));\n53:         ProductProjectionConsumer consumer = new ProductProjectionConsumer(search, checkpoint);\n54: \n55:         consumer.onEvent(new ProductChangeEvent(\"p-1\", 9L, null, true));\n56: \n57:         assertEquals(List.of(\"p-1\"), search.deletes);\n58:         assertTrue(search.upserts.isEmpty());\n59:         assertEquals(9L, checkpoint.latestVersion(\"p-1\"));\n60:     }\n61: \n62:     @Test\n63:     void failedSearchUpdateDoesNotAdvanceCheckpoint() {\n64:         CapturingSearchIndex search = new CapturingSearchIndex();\n65:         search.fail = true;\n66:         CapturingCheckpoint checkpoint = new CapturingCheckpoint(Map.of(\"p-1\", 7L));\n67:         ProductProjectionConsumer consumer = new ProductProjectionConsumer(search, checkpoint);\n68: \n69:         assertThrows(RuntimeException.class, () -> consumer.onEvent(new ProductChangeEvent(\"p-1\", 8L, \"new-name\", false)));\n70: \n71:         assertEquals(7L, checkpoint.latestVersion(\"p-1\"), \"checkpoint must advance only after projection update succeeds\");\n72:         assertEquals(0, checkpoint.casCalls);\n73:     }\n74: \n75:     static final class CapturingSearchIndex implements SearchIndexClient {\n76:         final List<SearchDocument> upserts = new ArrayList<>();\n77:         final List<String> deletes = new ArrayList<>();\n78:         boolean fail;\n79: \n80:         @Override\n81:         public void upsert(SearchDocument document) {\n82:             if (fail) {\n83:                 throw new RuntimeException(\"search unavailable\");\n84:             }\n85:             upserts.add(document);\n86:         }\n87: \n88:         @Override\n89:         public void delete(String productId) {\n90:             if (fail) {\n91:                 throw new RuntimeException(\"search unavailable\");\n92:             }\n93:             deletes.add(productId);\n94:         }\n95:     }\n96: \n97:     static final class CapturingCheckpoint implements ProjectionCheckpointRepository {\n98:         final Map<String, Long> versions = new HashMap<>();\n99:         int legacySaveCalls;\n100:         int casCalls;\n101: \n102:         CapturingCheckpoint(Map<String, Long> versions) {\n103:             this.versions.putAll(versions);\n104:         }\n105: \n106:         @Override\n107:         public long latestVersion(String productId) {\n108:             return versions.getOrDefault(productId, 0L);\n109:         }\n110: \n111:         public boolean advanceVersionIfNewer(String productId, long newVersion, long expectedCurrentVersion) {\n112:             casCalls++;\n113:             long current = latestVersion(productId);\n114:             if (current != expectedCurrentVersion || newVersion <= current) {\n115:                 return false;\n116:             }\n117:             versions.put(productId, newVersion);\n118:             return true;\n119:         }\n120: \n121:         public void saveVersion(String productId, long version) {\n122:             legacySaveCalls++;\n123:             versions.put(productId, version);\n124:         }\n125:     }\n126: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/projection/ProjectionCheckpointRepository.java\",\"start\":1,\"end\":200}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "start": 1,
+          "end": 200
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+            "start": 1,
+            "end": 200
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+            "content": "1: package com.example.projection;\n2: \n3: public interface ProjectionCheckpointRepository {\n4:     long latestVersion(String productId);\n5: \n6:     void saveVersion(String productId, long version);\n7: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/projection/SearchIndexClient.java\",\"start\":1,\"end\":160}{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/projection/SearchIndexClient.java\",\"start\":1,\"end\":160}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/projection/SearchIndexClient.java",
+          "start": 1,
+          "end": 160
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/projection/SearchIndexClient.java",
+          "start": 1,
+          "end": 160
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/projection/SearchIndexClient.java",
+            "start": 1,
+            "end": 160
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/projection/SearchIndexClient.java",
+            "content": "1: package com.example.projection;\n2: \n3: public interface SearchIndexClient {\n4:     void upsert(SearchDocument document);\n5: \n6:     void delete(String productId);\n7: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/projection/ProjectionCheckpointRepository.java\",\"old\":\"public interface ProjectionCheckpointRepository {\\n    long latestVersion(String productId);\\n\\n    void saveVersion(String productId, long version);\\n}\",\"new\":\"public interface ProjectionCheckpointRepository {\\n    long latestVersion(String productId);\\n\\n    boolean advanceVersionIfNewer(String productId, long newVersion, long expectedCurrentVersion);\\n\\n    void saveVersion(String productId, long version);\\n}\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "old": "public interface ProjectionCheckpointRepository {\n    long latestVersion(String productId);\n\n    void saveVersion(String productId, long version);\n}",
+          "new": "public interface ProjectionCheckpointRepository {\n    long latestVersion(String productId);\n\n    boolean advanceVersionIfNewer(String productId, long newVersion, long expectedCurrentVersion);\n\n    void saveVersion(String productId, long version);\n}"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+            "old": "public interface ProjectionCheckpointRepository {\n    long latestVersion(String productId);\n\n    void saveVersion(String productId, long version);\n}",
+            "new": "public interface ProjectionCheckpointRepository {\n    long latestVersion(String productId);\n\n    boolean advanceVersionIfNewer(String productId, long newVersion, long expectedCurrentVersion);\n\n    void saveVersion(String productId, long version);\n}"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+            "bytes": 248
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/projection/ProductProjectionConsumer.java\",\"old\":\"    public void onEvent(ProductChangeEvent event) {\\n        projectEventToSearchIndex(event);\\n        checkpointRepository.saveVersion(event.getProductId(), event.getVersion());\\n    }\",\"new\":\"    public void onEvent(ProductChangeEvent event) {\\n        long currentVersion = checkpointRepository.latestVersion(event.getProductId());\\n        if (event.getVersion() <= currentVersion) {\\n            return;\\n        }\\n\\n        projectEventToSearchIndex(event);\\n        checkpointRepository.advanceVersionIfNewer(\\n                event.getProductId(), event.getVersion(), currentVersion);\\n    }\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "old": "    public void onEvent(ProductChangeEvent event) {\n        projectEventToSearchIndex(event);\n        checkpointRepository.saveVersion(event.getProductId(), event.getVersion());\n    }",
+          "new": "    public void onEvent(ProductChangeEvent event) {\n        long currentVersion = checkpointRepository.latestVersion(event.getProductId());\n        if (event.getVersion() <= currentVersion) {\n            return;\n        }\n\n        projectEventToSearchIndex(event);\n        checkpointRepository.advanceVersionIfNewer(\n                event.getProductId(), event.getVersion(), currentVersion);\n    }"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+            "old": "    public void onEvent(ProductChangeEvent event) {\n        projectEventToSearchIndex(event);\n        checkpointRepository.saveVersion(event.getProductId(), event.getVersion());\n    }",
+            "new": "    public void onEvent(ProductChangeEvent event) {\n        long currentVersion = checkpointRepository.latestVersion(event.getProductId());\n        if (event.getVersion() <= currentVersion) {\n            return;\n        }\n\n        projectEventToSearchIndex(event);\n        checkpointRepository.advanceVersionIfNewer(\n                event.getProductId(), event.getVersion(), currentVersion);\n    }"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+            "bytes": 397
+          }
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "raw": "{\"action\":\"final\",\"answer\":\"Added compare-and-set checkpoint advancement, ignored stale events before search updates, retained tombstone deletion, and advanced checkpoints only after successful search-index operations without using unconditional saveVersion.\",\"files\":[\"src/main/java/com/example/projection/ProjectionCheckpointRepository.java\",\"src/main/java/com/example/projection/ProductProjectionConsumer.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "Added compare-and-set checkpoint advancement, ignored stale events before search updates, retained tombstone deletion, and advanced checkpoints only after successful search-index operations without using unconditional saveVersion.",
+          "files": [
+            "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+            "src/main/java/com/example/projection/ProductProjectionConsumer.java"
+          ]
+        }
+      ],
+      "tool_outputs": []
+    }
+  ],
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [],
+    "has_final": true,
+    "has_diff": true,
+    "duplicate_edit_suppressed": 0,
+    "extra_actions_ignored": 1,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}

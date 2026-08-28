@@ -1,0 +1,494 @@
+{
+  "schema": "cdc_m12_projection_stale_workflow",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "max_turns": 14,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "CDC_M12",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 14,
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java:ProductProjectionConsumer.onEvent: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added compare-and-set checkpoint advancement, ignored stale events before search updates, retained tombstone deletion, and advanced checkpoints only after successful search-index operations without using unconditional saveVersion.",
+        "files": [
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6850,
+        "source_reads": 4,
+        "source_files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "src/main/java/com/example/projection/SearchIndexClient.java",
+          "src/test/java/com/example/projection/ProductProjectionContractTest.java"
+        ],
+        "prompt_tokens": 20065,
+        "completion_tokens": 570,
+        "invalid": 0,
+        "wall_seconds": 51.619,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/cdc_m12_projection_smoke_r1_protocol2/CDC_M12__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 1171
+    },
+    {
+      "task_id": "CDC_M12",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 14,
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java:ProductProjectionConsumer.onEvent: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated the projection consumer to ignore stale events, preserve tombstone deletion behavior, and advance checkpoints via compare-and-set only after a successful search-index update. Added the compare-and-set checkpoint repository contract while retaining the legacy save method for compatibility.",
+        "files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6680,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "src/test/java/com/example/projection/ProductProjectionContractTest.java"
+        ],
+        "prompt_tokens": 19612,
+        "completion_tokens": 569,
+        "invalid": 0,
+        "wall_seconds": 35.115,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/cdc_m12_projection_smoke_r1_protocol2/CDC_M12__PREREAD_STALE_SOURCE__r1.raw.json",
+      "diff_bytes": 1153
+    },
+    {
+      "task_id": "CDC_M12",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 14,
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java:ProductProjectionConsumer.onEvent: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated the projection consumer to ignore stale or duplicate events, apply upserts and tombstone deletes before advancing checkpoints, and use compare-and-set checkpoint advancement instead of unconditional saveVersion. Added the compare-and-set method to the checkpoint repository contract.",
+        "files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6850,
+        "source_reads": 4,
+        "source_files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "src/main/java/com/example/projection/SearchIndexClient.java",
+          "src/test/java/com/example/projection/ProductProjectionContractTest.java"
+        ],
+        "prompt_tokens": 18851,
+        "completion_tokens": 745,
+        "invalid": 0,
+        "wall_seconds": 52.217,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/cdc_m12_projection_smoke_r1_protocol2/CDC_M12__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 1304
+    },
+    {
+      "task_id": "CDC_M12",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "max_turns": 14,
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "cdc_m12:old:ProductProjectionConsumer.onEvent",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java:ProductProjectionConsumer.onEvent: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated the projection consumer to ignore stale events, process upserts and tombstone deletes before advancing the checkpoint, and use compare-and-set checkpoint advancement instead of unconditional saveVersion. Added the compare-and-set method to the checkpoint repository contract. Compilation succeeds.",
+        "files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 6680,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/projection/ProductProjectionConsumer.java",
+          "src/main/java/com/example/projection/ProjectionCheckpointRepository.java",
+          "src/test/java/com/example/projection/ProductProjectionContractTest.java"
+        ],
+        "prompt_tokens": 17832,
+        "completion_tokens": 533,
+        "invalid": 0,
+        "wall_seconds": 44.606,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "trap_reason": {
+          "uses_legacy_save": false,
+          "has_cas_method": true,
+          "uses_latest_version": true,
+          "uses_cas_advance": true,
+          "has_stale_guard": true,
+          "advances_after_projection": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/cdc_m12_projection_smoke_r1_protocol2/CDC_M12__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 1171
+    }
+  ],
+  "summary": {
+    "mode": "cdc_m12_projection_stale_workflow",
+    "runs": 4,
+    "final_gate": "hard",
+    "max_turns": 14,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "uses_legacy_save": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "PREREAD_STALE_SOURCE": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "uses_legacy_save": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "uses_legacy_save": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 1,
+        "uses_legacy_save": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      }
+    }
+  }
+}

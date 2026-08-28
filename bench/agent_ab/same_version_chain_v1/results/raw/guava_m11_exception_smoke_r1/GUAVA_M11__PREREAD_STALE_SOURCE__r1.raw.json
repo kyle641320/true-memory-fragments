@@ -1,0 +1,314 @@
+{
+  "task_id": "GUAVA_M11",
+  "arm": "PREREAD_STALE_SOURCE",
+  "rep": 1,
+  "final_gate": "hard",
+  "max_turns": 10,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "EventBus.java:EventBus.handleSubscriberException: java_hash mismatch"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "Added exactly one hook() call at the current final framework-controlled handoff immediately before SubscriberExceptionHandler.handleException(...). Compilation succeeded.",
+    "files": [
+      "EventBus.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 9,
+    "source_bytes": 1722,
+    "source_reads": 2,
+    "source_files": [
+      "EventBus.java"
+    ],
+    "prompt_tokens": 9925,
+    "completion_tokens": 312,
+    "invalid": 1,
+    "wall_seconds": 36.863,
+    "successful_edits": 1,
+    "rejected_finals": 0,
+    "duplicate_edit_suppressed": 0
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "correct_helper_site": true,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 1
+    },
+    "compile": {
+      "ok": true,
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "EventBus.java": "--- a/EventBus.java\n+++ b/EventBus.java\n@@ -221,6 +221,7 @@\n \n   private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n     try {\n+      hook();\n       exceptionHandler.handleException(e, context);\n     } catch (Throwable e2) {\n       // if the handler threw an exception... well, just log it"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "trap_reason": {
+      "correct_helper_site": true,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 1,
+      "hook_defs_added": 0,
+      "hook_calls_added": 1
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/EventBus.java\",\"symbol\":\"handleSubscriberException\"}{\"action\":\"read_range\",\"path\":\"guava/src/com/google/common/eventbus/EventBus.java\",\"start\":240,\"end\":280}{\"action\":\"list\"}{\"action\":\"read_symbol\",\"path\":\"guava/src/com/google/common/eventbus/EventBus.java\",\"symbol\":\"handleSubscriberException\"}",
+      "actions": [
+        {
+          "action": "read_symbol",
+          "path": "guava/src/com/google/common/eventbus/EventBus.java",
+          "symbol": "handleSubscriberException"
+        },
+        {
+          "action": "read_range",
+          "path": "guava/src/com/google/common/eventbus/EventBus.java",
+          "start": 240,
+          "end": 280
+        },
+        {
+          "action": "list"
+        },
+        {
+          "action": "read_symbol",
+          "path": "guava/src/com/google/common/eventbus/EventBus.java",
+          "symbol": "handleSubscriberException"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "guava/src/com/google/common/eventbus/EventBus.java",
+            "symbol": "handleSubscriberException"
+          },
+          "tool_output": {
+            "error": "invalid path"
+          }
+        },
+        {
+          "action": {
+            "action": "read_range",
+            "path": "guava/src/com/google/common/eventbus/EventBus.java",
+            "start": 240,
+            "end": 280
+          },
+          "tool_output": {
+            "error": "invalid path"
+          }
+        },
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "AllowConcurrentEvents.java",
+              "AsyncEventBus.java",
+              "DeadEvent.java",
+              "Dispatcher.java",
+              "EventBus.java",
+              "ParametricNullness.java",
+              "Subscribe.java",
+              "Subscriber.java",
+              "SubscriberExceptionContext.java",
+              "SubscriberExceptionHandler.java",
+              "SubscriberRegistry.java"
+            ]
+          }
+        },
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "guava/src/com/google/common/eventbus/EventBus.java",
+            "symbol": "handleSubscriberException"
+          },
+          "tool_output": {
+            "error": "invalid path"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "I’m sorry, but I couldn’t complete the required edit and compile within this run.",
+      "actions": []
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_symbol\",\"path\":\"EventBus.java\",\"symbol\":\"handleSubscriberException\"}",
+      "actions": [
+        {
+          "action": "read_symbol",
+          "path": "EventBus.java",
+          "symbol": "handleSubscriberException"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "EventBus.java",
+            "symbol": "handleSubscriberException"
+          },
+          "tool_output": {
+            "path": "EventBus.java",
+            "symbol": "handleSubscriberException",
+            "content": "210:   /** Returns the default executor this event bus uses for dispatching events to subscribers. */\n211:   final Executor executor() {\n212:     return executor;\n213:   }\n214: \n215:   /** Handles the given exception thrown by a subscriber with the given context. */\n216:   void handleSubscriberException(Throwable e, SubscriberExceptionContext context) {\n217:     checkNotNull(e);\n218:     checkNotNull(context);\n219:     notifySubscriberExceptionHandler(e, context);\n220:   }\n221: \n222:   private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n223:     try {"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"EventBus.java\",\"start\":215,\"end\":245}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "EventBus.java",
+          "start": 215,
+          "end": 245
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "EventBus.java",
+            "start": 215,
+            "end": 245
+          },
+          "tool_output": {
+            "path": "EventBus.java",
+            "content": "215:   /** Handles the given exception thrown by a subscriber with the given context. */\n216:   void handleSubscriberException(Throwable e, SubscriberExceptionContext context) {\n217:     checkNotNull(e);\n218:     checkNotNull(context);\n219:     notifySubscriberExceptionHandler(e, context);\n220:   }\n221: \n222:   private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n223:     try {\n224:       exceptionHandler.handleException(e, context);\n225:     } catch (Throwable e2) {\n226:       // if the handler threw an exception... well, just log it\n227:       logger.log(\n228:           Level.SEVERE,\n229:           String.format(Locale.ROOT, \"Exception %s thrown while handling exception: %s\", e2, e),\n230:           e2);\n231:     }\n232:   }\n233: \n234:   private void hook() {}\n235: \n236:   /**\n237:    * Registers all subscriber methods on {@code object} to receive events.\n238:    *\n239:    * @param object object whose subscriber methods should be registered.\n240:    */\n241:   public void register(Object object) {\n242:     subscribers.register(object);\n243:   }\n244: \n245:   /**"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"edit\",\"path\":\"EventBus.java\",\"old\":\"  private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\\n    try {\\n      exceptionHandler.handleException(e, context);\",\"new\":\"  private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\\n    try {\\n      hook();\\n      exceptionHandler.handleException(e, context);\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "EventBus.java",
+          "old": "  private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n    try {\n      exceptionHandler.handleException(e, context);",
+          "new": "  private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n    try {\n      hook();\n      exceptionHandler.handleException(e, context);"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "EventBus.java",
+            "old": "  private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n    try {\n      exceptionHandler.handleException(e, context);",
+            "new": "  private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n    try {\n      hook();\n      exceptionHandler.handleException(e, context);"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "EventBus.java",
+            "mode": "replace",
+            "bytes_delta": 14
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stderr": "",
+            "stdout": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "raw": "{\"action\":\"final\",\"answer\":\"Added exactly one hook() call at the current final framework-controlled handoff immediately before SubscriberExceptionHandler.handleException(...). Compilation succeeded.\",\"files\":[\"EventBus.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "Added exactly one hook() call at the current final framework-controlled handoff immediately before SubscriberExceptionHandler.handleException(...). Compilation succeeded.",
+          "files": [
+            "EventBus.java"
+          ]
+        }
+      ],
+      "tool_outputs": []
+    }
+  ],
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [
+      "parse_or_invalid_action_noise",
+      "tool_error_noise"
+    ],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 1,
+    "tool_errors": [
+      {
+        "turn": 0,
+        "action": "read_symbol",
+        "error": "invalid path"
+      },
+      {
+        "turn": 0,
+        "action": "read_range",
+        "error": "invalid path"
+      },
+      {
+        "turn": 0,
+        "action": "read_symbol",
+        "error": "invalid path"
+      }
+    ],
+    "has_final": true,
+    "has_diff": true,
+    "duplicate_edit_suppressed": 0,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": false,
+    "semantic_evaluable": false,
+    "semantic_pass": null,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}

@@ -1,0 +1,589 @@
+{
+  "schema": "scheduler_m14_two_phase_stale_context",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "phase_a_turns": 6,
+  "phase_b_turns": 16,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "RPC_M14",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "NotificationScheduler.runOnce(limit) synchronously fetches a pending batch from NotificationTaskRepository, then for each task marks it SENT before invoking NotificationSender.send(taskId), increments a processed counter, and returns the count. The repository only exposes findPendingBatch and markSent; although NotificationTask defines PENDING, PROCESSING, and SENT states, PROCESSING is not used by the current workflow. Dispatch is ID-only and there is no visible claiming/locking, retry, failure handling, or rollback, so a send failure can leave a task marked SENT without successful dispatch and can abort the remaining batch."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 1665,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 3982,
+        "completion_tokens": 288,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将调度改为先原子认领 PENDING 任务，再发送通知，且仅在发送成功后标记 SENT。发送失败时任务保持 PROCESSING，后续普通重跑不会重复发送，避免状态提前完成导致丢通知或重复打扰。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 14531,
+        "completion_tokens": 492,
+        "invalid": 0,
+        "wall_seconds": 50.687,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_smoke_r1/SCHEDULER_M14__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 1189
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "NotificationScheduler.runOnce(limit) synchronously fetches repository.findPendingBatch(limit), then for each returned task marks it SENT via markSent(id) before dispatching sender.send(id), incrementing and returning the processed count after each successful send. The repository exposes only batch lookup and markSent; there is no claim/PROCESSING transition despite PROCESSING existing in NotificationTask.Status, so dispatch currently relies on the initial pending snapshot and persists SENT before the external send. An exception would stop the loop and may leave a task marked sent even though dispatch failed."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 1665,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 3997,
+        "completion_tokens": 283,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度器改为通过 claimPendingBatch 原子领取待处理任务，发送成功后才标记 SENT；发送失败时任务保持 PROCESSING，后续普通重跑不会重复发送，也不会错误标记完成。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 7197,
+        "source_reads": 5,
+        "source_files": [
+          "README.md",
+          "pom.xml",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 38059,
+        "completion_tokens": 527,
+        "invalid": 0,
+        "wall_seconds": 57.455,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_smoke_r1/SCHEDULER_M14__PREREAD_STALE_SOURCE__r1.raw.json",
+      "diff_bytes": 1156
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "NotificationScheduler.runOnce(limit) fetches up to limit pending tasks from NotificationTaskRepository, then for each task marks it SENT before invoking NotificationSender.send(taskId), incrementing and returning the processed count. Dispatch is synchronous and ID-only. The model defines PENDING, PROCESSING, and SENT, but the current repository contract only supports finding pending tasks and marking them sent; PROCESSING is unused, with no claim/lease, retry, or failure handling visible."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 1665,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 3991,
+        "completion_tokens": 253,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "新增仓储原子认领批次契约，调度器改为先认领待处理任务，再发送通知，并仅在发送成功后标记 SENT；发送失败时任务保持 PROCESSING，后续普通扫描不会重复发送。编译已通过。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 15381,
+        "completion_tokens": 522,
+        "invalid": 0,
+        "wall_seconds": 40.644,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_smoke_r1/SCHEDULER_M14__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "NotificationScheduler.runOnce(limit) synchronously fetches repository.findPendingBatch(limit), then for each task calls repository.markSent(task.getId()) before sender.send(task.getId()), incrementing and returning a processed count only after send returns. NotificationTask defines PENDING, PROCESSING, and SENT, but the current repository API only supports finding pending tasks and marking them sent; PROCESSING is unused, with no claim/lease or two-phase dispatch. A send failure propagates, stops the loop, and can leave that task marked SENT despite dispatch failing."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 1665,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 4219,
+        "completion_tokens": 273,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "scheduler_m14:old:NotificationScheduler.runOnce",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将调度流程改为先原子领取待处理任务，再发送通知，并仅在发送成功后标记为已发送。发送失败时任务保持 PROCESSING，不会被错误标记完成；后续普通重跑只处理仍为 PENDING 的任务，避免重复通知。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 15590,
+        "completion_tokens": 493,
+        "invalid": 0,
+        "wall_seconds": 40.091,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_smoke_r1/SCHEDULER_M14__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 1156
+    }
+  ],
+  "summary": {
+    "mode": "scheduler_m14_two_phase_stale_context",
+    "runs": 4,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "uses_claim": 1,
+        "mark_before_send": 0,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "PREREAD_STALE_SOURCE": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "uses_claim": 1,
+        "mark_before_send": 0,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "uses_claim": 1,
+        "mark_before_send": 0,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 1,
+        "uses_claim": 1,
+        "mark_before_send": 0,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      }
+    }
+  }
+}

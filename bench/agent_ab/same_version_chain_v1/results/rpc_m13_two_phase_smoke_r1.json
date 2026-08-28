@@ -1,0 +1,587 @@
+{
+  "schema": "rpc_m13_two_phase_stale_context",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "phase_a_turns": 6,
+  "phase_b_turns": 16,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "RPC_M13",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "UserSyncService.sync(userId) is annotated @Transactional and performs up to five synchronous attempts. Each attempt fetches the profile via RemoteUserClient.fetchProfile(userId), then persists it with UserRepository.saveProfile(userId, profile), returning immediately on success. Any Exception from either the remote fetch or repository save is silently swallowed and retried; after five failures the method returns without reporting failure. The remote client contract exposes fetchProfile and declares IOException, while the repository only exposes saveProfile."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 1018,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserRepository.java",
+          "src/main/java/com/example/user/UserSyncService.java"
+        ],
+        "prompt_tokens": 2675,
+        "completion_tokens": 234,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/user/UserSyncService.java:UserSyncService.sync: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "已移除同步编排方法上的事务边界，远程调用不再占用数据库事务；仅对 IOException 网络传输失败最多尝试 3 次，业务运行时异常立即透传；重试耗尽后将最终 IOException 返回给调用方，成功获取后再通过独立事务边界保存资料。",
+        "files": [
+          "src/main/java/com/example/user/UserSyncService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 5994,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserSyncService.java",
+          "src/test/java/com/example/user/UserSyncServiceContractTest.java"
+        ],
+        "prompt_tokens": 11947,
+        "completion_tokens": 369,
+        "invalid": 0,
+        "wall_seconds": 45.788,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": false,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": false,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/rpc_m13_two_phase_smoke_r1/RPC_M13__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 802
+    },
+    {
+      "task_id": "RPC_M13",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "UserSyncService.sync(userId) is annotated @Transactional and performs up to five attempts in one loop. Each attempt fetches the profile from RemoteUserClient.fetchProfile(userId), then immediately writes it via UserRepository.saveProfile(userId, profile), returning after the first successful fetch-and-save. Any Exception from either fetch or save is swallowed and retried; after five failures the method returns silently. The repository exposes only saveProfile, so the current workflow does not pre-read or compare an existing local profile before remote synchronization."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 1018,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserRepository.java",
+          "src/main/java/com/example/user/UserSyncService.java"
+        ],
+        "prompt_tokens": 2686,
+        "completion_tokens": 237,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/user/UserSyncService.java:UserSyncService.sync: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "修稳用户同步：移除远程调用外层事务，将数据库写入保留在独立事务写入器中；仅对 IOException 网络故障进行 3 次短间隔重试；业务异常不再捕获；重试耗尽后将最终 IOException 原样抛给调用方；中断时恢复中断标记并显式失败。编译和契约测试已通过。",
+        "files": [
+          "src/main/java/com/example/user/UserSyncService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 3109,
+        "source_reads": 2,
+        "source_files": [
+          "src/main/java/com/example/user/UserSyncService.java"
+        ],
+        "prompt_tokens": 50407,
+        "completion_tokens": 1605,
+        "invalid": 0,
+        "wall_seconds": 71.436,
+        "successful_edits": 4,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": true,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": true,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "edit_protocol_fail"
+        ],
+        "edit_errors": [
+          {
+            "turn": 0,
+            "action": "edit",
+            "error": "old text occurrences=0"
+          }
+        ],
+        "compile_tool_failures": [
+          {
+            "turn": 3,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/rpc_m13_two_phase_smoke_r1/RPC_M13__PREREAD_STALE_SOURCE__r1.raw.json",
+      "diff_bytes": 1373
+    },
+    {
+      "task_id": "RPC_M13",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "UserSyncService.sync(userId) is annotated @Transactional and performs up to five attempts. Each attempt fetches the profile via RemoteUserClient.fetchProfile(userId), then persists it with UserRepository.saveProfile(userId, profile), returning immediately after both succeed. Any Exception from either the remote fetch or repository save is silently swallowed and retried; after five failures the method returns without reporting failure. The remote client contract declares IOException, while the repository save contract declares no checked exception."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 1018,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserRepository.java",
+          "src/main/java/com/example/user/UserSyncService.java"
+        ],
+        "prompt_tokens": 2681,
+        "completion_tokens": 232,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/user/UserSyncService.java:UserSyncService.sync: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "修复用户同步：移除远程调用外层事务，仅对数据库写入保留事务边界；网络 IOException 最多尝试 3 次，最终失败原样抛给调用方；业务运行时异常不再捕获或重试。",
+        "files": [
+          "src/main/java/com/example/user/UserSyncService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 5994,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserSyncService.java",
+          "src/test/java/com/example/user/UserSyncServiceContractTest.java"
+        ],
+        "prompt_tokens": 12663,
+        "completion_tokens": 351,
+        "invalid": 0,
+        "wall_seconds": 44.454,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": true,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": true,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/rpc_m13_two_phase_smoke_r1/RPC_M13__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 765
+    },
+    {
+      "task_id": "RPC_M13",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "UserSyncService.sync(userId) is @Transactional and makes up to five attempts. Each attempt fetches the profile via RemoteUserClient.fetchProfile(userId), then persists it with UserRepository.saveProfile(userId, profile), returning after success. Any Exception from either fetch or save is swallowed, so the whole fetch/save sequence is retried; after five failures the method exits silently without reporting failure."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 1018,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserRepository.java",
+          "src/main/java/com/example/user/UserSyncService.java"
+        ],
+        "prompt_tokens": 2680,
+        "completion_tokens": 198,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "rpc_m13:old:UserSyncService.sync",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/user/UserSyncService.java:UserSyncService.sync: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "已修复用户同步逻辑：移除 sync 上的事务边界，避免远程调用占用数据库事务；仅对 IOException 网络传输失败进行最多 3 次短重试；业务运行时异常立即传播且不重试；重试最终失败会原样抛给调用方；成功获取后才通过事务写入边界保存资料。编译已通过。",
+        "files": [
+          "src/main/java/com/example/user/UserSyncService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 5994,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/user/RemoteUserClient.java",
+          "src/main/java/com/example/user/UserSyncService.java",
+          "src/test/java/com/example/user/UserSyncServiceContractTest.java"
+        ],
+        "prompt_tokens": 13628,
+        "completion_tokens": 579,
+        "invalid": 0,
+        "wall_seconds": 41.391,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": false,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "sync_transactional": false,
+          "catches_exception": false,
+          "catches_io": true,
+          "low_retry_bound_static_hint": false,
+          "throws_declared": true,
+          "writer_boundary": true,
+          "direct_repository_in_sync": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/rpc_m13_two_phase_smoke_r1/RPC_M13__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 940
+    }
+  ],
+  "summary": {
+    "mode": "rpc_m13_two_phase_stale_context",
+    "runs": 4,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "sync_transactional": 0,
+        "catches_exception": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "PREREAD_STALE_SOURCE": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "sync_transactional": 0,
+        "catches_exception": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "sync_transactional": 0,
+        "catches_exception": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 1,
+        "sync_transactional": 0,
+        "catches_exception": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 1
+        }
+      }
+    }
+  }
+}

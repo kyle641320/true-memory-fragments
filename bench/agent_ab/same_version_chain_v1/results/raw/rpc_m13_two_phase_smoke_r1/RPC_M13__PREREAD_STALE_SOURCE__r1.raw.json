@@ -1,0 +1,511 @@
+{
+  "task_id": "RPC_M13",
+  "arm": "PREREAD_STALE_SOURCE",
+  "rep": 1,
+  "final_gate": "hard",
+  "phase_a_max_turns": 6,
+  "phase_b_max_turns": 16,
+  "fixture_meta": {
+    "fixture": "rpc-retry-transaction",
+    "phase_a": "old source visible; post contract test hidden",
+    "phase_b_mutation": "source refactored to a transactional writer boundary and post contract test restored"
+  },
+  "phase_a_orientation": {
+    "action": "orientation",
+    "summary": "UserSyncService.sync(userId) is annotated @Transactional and performs up to five attempts in one loop. Each attempt fetches the profile from RemoteUserClient.fetchProfile(userId), then immediately writes it via UserRepository.saveProfile(userId, profile), returning after the first successful fetch-and-save. Any Exception from either fetch or save is swallowed and retried; after five failures the method returns silently. The repository exposes only saveProfile, so the current workflow does not pre-read or compare an existing local profile before remote synchronization."
+  },
+  "phase_a_telemetry": {
+    "tool_calls": 5,
+    "source_reads": 3,
+    "source_bytes": 1018,
+    "source_files": [
+      "src/main/java/com/example/user/RemoteUserClient.java",
+      "src/main/java/com/example/user/UserRepository.java",
+      "src/main/java/com/example/user/UserSyncService.java"
+    ],
+    "prompt_tokens": 2686,
+    "completion_tokens": 237,
+    "invalid": 0,
+    "edits_rejected": 0,
+    "compile_calls": 0
+  },
+  "phase_a_transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "pom.xml",
+              "src/main/java/com/example/user/RemoteUserClient.java",
+              "src/main/java/com/example/user/Transactional.java",
+              "src/main/java/com/example/user/UserRepository.java",
+              "src/main/java/com/example/user/UserSyncService.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "content": "1: package com.example.user;\n2: \n3: public class UserSyncService {\n4:     private final UserRepository repository;\n5:     private final RemoteUserClient remote;\n6: \n7:     public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n8:         this.repository = repository;\n9:         this.remote = remote;\n10:     }\n11: \n12:     @Transactional\n13:     public void sync(String userId) {\n14:         for (int i = 0; i < 5; i++) {\n15:             try {\n16:                 String profile = remote.fetchProfile(userId);\n17:                 repository.saveProfile(userId, profile);\n18:                 return;\n19:             } catch (Exception ignored) {\n20:             }\n21:         }\n22:     }\n23: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/user/RemoteUserClient.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/user/RemoteUserClient.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/user/RemoteUserClient.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/user/RemoteUserClient.java",
+            "content": "1: package com.example.user;\n2: \n3: import java.io.IOException;\n4: \n5: public interface RemoteUserClient {\n6:     String fetchProfile(String userId) throws IOException;\n7: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/user/UserRepository.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/user/UserRepository.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/user/UserRepository.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/user/UserRepository.java",
+            "content": "1: package com.example.user;\n2: \n3: public interface UserRepository {\n4:     void saveProfile(String userId, String profile);\n5: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"orientation\",\"summary\":\"UserSyncService.sync(userId) is annotated @Transactional and performs up to five attempts in one loop. Each attempt fetches the profile from RemoteUserClient.fetchProfile(userId), then immediately writes it via UserRepository.saveProfile(userId, profile), returning after the first successful fetch-and-save. Any Exception from either fetch or save is swallowed and retried; after five failures the method returns silently. The repository exposes only saveProfile, so the current workflow does not pre-read or compare an existing local profile before remote synchronization.\"}",
+      "actions": [
+        {
+          "action": "orientation",
+          "summary": "UserSyncService.sync(userId) is annotated @Transactional and performs up to five attempts in one loop. Each attempt fetches the profile from RemoteUserClient.fetchProfile(userId), then immediately writes it via UserRepository.saveProfile(userId, profile), returning after the first successful fetch-and-save. Any Exception from either fetch or save is swallowed and retried; after five failures the method returns silently. The repository exposes only saveProfile, so the current workflow does not pre-read or compare an existing local profile before remote synchronization."
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "orientation",
+            "summary": "UserSyncService.sync(userId) is annotated @Transactional and performs up to five attempts in one loop. Each attempt fetches the profile from RemoteUserClient.fetchProfile(userId), then immediately writes it via UserRepository.saveProfile(userId, profile), returning after the first successful fetch-and-save. Any Exception from either fetch or save is swallowed and retried; after five failures the method returns silently. The repository exposes only saveProfile, so the current workflow does not pre-read or compare an existing local profile before remote synchronization."
+          },
+          "tool_output": {
+            "ok": true
+          }
+        }
+      ]
+    }
+  ],
+  "phase_a_old_source_excerpt": "package com.example.user;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n    }\n\n    @Transactional\n    public void sync(String userId) {\n        for (int i = 0; i < 5; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                repository.saveProfile(userId, profile);\n                return;\n            } catch (Exception ignored) {\n            }\n        }\n    }\n}\n",
+  "stale_claim_present": true,
+  "stale_claim_fresh": false,
+  "stale_claim_withheld": false,
+  "withheld_claim_id": null,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "src/main/java/com/example/user/UserSyncService.java:UserSyncService.sync: java_hash mismatch"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "修稳用户同步：移除远程调用外层事务，将数据库写入保留在独立事务写入器中；仅对 IOException 网络故障进行 3 次短间隔重试；业务异常不再捕获；重试耗尽后将最终 IOException 原样抛给调用方；中断时恢复中断标记并显式失败。编译和契约测试已通过。",
+    "files": [
+      "src/main/java/com/example/user/UserSyncService.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 10,
+    "source_bytes": 3109,
+    "source_reads": 2,
+    "source_files": [
+      "src/main/java/com/example/user/UserSyncService.java"
+    ],
+    "prompt_tokens": 50407,
+    "completion_tokens": 1605,
+    "invalid": 0,
+    "wall_seconds": 71.436,
+    "successful_edits": 4,
+    "rejected_finals": 0,
+    "duplicate_edit_suppressed": 0,
+    "extra_actions_ignored": 0,
+    "post_test_pass_observed": true
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "sync_transactional": false,
+      "catches_exception": false,
+      "catches_io": true,
+      "low_retry_bound_static_hint": true,
+      "throws_declared": true,
+      "writer_boundary": true,
+      "direct_repository_in_sync": false
+    },
+    "test": {
+      "ok": true,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "src/main/java/com/example/user/UserSyncService.java": "--- a/src/main/java/com/example/user/UserSyncService.java\n+++ b/src/main/java/com/example/user/UserSyncService.java\n@@ -1,4 +1,6 @@\n package com.example.user;\n+\n+import java.io.IOException;\n \n public class UserSyncService {\n     private final UserRepository repository;\n@@ -11,16 +13,26 @@\n         this.writer = new ProfileWriter(repository);\n     }\n \n-    @Transactional\n-    public void sync(String userId) {\n-        for (int i = 0; i < 5; i++) {\n+    public void sync(String userId) throws IOException {\n+        IOException lastFailure = null;\n+        for (int i = 0; i < 3; i++) {\n             try {\n                 String profile = remote.fetchProfile(userId);\n                 writer.saveProfile(userId, profile);\n                 return;\n-            } catch (Exception ignored) {\n+            } catch (IOException failure) {\n+                lastFailure = failure;\n+                if (i < 2) {\n+                    try {\n+                        Thread.sleep(50L);\n+                    } catch (InterruptedException interrupted) {\n+                        Thread.currentThread().interrupt();\n+                        throw new IllegalStateException(\"Interrupted while retrying user synchronization\", interrupted);\n+                    }\n+                }\n             }\n         }\n+        throw lastFailure;\n     }\n \n     public static class ProfileWriter {"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "semantic_pass": true,
+    "trap_reason": {
+      "sync_transactional": false,
+      "catches_exception": false,
+      "catches_io": true,
+      "low_retry_bound_static_hint": true,
+      "throws_declared": true,
+      "writer_boundary": true,
+      "direct_repository_in_sync": false,
+      "post_message": "PASS"
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"old\":\"package com.example.user;\\n\\npublic class UserSyncService {\\n    private final UserRepository repository;\\n    private final RemoteUserClient remote;\\n\\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\\n        this.repository = repository;\\n        this.remote = remote;\\n    }\\n\\n    @Transactional\\n    public void sync(String userId) {\\n        for (int i = 0; i < 5; i++) {\\n            try {\\n                String profile = remote.fetchProfile(userId);\\n                repository.saveProfile(userId, profile);\\n                return;\\n            } catch (Exception ignored) {\\n            }\\n        }\\n    }\\n}\",\"new\":\"package com.example.user;\\n\\nimport java.io.IOException;\\nimport java.io.UncheckedIOException;\\n\\npublic class UserSyncService {\\n    private static final int MAX_ATTEMPTS = 3;\\n    private static final long RETRY_DELAY_MILLIS = 50L;\\n\\n    private final UserRepository repository;\\n    private final RemoteUserClient remote;\\n\\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\\n        this.repository = repository;\\n        this.remote = remote;\\n    }\\n\\n    public void sync(String userId) {\\n        String profile = fetchProfileWithRetry(userId);\\n        repository.saveProfile(userId, profile);\\n    }\\n\\n    private String fetchProfileWithRetry(String userId) {\\n        IOException lastFailure = null;\\n        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {\\n            try {\\n                return remote.fetchProfile(userId);\\n            } catch (IOException failure) {\\n                lastFailure = failure;\\n                if (attempt < MAX_ATTEMPTS) {\\n                    pauseBeforeRetry();\\n                }\\n            }\\n        }\\n        throw new UncheckedIOException(\\\"Failed to fetch profile for user \\\" + userId, lastFailure);\\n    }\\n\\n    private void pauseBeforeRetry() {\\n        try {\\n            Thread.sleep(RETRY_DELAY_MILLIS);\\n        } catch (InterruptedException failure) {\\n            Thread.currentThread().interrupt();\\n            throw new IllegalStateException(\\\"Interrupted while retrying remote user synchronization\\\", failure);\\n        }\\n    }\\n}\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "old": "package com.example.user;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n    }\n\n    @Transactional\n    public void sync(String userId) {\n        for (int i = 0; i < 5; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                repository.saveProfile(userId, profile);\n                return;\n            } catch (Exception ignored) {\n            }\n        }\n    }\n}",
+          "new": "package com.example.user;\n\nimport java.io.IOException;\nimport java.io.UncheckedIOException;\n\npublic class UserSyncService {\n    private static final int MAX_ATTEMPTS = 3;\n    private static final long RETRY_DELAY_MILLIS = 50L;\n\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n    }\n\n    public void sync(String userId) {\n        String profile = fetchProfileWithRetry(userId);\n        repository.saveProfile(userId, profile);\n    }\n\n    private String fetchProfileWithRetry(String userId) {\n        IOException lastFailure = null;\n        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {\n            try {\n                return remote.fetchProfile(userId);\n            } catch (IOException failure) {\n                lastFailure = failure;\n                if (attempt < MAX_ATTEMPTS) {\n                    pauseBeforeRetry();\n                }\n            }\n        }\n        throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);\n    }\n\n    private void pauseBeforeRetry() {\n        try {\n            Thread.sleep(RETRY_DELAY_MILLIS);\n        } catch (InterruptedException failure) {\n            Thread.currentThread().interrupt();\n            throw new IllegalStateException(\"Interrupted while retrying remote user synchronization\", failure);\n        }\n    }\n}"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "old": "package com.example.user;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n    }\n\n    @Transactional\n    public void sync(String userId) {\n        for (int i = 0; i < 5; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                repository.saveProfile(userId, profile);\n                return;\n            } catch (Exception ignored) {\n            }\n        }\n    }\n}",
+            "new": "package com.example.user;\n\nimport java.io.IOException;\nimport java.io.UncheckedIOException;\n\npublic class UserSyncService {\n    private static final int MAX_ATTEMPTS = 3;\n    private static final long RETRY_DELAY_MILLIS = 50L;\n\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n    }\n\n    public void sync(String userId) {\n        String profile = fetchProfileWithRetry(userId);\n        repository.saveProfile(userId, profile);\n    }\n\n    private String fetchProfileWithRetry(String userId) {\n        IOException lastFailure = null;\n        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {\n            try {\n                return remote.fetchProfile(userId);\n            } catch (IOException failure) {\n                lastFailure = failure;\n                if (attempt < MAX_ATTEMPTS) {\n                    pauseBeforeRetry();\n                }\n            }\n        }\n        throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);\n    }\n\n    private void pauseBeforeRetry() {\n        try {\n            Thread.sleep(RETRY_DELAY_MILLIS);\n        } catch (InterruptedException failure) {\n            Thread.currentThread().interrupt();\n            throw new IllegalStateException(\"Interrupted while retrying remote user synchronization\", failure);\n        }\n    }\n}"
+          },
+          "tool_output": {
+            "error": "old text occurrences=0"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "content": "1: package com.example.user;\n2: \n3: public class UserSyncService {\n4:     private final UserRepository repository;\n5:     private final RemoteUserClient remote;\n6:     private final ProfileWriter writer;\n7: \n8:     public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n9:         this.repository = repository;\n10:         this.remote = remote;\n11:         this.writer = new ProfileWriter(repository);\n12:     }\n13: \n14:     @Transactional\n15:     public void sync(String userId) {\n16:         for (int i = 0; i < 5; i++) {\n17:             try {\n18:                 String profile = remote.fetchProfile(userId);\n19:                 writer.saveProfile(userId, profile);\n20:                 return;\n21:             } catch (Exception ignored) {\n22:             }\n23:         }\n24:     }\n25: \n26:     public static class ProfileWriter {\n27:         private final UserRepository repository;\n28: \n29:         public ProfileWriter(UserRepository repository) {\n30:             this.repository = repository;\n31:         }\n32: \n33:         @Transactional\n34:         public void saveProfile(String userId, String profile) {\n35:             repository.saveProfile(userId, profile);\n36:         }\n37:     }\n38: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"old\":\"package com.example.user;\\n\\npublic class UserSyncService {\\n    private final UserRepository repository;\\n    private final RemoteUserClient remote;\\n    private final ProfileWriter writer;\\n\\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\\n        this.repository = repository;\\n        this.remote = remote;\\n        this.writer = new ProfileWriter(repository);\\n    }\\n\\n    @Transactional\\n    public void sync(String userId) {\\n        for (int i = 0; i < 5; i++) {\\n            try {\\n                String profile = remote.fetchProfile(userId);\\n                writer.saveProfile(userId, profile);\\n                return;\\n            } catch (Exception ignored) {\\n            }\\n        }\\n    }\\n\\n    public static class ProfileWriter {\\n        private final UserRepository repository;\\n\\n        public ProfileWriter(UserRepository repository) {\\n            this.repository = repository;\\n        }\\n\\n        @Transactional\\n        public void saveProfile(String userId, String profile) {\\n            repository.saveProfile(userId, profile);\\n        }\\n    }\\n}\",\"new\":\"package com.example.user;\\n\\nimport java.io.IOException;\\nimport java.io.UncheckedIOException;\\n\\npublic class UserSyncService {\\n    private final UserRepository repository;\\n    private final RemoteUserClient remote;\\n    private final ProfileWriter writer;\\n\\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\\n        this.repository = repository;\\n        this.remote = remote;\\n        this.writer = new ProfileWriter(repository);\\n    }\\n\\n    public void sync(String userId) {\\n        IOException lastFailure = null;\\n        for (int i = 0; i < 3; i++) {\\n            try {\\n                String profile = remote.fetchProfile(userId);\\n                writer.saveProfile(userId, profile);\\n                return;\\n            } catch (IOException failure) {\\n                lastFailure = failure;\\n                if (i < 2) {\\n                    try {\\n                        Thread.sleep(50L);\\n                    } catch (InterruptedException interrupted) {\\n                        Thread.currentThread().interrupt();\\n                        throw new IllegalStateException(\\\"Interrupted while retrying user synchronization\\\", interrupted);\\n                    }\\n                }\\n            }\\n        }\\n        throw new UncheckedIOException(\\\"Failed to fetch profile for user \\\" + userId, lastFailure);\\n    }\\n\\n    public static class ProfileWriter {\\n        private final UserRepository repository;\\n\\n        public ProfileWriter(UserRepository repository) {\\n            this.repository = repository;\\n        }\\n\\n        @Transactional\\n        public void saveProfile(String userId, String profile) {\\n            repository.saveProfile(userId, profile);\\n        }\\n    }\\n}\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "old": "package com.example.user;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n    private final ProfileWriter writer;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n        this.writer = new ProfileWriter(repository);\n    }\n\n    @Transactional\n    public void sync(String userId) {\n        for (int i = 0; i < 5; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                writer.saveProfile(userId, profile);\n                return;\n            } catch (Exception ignored) {\n            }\n        }\n    }\n\n    public static class ProfileWriter {\n        private final UserRepository repository;\n\n        public ProfileWriter(UserRepository repository) {\n            this.repository = repository;\n        }\n\n        @Transactional\n        public void saveProfile(String userId, String profile) {\n            repository.saveProfile(userId, profile);\n        }\n    }\n}",
+          "new": "package com.example.user;\n\nimport java.io.IOException;\nimport java.io.UncheckedIOException;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n    private final ProfileWriter writer;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n        this.writer = new ProfileWriter(repository);\n    }\n\n    public void sync(String userId) {\n        IOException lastFailure = null;\n        for (int i = 0; i < 3; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                writer.saveProfile(userId, profile);\n                return;\n            } catch (IOException failure) {\n                lastFailure = failure;\n                if (i < 2) {\n                    try {\n                        Thread.sleep(50L);\n                    } catch (InterruptedException interrupted) {\n                        Thread.currentThread().interrupt();\n                        throw new IllegalStateException(\"Interrupted while retrying user synchronization\", interrupted);\n                    }\n                }\n            }\n        }\n        throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);\n    }\n\n    public static class ProfileWriter {\n        private final UserRepository repository;\n\n        public ProfileWriter(UserRepository repository) {\n            this.repository = repository;\n        }\n\n        @Transactional\n        public void saveProfile(String userId, String profile) {\n            repository.saveProfile(userId, profile);\n        }\n    }\n}"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "old": "package com.example.user;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n    private final ProfileWriter writer;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n        this.writer = new ProfileWriter(repository);\n    }\n\n    @Transactional\n    public void sync(String userId) {\n        for (int i = 0; i < 5; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                writer.saveProfile(userId, profile);\n                return;\n            } catch (Exception ignored) {\n            }\n        }\n    }\n\n    public static class ProfileWriter {\n        private final UserRepository repository;\n\n        public ProfileWriter(UserRepository repository) {\n            this.repository = repository;\n        }\n\n        @Transactional\n        public void saveProfile(String userId, String profile) {\n            repository.saveProfile(userId, profile);\n        }\n    }\n}",
+            "new": "package com.example.user;\n\nimport java.io.IOException;\nimport java.io.UncheckedIOException;\n\npublic class UserSyncService {\n    private final UserRepository repository;\n    private final RemoteUserClient remote;\n    private final ProfileWriter writer;\n\n    public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n        this.repository = repository;\n        this.remote = remote;\n        this.writer = new ProfileWriter(repository);\n    }\n\n    public void sync(String userId) {\n        IOException lastFailure = null;\n        for (int i = 0; i < 3; i++) {\n            try {\n                String profile = remote.fetchProfile(userId);\n                writer.saveProfile(userId, profile);\n                return;\n            } catch (IOException failure) {\n                lastFailure = failure;\n                if (i < 2) {\n                    try {\n                        Thread.sleep(50L);\n                    } catch (InterruptedException interrupted) {\n                        Thread.currentThread().interrupt();\n                        throw new IllegalStateException(\"Interrupted while retrying user synchronization\", interrupted);\n                    }\n                }\n            }\n        }\n        throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);\n    }\n\n    public static class ProfileWriter {\n        private final UserRepository repository;\n\n        public ProfileWriter(UserRepository repository) {\n            this.repository = repository;\n        }\n\n        @Transactional\n        public void saveProfile(String userId, String profile) {\n            repository.saveProfile(userId, profile);\n        }\n    }\n}"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "bytes": 1691
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": false,
+            "exit": 1,
+            "stdout": "[\u001b[1;31mERROR\u001b[m] \u001b[1;31mTests \u001b[0;1mrun: \u001b[0;1m5\u001b[m, \u001b[1;31mFailures: \u001b[0;1;31m1\u001b[m, Errors: 0, Skipped: 0, Time elapsed: 0.252 s\u001b[1;31m <<< FAILURE!\u001b[m -- in com.example.user.\u001b[1mUserSyncServiceContractTest\u001b[m\n[\u001b[1;31mERROR\u001b[m] com.example.user.UserSyncServiceContractTest.retriesOnlyIoTransportFailuresWithLowBoundAndPropagatesFinalFailure -- Time elapsed: 0.112 s <<< FAILURE!\norg.opentest4j.AssertionFailedError: Unexpected exception type thrown, expected: <java.io.IOException> but was: <java.io.UncheckedIOException>\n\tat org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)\n\tat org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:67)\n\tat org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:35)\n\tat org.junit.jupiter.api.Assertions.assertThrows(Assertions.java:3115)\n\tat com.example.user.UserSyncServiceContractTest.retriesOnlyIoTransportFailuresWithLowBoundAndPropagatesFinalFailure(UserSyncServiceContractTest.java:48)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:569)\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\nCaused by: java.io.UncheckedIOException: Failed to fetch profile for user u1\n\tat com.example.user.UserSyncService.sync(UserSyncService.java:36)\n\tat com.example.user.UserSyncServiceContractTest.lambda$retriesOnlyIoTransportFailuresWithLowBoundAndPropagatesFinalFailure$1(UserSyncServiceContractTest.java:48)\n\tat org.junit.jupiter.api.AssertThrows.assertThrows(AssertThrows.java:53)\n\t... 6 more\nCaused by: java.io.IOException: final\n\tat com.example.user.UserSyncServiceContractTest.retriesOnlyIoTransportFailuresWithLowBoundAndPropagatesFinalFailure(UserSyncServiceContractTest.java:46)\n\t... 3 more\n\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mFailures: \u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m  UserSyncServiceContractTest.retriesOnlyIoTransportFailuresWithLowBoundAndPropagatesFinalFailure:48 Unexpected exception type thrown, expected: <java.io.IOException> but was: <java.io.UncheckedIOException>\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mTests run: 5, Failures: 1, Errors: 0, Skipped: 0\u001b[m\n[\u001b[1;31mERROR\u001b[m] Failed to execute goal \u001b[32morg.apache.maven.plugins:maven-surefire-plugin:3.2.5:test\u001b[m \u001b[1m(default-test)\u001b[m on project \u001b[36mrpc-retry-transaction-fixture\u001b[m: \u001b[1;31mThere are test failures.\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mPlease refer to /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/rpc_m13_two_phase_smoke_r1/RPC_M13__PREREAD_STALE_SOURCE__r1/target/surefire-reports for the individual test results.\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mPlease refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.\u001b[m\n[\u001b[1;31mERROR\u001b[m] -> \u001b[1m[Help 1]\u001b[m\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] To see the full stack trace of the errors, re-run Maven with the \u001b[1m-e\u001b[m switch.\n[\u001b[1;31mERROR\u001b[m] Re-run Maven using the \u001b[1m-X\u001b[m switch to enable full debug logging.\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] For more information about the errors and possible solutions, please read the following articles:\n[\u001b[1;31mERROR\u001b[m] \u001b[1m[Help 1]\u001b[m http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "content": "1: package com.example.user;\n2: \n3: import java.io.IOException;\n4: import java.io.UncheckedIOException;\n5: \n6: public class UserSyncService {\n7:     private final UserRepository repository;\n8:     private final RemoteUserClient remote;\n9:     private final ProfileWriter writer;\n10: \n11:     public UserSyncService(UserRepository repository, RemoteUserClient remote) {\n12:         this.repository = repository;\n13:         this.remote = remote;\n14:         this.writer = new ProfileWriter(repository);\n15:     }\n16: \n17:     public void sync(String userId) {\n18:         IOException lastFailure = null;\n19:         for (int i = 0; i < 3; i++) {\n20:             try {\n21:                 String profile = remote.fetchProfile(userId);\n22:                 writer.saveProfile(userId, profile);\n23:                 return;\n24:             } catch (IOException failure) {\n25:                 lastFailure = failure;\n26:                 if (i < 2) {\n27:                     try {\n28:                         Thread.sleep(50L);\n29:                     } catch (InterruptedException interrupted) {\n30:                         Thread.currentThread().interrupt();\n31:                         throw new IllegalStateException(\"Interrupted while retrying user synchronization\", interrupted);\n32:                     }\n33:                 }\n34:             }\n35:         }\n36:         throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);\n37:     }\n38: \n39:     public static class ProfileWriter {\n40:         private final UserRepository repository;\n41: \n42:         public ProfileWriter(UserRepository repository) {\n43:             this.repository = repository;\n44:         }\n45: \n46:         @Transactional\n47:         public void saveProfile(String userId, String profile) {\n48:             repository.saveProfile(userId, profile);\n49:         }\n50:     }\n51: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"old\":\"import java.io.IOException;\\nimport java.io.UncheckedIOException;\",\"new\":\"import java.io.IOException;\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "old": "import java.io.IOException;\nimport java.io.UncheckedIOException;",
+          "new": "import java.io.IOException;"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "old": "import java.io.IOException;\nimport java.io.UncheckedIOException;",
+            "new": "import java.io.IOException;"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "bytes": 27
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"old\":\"    public void sync(String userId) {\\n        IOException lastFailure = null;\",\"new\":\"    public void sync(String userId) throws IOException {\\n        IOException lastFailure = null;\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "old": "    public void sync(String userId) {\n        IOException lastFailure = null;",
+          "new": "    public void sync(String userId) throws IOException {\n        IOException lastFailure = null;"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "old": "    public void sync(String userId) {\n        IOException lastFailure = null;",
+            "new": "    public void sync(String userId) throws IOException {\n        IOException lastFailure = null;"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "bytes": 96
+          }
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/user/UserSyncService.java\",\"old\":\"        throw new UncheckedIOException(\\\"Failed to fetch profile for user \\\" + userId, lastFailure);\",\"new\":\"        throw lastFailure;\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/user/UserSyncService.java",
+          "old": "        throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);",
+          "new": "        throw lastFailure;"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "old": "        throw new UncheckedIOException(\"Failed to fetch profile for user \" + userId, lastFailure);",
+            "new": "        throw lastFailure;"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/user/UserSyncService.java",
+            "bytes": 26
+          }
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "raw": "{\"action\":\"final\",\"answer\":\"修稳用户同步：移除远程调用外层事务，将数据库写入保留在独立事务写入器中；仅对 IOException 网络故障进行 3 次短间隔重试；业务异常不再捕获；重试耗尽后将最终 IOException 原样抛给调用方；中断时恢复中断标记并显式失败。编译和契约测试已通过。\",\"files\":[\"src/main/java/com/example/user/UserSyncService.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "修稳用户同步：移除远程调用外层事务，将数据库写入保留在独立事务写入器中；仅对 IOException 网络故障进行 3 次短间隔重试；业务异常不再捕获；重试耗尽后将最终 IOException 原样抛给调用方；中断时恢复中断标记并显式失败。编译和契约测试已通过。",
+          "files": [
+            "src/main/java/com/example/user/UserSyncService.java"
+          ]
+        }
+      ]
+    }
+  ],
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [
+      "edit_protocol_fail"
+    ],
+    "edit_errors": [
+      {
+        "turn": 0,
+        "action": "edit",
+        "error": "old text occurrences=0"
+      }
+    ],
+    "compile_tool_failures": [
+      {
+        "turn": 3,
+        "exit": 1,
+        "stderr_tail": ""
+      }
+    ],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [],
+    "has_final": true,
+    "has_diff": true,
+    "extra_actions_ignored": 0,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}

@@ -1,0 +1,482 @@
+{
+  "task_id": "RPC_M14",
+  "arm": "STALE_DOC_CONTROL",
+  "rep": 1,
+  "final_gate": "hard",
+  "phase_a_max_turns": 6,
+  "phase_b_max_turns": 16,
+  "fixture_meta": {
+    "fixture": "scheduler-partial-failure-idempotency",
+    "phase_a": "old source visible; post contract test hidden",
+    "phase_b_mutation": "source refactored to a transactional writer boundary and post contract test restored"
+  },
+  "phase_a_orientation": {
+    "action": "orientation",
+    "summary": "NotificationScheduler.runOnce(limit) fetches up to limit pending tasks from NotificationTaskRepository, then for each task marks it SENT before invoking NotificationSender.send(taskId), incrementing and returning the processed count. Dispatch is synchronous and ID-only. The model defines PENDING, PROCESSING, and SENT, but the current repository contract only supports finding pending tasks and marking them sent; PROCESSING is unused, with no claim/lease, retry, or failure handling visible."
+  },
+  "phase_a_telemetry": {
+    "tool_calls": 6,
+    "source_reads": 4,
+    "source_bytes": 1665,
+    "source_files": [
+      "src/main/java/com/example/scheduler/NotificationScheduler.java",
+      "src/main/java/com/example/scheduler/NotificationSender.java",
+      "src/main/java/com/example/scheduler/NotificationTask.java",
+      "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+    ],
+    "prompt_tokens": 3991,
+    "completion_tokens": 253,
+    "invalid": 0,
+    "edits_rejected": 0,
+    "compile_calls": 0
+  },
+  "phase_a_transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "README.md",
+              "pom.xml",
+              "src/main/java/com/example/scheduler/NotificationScheduler.java",
+              "src/main/java/com/example/scheduler/NotificationSender.java",
+              "src/main/java/com/example/scheduler/NotificationTask.java",
+              "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/scheduler/NotificationScheduler.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: public class NotificationScheduler {\n4:     private final NotificationTaskRepository repository;\n5:     private final NotificationSender sender;\n6: \n7:     public NotificationScheduler(NotificationTaskRepository repository, NotificationSender sender) {\n8:         this.repository = repository;\n9:         this.sender = sender;\n10:     }\n11: \n12:     public int runOnce(int limit) {\n13:         int processed = 0;\n14:         for (NotificationTask task : repository.findPendingBatch(limit)) {\n15:             repository.markSent(task.getId());\n16:             sender.send(task.getId());\n17:             processed++;\n18:         }\n19:         return processed;\n20:     }\n21: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/scheduler/NotificationTaskRepository.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: import java.util.List;\n4: \n5: public interface NotificationTaskRepository {\n6:     List<NotificationTask> findPendingBatch(int limit);\n7: \n8:     void markSent(long id);\n9: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/scheduler/NotificationSender.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/scheduler/NotificationSender.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/scheduler/NotificationSender.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/scheduler/NotificationSender.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: public interface NotificationSender {\n4:     void send(long taskId);\n5: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/scheduler/NotificationTask.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/scheduler/NotificationTask.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/scheduler/NotificationTask.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/scheduler/NotificationTask.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: public final class NotificationTask {\n4:     public enum Status {\n5:         PENDING,\n6:         PROCESSING,\n7:         SENT\n8:     }\n9: \n10:     private final long id;\n11:     private Status status;\n12: \n13:     public NotificationTask(long id, Status status) {\n14:         this.id = id;\n15:         this.status = status;\n16:     }\n17: \n18:     public long getId() {\n19:         return id;\n20:     }\n21: \n22:     public Status getStatus() {\n23:         return status;\n24:     }\n25: \n26:     public void setStatus(Status status) {\n27:         this.status = status;\n28:     }\n29: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"orientation\",\"summary\":\"NotificationScheduler.runOnce(limit) fetches up to limit pending tasks from NotificationTaskRepository, then for each task marks it SENT before invoking NotificationSender.send(taskId), incrementing and returning the processed count. Dispatch is synchronous and ID-only. The model defines PENDING, PROCESSING, and SENT, but the current repository contract only supports finding pending tasks and marking them sent; PROCESSING is unused, with no claim/lease, retry, or failure handling visible.\"}",
+      "actions": [
+        {
+          "action": "orientation",
+          "summary": "NotificationScheduler.runOnce(limit) fetches up to limit pending tasks from NotificationTaskRepository, then for each task marks it SENT before invoking NotificationSender.send(taskId), incrementing and returning the processed count. Dispatch is synchronous and ID-only. The model defines PENDING, PROCESSING, and SENT, but the current repository contract only supports finding pending tasks and marking them sent; PROCESSING is unused, with no claim/lease, retry, or failure handling visible."
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "orientation",
+            "summary": "NotificationScheduler.runOnce(limit) fetches up to limit pending tasks from NotificationTaskRepository, then for each task marks it SENT before invoking NotificationSender.send(taskId), incrementing and returning the processed count. Dispatch is synchronous and ID-only. The model defines PENDING, PROCESSING, and SENT, but the current repository contract only supports finding pending tasks and marking them sent; PROCESSING is unused, with no claim/lease, retry, or failure handling visible."
+          },
+          "tool_output": {
+            "ok": true
+          }
+        }
+      ]
+    }
+  ],
+  "phase_a_old_source_excerpt": "package com.example.scheduler;\n\npublic class NotificationScheduler {\n    private final NotificationTaskRepository repository;\n    private final NotificationSender sender;\n\n    public NotificationScheduler(NotificationTaskRepository repository, NotificationSender sender) {\n        this.repository = repository;\n        this.sender = sender;\n    }\n\n    public int runOnce(int limit) {\n        int processed = 0;\n        for (NotificationTask task : repository.findPendingBatch(limit)) {\n            repository.markSent(task.getId());\n            sender.send(task.getId());\n            processed++;\n        }\n        return processed;\n    }\n}\n",
+  "stale_claim_present": true,
+  "stale_claim_fresh": false,
+  "stale_claim_withheld": false,
+  "withheld_claim_id": null,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "新增仓储原子认领批次契约，调度器改为先认领待处理任务，再发送通知，并仅在发送成功后标记 SENT；发送失败时任务保持 PROCESSING，后续普通扫描不会重复发送。编译已通过。",
+    "files": [
+      "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+      "src/main/java/com/example/scheduler/NotificationScheduler.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 8,
+    "source_bytes": 5531,
+    "source_reads": 3,
+    "source_files": [
+      "src/main/java/com/example/scheduler/NotificationScheduler.java",
+      "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+      "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+    ],
+    "prompt_tokens": 15381,
+    "completion_tokens": 522,
+    "invalid": 0,
+    "wall_seconds": 40.644,
+    "successful_edits": 2,
+    "rejected_finals": 0,
+    "duplicate_edit_suppressed": 0,
+    "extra_actions_ignored": 0,
+    "post_test_pass_observed": true
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "has_claim_api": true,
+      "uses_claim": true,
+      "uses_find_pending": false,
+      "mark_before_send": false,
+      "send_before_mark": true,
+      "catches_runtime": false,
+      "legacy_helper": false
+    },
+    "test": {
+      "ok": true,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "src/main/java/com/example/scheduler/NotificationScheduler.java": "--- a/src/main/java/com/example/scheduler/NotificationScheduler.java\n+++ b/src/main/java/com/example/scheduler/NotificationScheduler.java\n@@ -11,17 +11,17 @@\n \n     public int runOnce(int limit) {\n         int processed = 0;\n-        for (NotificationTask task : repository.findPendingBatch(limit)) {\n-            if (deliverLegacy(task)) {\n+        for (NotificationTask task : repository.claimPendingBatch(limit)) {\n+            if (deliver(task)) {\n                 processed++;\n             }\n         }\n         return processed;\n     }\n \n-    private boolean deliverLegacy(NotificationTask task) {\n+    private boolean deliver(NotificationTask task) {\n+        sender.send(task.getId());\n         repository.markSent(task.getId());\n-        sender.send(task.getId());\n         return true;\n     }\n }",
+    "src/main/java/com/example/scheduler/NotificationTaskRepository.java": "--- a/src/main/java/com/example/scheduler/NotificationTaskRepository.java\n+++ b/src/main/java/com/example/scheduler/NotificationTaskRepository.java\n@@ -5,5 +5,7 @@\n public interface NotificationTaskRepository {\n     List<NotificationTask> findPendingBatch(int limit);\n \n+    List<NotificationTask> claimPendingBatch(int limit);\n+\n     void markSent(long id);\n }"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "semantic_pass": true,
+    "trap_reason": {
+      "has_claim_api": true,
+      "uses_claim": true,
+      "uses_find_pending": false,
+      "mark_before_send": false,
+      "send_before_mark": true,
+      "catches_runtime": false,
+      "legacy_helper": false,
+      "post_message": "PASS"
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "README.md",
+              "pom.xml",
+              "src/main/java/com/example/scheduler/NotificationScheduler.java",
+              "src/main/java/com/example/scheduler/NotificationSender.java",
+              "src/main/java/com/example/scheduler/NotificationTask.java",
+              "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+              "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/scheduler/NotificationScheduler.java\",\"start\":1,\"end\":240}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "start": 1,
+          "end": 240
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+            "start": 1,
+            "end": 240
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: public class NotificationScheduler {\n4:     private final NotificationTaskRepository repository;\n5:     private final NotificationSender sender;\n6: \n7:     public NotificationScheduler(NotificationTaskRepository repository, NotificationSender sender) {\n8:         this.repository = repository;\n9:         this.sender = sender;\n10:     }\n11: \n12:     public int runOnce(int limit) {\n13:         int processed = 0;\n14:         for (NotificationTask task : repository.findPendingBatch(limit)) {\n15:             if (deliverLegacy(task)) {\n16:                 processed++;\n17:             }\n18:         }\n19:         return processed;\n20:     }\n21: \n22:     private boolean deliverLegacy(NotificationTask task) {\n23:         repository.markSent(task.getId());\n24:         sender.send(task.getId());\n25:         return true;\n26:     }\n27: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java\",\"start\":1,\"end\":280}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java",
+          "start": 1,
+          "end": 280
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java",
+            "start": 1,
+            "end": 280
+          },
+          "tool_output": {
+            "path": "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: import static org.junit.jupiter.api.Assertions.*;\n4: \n5: import java.lang.reflect.Method;\n6: import java.util.ArrayList;\n7: import java.util.LinkedHashMap;\n8: import java.util.List;\n9: import java.util.Map;\n10: import org.junit.jupiter.api.Test;\n11: \n12: class NotificationSchedulerContractTest {\n13:     @Test\n14:     void repositoryProvidesAtomicClaimBeforeSideEffect() throws Exception {\n15:         Method claim = NotificationTaskRepository.class.getMethod(\"claimPendingBatch\", int.class);\n16:         assertEquals(List.class, claim.getReturnType());\n17:     }\n18: \n19:     @Test\n20:     void marksSentOnlyAfterSuccessfulSend() {\n21:         FakeRepository repository = new FakeRepository(\n22:                 new NotificationTask(1L, NotificationTask.Status.PENDING),\n23:                 new NotificationTask(2L, NotificationTask.Status.PENDING));\n24:         FailingOnceSender sender = new FailingOnceSender(1L);\n25:         NotificationScheduler scheduler = new NotificationScheduler(repository, sender);\n26: \n27:         RuntimeException failure = assertThrows(RuntimeException.class, () -> scheduler.runOnce(1));\n28:         assertEquals(\"boom\", failure.getMessage());\n29:         assertEquals(NotificationTask.Status.PROCESSING, repository.statusOf(1L),\n30:                 \"failed item should remain claimed/in progress, not completed before side effect succeeds\");\n31:         assertFalse(repository.sentIds.contains(1L), \"failed send must not be marked SENT\");\n32: \n33:         sender.failTaskId = -1L;\n34:         int processed = scheduler.runOnce(10);\n35: \n36:         assertEquals(1, processed, \"retry should process only still-pending work, not duplicate the failed claimed item\");\n37:         assertEquals(List.of(1L, 2L), sender.attempts, \"failed item is not sent again until recovery policy explicitly releases it\");\n38:         assertEquals(List.of(2L), repository.sentIds);\n39:         assertEquals(NotificationTask.Status.SENT, repository.statusOf(2L));\n40:     }\n41: \n42:     static final class FakeRepository implements NotificationTaskRepository {\n43:         final Map<Long, NotificationTask> tasks = new LinkedHashMap<>();\n44:         final List<Long> sentIds = new ArrayList<>();\n45: \n46:         FakeRepository(NotificationTask... tasks) {\n47:             for (NotificationTask task : tasks) {\n48:                 this.tasks.put(task.getId(), task);\n49:             }\n50:         }\n51: \n52:         public List<NotificationTask> claimPendingBatch(int limit) {\n53:             List<NotificationTask> claimed = new ArrayList<>();\n54:             for (NotificationTask task : tasks.values()) {\n55:                 if (claimed.size() >= limit) {\n56:                     break;\n57:                 }\n58:                 if (task.getStatus() == NotificationTask.Status.PENDING) {\n59:                     task.setStatus(NotificationTask.Status.PROCESSING);\n60:                     claimed.add(task);\n61:                 }\n62:             }\n63:             return claimed;\n64:         }\n65: \n66:         public List<NotificationTask> findPendingBatch(int limit) {\n67:             List<NotificationTask> pending = new ArrayList<>();\n68:             for (NotificationTask task : tasks.values()) {\n69:                 if (pending.size() >= limit) {\n70:                     break;\n71:                 }\n72:                 if (task.getStatus() == NotificationTask.Status.PENDING) {\n73:                     pending.add(task);\n74:                 }\n75:             }\n76:             return pending;\n77:         }\n78: \n79:         @Override\n80:         public void markSent(long id) {\n81:             tasks.get(id).setStatus(NotificationTask.Status.SENT);\n82:             sentIds.add(id);\n83:         }\n84: \n85:         NotificationTask.Status statusOf(long id) {\n86:             return tasks.get(id).getStatus();\n87:         }\n88:     }\n89: \n90:     static final class FailingOnceSender implements NotificationSender {\n91:         final List<Long> attempts = new ArrayList<>();\n92:         long failTaskId;\n93: \n94:         FailingOnceSender(long failTaskId) {\n95:             this.failTaskId = failTaskId;\n96:         }\n97: \n98:         @Override\n99:         public void send(long taskId) {\n100:             attempts.add(taskId);\n101:             if (taskId == failTaskId) {\n102:                 throw new RuntimeException(\"boom\");\n103:             }\n104:         }\n105:     }\n106: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/scheduler/NotificationTaskRepository.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "content": "1: package com.example.scheduler;\n2: \n3: import java.util.List;\n4: \n5: public interface NotificationTaskRepository {\n6:     List<NotificationTask> findPendingBatch(int limit);\n7: \n8:     void markSent(long id);\n9: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/scheduler/NotificationTaskRepository.java\",\"old\":\"public interface NotificationTaskRepository {\\n    List<NotificationTask> findPendingBatch(int limit);\\n\\n    void markSent(long id);\\n}\",\"new\":\"public interface NotificationTaskRepository {\\n    List<NotificationTask> findPendingBatch(int limit);\\n\\n    List<NotificationTask> claimPendingBatch(int limit);\\n\\n    void markSent(long id);\\n}\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "old": "public interface NotificationTaskRepository {\n    List<NotificationTask> findPendingBatch(int limit);\n\n    void markSent(long id);\n}",
+          "new": "public interface NotificationTaskRepository {\n    List<NotificationTask> findPendingBatch(int limit);\n\n    List<NotificationTask> claimPendingBatch(int limit);\n\n    void markSent(long id);\n}"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "old": "public interface NotificationTaskRepository {\n    List<NotificationTask> findPendingBatch(int limit);\n\n    void markSent(long id);\n}",
+            "new": "public interface NotificationTaskRepository {\n    List<NotificationTask> findPendingBatch(int limit);\n\n    List<NotificationTask> claimPendingBatch(int limit);\n\n    void markSent(long id);\n}"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "bytes": 190
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/scheduler/NotificationScheduler.java\",\"old\":\"    public int runOnce(int limit) {\\n        int processed = 0;\\n        for (NotificationTask task : repository.findPendingBatch(limit)) {\\n            if (deliverLegacy(task)) {\\n                processed++;\\n            }\\n        }\\n        return processed;\\n    }\\n\\n    private boolean deliverLegacy(NotificationTask task) {\\n        repository.markSent(task.getId());\\n        sender.send(task.getId());\\n        return true;\\n    }\",\"new\":\"    public int runOnce(int limit) {\\n        int processed = 0;\\n        for (NotificationTask task : repository.claimPendingBatch(limit)) {\\n            if (deliver(task)) {\\n                processed++;\\n            }\\n        }\\n        return processed;\\n    }\\n\\n    private boolean deliver(NotificationTask task) {\\n        sender.send(task.getId());\\n        repository.markSent(task.getId());\\n        return true;\\n    }\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "old": "    public int runOnce(int limit) {\n        int processed = 0;\n        for (NotificationTask task : repository.findPendingBatch(limit)) {\n            if (deliverLegacy(task)) {\n                processed++;\n            }\n        }\n        return processed;\n    }\n\n    private boolean deliverLegacy(NotificationTask task) {\n        repository.markSent(task.getId());\n        sender.send(task.getId());\n        return true;\n    }",
+          "new": "    public int runOnce(int limit) {\n        int processed = 0;\n        for (NotificationTask task : repository.claimPendingBatch(limit)) {\n            if (deliver(task)) {\n                processed++;\n            }\n        }\n        return processed;\n    }\n\n    private boolean deliver(NotificationTask task) {\n        sender.send(task.getId());\n        repository.markSent(task.getId());\n        return true;\n    }"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+            "old": "    public int runOnce(int limit) {\n        int processed = 0;\n        for (NotificationTask task : repository.findPendingBatch(limit)) {\n            if (deliverLegacy(task)) {\n                processed++;\n            }\n        }\n        return processed;\n    }\n\n    private boolean deliverLegacy(NotificationTask task) {\n        repository.markSent(task.getId());\n        sender.send(task.getId());\n        return true;\n    }",
+            "new": "    public int runOnce(int limit) {\n        int processed = 0;\n        for (NotificationTask task : repository.claimPendingBatch(limit)) {\n            if (deliver(task)) {\n                processed++;\n            }\n        }\n        return processed;\n    }\n\n    private boolean deliver(NotificationTask task) {\n        sender.send(task.getId());\n        repository.markSent(task.getId());\n        return true;\n    }"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/scheduler/NotificationScheduler.java",
+            "bytes": 415
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "raw": "{\"action\":\"final\",\"answer\":\"新增仓储原子认领批次契约，调度器改为先认领待处理任务，再发送通知，并仅在发送成功后标记 SENT；发送失败时任务保持 PROCESSING，后续普通扫描不会重复发送。编译已通过。\",\"files\":[\"src/main/java/com/example/scheduler/NotificationTaskRepository.java\",\"src/main/java/com/example/scheduler/NotificationScheduler.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "新增仓储原子认领批次契约，调度器改为先认领待处理任务，再发送通知，并仅在发送成功后标记 SENT；发送失败时任务保持 PROCESSING，后续普通扫描不会重复发送。编译已通过。",
+          "files": [
+            "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+            "src/main/java/com/example/scheduler/NotificationScheduler.java"
+          ]
+        }
+      ]
+    }
+  ],
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [],
+    "has_final": true,
+    "has_diff": true,
+    "extra_actions_ignored": 0,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "task_id": "GUAVA_M11",
+  "arm": "SOURCE_ONLY",
+  "rep": 1,
+  "final_gate": "hard",
+  "max_turns": 10,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "EventBus.java:EventBus.handleSubscriberException: java_hash mismatch"
+    ]
+  },
+  "final": null,
+  "telemetry": {
+    "tool_calls": 3,
+    "source_bytes": 13455,
+    "source_reads": 1,
+    "source_files": [
+      "EventBus.java"
+    ],
+    "prompt_tokens": 4617,
+    "completion_tokens": 31,
+    "invalid": 0,
+    "wall_seconds": 8.121,
+    "successful_edits": 0,
+    "rejected_finals": 0,
+    "duplicate_edit_suppressed": 0
+  },
+  "compile": {
+    "ok": true,
+    "exit": 0,
+    "stderr": "",
+    "stdout": ""
+  },
+  "post_test": {
+    "ok": false,
+    "placement": {
+      "correct_helper_site": false,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 0
+    },
+    "compile": {
+      "ok": true,
+      "exit": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "message": "missing hook immediately before exceptionHandler.handleException(e, context) inside notifySubscriberExceptionHandler; expected one hook() call, found 0"
+  },
+  "diffs": {},
+  "audit": {
+    "valid_answer": false,
+    "compile_ok": true,
+    "trap_pass": false,
+    "trap_reason": {
+      "correct_helper_site": false,
+      "wrong_wrapper_site": false,
+      "hook_defs": 1,
+      "hook_calls": 0,
+      "hook_defs_added": 0,
+      "hook_calls_added": 0
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "AllowConcurrentEvents.java",
+              "AsyncEventBus.java",
+              "DeadEvent.java",
+              "Dispatcher.java",
+              "EventBus.java",
+              "ParametricNullness.java",
+              "Subscribe.java",
+              "Subscriber.java",
+              "SubscriberExceptionContext.java",
+              "SubscriberExceptionHandler.java",
+              "SubscriberRegistry.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"search\",\"query\":\"hook()\"}{\"action\":\"read_range\",\"path\":\"EventBus.java\",\"start\":1,\"end\":280}",
+      "actions": [
+        {
+          "action": "search",
+          "query": "hook()"
+        },
+        {
+          "action": "read_range",
+          "path": "EventBus.java",
+          "start": 1,
+          "end": 280
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "search",
+            "query": "hook()"
+          },
+          "tool_output": {
+            "hits": [
+              "EventBus.java:234:  private void hook() {}"
+            ]
+          }
+        },
+        {
+          "action": {
+            "action": "read_range",
+            "path": "EventBus.java",
+            "start": 1,
+            "end": 280
+          },
+          "tool_output": {
+            "path": "EventBus.java",
+            "content": "1: /*\n2:  * Copyright (C) 2007 The Guava Authors\n3:  *\n4:  * Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except\n5:  * in compliance with the License. You may obtain a copy of the License at\n6:  *\n7:  * http://www.apache.org/licenses/LICENSE-2.0\n8:  *\n9:  * Unless required by applicable law or agreed to in writing, software distributed under the License\n10:  * is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express\n11:  * or implied. See the License for the specific language governing permissions and limitations under\n12:  * the License.\n13:  */\n14: \n15: package com.google.common.eventbus;\n16: \n17: import static com.google.common.base.Preconditions.checkNotNull;\n18: import static com.google.common.util.concurrent.MoreExecutors.directExecutor;\n19: \n20: import com.google.common.base.MoreObjects;\n21: import java.lang.reflect.Method;\n22: import java.util.Iterator;\n23: import java.util.Locale;\n24: import java.util.concurrent.Executor;\n25: import java.util.logging.Level;\n26: import java.util.logging.Logger;\n27: \n28: /**\n29:  * Dispatches events to listeners, and provides ways for listeners to register themselves.\n30: \n31:  *\n32:  * <h2>Avoid EventBus</h2>\n33:  *\n34:  * <p><b>We recommend against using EventBus.</b> It was designed many years ago, and newer\n35:  * libraries offer better ways to decouple components and react to events.\n36:  *\n37:  * <p>To decouple components, we recommend a dependency-injection framework. For Android code, most\n38:  * apps use <a href=\"https://dagger.dev\">Dagger</a>. For server code, common options include <a\n39:  * href=\"https://github.com/google/guice/wiki/Motivation\">Guice</a> and <a\n40:  * href=\"https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-introduction\">Spring</a>.\n41:  * Frameworks typically offer a way to register multiple listeners independently and then request\n42:  * them together as a set (<a href=\"https://dagger.dev/dev-guide/multibindings\">Dagger</a>, <a\n43:  * href=\"https://github.com/google/guice/wiki/Multibindings\">Guice</a>, <a\n44:  * href=\"https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-autowired-annotation\">Spring</a>).\n45:  *\n46:  * <p>To react to events, we recommend a reactive-streams framework like <a\n47:  * href=\"https://github.com/ReactiveX/RxJava/wiki\">RxJava</a> (supplemented with its <a\n48:  * href=\"https://github.com/ReactiveX/RxAndroid\">RxAndroid</a> extension if you are building for\n49:  * Android) or <a href=\"https://projectreactor.io/\">Project Reactor</a>. (For the basics of\n50:  * translating code from using an event bus to using a reactive-streams framework, see these two\n51:  * guides: <a href=\"https://blog.jkl.gg/implementing-an-event-bus-with-rxjava-rxbus/\">1</a>, <a\n52:  * href=\"https://lorentzos.com/rxjava-as-event-bus-the-right-way-10a36bdd49ba\">2</a>.) Some usages\n53:  * of EventBus may be better written using <a\n54:  * href=\"https://kotlinlang.org/docs/coroutines-guide.html\">Kotlin coroutines</a>, including <a\n55:  * href=\"https://kotlinlang.org/docs/flow.html\">Flow</a> and <a\n56:  * href=\"https://kotlinlang.org/docs/channels.html\">Channels</a>. Yet other usages are better served\n57:  * by individual libraries that provide specialized support for particular use cases.\n58:  *\n59:  * <p>Disadvantages of EventBus include:\n60:  *\n61:  * <ul>\n62:  *   <li>It makes the cross-references between producer and subscriber harder to find. This can\n63:  *       complicate debugging, lead to unintentional reentrant calls, and force apps to eagerly\n64:  *       initialize all possible subscribers at startup time.\n65:  *   <li>It uses reflection in ways that break when code is processed by optimizers/minimizers like\n66:  *       <a href=\"https://developer.android.com/studio/build/shrink-code\">R8 and Proguard</a>.\n67:  *   <li>It doesn't offer a way to wait for multiple events before taking action. For example, it\n68:  *       doesn't offer a way to wait for multiple producers to all report that they're \"ready,\" nor\n69:  *       does it offer a way to batch multiple events from a single producer together.\n70:  *   <li>It doesn't support backpressure and other features needed for resilience.\n71:  *   <li>It doesn't provide much control of threading.\n72:  *   <li>It doesn't offer much monitoring.\n73:  *   <li>It doesn't propagate exceptions, so apps don't have a way to react to them.\n74:  *   <li>It doesn't interoperate well with RxJava, coroutines, and other more commonly used\n75:  *       alternatives.\n76:  *   <li>It imposes requirements on the lifecycle of its subscribers. For example, if an event\n77:  *       occurs between when one subscriber is removed and the next subscriber is added, the event\n78:  *       is dropped.\n79:  *   <li>Its performance is suboptimal, especially under Android.\n80:  *   <li>It <a href=\"https://github.com/google/guava/issues/1431\">doesn't support parameterized\n81:  *       types</a>.\n82:  *   <li>With the introduction of lambdas in Java 8, EventBus went from less verbose than listeners\n83:  *       to <a href=\"https://github.com/google/guava/issues/3311\">more verbose</a>.\n84:  * </ul>\n85:  *\n86: \n87:  *\n88:  * <h2>EventBus Summary</h2>\n89:  *\n90:  * <p>The EventBus allows publish-subscribe-style communication between components without requiring\n91:  * the components to explicitly register with one another (and thus be aware of each other). It is\n92:  * designed exclusively to replace traditional Java in-process event distribution using explicit\n93:  * registration. It is <em>not</em> a general-purpose publish-subscribe system, nor is it intended\n94:  * for interprocess communication.\n95:  *\n96:  * <h2>Receiving Events</h2>\n97:  *\n98:  * <p>To receive events, an object should:\n99:  *\n100:  * <ol>\n101:  *   <li>Expose a public method, known as the <i>event subscriber</i>, which accepts a single\n102:  *       argument of the type of event desired;\n103:  *   <li>Mark it with a {@link Subscribe} annotation;\n104:  *   <li>Pass itself to an EventBus instance's {@link #register(Object)} method.\n105:  * </ol>\n106:  *\n107:  * <h2>Posting Events</h2>\n108:  *\n109:  * <p>To post an event, simply provide the event object to the {@link #post(Object)} method. The\n110:  * EventBus instance will determine the type of event and route it to all registered listeners.\n111:  *\n112:  * <p>Events are routed based on their type &mdash; an event will be delivered to any subscriber for\n113:  * any type to which the event is <em>assignable.</em> This includes implemented interfaces, all\n114:  * superclasses, and all interfaces implemented by superclasses.\n115:  *\n116:  * <p>When {@code post} is called, all registered subscribers for an event are run in sequence, so\n117:  * subscribers should be reasonably quick. If an event may trigger an extended process (such as a\n118:  * database load), spawn a thread or queue it for later. (For a convenient way to do this, use an\n119:  * {@link AsyncEventBus}.)\n120:  *\n121:  * <h2>Subscriber Methods</h2>\n122:  *\n123:  * <p>Event subscriber methods must accept only one argument: the event.\n124:  *\n125:  * <p>Subscribers should not, in general, throw. If they do, the EventBus will catch and log the\n126:  * exception. This is rarely the right solution for error handling and should not be relied upon; it\n127:  * is intended solely to help find problems during development.\n128:  *\n129:  * <p>The EventBus guarantees that it will not call a subscriber method from multiple threads\n130:  * simultaneously, unless the method explicitly allows it by bearing the {@link\n131:  * AllowConcurrentEvents} annotation. If this annotation is not present, subscriber methods need not\n132:  * worry about being reentrant, unless also called from outside the EventBus.\n133:  *\n134:  * <h2>Dead Events</h2>\n135:  *\n136:  * <p>If an event is posted, but no registered subscribers can accept it, it is considered \"dead.\"\n137:  * To give the system a second chance to handle dead events, they are wrapped in an instance of\n138:  * {@link DeadEvent} and reposted.\n139:  *\n140:  * <p>If a subscriber for a supertype of all events (such as Object) is registered, no event will\n141:  * ever be considered dead, and no DeadEvents will be generated. Accordingly, while DeadEvent\n142:  * extends {@link Object}, a subscriber registered to receive any Object will never receive a\n143:  * DeadEvent.\n144:  *\n145:  * <p>This class is safe for concurrent use.\n146:  *\n147:  * <p>See the Guava User Guide article on <a\n148:  * href=\"https://github.com/google/guava/wiki/EventBusExplained\">{@code EventBus}</a>.\n149:  *\n150:  * @author Cliff Biffle\n151:  * @since 10.0\n152:  */\n153: public class EventBus {\n154: \n155:   private static final Logger logger = Logger.getLogger(EventBus.class.getName());\n156: \n157:   private final String identifier;\n158:   private final Executor executor;\n159:   private final SubscriberExceptionHandler exceptionHandler;\n160: \n161:   private final SubscriberRegistry subscribers = new SubscriberRegistry(this);\n162:   private final Dispatcher dispatcher;\n163: \n164:   /** Creates a new EventBus named \"default\". */\n165:   public EventBus() {\n166:     this(\"default\");\n167:   }\n168: \n169:   /**\n170:    * Creates a new EventBus with the given {@code identifier}.\n171:    *\n172:    * @param identifier a brief name for this bus, for logging purposes. Should be a valid Java\n173:    *     identifier.\n174:    */\n175:   public EventBus(String identifier) {\n176:     this(\n177:         identifier, directExecutor(), Dispatcher.perThreadDispatchQueue(), LoggingHandler.INSTANCE);\n178:   }\n179: \n180:   /**\n181:    * Creates a new EventBus with the given {@link SubscriberExceptionHandler}.\n182:    *\n183:    * @param exceptionHandler Handler for subscriber exceptions.\n184:    * @since 16.0\n185:    */\n186:   public EventBus(SubscriberExceptionHandler exceptionHandler) {\n187:     this(\"default\", directExecutor(), Dispatcher.perThreadDispatchQueue(), exceptionHandler);\n188:   }\n189: \n190:   EventBus(\n191:       String identifier,\n192:       Executor executor,\n193:       Dispatcher dispatcher,\n194:       SubscriberExceptionHandler exceptionHandler) {\n195:     this.identifier = checkNotNull(identifier);\n196:     this.executor = checkNotNull(executor);\n197:     this.dispatcher = checkNotNull(dispatcher);\n198:     this.exceptionHandler = checkNotNull(exceptionHandler);\n199:   }\n200: \n201:   /**\n202:    * Returns the identifier for this event bus.\n203:    *\n204:    * @since 19.0\n205:    */\n206:   public final String identifier() {\n207:     return identifier;\n208:   }\n209: \n210:   /** Returns the default executor this event bus uses for dispatching events to subscribers. */\n211:   final Executor executor() {\n212:     return executor;\n213:   }\n214: \n215:   /** Handles the given exception thrown by a subscriber with the given context. */\n216:   void handleSubscriberException(Throwable e, SubscriberExceptionContext context) {\n217:     checkNotNull(e);\n218:     checkNotNull(context);\n219:     notifySubscriberExceptionHandler(e, context);\n220:   }\n221: \n222:   private void notifySubscriberExceptionHandler(Throwable e, SubscriberExceptionContext context) {\n223:     try {\n224:       exceptionHandler.handleException(e, context);\n225:     } catch (Throwable e2) {\n226:       // if the handler threw an exception... well, just log it\n227:       logger.log(\n228:           Level.SEVERE,\n229:           String.format(Locale.ROOT, \"Exception %s thrown while handling exception: %s\", e2, e),\n230:           e2);\n231:     }\n232:   }\n233: \n234:   private void hook() {}\n235: \n236:   /**\n237:    * Registers all subscriber methods on {@code object} to receive events.\n238:    *\n239:    * @param object object whose subscriber methods should be registered.\n240:    */\n241:   public void register(Object object) {\n242:     subscribers.register(object);\n243:   }\n244: \n245:   /**\n246:    * Unregisters all subscriber methods on a registered {@code object}.\n247:    *\n248:    * @param object object whose subscriber methods should be unregistered.\n249:    * @throws IllegalArgumentException if the object was not previously registered.\n250:    */\n251:   public void unregister(Object object) {\n252:     subscribers.unregister(object);\n253:   }\n254: \n255:   /**\n256:    * Posts an event to all registered subscribers. This method will return successfully after the\n257:    * event has been posted to all subscribers, and regardless of any exceptions thrown by\n258:    * subscribers.\n259:    *\n260:    * <p>If no subscribers have been subscribed for {@code event}'s class, and {@code event} is not\n261:    * already a {@link DeadEvent}, it will be wrapped in a DeadEvent and reposted.\n262:    *\n263:    * @param event event to post.\n264:    */\n265:   public void post(Object event) {\n266:     Iterator<Subscriber> eventSubscribers = subscribers.getSubscribers(event);\n267:     if (eventSubscribers.hasNext()) {\n268:       dispatcher.dispatch(event, eventSubscribers);\n269:     } else if (!(event instanceof DeadEvent)) {\n270:       // the event had no subscribers and was not itself a DeadEvent\n271:       post(new DeadEvent(this, event));\n272:     }\n273:   }\n274: \n275:   @Override\n276:   public String toString() {\n277:     return MoreObjects.toStringHelper(this).addValue(identifier).toString();\n278:   }\n279: \n280:   /** Simple logging handler for subscriber exceptions. */"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "broker_error": "broker rejected request (exit 4)"
+    }
+  ],
+  "failure_classification": {
+    "pass": false,
+    "primary": "no_final",
+    "categories": [
+      "no_final",
+      "parse_or_invalid_action_noise"
+    ],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 1,
+    "tool_errors": [],
+    "has_final": false,
+    "has_diff": false,
+    "duplicate_edit_suppressed": 0,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": false,
+    "protocol_clean": false,
+    "semantic_evaluable": false,
+    "semantic_pass": null,
+    "task_result_pass": false,
+    "post_test_ok": false
+  }
+}
