@@ -14,6 +14,7 @@ from .store import Store
 from .warm import warm_is_complete, warm_repo
 from .index import EDGE_ENDPOINT_FIELDS
 from .relations import HARD_MAX_EDGES, HARD_MAX_NODES, RequestFreshnessCache, bounded_fragment
+from .stale_slice import plan_stale_slice
 
 HONEST_NOTE = (
     "TMF is a partial, source-bound memory. Fresh means the stored binding matches "
@@ -217,6 +218,18 @@ class McpService:
             semantic_boundaries=bool(semantic_boundaries),
         )
 
+    def tmf_stale_slice(self, claim_id: str, question: str = "", max_required_reads: int = 4, max_optional_neighbors: int = 4) -> dict[str, Any]:
+        claim = self.store.get_claim(str(claim_id))
+        if claim is None:
+            raise ValueError(f"claim not found: {claim_id}")
+        return plan_stale_slice(
+            self.repo.root,
+            claim,
+            question=str(question or ""),
+            max_required_reads=max(1, min(int(max_required_reads), 16)),
+            max_optional_neighbors=max(0, min(int(max_optional_neighbors), 16)),
+        )
+
     def tmf_context(self, question: str, max_chars: int | None = None) -> dict[str, Any]:
         budget = max(180, int(max_chars)) if max_chars is not None else 3000
         payload = self._context_payload(question, budget)
@@ -320,6 +333,7 @@ class McpService:
             "tmf_subtypes": self.tmf_subtypes,
             "tmf_context": self.tmf_context,
             "tmf_fragment": self.tmf_fragment,
+            "tmf_stale_slice": self.tmf_stale_slice,
             "tmf_warm": self.tmf_warm,
             "tmf_status": self.tmf_status,
         }
@@ -338,6 +352,7 @@ def tools_list() -> list[dict[str, Any]]:
     return [
         {"name": "tmf_context", "description": first + "Return one deterministic thin context bundle with anchors and key fresh graph relations." + trust, "inputSchema": schema({"question": {"type": "string"}, "max_chars": {"type": "integer", "minimum": 180}}, ["question"])},
         {"name": "tmf_fragment", "description": "Return a strictly bounded evidence fragment from the rebuildable endpoint index; a fragment is not a graph." + trust, "inputSchema": schema({"entry": {"type": "string"}, "relations": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "hop_limit": {"type": "integer", "minimum": 0, "maximum": 4}, "boundary_types": {"type": "array", "items": {"type": "string"}, "minItems": 1}, "max_nodes": {"type": "integer", "minimum": 1, "maximum": 64}, "max_edges": {"type": "integer", "minimum": 1, "maximum": 128}, "semantic_boundaries": {"type": "boolean"}}, ["entry", "relations", "hop_limit", "boundary_types"])},
+        {"name": "tmf_stale_slice", "description": "Plan a task-relevant stale-slice refresh: per-binding signature/hash status, minimal required reads, retained fresh endpoints, and a stop rule. This is a graph patch plan, not a rebuild." + trust, "inputSchema": schema({"claim_id": {"type": "string"}, "question": {"type": "string"}, "max_required_reads": {"type": "integer", "minimum": 1, "maximum": 16}, "max_optional_neighbors": {"type": "integer", "minimum": 0, "maximum": 16}}, ["claim_id"])},
         {"name": "tmf_retrieve", "description": first + "Retrieve thin TMF claims for a lexical query." + trust, "inputSchema": schema({"query": {"type": "string"}, "limit": {"type": "integer", "minimum": 1, "maximum": 50}}, ["query"])},
         {"name": "tmf_explain", "description": "Explain one claim; full=true includes thick body/source-bound details." + trust, "inputSchema": schema({"claim_id": {"type": "string"}, "full": {"type": "boolean"}}, ["claim_id"])},
         {"name": "tmf_callers", "description": "List known callers by claim_id or by qualname plus optional path; ambiguous names return candidates, never a guess." + trust, "inputSchema": schema(reverse_props)},
