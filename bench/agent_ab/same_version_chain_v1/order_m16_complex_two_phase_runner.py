@@ -519,11 +519,11 @@ def build_claim(root: Path, orientation: dict[str, Any] | None) -> Claim:
 def placement(root: Path) -> dict[str, Any]:
     svc = (root / SERVICE).read_text(encoding="utf-8", errors="replace")
     return {
-        "branches_on_payment_status": bool(re.search(r"getStatus\s*\(\s*\)|PaymentIntentStatus", svc)),
+        "branches_on_payment_status": bool(re.search(r"getStatus\s*\(\s*\)|PaymentIntentStatus|requiresManualReview\s*\(|customerId\s*\(\s*\)|getCustomerId\s*\(", svc)),
         "marks_awaiting_review": "markAwaitingReview" in svc,
         "marks_ready": "markReady" in svc,
         "publishes_order_created": "ORDER_CREATED" in svc and "eventPublisher.publish" in svc,
-        "conditional_publish_after_status": bool(re.search(r"if\s*\([^)]*(CONFIRMED|getStatus|PENDING_REVIEW)", svc, re.S)),
+        "conditional_publish_after_status": bool(re.search(r"if\s*\([^)]*(CONFIRMED|getStatus|PENDING_REVIEW|requiresManualReview|getCustomerId|customerId)", svc, re.S)),
         "visible_tests_present": (root / VISIBLE_TEST).exists(),
     }
 
@@ -535,7 +535,7 @@ def deterministic_test(root: Path) -> dict[str, Any]:
     if not test.get("ok"):
         reasons.append("hidden JUnit tests failed")
     if not pl["branches_on_payment_status"]:
-        reasons.append("OrderService does not branch on payment intent status")
+        reasons.append("OrderService does not branch on current payment/review contract")
     if not pl["marks_awaiting_review"]:
         reasons.append("OrderService does not mark pending-review orders as awaiting review")
     if pl["visible_tests_present"]:
@@ -825,19 +825,35 @@ def classify(raw: dict[str, Any]) -> dict[str, Any]:
                 tool_errors.append(err)
 
     raw_pass = bool(final is not None and diffs and compile_action["ok"] and hidden_ok and semantic_ok)
+    final_gate_deadlock = bool(
+        final is None
+        and compile_action["ok"]
+        and not diffs
+        and (
+            tel.get("rejected_finals", 0) > 0
+            or any("final rejected: no successful edit" in str(err.get("error", "")) for err in tool_errors)
+            or any("compile already succeeded; next action must be final" in str(err.get("error", "")) for err in tool_errors)
+        )
+    )
     categories: list[str] = []
     if raw_pass:
         categories.append("pass")
     else:
-        if compile_action["failures"]:
+        if final_gate_deadlock:
+            categories.append("final_gate_deadlock")
+        if compile_action["failures"] and compile_action["ok"]:
+            categories.append("compile_action_recovered")
+        elif compile_action["failures"]:
             categories.append("compile_action_fail")
         if final is None and diffs and compile_action["ok"] and hidden_ok:
             categories.append("no_final_after_success")
-        if compile_action["ok"] and not hidden_ok:
+        if compile_action["ok"] and not hidden_ok and diffs:
             categories.append("hidden_oracle_fail")
+        elif compile_action["ok"] and not hidden_ok:
+            categories.append("hidden_oracle_fail_after_protocol_failure")
         if final is not None and not diffs and compile_action["ok"]:
             categories.append("no_effect_false_completion")
-        if final is None and "no_final_after_success" not in categories:
+        if final is None and "no_final_after_success" not in categories and "final_gate_deadlock" not in categories:
             categories.append("no_final")
         if edit_errors:
             categories.append("edit_protocol_fail")
@@ -854,7 +870,25 @@ def classify(raw: dict[str, Any]) -> dict[str, Any]:
         if not categories:
             categories.append("uncategorized_fail")
 
-    primary = "pass" if raw_pass else categories[0]
+    primary_priority = [
+        "pass",
+        "final_gate_deadlock",
+        "compile_action_fail",
+        "no_final_after_success",
+        "hidden_oracle_fail",
+        "semantic_boundary_fail",
+        "no_effect_false_completion",
+        "no_final",
+        "edit_protocol_fail",
+        "parse_or_invalid_action_noise",
+        "tool_error_noise",
+        "extra_actions_ignored",
+        "compile_action_recovered",
+        "hidden_oracle_fail_after_protocol_failure",
+        "no_compile_action",
+        "uncategorized_fail",
+    ]
+    primary = "pass" if raw_pass else next((item for item in primary_priority if item in categories), categories[0])
     return {
         "pass": raw_pass,
         "primary": primary,

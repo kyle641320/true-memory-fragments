@@ -1,0 +1,646 @@
+{
+  "schema": "order_m16_complex_two_phase_payment_review",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "ORDER_M16",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 8,
+      "phase_b_max_turns": 24,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder is the transactional creation chain: it reserves the order SKU/quantity through InventoryReservationService, creates and saves a CONFIRMED PaymentIntent keyed by order ID, marks the Order from DRAFT to READY, saves it, then publishes ORDER_CREATED with the order ID and returns the order. The calls are synchronous and no explicit retry or failure handling is present in this workflow."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 7,
+        "source_reads": 5,
+        "source_bytes": 3203,
+        "source_files": [
+          "src/main/java/com/example/order/InventoryReservationService.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderEventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntentService.java"
+        ],
+        "prompt_tokens": 7021,
+        "completion_tokens": 253,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "hidden_oracle_visible_to_agent": false,
+      "compile_action_runs_tests": false,
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "修复订单创建链路：创建支付意图后，仅当状态为 CONFIRMED 时才将订单标记为可履约；PENDING_REVIEW 状态不会提前进入履约，正常已确认订单行为保持不变。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2225,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntentService.java",
+          "src/main/java/com/example/order/PaymentIntentStatus.java"
+        ],
+        "prompt_tokens": 12173,
+        "completion_tokens": 1085,
+        "invalid": 0,
+        "wall_seconds": 106.201,
+        "successful_edits": 1,
+        "successful_compile": true,
+        "rejected_finals": 0,
+        "post_edit_rejected_non_compile": 0,
+        "post_compile_rejected_non_final": 0,
+        "extra_actions_ignored": 40,
+        "compile_calls": 1
+      },
+      "post_test": {
+        "ok": false,
+        "placement": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": false,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": true,
+          "visible_tests_present": false
+        },
+        "test": {
+          "ok": false,
+          "exit": 1,
+          "stdout": "[\u001b[1;31mERROR\u001b[m] \u001b[1;31mTests \u001b[0;1mrun: \u001b[0;1m2\u001b[m, \u001b[1;31mFailures: \u001b[0;1;31m1\u001b[m, Errors: 0, Skipped: 0, Time elapsed: 0.096 s\u001b[1;31m <<< FAILURE!\u001b[m -- in com.example.order.\u001b[1mOrderServiceReviewContractTest\u001b[m\n[\u001b[1;31mERROR\u001b[m] com.example.order.OrderServiceReviewContractTest.pendingReviewDoesNotStartFulfillmentEvent -- Time elapsed: 0.011 s <<< FAILURE!\norg.opentest4j.AssertionFailedError: review intent should leave order waiting instead of ready ==> expected: <AWAITING_REVIEW> but was: <DRAFT>\n\tat org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)\n\tat org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)\n\tat org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)\n\tat org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)\n\tat org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)\n\tat com.example.order.OrderServiceReviewContractTest.pendingReviewDoesNotStartFulfillmentEvent(OrderServiceReviewContractTest.java:34)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:569)\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\n\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mFailures: \u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m  OrderServiceReviewContractTest.pendingReviewDoesNotStartFulfillmentEvent:34 review intent should leave order waiting instead of ready ==> expected: <AWAITING_REVIEW> but was: <DRAFT>\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mTests run: 2, Failures: 1, Errors: 0, Skipped: 0\u001b[m\n[\u001b[1;31mERROR\u001b[m] Failed to execute goal \u001b[32morg.apache.maven.plugins:maven-surefire-plugin:3.2.5:test\u001b[m \u001b[1m(default-test)\u001b[m on project \u001b[36morder-m16\u001b[m: \u001b[1;31mThere are test failures.\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mPlease refer to /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/order_m16_corevalue_retry_r1/ORDER_M16__SOURCE_ONLY__r1/target/surefire-reports for the individual test results.\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mPlease refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.\u001b[m\n[\u001b[1;31mERROR\u001b[m] -> \u001b[1m[Help 1]\u001b[m\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] To see the full stack trace of the errors, re-run Maven with the \u001b[1m-e\u001b[m switch.\n[\u001b[1;31mERROR\u001b[m] Re-run Maven using the \u001b[1m-X\u001b[m switch to enable full debug logging.\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] For more information about the errors and possible solutions, please read the following articles:\n[\u001b[1;31mERROR\u001b[m] \u001b[1m[Help 1]\u001b[m http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n",
+          "stderr": ""
+        },
+        "message": "hidden JUnit tests failed; OrderService does not mark pending-review orders as awaiting review"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": false,
+        "hidden_oracle_ok": false,
+        "trap_pass": false,
+        "semantic_pass": false,
+        "trap_reason": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": false,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": true,
+          "visible_tests_present": false,
+          "post_message": "hidden JUnit tests failed; OrderService does not mark pending-review orders as awaiting review"
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "hidden_oracle_fail",
+        "categories": [
+          "hidden_oracle_fail",
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_action": {
+          "calls": 1,
+          "successes": 1,
+          "ok": true,
+          "failures": []
+        },
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "hidden_oracle_ok": false,
+        "semantic_ok": false,
+        "extra_actions_ignored": 40,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": false,
+        "task_result_pass": false,
+        "post_test_ok": false,
+        "compile_action_ok": true
+      },
+      "raw_path": "results/raw/order_m16_corevalue_retry_r1/ORDER_M16__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 655
+    },
+    {
+      "task_id": "ORDER_M16",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 8,
+      "phase_b_max_turns": 24,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder is the transactional submission chain: reserve inventory using the order SKU and quantity, create and persist a CONFIRMED payment intent for the order ID, change the order from DRAFT to READY, save the order, publish ORDER_CREATED with its ID, and return it. The calls are sequential, so any thrown failure prevents later steps; no explicit retry or compensation is present in the inspected services."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 3070,
+        "source_files": [
+          "src/main/java/com/example/order/InventoryReservationService.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntentService.java"
+        ],
+        "prompt_tokens": 5914,
+        "completion_tokens": 458,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "hidden_oracle_visible_to_agent": false,
+      "compile_action_runs_tests": false,
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "创建订单时先检查支付意图状态，仅在支付意图为 CONFIRMED 时将订单标记为 READY、保存并发布 ORDER_CREATED；复核中的支付意图不会触发履约，正常已确认支付订单流程保持不变。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 6,
+        "source_bytes": 1778,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntent.java",
+          "src/main/java/com/example/order/PaymentIntentStatus.java"
+        ],
+        "prompt_tokens": 18190,
+        "completion_tokens": 566,
+        "invalid": 0,
+        "wall_seconds": 43.411,
+        "successful_edits": 1,
+        "successful_compile": true,
+        "rejected_finals": 0,
+        "post_edit_rejected_non_compile": 0,
+        "post_compile_rejected_non_final": 0,
+        "extra_actions_ignored": 9,
+        "compile_calls": 1
+      },
+      "post_test": {
+        "ok": false,
+        "placement": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": false,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": true,
+          "visible_tests_present": false
+        },
+        "test": {
+          "ok": false,
+          "exit": 1,
+          "stdout": "[\u001b[1;31mERROR\u001b[m] \u001b[1;31mTests \u001b[0;1mrun: \u001b[0;1m2\u001b[m, \u001b[1;31mFailures: \u001b[0;1;31m1\u001b[m, Errors: 0, Skipped: 0, Time elapsed: 0.086 s\u001b[1;31m <<< FAILURE!\u001b[m -- in com.example.order.\u001b[1mOrderServiceReviewContractTest\u001b[m\n[\u001b[1;31mERROR\u001b[m] com.example.order.OrderServiceReviewContractTest.pendingReviewDoesNotStartFulfillmentEvent -- Time elapsed: 0.010 s <<< FAILURE!\norg.opentest4j.AssertionFailedError: review intent should leave order waiting instead of ready ==> expected: <AWAITING_REVIEW> but was: <DRAFT>\n\tat org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)\n\tat org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)\n\tat org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)\n\tat org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:182)\n\tat org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1156)\n\tat com.example.order.OrderServiceReviewContractTest.pendingReviewDoesNotStartFulfillmentEvent(OrderServiceReviewContractTest.java:34)\n\tat java.base/java.lang.reflect.Method.invoke(Method.java:569)\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\n\tat java.base/java.util.ArrayList.forEach(ArrayList.java:1511)\n\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mFailures: \u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m  OrderServiceReviewContractTest.pendingReviewDoesNotStartFulfillmentEvent:34 review intent should leave order waiting instead of ready ==> expected: <AWAITING_REVIEW> but was: <DRAFT>\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mTests run: 2, Failures: 1, Errors: 0, Skipped: 0\u001b[m\n[\u001b[1;31mERROR\u001b[m] Failed to execute goal \u001b[32morg.apache.maven.plugins:maven-surefire-plugin:3.2.5:test\u001b[m \u001b[1m(default-test)\u001b[m on project \u001b[36morder-m16\u001b[m: \u001b[1;31mThere are test failures.\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mPlease refer to /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/order_m16_corevalue_retry_r1/ORDER_M16__PREREAD_STALE_SOURCE__r1/target/surefire-reports for the individual test results.\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31mPlease refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.\u001b[m\n[\u001b[1;31mERROR\u001b[m] -> \u001b[1m[Help 1]\u001b[m\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] To see the full stack trace of the errors, re-run Maven with the \u001b[1m-e\u001b[m switch.\n[\u001b[1;31mERROR\u001b[m] Re-run Maven using the \u001b[1m-X\u001b[m switch to enable full debug logging.\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] For more information about the errors and possible solutions, please read the following articles:\n[\u001b[1;31mERROR\u001b[m] \u001b[1m[Help 1]\u001b[m http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n",
+          "stderr": ""
+        },
+        "message": "hidden JUnit tests failed; OrderService does not mark pending-review orders as awaiting review"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": false,
+        "hidden_oracle_ok": false,
+        "trap_pass": false,
+        "semantic_pass": false,
+        "trap_reason": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": false,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": true,
+          "visible_tests_present": false,
+          "post_message": "hidden JUnit tests failed; OrderService does not mark pending-review orders as awaiting review"
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "hidden_oracle_fail",
+        "categories": [
+          "hidden_oracle_fail",
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_action": {
+          "calls": 1,
+          "successes": 1,
+          "ok": true,
+          "failures": []
+        },
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "hidden_oracle_ok": false,
+        "semantic_ok": false,
+        "extra_actions_ignored": 9,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": false,
+        "task_result_pass": false,
+        "post_test_ok": false,
+        "compile_action_ok": true
+      },
+      "raw_path": "results/raw/order_m16_corevalue_retry_r1/ORDER_M16__PREREAD_STALE_SOURCE__r1.raw.json",
+      "diff_bytes": 627
+    },
+    {
+      "task_id": "ORDER_M16",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 8,
+      "phase_b_max_turns": 24,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder is the submission workflow and is annotated @Transactional. It synchronously reserves inventory using the order SKU and quantity, creates and saves a CONFIRMED PaymentIntent keyed by order ID, marks the Order READY, saves it, then publishes ORDER_CREATED with the order ID before returning the order. The publisher is only an interface here, so downstream event handling is outside this fixture."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 7,
+        "source_reads": 5,
+        "source_bytes": 3203,
+        "source_files": [
+          "src/main/java/com/example/order/InventoryReservationService.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderEventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntentService.java"
+        ],
+        "prompt_tokens": 8242,
+        "completion_tokens": 436,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "hidden_oracle_visible_to_agent": false,
+      "compile_action_runs_tests": false,
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "创建订单时检查支付意图状态：若仍在复核，则将订单标记为 AWAITING_REVIEW、保存并停止发布 ORDER_CREATED；已确认支付意图仍保持原有 READY、保存及立即发布事件的正常链路。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 3570,
+        "source_reads": 5,
+        "source_files": [
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntent.java",
+          "src/main/java/com/example/order/PaymentIntentService.java",
+          "src/main/java/com/example/order/PaymentIntentStatus.java"
+        ],
+        "prompt_tokens": 14118,
+        "completion_tokens": 456,
+        "invalid": 0,
+        "wall_seconds": 45.056,
+        "successful_edits": 1,
+        "successful_compile": true,
+        "rejected_finals": 0,
+        "post_edit_rejected_non_compile": 0,
+        "post_compile_rejected_non_final": 0,
+        "extra_actions_ignored": 2,
+        "compile_calls": 1
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": true,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": true,
+          "visible_tests_present": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "hidden_oracle_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": true,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": true,
+          "visible_tests_present": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "pass"
+        ],
+        "edit_errors": [],
+        "compile_action": {
+          "calls": 1,
+          "successes": 1,
+          "ok": true,
+          "failures": []
+        },
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "hidden_oracle_ok": true,
+        "semantic_ok": true,
+        "extra_actions_ignored": 2,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true,
+        "compile_action_ok": true
+      },
+      "raw_path": "results/raw/order_m16_corevalue_retry_r1/ORDER_M16__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 715
+    },
+    {
+      "task_id": "ORDER_M16",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 8,
+      "phase_b_max_turns": 24,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder is @Transactional and runs synchronously in this order: reserve inventory via InventoryReservationService (repository.reserve SKU and quantity), create and save a CONFIRMED PaymentIntent keyed by order ID, mark the order READY, save the order, then publish ORDER_CREATED with the order ID and return it. Orders start as DRAFT; no downstream handlers or failure/compensation logic are present in the inspected source."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 7,
+        "source_reads": 5,
+        "source_bytes": 3203,
+        "source_files": [
+          "src/main/java/com/example/order/InventoryReservationService.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderEventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntentService.java"
+        ],
+        "prompt_tokens": 7031,
+        "completion_tokens": 261,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "hidden_oracle_visible_to_agent": false,
+      "compile_action_runs_tests": false,
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "order_m16:old:OrderService.createOrder",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "修复订单创建链路：需要人工复核的支付订单会进入 AWAITING_REVIEW，仅保存订单且不会发布 ORDER_CREATED 事件，从而避免提前履约；正常订单仍进入 READY，并在保存后照常发布创建事件。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 1629,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/PaymentIntentService.java"
+        ],
+        "prompt_tokens": 31513,
+        "completion_tokens": 775,
+        "invalid": 0,
+        "wall_seconds": 80.172,
+        "successful_edits": 2,
+        "successful_compile": true,
+        "rejected_finals": 0,
+        "post_edit_rejected_non_compile": 1,
+        "post_compile_rejected_non_final": 0,
+        "extra_actions_ignored": 9,
+        "compile_calls": 2
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": true,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": false,
+          "visible_tests_present": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "hidden_oracle_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "branches_on_payment_status": true,
+          "marks_awaiting_review": true,
+          "marks_ready": true,
+          "publishes_order_created": true,
+          "conditional_publish_after_status": false,
+          "visible_tests_present": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "pass"
+        ],
+        "edit_errors": [],
+        "compile_action": {
+          "calls": 2,
+          "successes": 1,
+          "ok": true,
+          "failures": [
+            {
+              "turn": 4,
+              "exit": 1,
+              "stderr_tail": ""
+            }
+          ]
+        },
+        "compile_tool_failures": [
+          {
+            "turn": 4,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [
+          {
+            "turn": 5,
+            "action": "read_range",
+            "error": "edit already succeeded; next action must be compile unless another exact edit is required"
+          }
+        ],
+        "has_final": true,
+        "has_diff": true,
+        "hidden_oracle_ok": true,
+        "semantic_ok": true,
+        "extra_actions_ignored": 9,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true,
+        "compile_action_ok": true
+      },
+      "raw_path": "results/raw/order_m16_corevalue_retry_r1/ORDER_M16__TMF_REFRESHED_MAP__r1.raw.json",
+      "diff_bytes": 752
+    }
+  ],
+  "summary": {
+    "mode": "order_m16_complex_two_phase_payment_review",
+    "runs": 4,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 1,
+        "raw_pass": 0,
+        "task_result_pass": 0,
+        "post_test_ok": 0,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 0,
+        "stale_claim_withheld": 0,
+        "marks_awaiting_review": 0,
+        "branches_on_payment_status": 1,
+        "primary": {
+          "hidden_oracle_fail": 1
+        }
+      },
+      "PREREAD_STALE_SOURCE": {
+        "runs": 1,
+        "raw_pass": 0,
+        "task_result_pass": 0,
+        "post_test_ok": 0,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 0,
+        "stale_claim_withheld": 0,
+        "marks_awaiting_review": 0,
+        "branches_on_payment_status": 1,
+        "primary": {
+          "hidden_oracle_fail": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 0,
+        "marks_awaiting_review": 1,
+        "branches_on_payment_status": 1,
+        "primary": {
+          "pass": 1
+        }
+      },
+      "TMF_REFRESHED_MAP": {
+        "runs": 1,
+        "raw_pass": 1,
+        "task_result_pass": 1,
+        "post_test_ok": 1,
+        "semantic_evaluable": 1,
+        "semantic_adjusted_pass": 1,
+        "stale_claim_withheld": 1,
+        "marks_awaiting_review": 1,
+        "branches_on_payment_status": 1,
+        "primary": {
+          "pass": 1
+        }
+      }
+    }
+  },
+  "note": "M16 classfix/checkerfix replay from existing work dirs; no LLM rerun"
+}
