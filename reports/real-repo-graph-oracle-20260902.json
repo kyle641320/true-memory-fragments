@@ -1,0 +1,108 @@
+{
+  "schema": "tmf.real_repo_graph_oracle.v1",
+  "repos": {
+    "petclinic": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith",
+    "jhipster": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/jhipster-sample-app"
+  },
+  "commits": {
+    "petclinic": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea",
+    "jhipster": "f8da577c944ecc4db46fc961a1ba022d5bbf8964"
+  },
+  "summary": {
+    "checks": 5,
+    "passed": 4,
+    "failed": 1,
+    "tp": 4,
+    "fp": 1,
+    "fn": 1,
+    "micro_precision": 0.8,
+    "micro_recall": 0.8,
+    "macro_precision": 0.9,
+    "macro_recall": 0.9,
+    "verdict": "FAIL"
+  },
+  "checks": [
+    {
+      "name": "petclinic_callers_vetroster_assignVet",
+      "expected": [
+        "claim_java_a869f404efc38d1d"
+      ],
+      "actual": [
+        "claim_java_a869f404efc38d1d"
+      ],
+      "tp": [
+        "claim_java_a869f404efc38d1d"
+      ],
+      "fp": [],
+      "fn": [],
+      "precision": 1.0,
+      "recall": 1.0,
+      "pass": true
+    },
+    {
+      "name": "petclinic_used_by_type_visit_booked",
+      "expected": [
+        "claim_java_0bcdedb34df9cc4d",
+        "claim_java_a869f404efc38d1d"
+      ],
+      "actual": [
+        "claim_java_0b5029bc7c882a83",
+        "claim_java_0bcdedb34df9cc4d"
+      ],
+      "tp": [
+        "claim_java_0bcdedb34df9cc4d"
+      ],
+      "fp": [
+        "claim_java_0b5029bc7c882a83"
+      ],
+      "fn": [
+        "claim_java_a869f404efc38d1d"
+      ],
+      "precision": 0.5,
+      "recall": 0.5,
+      "pass": false
+    },
+    {
+      "name": "jhipster_subtypes_operation_bag_relationships",
+      "expected": [
+        "claim_java_dd94e4300a50d631",
+        "claim_java_df0317f64a159d77"
+      ],
+      "actual": [
+        "claim_java_dd94e4300a50d631",
+        "claim_java_df0317f64a159d77"
+      ],
+      "tp": [
+        "claim_java_dd94e4300a50d631",
+        "claim_java_df0317f64a159d77"
+      ],
+      "fp": [],
+      "fn": [],
+      "precision": 1.0,
+      "recall": 1.0,
+      "pass": true
+    },
+    {
+      "name": "petclinic_no_callers_owner_repository_type",
+      "expected": [],
+      "actual": [],
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "precision": 1.0,
+      "recall": 1.0,
+      "pass": true
+    },
+    {
+      "name": "jhipster_no_writers_operation_resource_type",
+      "expected": [],
+      "actual": [],
+      "tp": [],
+      "fp": [],
+      "fn": [],
+      "precision": 1.0,
+      "recall": 1.0,
+      "pass": true
+    }
+  ]
+}
