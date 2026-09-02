@@ -76,7 +76,7 @@ TMF has substantial bounded Java/Spring **source-analysis** validation: declarat
 | Real long-running repo maintenance tasks | Not fully proven | Low/Medium | Some real Java evidence exists, but today's ROI pass is synthetic/bounded agent A/B fixtures. |
 | Runtime framework behavior | Not proven | Low | Source analysis does not certify Spring runtime, DI container behavior, database migration, or message broker runtime semantics. |
 | Release packaging / current HEAD preflight | Current HEAD local re-preflight passed; publication unreleased | Strong for local preflight, not publication | 2026-09-02 run passed Java qualifications, source-only smoke, 615 unittests, compileall, and diff check; no tag/upload authorized. |
-| Production operations / CI integration | Partially documented | Medium | Reflex hook docs and workflows exist; product rollout, latency, cache ops, rollback and support playbooks remain open. |
+| Production CLI/MCP integration smoke | Bounded smoke passed; rollout playbooks pending | Strong for local CLI/MCP smoke, Medium for production ops | `TMF_PRODUCTION_INTEGRATION_SMOKE_20260902.md`: 15/15 checks PASS across CLI warm/retrieve/explain/callers, stale labeling, source fallback, MCP initialize/list/warm/retrieve/status, path traversal rejection, malformed JSON fail-closed, no traceback stderr. |
 
 ## 4. What is fair to claim now
 
@@ -119,9 +119,12 @@ Not fair yet:
    - Boundary: Java class claim still stales on member body change; documented as conservative over-invalidation, not marketed as class-level precision.
    - Remaining: larger real mixed-repo validation.
 
-4. **Production integration smoke**
-   - Exercise MCP tool path, CLI warm/retrieve, reflex hook warning, and fallback-to-source behavior in one scripted flow.
-   - Success criterion: no unsafe blocking, stale claims clearly labeled, source remains authoritative.
+4. **Production integration smoke — DONE 2026-09-02**
+   - Evidence: `TMF_PRODUCTION_INTEGRATION_SMOKE_20260902.md` and `reports/production-integration-smoke-20260902.json`.
+   - Result: PASS.
+   - Checks: 15/15 PASS.
+   - Covered CLI warm/retrieve/explain/callers, stale labeling after source mutation, source fallback, thin retrieval, MCP initialize/tools/list/warm/retrieve/status, path traversal rejection, malformed JSON fail-closed, and no traceback stderr.
+   - Remaining boundary: no package publication, release tag, hosted MCP deployment, latency SLO, cache operations, rollback playbook, or runtime framework certification.
 
 5. **Release re-preflight on current HEAD — DONE 2026-09-02**
    - Evidence: `TMF_CURRENT_HEAD_REPREFLIGHT_20260902.md`.
@@ -141,4 +144,4 @@ Recommended label for external/internal tracking:
 
 Reason:
 
-The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, and mixed Python+Java freshness has a bounded oracle. But full TMF capability validation still requires real-repo stale A/B, larger real-repo graph oracle coverage, larger mixed-repo validation, and production integration smoke.
+The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires real-repo stale A/B, larger real-repo graph oracle coverage, larger mixed-repo validation, and production rollout evidence.

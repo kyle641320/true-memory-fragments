@@ -1,0 +1,339 @@
+{
+  "schema": "tmf.production_integration_smoke.v1",
+  "summary": {
+    "checks": 15,
+    "passed": 15,
+    "failed": 0,
+    "verdict": "PASS"
+  },
+  "checks": [
+    {
+      "name": "cli_warm_exports_claims",
+      "passed": true,
+      "details": {
+        "coverage": "complete",
+        "derived": 2,
+        "skipped": 0,
+        "files": 2,
+        "failed_files": {},
+        "index_callees": 1,
+        "renamed_claims": 0,
+        "deleted_missing_claims": 0,
+        "migrated_legacy_java_claims": 0,
+        "migrated_legacy_java_paths": 0
+      }
+    },
+    {
+      "name": "cli_retrieve_thin_claims",
+      "passed": true,
+      "details": {
+        "claims": 4,
+        "gaps": []
+      }
+    },
+    {
+      "name": "cli_retrieve_omits_thick_body",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "cli_explain_json_fresh",
+      "passed": true,
+      "details": {
+        "id": "claim_fn_b9df6cbdca84b925",
+        "claim": "Function helper in b.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+        "fresh": true,
+        "stale_reasons": [],
+        "trust": {
+          "level": "observed",
+          "label": "源码观察",
+          "description": "从源码观察得到，但验证方式较粗"
+        },
+        "evidence": "observed",
+        "confidence": 0.4,
+        "raw_confidence": null,
+        "confidence_cap_applied": false,
+        "verification": null,
+        "kind": "structure",
+        "scope": "function",
+        "model": "tmf-v1-heuristic",
+        "last_verified": "2026-09-02T06:36:08+00:00",
+        "endorsed_by": null,
+        "qualname": "helper",
+        "language": null,
+        "node_kind": null,
+        "extraction_tier": null,
+        "anchors": [
+          {
+            "path": "b.py",
+            "line_start": 1,
+            "line_end": 2
+          }
+        ],
+        "belief_provenance": [],
+        "freshness_bindings": [
+          {
+            "path": "b.py",
+            "file_blob": "4c8b581df7ebee5ef6393e96bc96f0b8b22e71dc",
+            "fn_hash": "01ce91f920ec0f8c8a4881ae24f41cbb81f4126e957ff3ca394afe5904ae4628",
+            "commit": "4a47dfa4f6806f97377159d43510b503a25eafbb",
+            "qualname": "helper",
+            "role": "function",
+            "line_start": 1,
+            "line_end": 2,
+            "hash_kind": "python-token-stream"
+          }
+        ],
+        "action_hint": "can_use_with_source_anchor_for_precision",
+        "source_provenance": {
+          "origin": "locally_derived",
+          "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+          "trust": "source_rederived"
+        },
+        "feedback_events": [],
+        "hunches": [],
+        "graph": {
+          "callees": [],
+          "callers": [
+            {
+              "source_id": "claim_fn_f163a39f3e035fd2",
+              "source_qualname": "main",
+              "source_path": "a.py",
+              "evidence": "observed",
+              "resolution": "from_import_direct_top_level"
+            }
+          ],
+          "unresolved_calls": [],
+          "reads": [],
+          "reads_unresolved": [],
+          "writes": [],
+          "writes_unresolved": [],
+          "reads_env": [],
+          "reads_env_unresolved": [],
+          "reads_env_coverage": "partial",
+          "reads_config_key": [],
+          "reads_config_key_unresolved": [],
+          "reads_config_key_coverage": "partial"
+        },
+        "graph_coverage": "complete",
+        "warnings": []
+      }
+    },
+    {
+      "name": "cli_callers_has_main",
+      "passed": true,
+      "details": {
+        "node_id": "claim_fn_b9df6cbdca84b925",
+        "callers": [
+          {
+            "caller_id": "claim_fn_f163a39f3e035fd2",
+            "caller_path": "a.py",
+            "callee_qualname": "helper",
+            "resolution": "from_import_direct_top_level",
+            "evidence": "observed",
+            "anchor": {
+              "line_end": 4,
+              "line_start": 3,
+              "path": "a.py",
+              "qualname": "main"
+            }
+          }
+        ],
+        "stale_skipped": 0,
+        "coverage": "complete",
+        "note": "Known callers from fully warmed files; complete for the current warm manifest."
+      }
+    },
+    {
+      "name": "cli_explain_marks_stale_after_source_change",
+      "passed": true,
+      "details": {
+        "id": "claim_fn_b9df6cbdca84b925",
+        "claim": "Function helper in b.py is a Python function node bound by worktree file_blob and token-stream fn_hash.",
+        "fresh": false,
+        "stale_reasons": [
+          "b.py:helper: fn_hash mismatch"
+        ],
+        "trust": {
+          "level": "observed",
+          "label": "源码观察",
+          "description": "从源码观察得到，但验证方式较粗"
+        },
+        "evidence": "observed",
+        "confidence": 0.4,
+        "raw_confidence": null,
+        "confidence_cap_applied": false,
+        "verification": null,
+        "kind": "structure",
+        "scope": "function",
+        "model": "tmf-v1-heuristic",
+        "last_verified": "2026-09-02T06:36:08+00:00",
+        "endorsed_by": null,
+        "qualname": "helper",
+        "language": null,
+        "node_kind": null,
+        "extraction_tier": null,
+        "anchors": [
+          {
+            "path": "b.py",
+            "line_start": 1,
+            "line_end": 2
+          }
+        ],
+        "belief_provenance": [],
+        "freshness_bindings": [
+          {
+            "path": "b.py",
+            "file_blob": "4c8b581df7ebee5ef6393e96bc96f0b8b22e71dc",
+            "fn_hash": "01ce91f920ec0f8c8a4881ae24f41cbb81f4126e957ff3ca394afe5904ae4628",
+            "commit": "4a47dfa4f6806f97377159d43510b503a25eafbb",
+            "qualname": "helper",
+            "role": "function",
+            "line_start": 1,
+            "line_end": 2,
+            "hash_kind": "python-token-stream"
+          }
+        ],
+        "action_hint": "degrade_to_source_or_rederive",
+        "source_provenance": {
+          "origin": "locally_derived",
+          "machine_hash": "970033982099ceb07fa686311421e51adea34fe458cdac546e5a304243280cc4",
+          "trust": "source_rederived"
+        },
+        "feedback_events": [],
+        "hunches": [],
+        "graph": {
+          "callees": [],
+          "callers": [],
+          "unresolved_calls": [],
+          "reads": [],
+          "reads_unresolved": [],
+          "writes": [],
+          "writes_unresolved": [],
+          "reads_env": [],
+          "reads_env_unresolved": [],
+          "reads_env_coverage": "partial",
+          "reads_config_key": [],
+          "reads_config_key_unresolved": [],
+          "reads_config_key_coverage": "partial"
+        },
+        "graph_coverage": "partial",
+        "warnings": [
+          "STALE_BUT_STORED: this claim remains in storage but is not fresh for current worktree"
+        ]
+      }
+    },
+    {
+      "name": "cli_retrieve_source_fallback_after_stale",
+      "passed": true,
+      "details": {
+        "paths": [
+          "b.py"
+        ]
+      }
+    },
+    {
+      "name": "mcp_initialize",
+      "passed": true,
+      "details": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "capabilities": {
+            "tools": {}
+          },
+          "protocolVersion": "2024-11-05",
+          "serverInfo": {
+            "name": "tmf",
+            "version": "0.1.0rc3"
+          }
+        }
+      }
+    },
+    {
+      "name": "mcp_tools_list_required",
+      "passed": true,
+      "details": [
+        "tmf_callers",
+        "tmf_context",
+        "tmf_explain",
+        "tmf_fragment",
+        "tmf_readers",
+        "tmf_retrieve",
+        "tmf_stale_slice",
+        "tmf_status",
+        "tmf_subtypes",
+        "tmf_warm",
+        "tmf_writers"
+      ]
+    },
+    {
+      "name": "mcp_warm_content",
+      "passed": true,
+      "details": {
+        "id": 3,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"coverage\": \"complete\", \"deleted_missing_claims\": 0, \"derived\": 1, \"failed_files\": {}, \"files\": 2, \"index_callees\": 0, \"migrated_legacy_java_claims\": 0, \"migrated_legacy_java_paths\": 0, \"read_only_source\": true, \"renamed_claims\": 0, \"skipped\": 1}",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp_retrieve_thin_no_body",
+      "passed": true,
+      "details": {
+        "claims": 2
+      }
+    },
+    {
+      "name": "mcp_status_content",
+      "passed": true,
+      "details": {
+        "id": 5,
+        "jsonrpc": "2.0",
+        "result": {
+          "content": [
+            {
+              "text": "{\"claims\": 5, \"coverage\": \"complete\", \"edge_counts\": {\"calls\": 1}, \"freshness_sample\": {\"checked\": 5, \"fresh\": 4, \"stale\": 1}, \"index_schema_version\": \"tmf.inverted_index.v2\", \"repo\": \"/tmp/tmf-prod-smoke-s9yl8h2z\", \"warm_complete\": true}",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "mcp_rejects_path_traversal",
+      "passed": true,
+      "details": {
+        "error": {
+          "code": -32000,
+          "message": "path is outside repo root"
+        },
+        "id": 6,
+        "jsonrpc": "2.0"
+      }
+    },
+    {
+      "name": "mcp_malformed_json_fails_closed",
+      "passed": true,
+      "details": {
+        "jsonrpc": "2.0",
+        "id": null,
+        "error": {
+          "code": -32700,
+          "message": "parse error: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)"
+        }
+      }
+    },
+    {
+      "name": "mcp_no_traceback_stderr",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}
