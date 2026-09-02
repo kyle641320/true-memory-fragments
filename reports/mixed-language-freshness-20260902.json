@@ -1,0 +1,106 @@
+{
+  "schema": "tmf.mixed_language_freshness_oracle.v1",
+  "summary": {
+    "cases": 5,
+    "passed": 5,
+    "failed": 0,
+    "verdict": "PASS",
+    "localized_changed_stale": true,
+    "cross_language_unrelated_fresh": true,
+    "java_class_overinvalidates_on_member_body_change": true
+  },
+  "ids": {
+    "changed_py": "claim_fn_656c30bd08d5455f",
+    "stable_py": "claim_fn_f62bab6fdce71e0d",
+    "service_class": "claim_java_d6a5f906339c720e",
+    "changed_java": "claim_java_b2a8f8fe408da719",
+    "stable_java": "claim_java_2717fa138b292308"
+  },
+  "initial": {
+    "changed_py": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    },
+    "stable_py": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    },
+    "service_class": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    },
+    "changed_java": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    },
+    "stable_java": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    }
+  },
+  "after_mutation": {
+    "changed_py": {
+      "exists": true,
+      "fresh": false,
+      "stale_bindings": [
+        "app.py:changed_py: fn_hash mismatch"
+      ]
+    },
+    "stable_py": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    },
+    "service_class": {
+      "exists": true,
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/demo/Service.java:Service: java_hash mismatch"
+      ]
+    },
+    "changed_java": {
+      "exists": true,
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/demo/Service.java:Service.changedJava: java_hash mismatch"
+      ]
+    },
+    "stable_java": {
+      "exists": true,
+      "fresh": true,
+      "stale_bindings": []
+    }
+  },
+  "cases": {
+    "changed_py": {
+      "expected_fresh": false,
+      "actual_fresh": false,
+      "pass": true
+    },
+    "stable_py": {
+      "expected_fresh": true,
+      "actual_fresh": true,
+      "pass": true
+    },
+    "service_class": {
+      "expected_fresh": false,
+      "actual_fresh": false,
+      "pass": true
+    },
+    "changed_java": {
+      "expected_fresh": false,
+      "actual_fresh": false,
+      "pass": true
+    },
+    "stable_java": {
+      "expected_fresh": true,
+      "actual_fresh": true,
+      "pass": true
+    }
+  }
+}

@@ -72,7 +72,7 @@ TMF has substantial bounded Java/Spring **source-analysis** validation: declarat
 | Boundary / semantic stopping | Partially proven | Medium | Boundary precision evidence exists, but attribution distinguishes semantic failures from protocol/harness failures; not a universal proof. |
 | Reverse graph queries (readers/writers/callers/subtypes/implementors) | Proven on bounded mixed oracle; larger real-repo oracle pending | Strong for bounded fixture, Medium for real repos | `TMF_GRAPH_QUERY_ORACLE_20260902.md`: 6/6 cases, micro/macro precision/recall 1.000/1.000 across Python callers/readers/writers and Java subtypes/implementors. |
 | API/Config/YAML/SQL nodes | Partially proven | Medium | Unit and source-analysis evidence exists for selected adapters; not fully validated as multi-language product surface. |
-| Multi-language mixed repos | Not fully proven | Low | Python exists historically; Java is current focus; mixed Python+Java repo behavior needs explicit gate. |
+| Multi-language mixed repos / freshness | Proven on bounded Python+Java freshness oracle; larger real-repo validation pending | Strong for bounded fixture, Medium/Low for real repos | `TMF_MIXED_LANGUAGE_FRESHNESS_20260902.md`: 5/5 cases PASS; changed Python/Java symbols stale, unrelated Python/Java function/method claims remain fresh. Java class-level over-invalidation remains documented current behavior. |
 | Real long-running repo maintenance tasks | Not fully proven | Low/Medium | Some real Java evidence exists, but today's ROI pass is synthetic/bounded agent A/B fixtures. |
 | Runtime framework behavior | Not proven | Low | Source analysis does not certify Spring runtime, DI container behavior, database migration, or message broker runtime semantics. |
 | Release packaging / current HEAD preflight | Current HEAD local re-preflight passed; publication unreleased | Strong for local preflight, not publication | 2026-09-02 run passed Java qualifications, source-only smoke, 615 unittests, compileall, and diff check; no tag/upload authorized. |
@@ -111,10 +111,13 @@ Not fair yet:
    - Micro precision/recall: 1.000 / 1.000; macro precision/recall: 1.000 / 1.000; TP/FP/FN: 8/0/0.
    - Remaining boundary: run larger real-repo oracle coverage for dynamic/reflection/DI-heavy Java and mixed repos before claiming complete blast-radius validation.
 
-3. **Mixed-language freshness gate**
-   - Build a small Python+Java fixture or use a real mixed repo.
-   - Mutate one language and ensure unrelated claims in the other language are not over-invalidated.
-   - Success criterion: correct stale/fresh split and useful retrieval fallback.
+3. **Mixed-language freshness gate — BOUNDED ORACLE DONE 2026-09-02**
+   - Evidence: `TMF_MIXED_LANGUAGE_FRESHNESS_20260902.md` and `reports/mixed-language-freshness-20260902.json`.
+   - Result: PASS on a small Python+Java repository.
+   - Cases: 5/5 PASS.
+   - Changed Python function and Java method stale correctly; unrelated Python function and Java method remain fresh.
+   - Boundary: Java class claim still stales on member body change; documented as conservative over-invalidation, not marketed as class-level precision.
+   - Remaining: larger real mixed-repo validation.
 
 4. **Production integration smoke**
    - Exercise MCP tool path, CLI warm/retrieve, reflex hook warning, and fallback-to-source behavior in one scripted flow.
@@ -138,4 +141,4 @@ Recommended label for external/internal tracking:
 
 Reason:
 
-The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, and reverse graph queries now have a bounded mixed-language precision/recall oracle. But full TMF capability validation still requires real-repo stale A/B, larger real-repo graph oracle coverage, mixed-language freshness, and production integration smoke.
+The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, and mixed Python+Java freshness has a bounded oracle. But full TMF capability validation still requires real-repo stale A/B, larger real-repo graph oracle coverage, larger mixed-repo validation, and production integration smoke.
