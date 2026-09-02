@@ -3377,21 +3377,33 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
     same_by_simple: dict[str, list[ClassNode]] = {}
     for c in class_by_qual.values():
         same_by_simple.setdefault(c.qualname.rsplit(".", 1)[-1], []).append(c)
-    methods_by_qual = {m.qualname: m for m in java_methods if m.node_kind in {"method", "constructor"}}
+    methods_by_qual: dict[str, list[ClassNode]] = {}
+    for method in java_methods:
+        if method.node_kind in {"method", "constructor"}:
+            methods_by_qual.setdefault(method.qualname, []).append(method)
     fields_by_qual = {f.qualname: f for f in java_fields}
     edges: list[JavaTypeUseEdge] = []
     unresolved: dict[str, list[JavaUnresolvedTypeUse]] = {}
 
-    def user_id_for(kind: str, q: str) -> str:
-        if kind in {"method", "constructor", "class", "interface", "enum"}:
+    def method_for(q: str, identity_key: str | None = None) -> ClassNode | None:
+        candidates = methods_by_qual.get(q, [])
+        if identity_key:
+            candidates = [method for method in candidates if method.identity_key == identity_key]
+        return candidates[0] if len(candidates) == 1 else None
+
+    def user_id_for(kind: str, q: str, identity_key: str | None = None) -> str:
+        if kind in {"method", "constructor"}:
+            return ids.stable_java_node_claim_id(path, q, kind, identity_key)
+        if kind in {"class", "interface", "enum"}:
             node_kind = kind
             return ids.stable_java_node_claim_id(path, q, node_kind)
         decl = fields_by_qual[q]
         return ids.stable_java_node_claim_id(path, q, decl.declaration_kind)
 
-    def user_hash_for(kind: str, q: str) -> str | None:
-        if kind in {"method", "constructor"} and q in methods_by_qual:
-            return methods_by_qual[q].class_hash
+    def user_hash_for(kind: str, q: str, identity_key: str | None = None) -> str | None:
+        if kind in {"method", "constructor"}:
+            method = method_for(q, identity_key)
+            return method.class_hash if method is not None else None
         if kind in {"class", "interface", "enum"} and q in class_by_qual:
             return class_by_qual[q].class_hash
         if q in fields_by_qual:
@@ -3441,8 +3453,8 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
             return None, "java_external_or_jdk_type_not_resolved"
         return None, "java_type_not_resolved"
 
-    def add_type_uses(user_kind: str, user_q: str, type_text: str, use_kind: str) -> None:
-        uid = user_id_for(user_kind, user_q)
+    def add_type_uses(user_kind: str, user_q: str, type_text: str, use_kind: str, user_identity_key: str | None = None) -> None:
+        uid = user_id_for(user_kind, user_q, user_identity_key)
         for simple in _java_type_tokens(type_text):
             target, reason = resolve_one(simple)
             if target is None:
@@ -3452,11 +3464,11 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
             edges.append(JavaTypeUseEdge(
                 user_id=uid, type_id=tid, type_qualname=target.qualname, use_kind=use_kind,
                 resolution=reason, user_path=path, type_path=target.path,
-                user_hash=user_hash_for(user_kind, user_q), type_hash=target.class_hash,
+                user_hash=user_hash_for(user_kind, user_q, user_identity_key), type_hash=target.class_hash,
                 user_qualname=user_q, user_node_kind=user_kind, type_node_kind=target.node_kind,
             ))
 
-    def add_annotations(user_kind: str, user_q: str, roots: list[Any]) -> None:
+    def add_annotations(user_kind: str, user_q: str, roots: list[Any], user_identity_key: str | None = None) -> None:
         """Attach only annotations syntactically owned by one declaration.
 
         Callers pass modifiers/type/parameter subtrees rather than declaration
@@ -3470,7 +3482,7 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
                     seen.add(marker)
                     name = _java_annotation_name(source_bytes, cur)
                     if name:
-                        add_type_uses(user_kind, user_q, name, "annotation_type")
+                        add_type_uses(user_kind, user_q, name, "annotation_type", user_identity_key)
                 return  # nested annotation values are separate metadata, not ownership
             for child in _named_children(cur):
                 visit_annotation(child)
@@ -3521,8 +3533,11 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
             if q:
                 user_kind = "constructor" if node.type in {"constructor_declaration", "compact_constructor_declaration"} else "method"
                 ret = _child_by_field(node, "type")
+                node_hash = java_hash_for_node(source, node)
+                current_method = next((method for method in methods_by_qual.get(q, []) if method.class_hash == node_hash), None)
+                identity_key = current_method.identity_key if current_method is not None else None
                 if ret is not None:
-                    add_type_uses(user_kind, q, _node_text(source_bytes, ret).strip(), "return_type")
+                    add_type_uses(user_kind, q, _node_text(source_bytes, ret).strip(), "return_type", identity_key)
                 modifiers = next((c for c in _named_children(node) if c.type == "modifiers"), None)
                 annotation_roots = [modifiers, ret]
                 params = _child_by_field(node, "parameters")
@@ -3531,9 +3546,9 @@ def resolve_java_type_use_edges(path: str, source: str, java_classes: list[Class
                         if child.type in {"formal_parameter", "spread_parameter"}:
                             typ = _child_by_field(child, "type")
                             if typ is not None:
-                                add_type_uses(user_kind, q, _node_text(source_bytes, typ).strip(), "param_type")
+                                add_type_uses(user_kind, q, _node_text(source_bytes, typ).strip(), "param_type", identity_key)
                             annotation_roots.append(child)
-                add_annotations(user_kind, q, annotation_roots)
+                add_annotations(user_kind, q, annotation_roots, identity_key)
         for child in _named_children(node):
             walk(child, next_stack)
 

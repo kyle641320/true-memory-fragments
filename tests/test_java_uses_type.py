@@ -126,6 +126,54 @@ class Service {
             warm_repo(repo)
             self.assertIsNone(store.get_claim(stale_edge_id))
 
+    def test_overloaded_method_param_type_uses_signature_identity(self):
+        source = """class A {}
+class B {}
+class Listener {
+  void on(A event) {}
+  void on(B event) {}
+}
+"""
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"Listener.java": source})
+            warm_repo(repo)
+            store = Store(repo)
+            a_id = stable_java_node_claim_id("Listener.java", "A", "class")
+            b_id = stable_java_node_claim_id("Listener.java", "B", "class")
+            on_a_id = stable_java_node_claim_id("Listener.java", "Listener.on", "method", "Listener.on(A)")
+            on_b_id = stable_java_node_claim_id("Listener.java", "Listener.on", "method", "Listener.on(B)")
+            legacy_id = stable_java_node_claim_id("Listener.java", "Listener.on", "method")
+            self.assertIsNotNone(store.get_claim(on_a_id))
+            self.assertIsNotNone(store.get_claim(on_b_id))
+            self.assertIsNone(store.get_claim(legacy_id))
+            self.assertEqual({on_a_id}, {u["user_id"] for u in reverse_used_by_types(repo, a_id)["used_by_types"]})
+            self.assertEqual({on_b_id}, {u["user_id"] for u in reverse_used_by_types(repo, b_id)["used_by_types"]})
+
+    def test_rewarm_reconciles_uses_type_edges_owned_by_user_path(self):
+        source = """class Value {}
+class Service { Value run(Value input) { return input; } }
+"""
+        changed = """class Value {}
+class Service { int run(int input) { return input; } }
+"""
+        with tempfile.TemporaryDirectory() as td:
+            repo = init_repo(Path(td), {"Service.java": source})
+            warm_repo(repo)
+            store = Store(repo)
+            value_id = stable_java_node_claim_id("Service.java", "Value", "class")
+            run_id = stable_java_node_claim_id("Service.java", "Service.run", "method")
+            edge_id = stable_type_use_edge_claim_id(run_id, value_id, "param_type")
+            self.assertIsNotNone(store.get_claim(edge_id))
+
+            source_path = repo / "Service.java"
+            source_path.write_text(changed, encoding="utf-8")
+            import subprocess
+            subprocess.run(["git", "add", "Service.java"], cwd=repo, check=True)
+            subprocess.run(["git", "commit", "-m", "remove type use"], cwd=repo, check=True, capture_output=True)
+            warm_repo(repo)
+            self.assertIsNone(store.get_claim(edge_id))
+            self.assertNotIn(run_id, {u["user_id"] for u in reverse_used_by_types(repo, value_id)["used_by_types"]})
+
     def test_nested_generic_array_and_wildcard_type_references_resolve(self):
         source = """class Value {}
 class Box<T> { java.util.Map<String, java.util.List<? extends Value[]>> values; }

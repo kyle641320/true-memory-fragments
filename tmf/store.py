@@ -263,6 +263,7 @@ class Store:
                 claim.body.get("writer_path") if edge_kind == "writes" else
                 claim.body.get("child_path") if edge_kind == "inherits" else
                 claim.body.get("method_path") if edge_kind == "overrides" else
+                claim.body.get("user_path") if edge_kind == "uses_type" else
                 claim.body.get("reader_path") if edge_kind in {"reads_env", "reads_config_key"} else
                 claim.body.get("injector_path") if edge_kind == "injects" else
                 claim.body.get("source_path")

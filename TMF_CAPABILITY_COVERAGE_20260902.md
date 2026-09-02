@@ -70,7 +70,7 @@ TMF has substantial bounded Java/Spring **source-analysis** validation: declarat
 | Localized reread / refreshed map | Proven for stale-context ROI fixtures | Strong | Direct-refresh oracle and agent-loop ROI scorecard pass. |
 | Agent productivity ROI | Proven for scoped product segment | Strong within segment | `STRONG_PRODUCT_ROI_PASS` for retained Java stale-context benchmark set. |
 | Boundary / semantic stopping | Partially proven | Medium | Boundary precision evidence exists, but attribution distinguishes semantic failures from protocol/harness failures; not a universal proof. |
-| Reverse graph queries (readers/writers/callers/subtypes/implementors/type-use) | Bounded fixture PASS; real-repo oracle found one identity gap | Strong for bounded fixture, Mixed for real repos | `TMF_GRAPH_QUERY_ORACLE_20260902.md`: 6/6 PASS on small mixed fixture. `TMF_REAL_REPO_GRAPH_ORACLE_20260902.md`: 4/5 PASS, micro precision/recall 0.800/0.800; Petclinic `VisitBooked` reverse type-use returned a dangling historical listener id and missed the current listener variant. |
+| Reverse graph queries (readers/writers/callers/subtypes/implementors/type-use) | Bounded fixture PASS; bounded real-repo oracle PASS after overload-aware type-use fix | Strong for bounded fixture, Medium+ for real repos | `TMF_GRAPH_QUERY_ORACLE_20260902.md`: 6/6 PASS on small mixed fixture. `TMF_REAL_REPO_GRAPH_ORACLE_20260902.md`: 5/5 PASS, micro/macro precision/recall 1.000/1.000 after fixing overloaded Java method type-use identity and `uses_type` rewarm reconciliation. |
 | API/Config/YAML/SQL nodes | Partially proven | Medium | Unit and source-analysis evidence exists for selected adapters; not fully validated as multi-language product surface. |
 | Multi-language mixed repos / freshness | Proven on bounded Python+Java freshness oracle; larger real-repo validation pending | Strong for bounded fixture, Medium/Low for real repos | `TMF_MIXED_LANGUAGE_FRESHNESS_20260902.md`: 5/5 cases PASS; changed Python/Java symbols stale, unrelated Python/Java function/method claims remain fresh. Java class-level over-invalidation remains documented current behavior. |
 | Real-repo agent A/B transfer | Baseline audited; stale-context transfer pending | Medium for baseline, Low for superiority | `TMF_REAL_REPO_AB_STATUS_20260902.md`: retained java_real_v2 real Petclinic/JHipster evidence has 17 valid arms, 6 ordinary pairs, 2 freshness pairs, pollution gate PASS 3/3, but shows no audited accuracy advantage and no latency advantage for TMF_MAP. New discriminating real-repo stale A/B still required. |
@@ -105,11 +105,11 @@ Not fair yet:
    - Audited interpretation: no observed accuracy difference after correcting a lexical-rubric false negative; TMF_MAP did not show latency advantage; both freshness arms blocked stale memory; V2F02 failed in both arms.
    - Remaining: run a new intentionally discriminating real-repo stale-context A/B across at least 2 real repos or 4 real-repo stale tasks before claiming transfer beyond bounded fixtures.
 
-2. **Graph query precision/recall gate — BOUNDED ORACLE DONE; REAL-REPO GAP FOUND 2026-09-02**
+2. **Graph query precision/recall gate — BOUNDED + REAL-REPO ORACLES PASS 2026-09-02**
    - Bounded evidence: `TMF_GRAPH_QUERY_ORACLE_20260902.md` and `reports/graph-query-oracle-20260902.json`; 6/6 PASS, micro/macro precision/recall 1.000/1.000.
-   - Real-repo evidence: `TMF_REAL_REPO_GRAPH_ORACLE_20260902.md` and `reports/real-repo-graph-oracle-20260902.json`; 4/5 PASS, micro precision/recall 0.800/0.800.
-   - Real-repo finding: Petclinic `VisitBooked` reverse type-use returned a dangling historical listener claim id and missed the current listener variant. Treat as a retained-store/index identity gap until fixed and revalidated.
-   - Remaining boundary: fix/revalidate this identity gap and run larger real-repo oracle coverage for dynamic/reflection/DI-heavy Java and mixed repos before claiming complete blast-radius validation.
+   - Real-repo evidence: `TMF_REAL_REPO_GRAPH_ORACLE_20260902.md` and `reports/real-repo-graph-oracle-20260902.json`; 5/5 PASS, micro/macro precision/recall 1.000/1.000.
+   - Fix included: overloaded Java method type-use identity now uses method `identity_key`, and `uses_type` edge reconciliation uses `user_path` during rewarm.
+   - Remaining boundary: run larger real-repo oracle coverage for dynamic/reflection/DI-heavy Java and mixed repos before claiming complete blast-radius validation.
 
 3. **Mixed-language freshness gate — BOUNDED ORACLE DONE 2026-09-02**
    - Evidence: `TMF_MIXED_LANGUAGE_FRESHNESS_20260902.md` and `reports/mixed-language-freshness-20260902.json`.
@@ -144,4 +144,4 @@ Recommended label for external/internal tracking:
 
 Reason:
 
-The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires a new discriminating real-repo stale A/B, fixing/revalidating the real-repo graph type-use identity gap, larger mixed-repo validation, and production rollout evidence.
+The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires a new discriminating real-repo stale A/B, larger mixed-repo validation, and production rollout evidence.
