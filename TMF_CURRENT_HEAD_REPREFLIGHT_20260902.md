@@ -1,0 +1,686 @@
+# TMF current HEAD release re-preflight — 2026-09-02
+
+## Summary
+
+Verdict: **PASS**.
+
+Current HEAD passes the release re-preflight baseline run on 2026-09-02:
+
+- Java qualifications: 46/46 qualifiers, 731/731 checks, failed=0.
+- Java source-only smoke: PASS; exported_files=435; compileall/focused_tests/qualifications all passed.
+- Unit tests: 615 tests OK, skipped=5, duration 65.850s.
+- Python compileall: PASS.
+- git diff --check: PASS.
+
+Scope: this is a local current-HEAD preflight, not publication authorization, tag creation, PyPI upload, or runtime framework certification.
+
+## Commands
+- python3 tools/run_java_qualifications.py
+- python3 tools/verify_java_source_only_smoke.py
+- python3 -Werror -m unittest discover -s tests -v
+- python3 -m compileall -q tmf tests scripts tools
+- git diff --check
+
+## java qualifications
+```text
+{"failed":0,"passed":46,"results":[{"checks_passed":8,"checks_total":8,"name":"async","passed":true,"returncode":0},{"checks_passed":29,"checks_total":29,"name":"autowired","passed":true,"returncode":0},{"checks_passed":10,"checks_total":10,"name":"bean","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"bulkhead","passed":true,"returncode":0},{"checks_passed":7,"checks_total":7,"name":"cache","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"circuit_breaker","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"component","passed":true,"returncode":0},{"checks_passed":18,"checks_total":18,"name":"configuration_properties","passed":true,"returncode":0},{"checks_passed":10,"checks_total":10,"name":"configuration","passed":true,"returncode":0},{"checks_passed":10,"checks_total":10,"name":"controller_advice","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"controller","passed":true,"returncode":0},{"checks_passed":21,"checks_total":21,"name":"cross_origin","passed":true,"returncode":0},{"checks_passed":13,"checks_total":13,"name":"exception_handler","passed":true,"returncode":0},{"checks_passed":8,"checks_total":8,"name":"feign","passed":true,"returncode":0},{"checks_passed":14,"checks_total":14,"name":"init_binder","passed":true,"returncode":0},{"checks_passed":29,"checks_total":29,"name":"inject","passed":true,"returncode":0},{"checks_passed":8,"checks_total":8,"name":"kafka","passed":true,"returncode":0},{"checks_passed":21,"checks_total":21,"name":"lazy","passed":true,"returncode":0},{"checks_passed":15,"checks_total":15,"name":"model_attribute","passed":true,"returncode":0},{"checks_passed":29,"checks_total":29,"name":"named","passed":true,"returncode":0},{"checks_passed":29,"checks_total":29,"name":"persistence","passed":true,"returncode":0},{"checks_passed":13,"checks_total":13,"name":"post_authorize","passed":true,"returncode":0},{"checks_passed":25,"checks_total":25,"name":"post_construct","passed":true,"returncode":0},{"checks_passed":17,"checks_total":17,"name":"post_filter","passed":true,"returncode":0},{"checks_passed":13,"checks_total":13,"name":"pre_authorize","passed":true,"returncode":0},{"checks_passed":25,"checks_total":25,"name":"pre_destroy","passed":true,"returncode":0},{"checks_passed":18,"checks_total":18,"name":"pre_filter","passed":true,"returncode":0},{"checks_passed":21,"checks_total":21,"name":"primary","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"rate_limiter","passed":true,"returncode":0},{"checks_passed":10,"checks_total":10,"name":"repository_stereotype","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"resilience4j_retry","passed":true,"returncode":0},{"checks_passed":29,"checks_total":29,"name":"resource","passed":true,"returncode":0},{"checks_passed":21,"checks_total":21,"name":"response_body","passed":true,"returncode":0},{"checks_passed":15,"checks_total":15,"name":"response_status","passed":true,"returncode":0},{"checks_passed":19,"checks_total":19,"name":"rest_controller_advice","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"rest_controller","passed":true,"returncode":0},{"checks_passed":8,"checks_total":8,"name":"retry","passed":true,"returncode":0},{"checks_passed":13,"checks_total":13,"name":"roles_allowed","passed":true,"returncode":0},{"checks_passed":9,"checks_total":9,"name":"scheduling","passed":true,"returncode":0},{"checks_passed":21,"checks_total":21,"name":"scope","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"secured","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"service","passed":true,"returncode":0},{"checks_passed":21,"checks_total":21,"name":"session_attributes","passed":true,"returncode":0},{"checks_passed":26,"checks_total":26,"name":"singleton","passed":true,"returncode":0},{"checks_passed":12,"checks_total":12,"name":"time_limiter","passed":true,"returncode":0},{"checks_passed":8,"checks_total":8,"name":"transaction","passed":true,"returncode":0}],"total":46}
+```
+exit_code=0 duration_s=11
+
+## java source-only smoke
+```text
+{"compileall":"passed","excluded":[".git",".pytest_cache",".tmf","__pycache__","build","dist","generated","reports","uv.lock"],"exported_files":435,"focused_tests":"passed","qualifications":{"checks_passed":731,"checks_total":731,"failed":0,"passed":46,"total":46},"source_only":true}
+```
+exit_code=0 duration_s=21
+
+## unit tests
+```text
+test_answer_fails_closed_without_preflight (test_agent_adapter.JsonBrokerAdapterTests.test_answer_fails_closed_without_preflight) ... ok
+test_completion_rejects_model_drift_and_budget_breach (test_agent_adapter.JsonBrokerAdapterTests.test_completion_rejects_model_drift_and_budget_breach) ... ok
+test_preflight_and_completion_use_locked_stateless_contract (test_agent_adapter.JsonBrokerAdapterTests.test_preflight_and_completion_use_locked_stateless_contract) ... ok
+test_preflight_rejects_tools_or_credential_exposure (test_agent_adapter.JsonBrokerAdapterTests.test_preflight_rejects_tools_or_credential_exposure) ... ok
+test_rejects_relative_or_non_executable_broker (test_agent_adapter.JsonBrokerAdapterTests.test_rejects_relative_or_non_executable_broker) ... ok
+test_api_node_ignores_comment_and_formatting_changes (test_api_nodes.ApiNodeTests.test_api_node_ignores_comment_and_formatting_changes) ... ok
+test_deleted_route_reconciles_api_claim (test_api_nodes.ApiNodeTests.test_deleted_route_reconciles_api_claim) ... ok
+test_dynamic_and_unknown_decorators_are_not_api_nodes (test_api_nodes.ApiNodeTests.test_dynamic_and_unknown_decorators_are_not_api_nodes) ... ok
+test_fastapi_route_path_change_stales_api_node (test_api_nodes.ApiNodeTests.test_fastapi_route_path_change_stales_api_node) ... ok
+test_flask_route_api_node_is_derived_and_fresh (test_api_nodes.ApiNodeTests.test_flask_route_api_node_is_derived_and_fresh) ... ok
+test_handler_body_change_stales_api_node (test_api_nodes.ApiNodeTests.test_handler_body_change_stales_api_node) ... ok
+test_unrelated_function_change_does_not_stale_api_node (test_api_nodes.ApiNodeTests.test_unrelated_function_change_does_not_stale_api_node) ... ok
+test_java_method_binding_has_lines_role_and_hash_kind (test_binding_lines.BindingLinesTests.test_java_method_binding_has_lines_role_and_hash_kind)
+Java 方法 Binding 必须包含 line_start/line_end/role/hash_kind ... ok
+test_python_class_binding_has_lines_role_and_hash_kind (test_binding_lines.BindingLinesTests.test_python_class_binding_has_lines_role_and_hash_kind)
+Python 类 Binding 必须包含 line_start/line_end/role/hash_kind ... ok
+test_python_function_binding_has_lines_role_and_hash_kind (test_binding_lines.BindingLinesTests.test_python_function_binding_has_lines_role_and_hash_kind)
+Python 函数 Binding 必须包含 line_start/line_end/role/hash_kind ... ok
+test_configured_semantic_retrieval_and_status_never_scan_claim_store (test_bounded_relations.BoundedRelationTests.test_configured_semantic_retrieval_and_status_never_scan_claim_store) ... ok
+test_context_and_thin_explain_do_not_scan_claim_store (test_bounded_relations.BoundedRelationTests.test_context_and_thin_explain_do_not_scan_claim_store) ... ok
+test_endpoint_and_relation_kind_query_never_scans_claim_store (test_bounded_relations.BoundedRelationTests.test_endpoint_and_relation_kind_query_never_scans_claim_store) ... ok
+test_explicit_refresh_is_the_only_write_path (test_bounded_relations.BoundedRelationTests.test_explicit_refresh_is_the_only_write_path) ... ok
+test_fragment_contract_and_missing_index_gap (test_bounded_relations.BoundedRelationTests.test_fragment_contract_and_missing_index_gap) ... ok
+test_missing_index_retrieve_does_not_scan_or_rebuild (test_bounded_relations.BoundedRelationTests.test_missing_index_retrieve_does_not_scan_or_rebuild) ... ok
+test_path_miss_is_read_only_and_reports_refresh_gap (test_bounded_relations.BoundedRelationTests.test_path_miss_is_read_only_and_reports_refresh_gap) ... ok
+test_request_freshness_cache_invalidates_on_source_change (test_bounded_relations.BoundedRelationTests.test_request_freshness_cache_invalidates_on_source_change) ... ok
+test_required_constraints_and_hard_limits (test_bounded_relations.BoundedRelationTests.test_required_constraints_and_hard_limits) ... ok
+test_stale_path_and_lexical_hits_are_omitted_without_writes (test_bounded_relations.BoundedRelationTests.test_stale_path_and_lexical_hits_are_omitted_without_writes) ... ok
+test_stale_reverse_callers_query_is_read_only (test_bounded_relations.BoundedRelationTests.test_stale_reverse_callers_query_is_read_only) ... ok
+test_status_missing_index_returns_gap_without_scan (test_bounded_relations.BoundedRelationTests.test_status_missing_index_returns_gap_without_scan) ... ok
+test_call_edge_claim_uses_precomputed_anchors_without_reading_source (test_calls_edges.CallsEdgeTests.test_call_edge_claim_uses_precomputed_anchors_without_reading_source) ... ok
+test_module_local_name_call_and_reverse_caller (test_calls_edges.CallsEdgeTests.test_module_local_name_call_and_reverse_caller) ... ok
+test_rename_delete_recomputes_edges_and_removes_dead_endpoint (test_calls_edges.CallsEdgeTests.test_rename_delete_recomputes_edges_and_removes_dead_endpoint) ... ok
+test_self_method_call_resolves_only_same_class (test_calls_edges.CallsEdgeTests.test_self_method_call_resolves_only_same_class) ... ok
+test_unknown_attribute_and_external_name_are_unresolved_not_edges (test_calls_edges.CallsEdgeTests.test_unknown_attribute_and_external_name_are_unresolved_not_edges) ... ok
+test_nested_function_call_is_not_attributed_to_outer (test_calls_edges.CallsNestedAttributionTests.test_nested_function_call_is_not_attributed_to_outer) ... ok
+test_class_body_change_stales_class_and_method_change_over_invalidates_class (test_class_nodes.ClassNodeTests.test_class_body_change_stales_class_and_method_change_over_invalidates_class) ... ok
+test_class_claim_is_derived_and_fresh (test_class_nodes.ClassNodeTests.test_class_claim_is_derived_and_fresh) ... ok
+test_class_delete_reconciles_tombstone (test_class_nodes.ClassNodeTests.test_class_delete_reconciles_tombstone) ... ok
+test_all_targets_pass_is_go (test_clean_build_release.CleanBuildReleaseTests.test_all_targets_pass_is_go) ... ok
+test_declared_runtime_boundary_does_not_force_failure (test_clean_build_release.CleanBuildReleaseTests.test_declared_runtime_boundary_does_not_force_failure) ... ok
+test_hard_failure_is_no_go (test_clean_build_release.CleanBuildReleaseTests.test_hard_failure_is_no_go) ... ok
+test_hard_pass_target_failure_is_go_with_warnings (test_clean_build_release.CleanBuildReleaseTests.test_hard_pass_target_failure_is_go_with_warnings) ... ok
+test_invariant_failure_is_no_go (test_clean_build_release.CleanBuildReleaseTests.test_invariant_failure_is_no_go) ... ok
+test_override_replaces_old_repository_evidence (test_clean_build_release.CleanBuildReleaseTests.test_override_replaces_old_repository_evidence) ... ok
+test_two_process_warm_does_not_corrupt_claim_files (test_concurrency.ConcurrentWarmChecks.test_two_process_warm_does_not_corrupt_claim_files) ... ok
+test_invalid_json_degrades_to_no_config_nodes_without_crash (test_config_nodes.ConfigNodeTests.test_invalid_json_degrades_to_no_config_nodes_without_crash) ... ok
+test_json_top_level_key_config_node_fresh_format_immune_and_value_sensitive (test_config_nodes.ConfigNodeTests.test_json_top_level_key_config_node_fresh_format_immune_and_value_sensitive) ... ok
+test_json_unrelated_key_change_does_not_stale_and_delete_reconciles (test_config_nodes.ConfigNodeTests.test_json_unrelated_key_change_does_not_stale_and_delete_reconciles) ... ok
+test_toml_top_level_key_config_node_fresh_format_immune_and_value_sensitive (test_config_nodes.ConfigNodeTests.test_toml_top_level_key_config_node_fresh_format_immune_and_value_sensitive) ... ok
+test_model_contract_path_is_sanitized_before_claim_storage (test_contract_sanitizer.ContractModelPathTests.test_model_contract_path_is_sanitized_before_claim_storage) ... ok
+test_prunes_fabricated_raises (test_contract_sanitizer.ContractSanitizerTests.test_prunes_fabricated_raises) ... ok
+test_prunes_param_mismatch_and_caps_confidence (test_contract_sanitizer.ContractSanitizerTests.test_prunes_param_mismatch_and_caps_confidence) ... ok
+test_rejects_false_no_side_effect_claim_when_writes_exist (test_contract_sanitizer.ContractSanitizerTests.test_rejects_false_no_side_effect_claim_when_writes_exist) ... ok
+test_rejects_return_value_when_no_value_return (test_contract_sanitizer.ContractSanitizerTests.test_rejects_return_value_when_no_value_return) ... ok
+test_cross_file_edge_freshness_uses_per_binding_qualname (test_cross_file_edges.CrossFileEdgesTests.test_cross_file_edge_freshness_uses_per_binding_qualname) ... ok
+test_edge_reconcile_for_caller_path_removes_stale_cross_file_edge (test_cross_file_edges.CrossFileEdgesTests.test_edge_reconcile_for_caller_path_removes_stale_cross_file_edge) ... ok
+test_fresh_cross_file_edge_does_not_force_permanent_rederive (test_cross_file_edges.CrossFileEdgesTests.test_fresh_cross_file_edge_does_not_force_permanent_rederive) ... ok
+test_from_import_direct_top_level_creates_multibinding_edge_claim (test_cross_file_edges.CrossFileEdgesTests.test_from_import_direct_top_level_creates_multibinding_edge_claim) ... ok
+test_import_module_alias_attr_creates_multibinding_edge_claim (test_cross_file_edges.CrossFileEdgesTests.test_import_module_alias_attr_creates_multibinding_edge_claim) ... ok
+test_legacy_binding_without_qualname_falls_back_to_body_qualname (test_cross_file_edges.CrossFileEdgesTests.test_legacy_binding_without_qualname_falls_back_to_body_qualname) ... ok
+test_reverse_callers_is_lazy_fresh_and_partial (test_cross_file_edges.CrossFileEdgesTests.test_reverse_callers_is_lazy_fresh_and_partial) ... ok
+test_reverse_callers_skips_stale_until_explicit_refresh (test_cross_file_edges.CrossFileEdgesTests.test_reverse_callers_skips_stale_until_explicit_refresh) ... ok
+test_star_import_and_reexport_are_unresolved (test_cross_file_edges.CrossFileEdgesTests.test_star_import_and_reexport_are_unresolved) ... ok
+test_module_constant_declaration_is_derived_and_fresh (test_declaration_nodes.DeclarationNodeTests.test_module_constant_declaration_is_derived_and_fresh) ... ok
+test_module_declaration_change_stales_and_delete_reconciles (test_declaration_nodes.DeclarationNodeTests.test_module_declaration_change_stales_and_delete_reconciles) ... ok
+test_configured_embedder_can_select_semantic_seed_and_expand_fresh_edges (test_embeddings.EmbeddingRetrieveTests.test_configured_embedder_can_select_semantic_seed_and_expand_fresh_edges) ... ok
+test_embeddings_off_retrieve_text_matches_default_cli_payload (test_embeddings.EmbeddingRetrieveTests.test_embeddings_off_retrieve_text_matches_default_cli_payload) ... ok
+test_stale_embedding_seed_is_excluded (test_embeddings.EmbeddingRetrieveTests.test_stale_embedding_seed_is_excluded) ... ok
+test_literal_config_key_read_resolves_unique_config_file_and_dynamic_unresolved (test_env_config_edges.EnvAndConfigReadEdgeTests.test_literal_config_key_read_resolves_unique_config_file_and_dynamic_unresolved) ... ok
+test_literal_env_reads_create_env_node_and_reverse_and_dynamic_unresolved (test_env_config_edges.EnvAndConfigReadEdgeTests.test_literal_env_reads_create_env_node_and_reverse_and_dynamic_unresolved) ... ok
+test_archive_is_deterministic_idempotent_and_reconstructs_exact_bytes (test_evaluation_store_lock.EvaluationStoreLockTests.test_archive_is_deterministic_idempotent_and_reconstructs_exact_bytes) ... ok
+test_archive_rejects_tampering_and_id_mismatch (test_evaluation_store_lock.EvaluationStoreLockTests.test_archive_rejects_tampering_and_id_mismatch) ... ok
+test_archive_rejects_unsafe_paths_symlinks_and_special_files (test_evaluation_store_lock.EvaluationStoreLockTests.test_archive_rejects_unsafe_paths_symlinks_and_special_files) ... ok
+test_disposable_repository_isolates_read_through_writes (test_evaluation_store_lock.EvaluationStoreLockTests.test_disposable_repository_isolates_read_through_writes) ... ok
+test_inventory_detects_identity_and_trust_metadata_drift (test_evaluation_store_lock.EvaluationStoreLockTests.test_inventory_detects_identity_and_trust_metadata_drift) ... ok
+test_inventory_detects_semantic_drift_without_exposing_content (test_evaluation_store_lock.EvaluationStoreLockTests.test_inventory_detects_semantic_drift_without_exposing_content) ... ok
+test_inventory_is_stable_for_json_format_and_object_key_order (test_evaluation_store_lock.EvaluationStoreLockTests.test_inventory_is_stable_for_json_format_and_object_key_order) ... ok
+test_inventory_rejects_symlinked_store_entries (test_evaluation_store_lock.EvaluationStoreLockTests.test_inventory_rejects_symlinked_store_entries) ... ok
+test_inventory_rejects_symlinked_store_root (test_evaluation_store_lock.EvaluationStoreLockTests.test_inventory_rejects_symlinked_store_root) ... ok
+test_verify_lock_fails_explicitly_on_store_or_commit_drift (test_evaluation_store_lock.EvaluationStoreLockTests.test_verify_lock_fails_explicitly_on_store_or_commit_drift) ... ok
+test_explain_json_has_agent_branch_fields_and_recomputes_stale (test_explain.ExplainTests.test_explain_json_has_agent_branch_fields_and_recomputes_stale) ... ok
+test_explain_reviewer_text_separates_provenance_from_freshness (test_explain.ExplainTests.test_explain_reviewer_text_separates_provenance_from_freshness) ... ok
+test_explain_shows_raw_confidence_cap_for_attributed_claim (test_explain.ExplainTests.test_explain_shows_raw_confidence_cap_for_attributed_claim) ... ok
+test_contract_checks_prune_unsafe_slots (test_final_contracts.FinalContractsTests.test_contract_checks_prune_unsafe_slots) ... ok
+test_contract_stales_on_body_change (test_final_contracts.FinalContractsTests.test_contract_stales_on_body_change) ... ok
+test_java_interface_mechanical_facts_when_available (test_final_contracts.FinalContractsTests.test_java_interface_mechanical_facts_when_available) ... ok
+test_python_interface_mechanical_facts (test_final_contracts.FinalContractsTests.test_python_interface_mechanical_facts) ... ok
+test_tmf_context_default_is_3000_and_stubs_overflow (test_final_contracts.FinalContractsTests.test_tmf_context_default_is_3000_and_stubs_overflow) ... ok
+test_tmf_context_uses_budgeted_retrieve_limit (test_final_contracts.FinalContractsTests.test_tmf_context_uses_budgeted_retrieve_limit) ... ok
+test_boundary_indent_normalization_preserves_structure_distinction (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_boundary_indent_normalization_preserves_structure_distinction) ... ok
+test_changed_function_body_stales_function (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_changed_function_body_stales_function) ... ok
+test_class_first_method_stays_fresh_when_class_member_inserted_above (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_class_first_method_stays_fresh_when_class_member_inserted_above) ... ok
+test_comment_only_and_indent_width_changes_keep_function_fresh (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_comment_only_and_indent_width_changes_keep_function_fresh) ... ok
+test_cross_file_edge_stales_only_when_endpoint_hash_changes_not_unrelated_function (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_cross_file_edge_stales_only_when_endpoint_hash_changes_not_unrelated_function) ... ok
+test_extract_functions_reuses_single_file_token_stream_for_many_spans (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_extract_functions_reuses_single_file_token_stream_for_many_spans) ... ok
+test_file_claim_still_stales_on_any_file_blob_change (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_file_claim_still_stales_on_any_file_blob_change) ... ok
+test_method_body_change_stales_method (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_method_body_change_stales_method) ... ok
+test_method_internal_block_structure_change_stales_method (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_method_internal_block_structure_change_stales_method) ... ok
+test_module_first_function_hash_is_unaffected_by_preceding_comment (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_module_first_function_hash_is_unaffected_by_preceding_comment) ... ok
+test_nested_first_inner_function_stays_fresh_when_statement_inserted_above (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_nested_first_inner_function_stays_fresh_when_statement_inserted_above) ... ok
+test_same_file_changed_function_stales_only_that_function_not_sibling (test_freshness_over_invalidation.FreshnessOverInvalidationTests.test_same_file_changed_function_stales_only_that_function_not_sibling) ... ok
+test_test_and_tool_fixtures_never_use_bare_git_init (test_git_init_branch.ExplicitGitInitialBranchTests.test_test_and_tool_fixtures_never_use_bare_git_init) ... ok
+test_bulk_rebuild_equals_incremental_maintenance (test_inverted_index.InvertedIndexTests.test_bulk_rebuild_equals_incremental_maintenance) ... ok
+test_corrupt_index_returns_gap_without_ordinary_query_rebuild (test_inverted_index.InvertedIndexTests.test_corrupt_index_returns_gap_without_ordinary_query_rebuild) ... ok
+test_interrupted_rebuild_preserves_complete_live_index (test_inverted_index.InvertedIndexTests.test_interrupted_rebuild_preserves_complete_live_index) ... ok
+test_lexical_and_exact_preserve_ambiguity (test_inverted_index.InvertedIndexTests.test_lexical_and_exact_preserve_ambiguity) ... ok
+test_reconcile_delete_and_rebuild_remove_stale_ids (test_inverted_index.InvertedIndexTests.test_reconcile_delete_and_rebuild_remove_stale_ids) ... ok
+test_stale_index_id_is_ignored (test_inverted_index.InvertedIndexTests.test_stale_index_id_is_ignored) ... ok
+test_upsert_delete_and_path_migration (test_inverted_index.InvertedIndexTests.test_upsert_delete_and_path_migration) ... ok
+test_declaration_and_uses_are_stable_type_evidence (test_java_annotations.JavaAnnotationTests.test_declaration_and_uses_are_stable_type_evidence) ... ok
+test_exact_simple_annotation_import_rejects_all_shadowing_forms (test_java_annotations.JavaAnnotationTests.test_exact_simple_annotation_import_rejects_all_shadowing_forms) ... ok
+test_external_wildcard_ambiguity_and_values_do_not_create_calls (test_java_annotations.JavaAnnotationTests.test_external_wildcard_ambiguity_and_values_do_not_create_calls) ... ok
+test_meta_annotation_remains_explicitly_unresolved (test_java_annotations.JavaAnnotationTests.test_meta_annotation_remains_explicitly_unresolved) ... ok
+test_repeatable_looking_extraction_is_stable (test_java_annotations.JavaAnnotationTests.test_repeatable_looking_extraction_is_stable) ... ok
+test_type_use_record_component_and_compact_constructor (test_java_annotations.JavaAnnotationTests.test_type_use_record_component_and_compact_constructor) ... ok
+test_all_composed_mapping_verbs_and_webflux_annotated_identity (test_java_api_nodes.JavaSpringApiNodeTests.test_all_composed_mapping_verbs_and_webflux_annotated_identity) ... ok
+test_cross_file_stability_freshness_and_delete (test_java_api_nodes.JavaSpringApiNodeTests.test_cross_file_stability_freshness_and_delete) ... ok
+test_decoys_dynamic_ambiguous_unsupported_and_no_calls_are_rejected (test_java_api_nodes.JavaSpringApiNodeTests.test_decoys_dynamic_ambiguous_unsupported_and_no_calls_are_rejected) ... ok
+test_exact_spring_wildcard_import_composes_class_and_method_routes (test_java_api_nodes.JavaSpringApiNodeTests.test_exact_spring_wildcard_import_composes_class_and_method_routes) ... ok
+test_literal_arrays_and_request_methods_build_stable_handler_apis (test_java_api_nodes.JavaSpringApiNodeTests.test_literal_arrays_and_request_methods_build_stable_handler_apis) ... ok
+test_unrelated_wildcard_and_dynamic_class_prefix_remain_unresolved (test_java_api_nodes.JavaSpringApiNodeTests.test_unrelated_wildcard_and_dynamic_class_prefix_remain_unresolved) ... ok
+test_adversarial_fail_closed (test_java_async.JavaAsyncTests.test_adversarial_fail_closed) ... ok
+test_direct_class_methods_literals_overloads (test_java_async.JavaAsyncTests.test_direct_class_methods_literals_overloads) ... ok
+test_stability_mutation_deletion_no_runtime (test_java_async.JavaAsyncTests.test_stability_mutation_deletion_no_runtime) ... ok
+test_constructor_method_field_contract_and_identity (test_java_autowired.AutowiredTests.test_constructor_method_field_contract_and_identity) ... ok
+test_import_metadata_target_and_identity_fail_closed (test_java_autowired.AutowiredTests.test_import_metadata_target_and_identity_fail_closed) ... ok
+test_overloads_and_separate_fields_have_stable_unique_identity (test_java_autowired.AutowiredTests.test_overloads_and_separate_fields_have_stable_unique_identity) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_autowired.AutowiredTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_exact_direct_method_and_metadata_fail_closed (test_java_bean.BeanTests.test_exact_direct_method_and_metadata_fail_closed) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_bean.BeanTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_method_presence_precise_anchor_and_overloads (test_java_bean.BeanTests.test_method_presence_precise_anchor_and_overloads) ... ok
+test_exact_source_budget (test_java_broker_v2.V2.test_exact_source_budget) ... ok
+test_frozen_independent_protocol (test_java_broker_v2.V2.test_frozen_independent_protocol) ... ok
+test_isolation_probe (test_java_broker_v2.V2.test_isolation_probe) ... ok
+test_prompt_only_arm_difference_is_tmf_capability (test_java_broker_v2.V2.test_prompt_only_arm_difference_is_tmf_capability) ... ok
+test_randomization_and_equal_declared_budgets (test_java_broker_v2.V2.test_randomization_and_equal_declared_budgets) ... ok
+test_selection_rejects_pollution_and_fills_deterministically (test_java_broker_v2.V2.test_selection_rejects_pollution_and_fills_deterministically) ... ok
+test_fail_closed (test_java_bulkhead.JavaBulkheadTests.test_fail_closed) ... ok
+test_literal_overloads_and_anchor (test_java_bulkhead.JavaBulkheadTests.test_literal_overloads_and_anchor) ... ok
+test_stable_mutation_delete_no_calls (test_java_bulkhead.JavaBulkheadTests.test_stable_mutation_delete_no_calls) ... ok
+test_exact_import_literals_and_opaque_spel (test_java_cache.JavaCacheTests.test_exact_import_literals_and_opaque_spel) ... ok
+test_fail_closed_decoy_dynamic_composed_inherited_and_unsupported (test_java_cache.JavaCacheTests.test_fail_closed_decoy_dynamic_composed_inherited_and_unsupported) ... ok
+test_mutation_and_deletion_change_or_remove_claim (test_java_cache.JavaCacheTests.test_mutation_and_deletion_change_or_remove_claim) ... ok
+test_overloads_have_distinct_stable_declarations (test_java_cache.JavaCacheTests.test_overloads_have_distinct_stable_declarations) ... ok
+test_chain_propagates_only_explicit_unique_project_return_type (test_java_calls.JavaCallEdgeTests.test_chain_propagates_only_explicit_unique_project_return_type) ... ok
+test_chain_unknown_or_generic_container_stays_unresolved (test_java_calls.JavaCallEdgeTests.test_chain_unknown_or_generic_container_stays_unresolved) ... ok
+test_cross_file_typed_receiver_exact_overload_resolution (test_java_calls.JavaCallEdgeTests.test_cross_file_typed_receiver_exact_overload_resolution) ... ok
+test_direct_parent_and_super_calls_resolve_without_runtime_dispatch_guessing (test_java_calls.JavaCallEdgeTests.test_direct_parent_and_super_calls_resolve_without_runtime_dispatch_guessing) ... ok
+test_enhanced_for_variable_receiver_resolves_from_declared_type (test_java_calls.JavaCallEdgeTests.test_enhanced_for_variable_receiver_resolves_from_declared_type) ... ok
+test_exact_array_varargs_from_declared_and_new_arrays (test_java_calls.JavaCallEdgeTests.test_exact_array_varargs_from_declared_and_new_arrays) ... ok
+test_explicit_import_static_type_call_resolves (test_java_calls.JavaCallEdgeTests.test_explicit_import_static_type_call_resolves) ... ok
+test_field_receiver_call_resolves_from_field_declared_type (test_java_calls.JavaCallEdgeTests.test_field_receiver_call_resolves_from_field_declared_type) ... ok
+test_generic_method_overload_uses_builtin_object_supertype (test_java_calls.JavaCallEdgeTests.test_generic_method_overload_uses_builtin_object_supertype) ... ok
+test_imported_parameter_and_local_variable_receiver_calls_resolve (test_java_calls.JavaCallEdgeTests.test_imported_parameter_and_local_variable_receiver_calls_resolve) ... ok
+test_inapplicable_and_crossing_overloads_remain_unresolved (test_java_calls.JavaCallEdgeTests.test_inapplicable_and_crossing_overloads_remain_unresolved) ... ok
+test_lambda_bodies_are_not_calls_of_enclosing_method (test_java_calls.JavaCallEdgeTests.test_lambda_bodies_are_not_calls_of_enclosing_method) ... ok
+test_method_references_are_evidence_not_runtime_calls (test_java_calls.JavaCallEdgeTests.test_method_references_are_evidence_not_runtime_calls) ... ok
+test_non_overloaded_method_keeps_legacy_identity (test_java_calls.JavaCallEdgeTests.test_non_overloaded_method_keeps_legacy_identity) ... ok
+test_overload_ranks_exact_widening_and_boxing_conservatively (test_java_calls.JavaCallEdgeTests.test_overload_ranks_exact_widening_and_boxing_conservatively) ... ok
+test_overload_unknown_argument_remains_unresolved (test_java_calls.JavaCallEdgeTests.test_overload_unknown_argument_remains_unresolved) ... ok
+test_overloaded_methods_have_distinct_signature_identity_and_exact_literal_resolution (test_java_calls.JavaCallEdgeTests.test_overloaded_methods_have_distinct_signature_identity_and_exact_literal_resolution) ... ok
+test_same_class_method_and_this_method_calls_resolve (test_java_calls.JavaCallEdgeTests.test_same_class_method_and_this_method_calls_resolve) ... ok
+test_transitive_cross_file_inherited_field_reads_and_writes (test_java_calls.JavaCallEdgeTests.test_transitive_cross_file_inherited_field_reads_and_writes) ... ok
+test_transitive_cross_file_parent_method_resolution (test_java_calls.JavaCallEdgeTests.test_transitive_cross_file_parent_method_resolution) ... ok
+test_typed_receiver_overload_and_parent_method_resolution_boundaries (test_java_calls.JavaCallEdgeTests.test_typed_receiver_overload_and_parent_method_resolution_boundaries) ... ok
+test_varargs_zero_one_many_and_fixed_phase (test_java_calls.JavaCallEdgeTests.test_varargs_zero_one_many_and_fixed_phase) ... ok
+test_anonymous_class_keeps_explicit_base_constructor_but_defers_body_calls (test_java_calls.JavaConstructorCallEdgeTests.test_anonymous_class_keeps_explicit_base_constructor_but_defers_body_calls) ... ok
+test_constructor_exact_array_varargs (test_java_calls.JavaConstructorCallEdgeTests.test_constructor_exact_array_varargs) ... ok
+test_constructor_overloads_rank_widening_for_new_this_and_super (test_java_calls.JavaConstructorCallEdgeTests.test_constructor_overloads_rank_widening_for_new_this_and_super) ... ok
+test_constructor_varargs_for_new_this_and_super (test_java_calls.JavaConstructorCallEdgeTests.test_constructor_varargs_for_new_this_and_super) ... ok
+test_cross_file_new_and_reverse_caller (test_java_calls.JavaConstructorCallEdgeTests.test_cross_file_new_and_reverse_caller) ... ok
+test_interface_generic_external_and_nested_anonymous_bodies_are_conservative_and_stable (test_java_calls.JavaConstructorCallEdgeTests.test_interface_generic_external_and_nested_anonymous_bodies_are_conservative_and_stable) ... ok
+test_non_overloaded_constructor_keeps_deterministic_legacy_shape (test_java_calls.JavaConstructorCallEdgeTests.test_non_overloaded_constructor_keeps_deterministic_legacy_shape) ... ok
+test_overloaded_new_exact_and_unknown_are_conservative (test_java_calls.JavaConstructorCallEdgeTests.test_overloaded_new_exact_and_unknown_are_conservative) ... ok
+test_this_and_super_constructor_delegation (test_java_calls.JavaConstructorCallEdgeTests.test_this_and_super_constructor_delegation) ... ok
+test_conflict_unknown_bad_bound_and_nested_shape_stay_unresolved (test_java_calls.JavaGenericMethodCallTests.test_conflict_unknown_bad_bound_and_nested_shape_stay_unresolved) ... ok
+test_direct_type_variable_and_simple_source_bound (test_java_calls.JavaGenericMethodCallTests.test_direct_type_variable_and_simple_source_bound) ... ok
+test_non_generic_specific_overload_wins (test_java_calls.JavaGenericMethodCallTests.test_non_generic_specific_overload_wins) ... ok
+test_fail_closed (test_java_circuit_breaker.JavaCircuitBreakerTests.test_fail_closed) ... ok
+test_literal_overloads_and_anchor (test_java_circuit_breaker.JavaCircuitBreakerTests.test_literal_overloads_and_anchor) ... ok
+test_stable_mutation_delete_no_calls (test_java_circuit_breaker.JavaCircuitBreakerTests.test_stable_mutation_delete_no_calls) ... ok
+test_fail_closed (test_java_component.ComponentTests.test_fail_closed) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_component.ComponentTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_type_presence_precise_anchors (test_java_component.ComponentTests.test_type_presence_precise_anchors) ... ok
+test_fail_closed_and_distinct_from_configuration_properties (test_java_configuration.ConfigurationTests.test_fail_closed_and_distinct_from_configuration_properties) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_configuration.ConfigurationTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_type_presence_precise_anchors (test_java_configuration.ConfigurationTests.test_type_presence_precise_anchors) ... ok
+test_class_record_alias_and_factory_literal_metadata (test_java_configuration_properties.JavaConfigurationPropertiesTests.test_class_record_alias_and_factory_literal_metadata) ... ok
+test_cross_file_coexists_without_binding_relationships_and_ids_are_stable (test_java_configuration_properties.JavaConfigurationPropertiesTests.test_cross_file_coexists_without_binding_relationships_and_ids_are_stable) ... ok
+test_decoy_dynamic_unsupported_target_and_factory_are_unresolved_or_absent (test_java_configuration_properties.JavaConfigurationPropertiesTests.test_decoy_dynamic_unsupported_target_and_factory_are_unresolved_or_absent) ... ok
+test_java_contract_stales_on_method_body_change_and_skips_trivial_methods (test_java_contracts_window2.JavaContractWindow2Tests.test_java_contract_stales_on_method_body_change_and_skips_trivial_methods) ... ok
+test_java_semantic_contract_sanitizer_blocks_adversarial_slots (test_java_contracts_window2.JavaContractWindow2Tests.test_java_semantic_contract_sanitizer_blocks_adversarial_slots) ... ok
+test_fail_closed (test_java_controller.ControllerTests.test_fail_closed) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_controller.ControllerTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_type_presence_precise_anchors (test_java_controller.ControllerTests.test_type_presence_precise_anchors) ... ok
+test_class_interface_presence_namespace_and_precise_anchor (test_java_controller_advice.ControllerAdviceTests.test_class_interface_presence_namespace_and_precise_anchor) ... ok
+test_fail_closed_negatives (test_java_controller_advice.ControllerAdviceTests.test_fail_closed_negatives) ... ok
+test_stable_id_mutation_freshness_deletion_and_no_runtime_claims (test_java_controller_advice.ControllerAdviceTests.test_stable_id_mutation_freshness_deletion_and_no_runtime_claims) ... ok
+test_freshness_deletion_and_no_runtime_inference (test_java_cross_origin.CrossOriginTests.test_freshness_deletion_and_no_runtime_inference) ... ok
+test_overload_safe_identity_and_determinism (test_java_cross_origin.CrossOriginTests.test_overload_safe_identity_and_determinism) ... ok
+test_qualification_wrong_targets_metadata_dynamic_and_decoys_fail_closed (test_java_cross_origin.CrossOriginTests.test_qualification_wrong_targets_metadata_dynamic_and_decoys_fail_closed) ... ok
+test_type_and_method_presence_precise_anchors (test_java_cross_origin.CrossOriginTests.test_type_and_method_presence_precise_anchors) ... ok
+test_dynamic_classes_and_unknown_or_generic_types_fail_closed (test_java_event_types.JavaEventTypeTests.test_dynamic_classes_and_unknown_or_generic_types_fail_closed) ... ok
+test_event_rename_and_listener_delete_remove_precisely (test_java_event_types.JavaEventTypeTests.test_event_rename_and_listener_delete_remove_precisely) ... ok
+test_publish_and_listener_share_source_observed_event_type (test_java_event_types.JavaEventTypeTests.test_publish_and_listener_share_source_observed_event_type) ... ok
+test_same_named_annotation_without_exact_import_is_unresolved (test_java_event_types.JavaEventTypeTests.test_same_named_annotation_without_exact_import_is_unresolved) ... ok
+test_transaction_listener_metadata_is_declaration_only (test_java_event_types.JavaEventTypeTests.test_transaction_listener_metadata_is_declaration_only) ... ok
+test_fail_closed_imports_dynamic_conflict_local_decoy (test_java_exception_handler.ExceptionHandlerTests.test_fail_closed_imports_dynamic_conflict_local_decoy) ... ok
+test_literals_overloads_anchor_and_metadata (test_java_exception_handler.ExceptionHandlerTests.test_literals_overloads_anchor_and_metadata) ... ok
+test_stable_mutation_delete_and_no_runtime_semantics (test_java_exception_handler.ExceptionHandlerTests.test_stable_mutation_delete_and_no_runtime_semantics) ... ok
+test_value_attribute_and_empty_metadata (test_java_exception_handler.ExceptionHandlerTests.test_value_attribute_and_empty_metadata) ... ok
+test_presence_resolvers_use_one_structural_template (test_java_extract_structure.JavaExtractStructureTests.test_presence_resolvers_use_one_structural_template) ... ok
+test_top_level_symbols_are_unique (test_java_extract_structure.JavaExtractStructureTests.test_top_level_symbols_are_unique) ... ok
+test_fail_closed_adversarial_forms (test_java_feign.JavaFeignTests.test_fail_closed_adversarial_forms) ... ok
+test_literal_client_dual_binding_metadata_and_stable_id (test_java_feign.JavaFeignTests.test_literal_client_dual_binding_metadata_and_stable_id) ... ok
+test_mutation_and_deletion_are_independent (test_java_feign.JavaFeignTests.test_mutation_and_deletion_are_independent) ... ok
+test_overload_fails_closed (test_java_feign.JavaFeignTests.test_overload_fails_closed) ... ok
+test_control_and_exception_constructs_classify_without_flow_edges (test_java_fields_edges.JavaFieldReadWriteTests.test_control_and_exception_constructs_classify_without_flow_edges) ... ok
+test_local_parameter_shadow_and_variable_receiver_unresolved (test_java_fields_edges.JavaFieldReadWriteTests.test_local_parameter_shadow_and_variable_receiver_unresolved) ... ok
+test_nested_executable_boundaries_do_not_leak_field_access (test_java_fields_edges.JavaFieldReadWriteTests.test_nested_executable_boundaries_do_not_leak_field_access) ... ok
+test_static_field_and_explicit_import_static_field_resolve (test_java_fields_edges.JavaFieldReadWriteTests.test_static_field_and_explicit_import_static_field_resolve) ... ok
+test_this_and_bare_same_class_fields_still_resolve_after_variable_receiver_guard (test_java_fields_edges.JavaFieldReadWriteTests.test_this_and_bare_same_class_fields_still_resolve_after_variable_receiver_guard) ... ok
+test_this_field_reads_and_writes_resolve (test_java_fields_edges.JavaFieldReadWriteTests.test_this_field_reads_and_writes_resolve) ... ok
+test_variable_receiver_field_does_not_cross_bind_to_same_named_class_field (test_java_fields_edges.JavaFieldReadWriteTests.test_variable_receiver_field_does_not_cross_bind_to_same_named_class_field) ... ok
+test_di_endpoint_delete_ambiguity_rebind_and_rewarm (test_java_freshness_mutations.JavaFreshnessMutationTests.test_di_endpoint_delete_ambiguity_rebind_and_rewarm) ... ok
+test_jpa_repository_has_typed_entity_dependency_and_rebinds (test_java_freshness_mutations.JavaFreshnessMutationTests.test_jpa_repository_has_typed_entity_dependency_and_rebinds) ... ok
+test_method_comment_control_semantic_delete_and_rewarm (test_java_freshness_mutations.JavaFreshnessMutationTests.test_method_comment_control_semantic_delete_and_rewarm) ... ok
+test_manifest_has_bounded_current_batch (test_java_gradle_integration_verifier.JavaGradleIntegrationVerifierTest.test_manifest_has_bounded_current_batch) ... ok
+test_manifest_keys_map_to_hyphenated_fixture_paths (test_java_gradle_integration_verifier.JavaGradleIntegrationVerifierTest.test_manifest_keys_map_to_hyphenated_fixture_paths) ... ok
+test_real_build_command_is_fixed_and_requires_success_marker (test_java_gradle_integration_verifier.JavaGradleIntegrationVerifierTest.test_real_build_command_is_fixed_and_requires_success_marker) ... ok
+test_zero_exit_without_gradle_success_marker_fails_closed (test_java_gradle_integration_verifier.JavaGradleIntegrationVerifierTest.test_zero_exit_without_gradle_success_marker_fails_closed) ... ok
+test_explicit_import_top_level_resolves_but_external_wildcard_and_ambiguous_do_not (test_java_inherit.JavaInheritEdgeTests.test_explicit_import_top_level_resolves_but_external_wildcard_and_ambiguous_do_not) ... ok
+test_generics_are_erased_and_freshness_retarget_reconciles_old_edge (test_java_inherit.JavaInheritEdgeTests.test_generics_are_erased_and_freshness_retarget_reconciles_old_edge) ... ok
+test_project_index_does_not_guess_cross_package_ambiguous_or_unimported_type (test_java_inherit.JavaInheritEdgeTests.test_project_index_does_not_guess_cross_package_ambiguous_or_unimported_type) ... ok
+test_project_index_resolves_same_package_import_and_fqn_across_source_roots (test_java_inherit.JavaInheritEdgeTests.test_project_index_resolves_same_package_import_and_fqn_across_source_roots) ... ok
+test_same_file_extends_implements_and_interface_extends_edges (test_java_inherit.JavaInheritEdgeTests.test_same_file_extends_implements_and_interface_extends_edges) ... ok
+test_unrelated_change_fresh_parent_body_change_stale_and_endpoint_delete_clears_edge (test_java_inherit.JavaInheritEdgeTests.test_unrelated_change_fresh_parent_body_change_stale_and_endpoint_delete_clears_edge) ... ok
+test_fail_closed (test_java_init_binder.InitBinderTests.test_fail_closed) ... ok
+test_method_presence_overloads_and_anchors (test_java_init_binder.InitBinderTests.test_method_presence_overloads_and_anchors) ... ok
+test_stability_freshness_deletion_and_no_runtime_semantics (test_java_init_binder.InitBinderTests.test_stability_freshness_deletion_and_no_runtime_semantics) ... ok
+test_constructor_method_field_contract_and_identity (test_java_inject.InjectTests.test_constructor_method_field_contract_and_identity) ... ok
+test_namespace_metadata_target_and_identity_fail_closed (test_java_inject.InjectTests.test_namespace_metadata_target_and_identity_fail_closed) ... ok
+test_overloads_and_separate_fields_have_stable_unique_identity (test_java_inject.InjectTests.test_overloads_and_separate_fields_have_stable_unique_identity) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_inject.InjectTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_cross_file_mutation_and_deletion_reconcile_edges (test_java_kafka.JavaKafkaTests.test_cross_file_mutation_and_deletion_reconcile_edges) ... ok
+test_decoys_overloads_and_dynamic_values_fail_closed (test_java_kafka.JavaKafkaTests.test_decoys_overloads_and_dynamic_values_fail_closed) ... ok
+test_exact_import_literal_declarations_retain_group_payload_and_anchor (test_java_kafka.JavaKafkaTests.test_exact_import_literal_declarations_retain_group_payload_and_anchor) ... ok
+test_fail_closed_negatives (test_java_lazy.LazyTests.test_fail_closed_negatives) ... ok
+test_stability_freshness_deletion_and_qualification (test_java_lazy.LazyTests.test_stability_freshness_deletion_and_qualification) ... ok
+test_type_method_overloads_and_contract (test_java_lazy.LazyTests.test_type_method_overloads_and_contract) ... ok
+test_fail_closed_and_parameter_exclusion (test_java_model_attribute.ModelAttributeTests.test_fail_closed_and_parameter_exclusion) ... ok
+test_method_presence_overloads_and_anchors (test_java_model_attribute.ModelAttributeTests.test_method_presence_overloads_and_anchors) ... ok
+test_stability_freshness_deletion_and_no_runtime_semantics (test_java_model_attribute.ModelAttributeTests.test_stability_freshness_deletion_and_no_runtime_semantics) ... ok
+test_decoys_dynamic_providers_scripts_foreach_and_composed_fail_closed (test_java_mybatis.JavaMyBatisTests.test_decoys_dynamic_providers_scripts_foreach_and_composed_fail_closed) ... ok
+test_exact_mapper_and_four_literal_annotation_kinds (test_java_mybatis.JavaMyBatisTests.test_exact_mapper_and_four_literal_annotation_kinds) ... ok
+test_hash_freshness_and_delete_reconcile (test_java_mybatis.JavaMyBatisTests.test_hash_freshness_and_delete_reconcile) ... ok
+test_direct_default_named_contract_and_identity (test_java_named.NamedTests.test_direct_default_named_contract_and_identity) ... ok
+test_namespace_explicit_name_target_and_decoys_fail_closed (test_java_named.NamedTests.test_namespace_explicit_name_target_and_decoys_fail_closed) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_named.NamedTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_java_status_uses_cached_availability_once (test_java_nodes.JavaDegradeTests.test_java_status_uses_cached_availability_once) ... ok
+test_missing_tree_sitter_degrades_to_file_claim_with_hint (test_java_nodes.JavaDegradeTests.test_missing_tree_sitter_degrades_to_file_claim_with_hint) ... ok
+test_java_annotation_change_stales_method (test_java_nodes.JavaNodeTests.test_java_annotation_change_stales_method) ... ok
+test_java_delete_reconciles_tombstone (test_java_nodes.JavaNodeTests.test_java_delete_reconciles_tombstone) ... ok
+test_java_freshness_is_two_way_comments_whitespace_ignored_literals_included (test_java_nodes.JavaNodeTests.test_java_freshness_is_two_way_comments_whitespace_ignored_literals_included) ... ok
+test_java_nodes_are_derived_without_edges (test_java_nodes.JavaNodeTests.test_java_nodes_are_derived_without_edges) ... ok
+test_java_reformatting_remains_fresh (test_java_nodes.JavaNodeTests.test_java_reformatting_remains_fresh) ... ok
+test_diamond_convergence_is_deduplicated_but_distinct_defaults_are_ambiguous (test_java_override.JavaOverrideEdgeTests.test_diamond_convergence_is_deduplicated_but_distinct_defaults_are_ambiguous) ... ok
+test_interface_default_and_multilevel_transitive_override (test_java_override.JavaOverrideEdgeTests.test_interface_default_and_multilevel_transitive_override) ... ok
+test_overloads_and_unknown_parent_are_unresolved_while_cross_file_override_resolves (test_java_override.JavaOverrideEdgeTests.test_overloads_and_unknown_parent_are_unresolved_while_cross_file_override_resolves) ... ok
+test_same_file_extends_and_implements_override_candidates (test_java_override.JavaOverrideEdgeTests.test_same_file_extends_and_implements_override_candidates) ... ok
+test_decoy_and_dynamic_are_unresolved_not_inferred (test_java_persistence.JavaPersistenceTests.test_decoy_and_dynamic_are_unresolved_not_inferred) ... ok
+test_jakarta_type_and_field_literal_metadata (test_java_persistence.JavaPersistenceTests.test_jakarta_type_and_field_literal_metadata) ... ok
+test_javax_embedded_id_and_join_column_method (test_java_persistence.JavaPersistenceTests.test_javax_embedded_id_and_join_column_method) ... ok
+test_fail_closed (test_java_post_authorize.PostAuthorizeTests.test_fail_closed) ... ok
+test_opaque_literal_overloads (test_java_post_authorize.PostAuthorizeTests.test_opaque_literal_overloads) ... ok
+test_stable_mutation_delete_no_calls (test_java_post_authorize.PostAuthorizeTests.test_stable_mutation_delete_no_calls) ... ok
+test_methods_overloads_and_contract (test_java_post_construct.PostConstructTests.test_methods_overloads_and_contract) ... ok
+test_namespace_and_fail_closed_negatives (test_java_post_construct.PostConstructTests.test_namespace_and_fail_closed_negatives) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_post_construct.PostConstructTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_fail_closed (test_java_post_filter.PostFilterTests.test_fail_closed) ... ok
+test_opaque_literals_overloads_only (test_java_post_filter.PostFilterTests.test_opaque_literals_overloads_only) ... ok
+test_stable_mutation_delete (test_java_post_filter.PostFilterTests.test_stable_mutation_delete) ... ok
+test_fail_closed (test_java_pre_authorize.PreAuthorizeTests.test_fail_closed) ... ok
+test_opaque_literal_overloads (test_java_pre_authorize.PreAuthorizeTests.test_opaque_literal_overloads) ... ok
+test_stable_mutation_delete_no_calls (test_java_pre_authorize.PreAuthorizeTests.test_stable_mutation_delete_no_calls) ... ok
+test_methods_overloads_and_contract (test_java_pre_destroy.PreDestroyTests.test_methods_overloads_and_contract) ... ok
+test_namespace_and_fail_closed_negatives (test_java_pre_destroy.PreDestroyTests.test_namespace_and_fail_closed_negatives) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_pre_destroy.PreDestroyTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_fail_closed (test_java_pre_filter.PreFilterTests.test_fail_closed) ... ok
+test_opaque_literals_overloads_and_target (test_java_pre_filter.PreFilterTests.test_opaque_literals_overloads_and_target) ... ok
+test_stable_mutation_delete (test_java_pre_filter.PreFilterTests.test_stable_mutation_delete) ... ok
+test_fail_closed_negatives (test_java_primary.PrimaryTests.test_fail_closed_negatives) ... ok
+test_stability_freshness_deletion_and_qualification (test_java_primary.PrimaryTests.test_stability_freshness_deletion_and_qualification) ... ok
+test_type_method_overloads_and_contract (test_java_primary.PrimaryTests.test_type_method_overloads_and_contract) ... ok
+test_batch_blob_hashes_and_snapshot_support_newline_path (test_java_project.JavaProjectModelTests.test_batch_blob_hashes_and_snapshot_support_newline_path) ... ok
+test_batch_blob_hashes_match_single_hashes_and_follow_dirty_content (test_java_project.JavaProjectModelTests.test_batch_blob_hashes_match_single_hashes_and_follow_dirty_content) ... ok
+test_blob_hash_does_not_trust_same_size_and_mtime (test_java_project.JavaProjectModelTests.test_blob_hash_does_not_trust_same_size_and_mtime) ... ok
+test_build_descriptor_change_invalidates_cached_model (test_java_project.JavaProjectModelTests.test_build_descriptor_change_invalidates_cached_model) ... ok
+test_cached_in_memory_manifest_is_revalidated (test_java_project.JavaProjectModelTests.test_cached_in_memory_manifest_is_revalidated) ... ok
+test_external_placeholders_preserve_provenance_without_source_resolution (test_java_project.JavaProjectModelTests.test_external_placeholders_preserve_provenance_without_source_resolution) ... ok
+test_gradle_literal_modules_and_generated_sources (test_java_project.JavaProjectModelTests.test_gradle_literal_modules_and_generated_sources) ... ok
+test_index_policy_can_exclude_test_generated_and_custom_sources (test_java_project.JavaProjectModelTests.test_index_policy_can_exclude_test_generated_and_custom_sources) ... ok
+test_java_anchor_failure_is_fail_soft_and_diagnostic (test_java_project.JavaProjectModelTests.test_java_anchor_failure_is_fail_soft_and_diagnostic) ... ok
+test_lazy_manifest_rejects_source_changed_after_construction (test_java_project.JavaProjectModelTests.test_lazy_manifest_rejects_source_changed_after_construction) ... ok
+test_lazy_mapping_membership_is_io_free (test_java_project.JavaProjectModelTests.test_lazy_mapping_membership_is_io_free) ... ok
+test_lazy_snapshot_rejects_source_changed_after_construction_with_shard_hit (test_java_project.JavaProjectModelTests.test_lazy_snapshot_rejects_source_changed_after_construction_with_shard_hit) ... ok
+test_literal_maven_and_gradle_module_dependencies (test_java_project.JavaProjectModelTests.test_literal_maven_and_gradle_module_dependencies) ... ok
+test_manifest_reuses_unchanged_path_with_no_top_level_symbols (test_java_project.JavaProjectModelTests.test_manifest_reuses_unchanged_path_with_no_top_level_symbols) ... ok
+test_maven_multi_module_source_sets (test_java_project.JavaProjectModelTests.test_maven_multi_module_source_sets) ... ok
+test_pinned_snapshot_has_explicit_repo_lifetime_and_fresh_repo_refreshes (test_java_project.JavaProjectModelTests.test_pinned_snapshot_has_explicit_repo_lifetime_and_fresh_repo_refreshes) ... ok
+test_pinned_snapshot_skips_repository_fingerprint_work (test_java_project.JavaProjectModelTests.test_pinned_snapshot_skips_repository_fingerprint_work) ... ok
+test_repository_snapshot_construction_is_lazy_and_manifest_reused_by_project_index (test_java_project.JavaProjectModelTests.test_repository_snapshot_construction_is_lazy_and_manifest_reused_by_project_index) ... ok
+test_repository_snapshot_prunes_deleted_path_shards (test_java_project.JavaProjectModelTests.test_repository_snapshot_prunes_deleted_path_shards) ... ok
+test_repository_snapshot_rebuilds_changed_and_corrupt_accessed_shards (test_java_project.JavaProjectModelTests.test_repository_snapshot_rebuilds_changed_and_corrupt_accessed_shards) ... ok
+test_repository_snapshot_reuses_persistent_blob_shard_without_source (test_java_project.JavaProjectModelTests.test_repository_snapshot_reuses_persistent_blob_shard_without_source) ... ok
+test_structurally_corrupt_manifest_is_rebuilt (test_java_project.JavaProjectModelTests.test_structurally_corrupt_manifest_is_rebuilt) ... ok
+test_symbol_index_carries_module_and_source_set (test_java_project.JavaProjectModelTests.test_symbol_index_carries_module_and_source_set) ... ok
+test_synthetic_large_repo_snapshot_loads_only_accessed_file (test_java_project.JavaProjectModelTests.test_synthetic_large_repo_snapshot_loads_only_accessed_file) ... ok
+test_unpinned_snapshot_invalidates_for_add_delete_and_modify (test_java_project.JavaProjectModelTests.test_unpinned_snapshot_invalidates_for_add_delete_and_modify) ... ok
+test_fail_closed (test_java_rate_limiter.JavaRateLimiterTests.test_fail_closed) ... ok
+test_literal_overloads_and_anchor (test_java_rate_limiter.JavaRateLimiterTests.test_literal_overloads_and_anchor) ... ok
+test_stable_mutation_delete_no_calls (test_java_rate_limiter.JavaRateLimiterTests.test_stable_mutation_delete_no_calls) ... ok
+test_arm_network_and_ambient_secrets_are_denied (test_java_real_v1_broker_pilot.T.test_arm_network_and_ambient_secrets_are_denied) ... ok
+test_assignment_is_deterministic_and_balanced (test_java_real_v1_broker_pilot.T.test_assignment_is_deterministic_and_balanced) ... ok
+test_broker_telemetry_and_no_cross_arm_state (test_java_real_v1_broker_pilot.T.test_broker_telemetry_and_no_cross_arm_state) ... ok
+test_versioned_manifest_preserves_frozen_model_and_hash (test_java_real_v1_broker_pilot.T.test_versioned_manifest_preserves_frozen_model_and_hash) ... ok
+test_permits_ambiguity_and_external_remain_unresolved (test_java_records_sealed.JavaRecordsSealedTests.test_permits_ambiguity_and_external_remain_unresolved) ... ok
+test_record_is_stable_class_node_with_component_type_evidence_only (test_java_records_sealed.JavaRecordsSealedTests.test_record_is_stable_class_node_with_component_type_evidence_only) ... ok
+test_sealed_permits_is_explicit_subtype_edge_and_not_a_call (test_java_records_sealed.JavaRecordsSealedTests.test_sealed_permits_is_explicit_subtype_edge_and_not_a_call) ... ok
+test_decoys_dynamic_and_wildcard_are_unresolved (test_java_repositories.JavaRepositoryTests.test_decoys_dynamic_and_wildcard_are_unresolved) ... ok
+test_jpa_repository_and_literal_queries (test_java_repositories.JavaRepositoryTests.test_jpa_repository_and_literal_queries) ... ok
+test_distinct_from_spring_data_repository_type_claims (test_java_repository_stereotype.RepositoryTests.test_distinct_from_spring_data_repository_type_claims) ... ok
+test_fail_closed (test_java_repository_stereotype.RepositoryTests.test_fail_closed) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_repository_stereotype.RepositoryTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_type_presence_precise_anchors (test_java_repository_stereotype.RepositoryTests.test_type_presence_precise_anchors) ... ok
+test_fail_closed (test_java_resilience4j_retry.JavaResilience4jRetryTests.test_fail_closed) ... ok
+test_literal_overloads_and_anchor (test_java_resilience4j_retry.JavaResilience4jRetryTests.test_literal_overloads_and_anchor) ... ok
+test_namespace_collision_and_qualified_form_are_not_promoted (test_java_resilience4j_retry.JavaResilience4jRetryTests.test_namespace_collision_and_qualified_form_are_not_promoted) ... ok
+test_stable_mutation_delete_no_calls (test_java_resilience4j_retry.JavaResilience4jRetryTests.test_stable_mutation_delete_no_calls) ... ok
+test_namespace_metadata_target_and_identity_fail_closed (test_java_resource.ResourceTests.test_namespace_metadata_target_and_identity_fail_closed) ... ok
+test_overloads_and_separate_fields_have_stable_unique_identity (test_java_resource.ResourceTests.test_overloads_and_separate_fields_have_stable_unique_identity) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_resource.ResourceTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_type_method_field_contract_and_identity (test_java_resource.ResourceTests.test_type_method_field_contract_and_identity) ... ok
+test_freshness_deletion_and_no_runtime_inference (test_java_response_body.ResponseBodyTests.test_freshness_deletion_and_no_runtime_inference) ... ok
+test_overload_safe_identity_and_determinism (test_java_response_body.ResponseBodyTests.test_overload_safe_identity_and_determinism) ... ok
+test_qualification_wrong_targets_metadata_dynamic_and_decoys_fail_closed (test_java_response_body.ResponseBodyTests.test_qualification_wrong_targets_metadata_dynamic_and_decoys_fail_closed) ... ok
+test_type_and_method_presence_precise_anchors (test_java_response_body.ResponseBodyTests.test_type_and_method_presence_precise_anchors) ... ok
+test_class_method_presence_overloads_and_precise_anchors (test_java_response_status.ResponseStatusTests.test_class_method_presence_overloads_and_precise_anchors) ... ok
+test_qualification_and_metadata_fail_closed (test_java_response_status.ResponseStatusTests.test_qualification_and_metadata_fail_closed) ... ok
+test_stability_freshness_deletion_and_no_runtime_inference (test_java_response_status.ResponseStatusTests.test_stability_freshness_deletion_and_no_runtime_inference) ... ok
+test_fail_closed (test_java_rest_controller.RestControllerTests.test_fail_closed) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_rest_controller.RestControllerTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_type_presence_precise_anchors (test_java_rest_controller.RestControllerTests.test_type_presence_precise_anchors) ... ok
+test_fail_closed (test_java_rest_controller_advice.RestControllerAdviceTests.test_fail_closed) ... ok
+test_presence_only (test_java_rest_controller_advice.RestControllerAdviceTests.test_presence_only) ... ok
+test_stability_freshness_deletion_and_no_composition_semantics (test_java_rest_controller_advice.RestControllerAdviceTests.test_stability_freshness_deletion_and_no_composition_semantics) ... ok
+test_declaration_and_repository_intents_prefer_governing_source (test_java_retrieval_ranking.JavaRetrievalRankingTests.test_declaration_and_repository_intents_prefer_governing_source) ... ok
+test_first_screen_round_robins_relevant_paths_without_language_rules (test_java_retrieval_ranking.JavaRetrievalRankingTests.test_first_screen_round_robins_relevant_paths_without_language_rules) ... ok
+test_fail_closed (test_java_retry.JavaRetryTests.test_fail_closed) ... ok
+test_literals_overloads_recover (test_java_retry.JavaRetryTests.test_literals_overloads_recover) ... ok
+test_stable_mutation_delete_no_semantics (test_java_retry.JavaRetryTests.test_stable_mutation_delete_no_semantics) ... ok
+test_fail_closed_imports_and_values (test_java_roles_allowed.RolesAllowedTests.test_fail_closed_imports_and_values) ... ok
+test_namespaces_literals_overloads_and_anchor (test_java_roles_allowed.RolesAllowedTests.test_namespaces_literals_overloads_and_anchor) ... ok
+test_stable_mutation_delete_no_runtime_semantics (test_java_roles_allowed.RolesAllowedTests.test_stable_mutation_delete_no_runtime_semantics) ... ok
+test_dynamic_conflicting_unsupported_and_decoy_fail_closed_with_reasons (test_java_scheduling.JavaSchedulingTests.test_dynamic_conflicting_unsupported_and_decoy_fail_closed_with_reasons) ... ok
+test_literals_are_opaque_exact_and_overload_safe (test_java_scheduling.JavaSchedulingTests.test_literals_are_opaque_exact_and_overload_safe) ... ok
+test_methods_only_not_composed_or_inherited (test_java_scheduling.JavaSchedulingTests.test_methods_only_not_composed_or_inherited) ... ok
+test_mutation_deletion_and_anchor_hash (test_java_scheduling.JavaSchedulingTests.test_mutation_deletion_and_anchor_hash) ... ok
+test_fail_closed_negatives (test_java_scope.ScopeTests.test_fail_closed_negatives) ... ok
+test_stability_freshness_deletion_and_qualification (test_java_scope.ScopeTests.test_stability_freshness_deletion_and_qualification) ... ok
+test_type_method_overloads_and_contract (test_java_scope.ScopeTests.test_type_method_overloads_and_contract) ... ok
+test_fail_closed (test_java_secured.SecuredTests.test_fail_closed) ... ok
+test_literal_roles_overloads_and_anchor (test_java_secured.SecuredTests.test_literal_roles_overloads_and_anchor) ... ok
+test_stable_mutation_delete_no_calls (test_java_secured.SecuredTests.test_stable_mutation_delete_no_calls) ... ok
+test_conflicting_providers_fail_closed (test_java_semantic_facts.JavaSemanticFactsTests.test_conflicting_providers_fail_closed) ... ok
+test_default_off_degrades_and_does_not_read_provider (test_java_semantic_facts.JavaSemanticFactsTests.test_default_off_degrades_and_does_not_read_provider) ... ok
+test_missing_attributed_identity_is_unknown_and_does_not_cover_ast (test_java_semantic_facts.JavaSemanticFactsTests.test_missing_attributed_identity_is_unknown_and_does_not_cover_ast) ... ok
+test_path_escape_ambiguous_symbol_and_malformed_range_rejected (test_java_semantic_facts.JavaSemanticFactsTests.test_path_escape_ambiguous_symbol_and_malformed_range_rejected) ... ok
+test_stale_mutation_and_deletion_emit_nothing (test_java_semantic_facts.JavaSemanticFactsTests.test_stale_mutation_and_deletion_emit_nothing) ... ok
+test_valid_is_deterministic_and_coexists_without_changing_syntax (test_java_semantic_facts.JavaSemanticFactsTests.test_valid_is_deterministic_and_coexists_without_changing_syntax) ... ok
+test_fail_closed (test_java_service.ServiceTests.test_fail_closed) ... ok
+test_identity_freshness_deletion_determinism_and_no_runtime (test_java_service.ServiceTests.test_identity_freshness_deletion_determinism_and_no_runtime) ... ok
+test_type_presence_precise_anchors (test_java_service.ServiceTests.test_type_presence_precise_anchors) ... ok
+test_class_interface_presence_and_precise_anchors (test_java_session_attributes.SessionAttributesTests.test_class_interface_presence_and_precise_anchors) ... ok
+test_qualification_wrong_targets_and_metadata_fail_closed (test_java_session_attributes.SessionAttributesTests.test_qualification_wrong_targets_and_metadata_fail_closed) ... ok
+test_stability_freshness_deletion_and_no_runtime_inference (test_java_session_attributes.SessionAttributesTests.test_stability_freshness_deletion_and_no_runtime_inference) ... ok
+test_direct_class_contract_and_identity (test_java_singleton.SingletonTests.test_direct_class_contract_and_identity) ... ok
+test_namespace_metadata_target_and_decoys_fail_closed (test_java_singleton.SingletonTests.test_namespace_metadata_target_and_decoys_fail_closed) ... ok
+test_stability_freshness_deletion_and_boundary (test_java_singleton.SingletonTests.test_stability_freshness_deletion_and_boundary) ... ok
+test_cross_file_bean_literal_qualifier_and_ambiguity (test_java_spring.JavaSpringCrossFileEvidenceTests.test_cross_file_bean_literal_qualifier_and_ambiguity) ... ok
+test_cross_file_decoy_annotation_is_rejected (test_java_spring.JavaSpringCrossFileEvidenceTests.test_cross_file_decoy_annotation_is_rejected) ... ok
+test_cross_file_explicit_imported_component_injection (test_java_spring.JavaSpringCrossFileEvidenceTests.test_cross_file_explicit_imported_component_injection) ... ok
+test_cross_file_interface_has_one_source_proven_component_implementation (test_java_spring.JavaSpringCrossFileEvidenceTests.test_cross_file_interface_has_one_source_proven_component_implementation) ... ok
+test_cross_file_interface_multiple_components_is_unknown (test_java_spring.JavaSpringCrossFileEvidenceTests.test_cross_file_interface_multiple_components_is_unknown) ... ok
+test_constructor_injection_does_not_fabricate_calls (test_java_spring.JavaSpringEvidenceTests.test_constructor_injection_does_not_fabricate_calls) ... ok
+test_decoy_annotations_and_unannotated_constructor_do_not_inject (test_java_spring.JavaSpringEvidenceTests.test_decoy_annotations_and_unannotated_constructor_do_not_inject) ... ok
+test_exact_imported_stereotype_and_autowired_field_link (test_java_spring.JavaSpringEvidenceTests.test_exact_imported_stereotype_and_autowired_field_link) ... ok
+test_explicit_constructor_injection_resolves_source_bean (test_java_spring.JavaSpringEvidenceTests.test_explicit_constructor_injection_resolves_source_bean) ... ok
+test_explicit_method_injection_and_bean_producer (test_java_spring.JavaSpringEvidenceTests.test_explicit_method_injection_and_bean_producer) ... ok
+test_external_exact_import_is_unresolved_not_a_runtime_call (test_java_spring.JavaSpringEvidenceTests.test_external_exact_import_is_unresolved_not_a_runtime_call) ... ok
+test_ids_and_evidence_are_stable (test_java_spring.JavaSpringEvidenceTests.test_ids_and_evidence_are_stable) ... ok
+test_literal_qualifier_disambiguates_explicit_bean_names (test_java_spring.JavaSpringEvidenceTests.test_literal_qualifier_disambiguates_explicit_bean_names) ... ok
+test_multiple_beans_and_generic_parameter_are_unresolved (test_java_spring.JavaSpringEvidenceTests.test_multiple_beans_and_generic_parameter_are_unresolved) ... ok
+test_same_simple_name_decoys_do_not_create_beans_or_injection (test_java_spring.JavaSpringEvidenceTests.test_same_simple_name_decoys_do_not_create_beans_or_injection) ... ok
+test_decoy_dynamic_spel_and_condition_are_deferred (test_java_spring.JavaSpringFoundationMetadataTests.test_decoy_dynamic_spel_and_condition_are_deferred) ... ok
+test_exactly_one_primary_resolves_and_two_primaries_fail_closed (test_java_spring.JavaSpringFoundationMetadataTests.test_exactly_one_primary_resolves_and_two_primaries_fail_closed) ... ok
+test_literal_lifecycle_and_transaction_declarations (test_java_spring.JavaSpringFoundationMetadataTests.test_literal_lifecycle_and_transaction_declarations) ... ok
+test_autowired_field_unique_same_file_bean_is_attributed (test_java_spring_relationships.JavaSpringRelationshipTests.test_autowired_field_unique_same_file_bean_is_attributed) ... ok
+test_eventuate_direct_and_unique_wrapper_publishers (test_java_spring_relationships.JavaSpringRelationshipTests.test_eventuate_direct_and_unique_wrapper_publishers) ... ok
+test_eventuate_dynamic_direct_publisher_stays_unresolved (test_java_spring_relationships.JavaSpringRelationshipTests.test_eventuate_dynamic_direct_publisher_stays_unresolved) ... ok
+test_eventuate_literal_channel_creates_subscriber_edge (test_java_spring_relationships.JavaSpringRelationshipTests.test_eventuate_literal_channel_creates_subscriber_edge) ... ok
+test_eventuate_saga_ambiguous_participant_contract_stays_unresolved (test_java_spring_relationships.JavaSpringRelationshipTests.test_eventuate_saga_ambiguous_participant_contract_stays_unresolved) ... ok
+test_eventuate_saga_dynamic_definition_stays_unresolved (test_java_spring_relationships.JavaSpringRelationshipTests.test_eventuate_saga_dynamic_definition_stays_unresolved) ... ok
+test_eventuate_simple_saga_literal_definition_is_structured (test_java_spring_relationships.JavaSpringRelationshipTests.test_eventuate_simple_saga_literal_definition_is_structured) ... ok
+test_interface_multiple_implementors_unresolved_no_edge (test_java_spring_relationships.JavaSpringRelationshipTests.test_interface_multiple_implementors_unresolved_no_edge) ... ok
+test_kafka_literal_topics_create_topic_edges_not_direct_producer_consumer (test_java_spring_relationships.JavaSpringRelationshipTests.test_kafka_literal_topics_create_topic_edges_not_direct_producer_consumer) ... ok
+test_topic_graph_aggregates_subscribers_across_files (test_java_spring_relationships.JavaSpringRelationshipTests.test_topic_graph_aggregates_subscribers_across_files) ... ok
+test_fail_closed (test_java_time_limiter.JavaTimeLimiterTests.test_fail_closed) ... ok
+test_literal_overloads_and_anchor (test_java_time_limiter.JavaTimeLimiterTests.test_literal_overloads_and_anchor) ... ok
+test_stable_mutation_delete_no_calls (test_java_time_limiter.JavaTimeLimiterTests.test_stable_mutation_delete_no_calls) ... ok
+test_decoys_dynamic_alias_conflict_composed_inherited_wildcard_static_and_malformed_fail_closed (test_java_transactions.JavaTransactionTests.test_decoys_dynamic_alias_conflict_composed_inherited_wildcard_static_and_malformed_fail_closed) ... ok
+test_exact_literals_class_method_and_overloads (test_java_transactions.JavaTransactionTests.test_exact_literals_class_method_and_overloads) ... ok
+test_stable_id_mutation_hash_deletion_and_no_runtime_edges (test_java_transactions.JavaTransactionTests.test_stable_id_mutation_hash_deletion_and_no_runtime_edges) ... ok
+test_arbitrary_annotation_remains_true_negative (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_arbitrary_annotation_remains_true_negative) ... ok
+test_arbitrary_field_annotation_remains_true_negative (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_arbitrary_field_annotation_remains_true_negative) ... ok
+test_exact_javax_and_jakarta_presence_are_namespace_accurate (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_exact_javax_and_jakarta_presence_are_namespace_accurate) ... ok
+test_exact_resource_presence_is_not_injection_unknown (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_exact_resource_presence_is_not_injection_unknown) ... ok
+test_javax_singleton_named_are_presence_only_not_injection_edges (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_javax_singleton_named_are_presence_only_not_injection_edges) ... ok
+test_resource_same_name_custom_ambiguous_and_wildcard_fail_closed (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_resource_same_name_custom_ambiguous_and_wildcard_fail_closed) ... ok
+test_role_shaped_injection_annotation_is_explicit_unknown (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_role_shaped_injection_annotation_is_explicit_unknown) ... ok
+test_role_shaped_mq_annotation_is_explicit_unknown (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_role_shaped_mq_annotation_is_explicit_unknown) ... ok
+test_unknown_injection_rename_delete_and_exact_rebind (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_unknown_injection_rename_delete_and_exact_rebind) ... ok
+test_unknown_listener_rename_delete_and_exact_rebind (test_java_trust_model_unknown_annotations.JavaTrustModelUnknownAnnotationTests.test_unknown_listener_rename_delete_and_exact_rebind) ... ok
+test_bounded_direct_method_type_variable_substitution (test_java_types.JavaTypeTests.test_bounded_direct_method_type_variable_substitution) ... ok
+test_conservative_invocation_conversion_ranking (test_java_types.JavaTypeTests.test_conservative_invocation_conversion_ranking) ... ok
+test_crossing_and_equal_conversion_costs_remain_ambiguous (test_java_types.JavaTypeTests.test_crossing_and_equal_conversion_costs_remain_ambiguous) ... ok
+test_equally_applicable_non_generic_beats_generic (test_java_types.JavaTypeTests.test_equally_applicable_non_generic_beats_generic) ... ok
+test_exact_array_fixed_phase_beats_expansion_and_fixed_overload (test_java_types.JavaTypeTests.test_exact_array_fixed_phase_beats_expansion_and_fixed_overload) ... ok
+test_generic_erasure_is_stable_for_signature_matching (test_java_types.JavaTypeTests.test_generic_erasure_is_stable_for_signature_matching) ... ok
+test_nested_generics_and_wildcards_preserve_references (test_java_types.JavaTypeTests.test_nested_generics_and_wildcards_preserve_references) ... ok
+test_primitives_arrays_varargs_and_annotations (test_java_types.JavaTypeTests.test_primitives_arrays_varargs_and_annotations) ... ok
+test_source_reference_distance_makes_upcasts_applicable_and_ranked (test_java_types.JavaTypeTests.test_source_reference_distance_makes_upcasts_applicable_and_ranked) ... ok
+test_unbounded_wildcard_does_not_create_a_type_reference (test_java_types.JavaTypeTests.test_unbounded_wildcard_does_not_create_a_type_reference) ... ok
+test_varargs_expansion_and_fixed_arity_phase (test_java_types.JavaTypeTests.test_varargs_expansion_and_fixed_arity_phase) ... ok
+test_explicit_import_type_resolves_but_jdk_and_unknown_do_not (test_java_uses_type.JavaUsesTypeTests.test_explicit_import_type_resolves_but_jdk_and_unknown_do_not) ... ok
+test_nested_constructor_param_type_uses_constructor_node (test_java_uses_type.JavaUsesTypeTests.test_nested_constructor_param_type_uses_constructor_node) ... ok
+test_nested_generic_array_and_wildcard_type_references_resolve (test_java_uses_type.JavaUsesTypeTests.test_nested_generic_array_and_wildcard_type_references_resolve) ... ok
+test_project_index_cache_invalidates_after_java_file_change (test_java_uses_type.JavaUsesTypeTests.test_project_index_cache_invalidates_after_java_file_change) ... ok
+test_project_index_resolves_same_package_and_fully_qualified_signature_types (test_java_uses_type.JavaUsesTypeTests.test_project_index_resolves_same_package_and_fully_qualified_signature_types) ... ok
+test_rewarm_removes_stale_constructor_type_edge (test_java_uses_type.JavaUsesTypeTests.test_rewarm_removes_stale_constructor_type_edge) ... ok
+test_same_file_field_param_and_return_types_resolve (test_java_uses_type.JavaUsesTypeTests.test_same_file_field_param_and_return_types_resolve) ... ok
+test_ambiguity_decoys_and_unsupported_forms_emit_no_api_or_calls (test_java_webflux_functional_api.JavaWebFluxFunctionalApiTests.test_ambiguity_decoys_and_unsupported_forms_emit_no_api_or_calls) ... ok
+test_direct_cross_file_route_has_v2_dual_bindings_and_stable_id (test_java_webflux_functional_api.JavaWebFluxFunctionalApiTests.test_direct_cross_file_route_has_v2_dual_bindings_and_stable_id) ... ok
+test_exact_imports_required_and_legacy_ids_unchanged (test_java_webflux_functional_api.JavaWebFluxFunctionalApiTests.test_exact_imports_required_and_legacy_ids_unchanged) ... ok
+test_flat_builder_exact_forms_only (test_java_webflux_functional_api.JavaWebFluxFunctionalApiTests.test_flat_builder_exact_forms_only) ... ok
+test_route_and_handler_deletion_reconcile_or_stale (test_java_webflux_functional_api.JavaWebFluxFunctionalApiTests.test_route_and_handler_deletion_reconcile_or_stale) ... ok
+test_route_and_handler_mutate_stale_independently (test_java_webflux_functional_api.JavaWebFluxFunctionalApiTests.test_route_and_handler_mutate_stale_independently) ... ok
+test_compile_failure_emits_no_document (test_javac_semantic_provider.JavacProviderTests.test_compile_failure_emits_no_document) ... ok
+test_real_javac_overload_slice_and_stale_negative (test_javac_semantic_provider.JavacProviderTests.test_real_javac_overload_slice_and_stale_negative) ... ok
+test_classpath_canonical_hash_changes_and_missing_fails (test_javac_semantic_provider_round9.Round9.test_classpath_canonical_hash_changes_and_missing_fails) ... unknown: classpath entry missing: /tmp/tmpa3uyli98/missing
+ok
+test_cli_has_no_build_resolution_flags (test_javac_semantic_provider_round9.Round9.test_cli_has_no_build_resolution_flags) ... ok
+test_discovery_is_explicit_read_only_partial (test_javac_semantic_provider_round9.Round9.test_discovery_is_explicit_read_only_partial) ... ok
+test_multi_file_override_polymorphic_and_participant_stale (test_javac_semantic_provider_round9.Round9.test_multi_file_override_polymorphic_and_participant_stale) ... ok
+test_context_ambiguity_does_not_guess_relation_chain (test_mcp_ergonomics.McpErgonomicsTests.test_context_ambiguity_does_not_guess_relation_chain) ... ok
+test_context_expands_only_fresh_one_hop_relations_with_budget (test_mcp_ergonomics.McpErgonomicsTests.test_context_expands_only_fresh_one_hop_relations_with_budget) ... ok
+test_name_addressing_unique_ambiguous_and_claim_id_compat (test_mcp_ergonomics.McpErgonomicsTests.test_name_addressing_unique_ambiguous_and_claim_id_compat) ... ok
+test_relation_endpoint_hints_require_fresh_endpoint_claims (test_mcp_ergonomics.McpErgonomicsTests.test_relation_endpoint_hints_require_fresh_endpoint_claims) ... ok
+test_tmf_context_is_deterministic_thin_and_budgeted (test_mcp_ergonomics.McpErgonomicsTests.test_tmf_context_is_deterministic_thin_and_budgeted) ... ok
+test_tool_descriptions_carry_framework_and_payloads_are_slim (test_mcp_ergonomics.McpErgonomicsTests.test_tool_descriptions_carry_framework_and_payloads_are_slim) ... ok
+test_truncated_context_keeps_relation_endpoint_hints (test_mcp_ergonomics.McpErgonomicsTests.test_truncated_context_keeps_relation_endpoint_hints) ... ok
+test_protocol_tools_and_security (test_mcp_server.McpServerTests.test_protocol_tools_and_security) ... ok
+test_metrics_events_and_stats_cli (test_metrics.MetricsTests.test_metrics_events_and_stats_cli) ... ok
+test_retrieve_emits_local_metrics_without_source_content (test_metrics.MetricsTests.test_retrieve_emits_local_metrics_without_source_content) ... ok
+test_missing_key_upstream_error_timeout_and_audit_redaction (test_model_broker.T.test_missing_key_upstream_error_timeout_and_audit_redaction) ... ok
+test_preflight_and_oversize_wire (test_model_broker.T.test_preflight_and_oversize_wire) ... ok
+test_rebuildable_timeout_hierarchy (test_model_broker.T.test_rebuildable_timeout_hierarchy) ... ok
+test_validation (test_model_broker.T.test_validation) ... ok
+test_commit_injection_cannot_raise_above_attributed_cap (test_model_derive.TmfExternalProvenanceTests.test_commit_injection_cannot_raise_above_attributed_cap) ... ok
+test_commit_provenance_attributes_but_freshness_still_tracks_worktree (test_model_derive.TmfExternalProvenanceTests.test_commit_provenance_attributes_but_freshness_still_tracks_worktree) ... ok
+test_docstring_provenance_attributes_intent_mid_confidence (test_model_derive.TmfExternalProvenanceTests.test_docstring_provenance_attributes_intent_mid_confidence) ... ok
+test_pr_provenance_attributes_intent_without_leaking_thin_text (test_model_derive.TmfExternalProvenanceTests.test_pr_provenance_attributes_intent_without_leaking_thin_text) ... ok
+test_intent_candidate_without_external_provenance_stays_inferred_low_confidence (test_model_derive.TmfModelDeriveTests.test_intent_candidate_without_external_provenance_stays_inferred_low_confidence) ... ok
+test_model_derive_default_candidate_is_source_observed (test_model_derive.TmfModelDeriveTests.test_model_derive_default_candidate_is_source_observed) ... ok
+test_prompt_injection_comment_cannot_force_observed_high_confidence (test_model_derive.TmfModelDeriveTests.test_prompt_injection_comment_cannot_force_observed_high_confidence) ... ok
+test_function_reads_module_declaration_and_reverse_partial (test_read_edges.ReadEdgeTests.test_function_reads_module_declaration_and_reverse_partial) ... ok
+test_imported_declaration_read_and_unresolved_ambiguity (test_read_edges.ReadEdgeTests.test_imported_declaration_read_and_unresolved_ambiguity) ... ok
+test_local_shadowing_does_not_create_read_edge (test_read_edges.ReadEdgeTests.test_local_shadowing_does_not_create_read_edge) ... ok
+test_read_edge_freshness_reader_and_declaration_changes_only (test_read_edges.ReadEdgeTests.test_read_edge_freshness_reader_and_declaration_changes_only) ... ok
+test_reconcile_deletes_read_edge_when_reader_or_declaration_removed (test_read_edges.ReadEdgeTests.test_reconcile_deletes_read_edge_when_reader_or_declaration_removed) ... ok
+test_ambiguous_same_blob_new_paths_do_not_migrate (test_rename_identity.RenameIdentityTests.test_ambiguous_same_blob_new_paths_do_not_migrate) ... ok
+test_pure_rename_migrates_contract_and_edge_fresh (test_rename_identity.RenameIdentityTests.test_pure_rename_migrates_contract_and_edge_fresh) ... ok
+test_rename_plus_edit_does_not_migrate (test_rename_identity.RenameIdentityTests.test_rename_plus_edit_does_not_migrate) ... ok
+test_frozen (test_retrieval_e2e_v1.RetrievalE2E.test_frozen) ... ok
+test_only_arm_difference (test_retrieval_e2e_v1.RetrievalE2E.test_only_arm_difference) ... ok
+test_paths_deduplicate_and_actionable_shape (test_retrieval_e2e_v1.RetrievalE2E.test_paths_deduplicate_and_actionable_shape) ... ok
+test_prompt_has_no_hints (test_retrieval_e2e_v1.RetrievalE2E.test_prompt_has_no_hints) ... ok
+test_source_read_traversal_fails_closed (test_retrieval_e2e_v1.RetrievalE2E.test_source_read_traversal_fails_closed) ... ok
+test_default_retrieve_is_thin_and_omits_thick_untrusted_text (test_retrieve_thin.RetrieveThinTests.test_default_retrieve_is_thin_and_omits_thick_untrusted_text) ... ok
+test_retrieve_full_expands_one_claim (test_retrieve_thin.RetrieveThinTests.test_retrieve_full_expands_one_claim) ... ok
+test_thin_includes_fresh_cross_file_callers_from_edge_claims (test_retrieve_thin.RetrieveThinTests.test_thin_includes_fresh_cross_file_callers_from_edge_claims) ... ok
+test_frozen_hashes (test_revisit_memory_v1.RevisitMemoryV1Test.test_frozen_hashes) ... ok
+test_identity_gated_memory_and_stale_block (test_revisit_memory_v1.RevisitMemoryV1Test.test_identity_gated_memory_and_stale_block) ... ok
+test_mutation_and_fingerprint (test_revisit_memory_v1.RevisitMemoryV1Test.test_mutation_and_fingerprint) ... ok
+test_store_allowlist_and_no_answer_leak (test_revisit_memory_v1.RevisitMemoryV1Test.test_store_allowlist_and_no_answer_leak) ... ok
+test_fake_router_selects_seed_and_result_is_thin_without_trust_change (test_router.RouterRetrieveTests.test_fake_router_selects_seed_and_result_is_thin_without_trust_change) ... ok
+test_router_off_matches_default_payload (test_router.RouterRetrieveTests.test_router_off_matches_default_payload) ... ok
+test_async_handoff_pub_sub (test_routing_enhancements.RoutingEnhancementsTests.test_async_handoff_pub_sub)
+publishes_to edges should mark async_handoff=True ... skipped 'No publishes_to edges found'
+test_polymorphic_branch_overrides (test_routing_enhancements.RoutingEnhancementsTests.test_polymorphic_branch_overrides)
+overrides edges should mark polymorphic=True ... skipped 'No overrides edges found'
+test_routing_shape_branching (test_routing_enhancements.RoutingEnhancementsTests.test_routing_shape_branching)
+Multiple outgoing calls should have routing_shape with branching=True ... skipped 'No call edges found'
+test_routing_shape_single_call (test_routing_enhancements.RoutingEnhancementsTests.test_routing_shape_single_call)
+Single synchronous call should have routing_shape with single=True ... skipped 'No call edges found'
+test_understanding_tier_in_contract (test_routing_enhancements.RoutingEnhancementsTests.test_understanding_tier_in_contract)
+Semantic contracts should have tier=understanding ... skipped 'No inferred contracts found (TMF_MODEL_COMMAND not configured or no semantic contracts)'
+test_every_manifest_verifier_emits_valid_contract (test_run_java_qualifications.JavaQualificationRunnerTest.test_every_manifest_verifier_emits_valid_contract) ... ok
+test_failed_verifier_preserves_primary_failure_over_baseline_check (test_run_java_qualifications.JavaQualificationRunnerTest.test_failed_verifier_preserves_primary_failure_over_baseline_check) ... ok
+test_failure_preserves_trimmed_stdout_and_stderr (test_run_java_qualifications.JavaQualificationRunnerTest.test_failure_preserves_trimmed_stdout_and_stderr) ... ok
+test_fixture_corpus_audit_accepts_independent_split_and_root_layouts (test_run_java_qualifications.JavaQualificationRunnerTest.test_fixture_corpus_audit_accepts_independent_split_and_root_layouts) ... ok
+test_fixture_corpus_audit_rejects_cross_adapter_borrowing (test_run_java_qualifications.JavaQualificationRunnerTest.test_fixture_corpus_audit_rejects_cross_adapter_borrowing) ... ok
+test_fixture_corpus_audit_rejects_renamed_mechanical_copy (test_run_java_qualifications.JavaQualificationRunnerTest.test_fixture_corpus_audit_rejects_renamed_mechanical_copy) ... ok
+test_fixture_corpus_audit_requires_auditable_shared_reason (test_run_java_qualifications.JavaQualificationRunnerTest.test_fixture_corpus_audit_requires_auditable_shared_reason) ... ok
+test_list_prints_names_without_running_verifiers (test_run_java_qualifications.JavaQualificationRunnerTest.test_list_prints_names_without_running_verifiers) ... ok
+test_main_prints_machine_readable_success_summary (test_run_java_qualifications.JavaQualificationRunnerTest.test_main_prints_machine_readable_success_summary) ... ok
+test_main_rejects_successful_check_count_drift (test_run_java_qualifications.JavaQualificationRunnerTest.test_main_rejects_successful_check_count_drift) ... ok
+test_main_timings_are_opt_in_and_aggregated (test_run_java_qualifications.JavaQualificationRunnerTest.test_main_timings_are_opt_in_and_aggregated) ... ok
+test_manifest_declares_machine_readable_output_contract (test_run_java_qualifications.JavaQualificationRunnerTest.test_manifest_declares_machine_readable_output_contract) ... ok
+test_mismatched_check_counts_violate_contract (test_run_java_qualifications.JavaQualificationRunnerTest.test_mismatched_check_counts_violate_contract) ... ok
+test_non_json_success_output_violates_contract (test_run_java_qualifications.JavaQualificationRunnerTest.test_non_json_success_output_violates_contract) ... ok
+test_opt_in_timings_record_each_verifier_duration (test_run_java_qualifications.JavaQualificationRunnerTest.test_opt_in_timings_record_each_verifier_duration) ... ok
+test_opt_in_timings_record_timeout_duration (test_run_java_qualifications.JavaQualificationRunnerTest.test_opt_in_timings_record_timeout_duration) ... ok
+test_success_summary_includes_aggregate_and_check_counts (test_run_java_qualifications.JavaQualificationRunnerTest.test_success_summary_includes_aggregate_and_check_counts) ... ok
+test_successful_check_count_drift_fails_closed (test_run_java_qualifications.JavaQualificationRunnerTest.test_successful_check_count_drift_fails_closed) ... ok
+test_timeout_is_a_deterministic_failure (test_run_java_qualifications.JavaQualificationRunnerTest.test_timeout_is_a_deterministic_failure) ... ok
+test_verifier_paths_discovers_only_matching_files_in_name_order (test_run_java_qualifications.JavaQualificationRunnerTest.test_verifier_paths_discovers_only_matching_files_in_name_order) ... ok
+test_verifiers_with_fixture_git_init_choose_branch_explicitly (test_run_java_qualifications.JavaQualificationRunnerTest.test_verifiers_with_fixture_git_init_choose_branch_explicitly) ... ok
+test_zero_exit_with_failed_checks_violates_contract (test_run_java_qualifications.JavaQualificationRunnerTest.test_zero_exit_with_failed_checks_violates_contract) ... ok
+test_expected_stale_set_for_top_level_sample_excludes_unrelated_node (test_self_validation.SelfValidationTests.test_expected_stale_set_for_top_level_sample_excludes_unrelated_node) ... ok
+test_expected_stale_set_includes_enclosing_span_for_nested_sample (test_self_validation.SelfValidationTests.test_expected_stale_set_includes_enclosing_span_for_nested_sample) ... ok
+test_expected_stale_set_is_tight_for_same_file_unrelated_spans (test_self_validation.SelfValidationTests.test_expected_stale_set_is_tight_for_same_file_unrelated_spans) ... ok
+test_self_validation_reports_real_repo_checks_and_sampling_metrics (test_self_validation.SelfValidationTests.test_self_validation_reports_real_repo_checks_and_sampling_metrics) ... ok
+test_available_semantic_backend_queues_background_refresh_without_sync_claims (test_semantic_backend.SemanticBackendStubTests.test_available_semantic_backend_queues_background_refresh_without_sync_claims) ... ok
+test_semantic_claims_are_accepted_only_as_attributed_capped_overlay (test_semantic_backend.SemanticBackendStubTests.test_semantic_claims_are_accepted_only_as_attributed_capped_overlay) ... ok
+test_unavailable_semantic_backend_degrades_without_enqueue (test_semantic_backend.SemanticBackendStubTests.test_unavailable_semantic_backend_degrades_without_enqueue) ... ok
+test_binding_report_and_plan_refresh_only_stale_node (test_stale_slice.StaleSliceTests.test_binding_report_and_plan_refresh_only_stale_node) ... ok
+test_plan_adds_structured_event_publish_side_effect_check (test_stale_slice.StaleSliceTests.test_plan_adds_structured_event_publish_side_effect_check) ... ok
+test_plan_supplements_new_task_relevant_symbols_in_stale_file (test_stale_slice.StaleSliceTests.test_plan_supplements_new_task_relevant_symbols_in_stale_file) ... ok
+test_qualified_call_still_works (test_static_import_calls.TestStaticImportCalls.test_qualified_call_still_works)
+Qualified calls to external classes are unresolved without repo. ... ok
+test_static_import_field_access (test_static_import_calls.TestStaticImportCalls.test_static_import_field_access)
+Static imported constant field access should be resolved. ... ok
+test_static_import_method_call (test_static_import_calls.TestStaticImportCalls.test_static_import_method_call)
+Static imported method calls should be resolved. ... ok
+test_static_import_overloaded_method (test_static_import_calls.TestStaticImportCalls.test_static_import_overloaded_method)
+Static imported overloaded methods should match by argument count. ... ok
+test_probe_preserves_existing_dirty_file_and_restores_exact_bytes (test_ten_repo_mutation_gate.TenRepoMutationGateTests.test_probe_preserves_existing_dirty_file_and_restores_exact_bytes) ... ok
+test_recovery_refuses_to_overwrite_concurrent_change (test_ten_repo_mutation_gate.TenRepoMutationGateTests.test_recovery_refuses_to_overwrite_concurrent_change) ... ok
+test_startup_recovery_restores_only_expected_probe_bytes (test_ten_repo_mutation_gate.TenRepoMutationGateTests.test_startup_recovery_restores_only_expected_probe_bytes) ... ok
+test_worker_failure_still_restores_probe_bytes (test_ten_repo_mutation_gate.TenRepoMutationGateTests.test_worker_failure_still_restores_probe_bytes) ... ok
+test_workers_return_warm_and_streamed_audit_results (test_ten_repo_mutation_gate.TenRepoMutationGateTests.test_workers_return_warm_and_streamed_audit_results) ... ok
+test_audit_preserves_clean_static_pass_and_marks_runtime_boundary_partial (test_ten_repo_production_gate.RuntimeBoundaryClassifierTests.test_audit_preserves_clean_static_pass_and_marks_runtime_boundary_partial) ... ok
+test_incomplete_or_unstructured_saga_does_not_match (test_ten_repo_production_gate.RuntimeBoundaryClassifierTests.test_incomplete_or_unstructured_saga_does_not_match) ... ok
+test_isolated_message_or_keyword_like_claim_does_not_match (test_ten_repo_production_gate.RuntimeBoundaryClassifierTests.test_isolated_message_or_keyword_like_claim_does_not_match) ... ok
+test_shared_message_topology_accepts_persisted_source_id_schema (test_ten_repo_production_gate.RuntimeBoundaryClassifierTests.test_shared_message_topology_accepts_persisted_source_id_schema) ... ok
+test_shared_message_topology_requires_runtime_proof (test_ten_repo_production_gate.RuntimeBoundaryClassifierTests.test_shared_message_topology_requires_runtime_proof) ... ok
+test_structured_participant_saga_requires_runtime_proof (test_ten_repo_production_gate.RuntimeBoundaryClassifierTests.test_structured_participant_saga_requires_runtime_proof) ... ok
+test_foreign_claim_is_not_eligible_for_router_or_embedding_fallback (test_trust_boundary_checks.TrustBoundaryChecks.test_foreign_claim_is_not_eligible_for_router_or_embedding_fallback) ... ok
+test_foreign_claim_is_unverified_and_readthrough_rederived (test_trust_boundary_checks.TrustBoundaryChecks.test_foreign_claim_is_unverified_and_readthrough_rederived) ... ok
+test_locally_generated_store_remains_locally_derived (test_trust_boundary_checks.TrustBoundaryChecks.test_locally_generated_store_remains_locally_derived) ... ok
+test_refresh_path_creates_fresh_claim (test_v0.TmfV0Tests.test_refresh_path_creates_fresh_claim) ... ok
+test_refresh_path_rederives_in_place_after_committed_blob_change (test_v0.TmfV0Tests.test_refresh_path_rederives_in_place_after_committed_blob_change) ... ok
+test_retrieve_text_does_not_return_unrelated_current_claims_for_stale_old_match (test_v0.TmfV0Tests.test_retrieve_text_does_not_return_unrelated_current_claims_for_stale_old_match) ... ok
+test_retrieve_text_repairs_stale_top_match (test_v0.TmfV0Tests.test_retrieve_text_repairs_stale_top_match) ... ok
+test_summary_does_not_store_source_lines (test_v0.TmfV0Tests.test_summary_does_not_store_source_lines) ... ok
+test_uncommitted_worktree_change_is_not_misreported_fresh (test_v0.TmfV0Tests.test_uncommitted_worktree_change_is_not_misreported_fresh) ... ok
+test_function_delete_reconciles_tombstone_claim (test_v1.TmfV1PrecisionTests.test_function_delete_reconciles_tombstone_claim) ... ok
+test_function_rename_reconciles_tombstone_claim (test_v1.TmfV1PrecisionTests.test_function_rename_reconciles_tombstone_claim) ... ok
+test_indent_width_change_does_not_change_fn_hash (test_v1.TmfV1PrecisionTests.test_indent_width_change_does_not_change_fn_hash) ... ok
+test_feedback_hunch_does_not_overwrite_fact (test_v1.TmfV1Tests.test_feedback_hunch_does_not_overwrite_fact) ... ok
+test_feedback_usage_does_not_raise_confidence (test_v1.TmfV1Tests.test_feedback_usage_does_not_raise_confidence) ... ok
+test_feedback_verified_can_raise_confidence (test_v1.TmfV1Tests.test_feedback_verified_can_raise_confidence) ... ok
+test_fn_hash_uses_worktree_and_token_stream_not_regex_whitespace (test_v1.TmfV1Tests.test_fn_hash_uses_worktree_and_token_stream_not_regex_whitespace) ... ok
+test_path_retrieve_derives_file_and_function_claims (test_v1.TmfV1Tests.test_path_retrieve_derives_file_and_function_claims) ... ok
+test_path_reconcile_does_not_delete_multi_binding_claim (test_v2_reconcile_guard.ReconcileGuardTests.test_path_reconcile_does_not_delete_multi_binding_claim) ... ok
+test_copy_repo_excludes_local_validation_noise (test_validation.HeldoutValidationTests.test_copy_repo_excludes_local_validation_noise) ... ok
+test_heldout_validation_reports_metrics_and_zero_invariant_violations (test_validation.HeldoutValidationTests.test_heldout_validation_reports_metrics_and_zero_invariant_violations) ... ok
+test_complete_noop_does_not_build_java_repository_snapshot (test_warm.WarmReverseIndexTests.test_complete_noop_does_not_build_java_repository_snapshot) ... ok
+test_complete_noop_rejects_missing_claim_and_repairs_store (test_warm.WarmReverseIndexTests.test_complete_noop_rejects_missing_claim_and_repairs_store) ... ok
+test_failed_file_with_existing_claims_is_retried_not_skipped (test_warm.WarmReverseIndexTests.test_failed_file_with_existing_claims_is_retried_not_skipped) ... ok
+test_incremental_content_edit_does_not_build_full_claim_path_index (test_warm.WarmReverseIndexTests.test_incremental_content_edit_does_not_build_full_claim_path_index) ... ok
+test_java_claim_is_stale_when_derivation_version_changes_without_source_change (test_warm.WarmReverseIndexTests.test_java_claim_is_stale_when_derivation_version_changes_without_source_change) ... ok
+test_java_derivation_version_change_rederives_only_java_slice (test_warm.WarmReverseIndexTests.test_java_derivation_version_change_rederives_only_java_slice) ... ok
+test_legacy_java_edge_metadata_rewarms_only_owner_and_is_idempotent (test_warm.WarmReverseIndexTests.test_legacy_java_edge_metadata_rewarms_only_owner_and_is_idempotent) ... ok
+test_partial_warm_removes_stale_complete_reverse_index (test_warm.WarmReverseIndexTests.test_partial_warm_removes_stale_complete_reverse_index) ... ok
+test_pristine_clean_warm_streams_without_reconciliation_or_claim_cache (test_warm.WarmReverseIndexTests.test_pristine_clean_warm_streams_without_reconciliation_or_claim_cache) ... ok
+test_refresh_claim_cache_only_touches_old_owner_binding_buckets (test_warm.WarmReverseIndexTests.test_refresh_claim_cache_only_touches_old_owner_binding_buckets) ... ok
+test_reverse_callers_falls_back_to_partial_when_warm_index_is_stale (test_warm.WarmReverseIndexTests.test_reverse_callers_falls_back_to_partial_when_warm_index_is_stale) ... ok
+test_warm_cli_outputs_json (test_warm.WarmReverseIndexTests.test_warm_cli_outputs_json) ... ok
+test_warm_makes_reverse_callers_complete_and_matches_lazy (test_warm.WarmReverseIndexTests.test_warm_makes_reverse_callers_complete_and_matches_lazy) ... ok
+test_warm_records_failed_file_and_continues_after_per_file_timeout (test_warm.WarmReverseIndexTests.test_warm_records_failed_file_and_continues_after_per_file_timeout) ... ok
+test_warm_requires_exact_blob_map_for_complete_manifest (test_warm.WarmReverseIndexTests.test_warm_requires_exact_blob_map_for_complete_manifest) ... ok
+test_warm_respects_tmfignore_directory_prefixes (test_warm.WarmReverseIndexTests.test_warm_respects_tmfignore_directory_prefixes) ... ok
+test_warm_second_run_is_noop_and_file_change_is_incremental (test_warm.WarmReverseIndexTests.test_warm_second_run_is_noop_and_file_change_is_incremental) ... ok
+test_claim_ref_projection_is_bounded (test_warm_memory.WarmMemoryTest.test_claim_ref_projection_is_bounded)
+_ClaimRef holds only identity + paths + blobs, not full claim body. ... ok
+test_claims_by_path_accepts_refs_or_claims (test_warm_memory.WarmMemoryTest.test_claims_by_path_accepts_refs_or_claims)
+_claims_by_path_from_claims handles both projections and full claims. ... ok
+test_warm_uses_projections_not_full_claims (test_warm_memory.WarmMemoryTest.test_warm_uses_projections_not_full_claims)
+Warm's rename/delete detection uses _ClaimRef, not materialized full claims. ... ok
+test_function_nested_classes_are_qualname_scoped (test_window1.Window1Tests.test_function_nested_classes_are_qualname_scoped) ... ok
+test_imported_module_func_resolves_unique_top_level (test_window1.Window1Tests.test_imported_module_func_resolves_unique_top_level) ... ok
+test_mechanical_contract_slot_confidence_capped (test_window1.Window1Tests.test_mechanical_contract_slot_confidence_capped) ... ok
+test_nested_class_claims_split_and_reconcile_independently (test_window1.Window1Tests.test_nested_class_claims_split_and_reconcile_independently) ... ok
+test_self_call_resolves_unique_base_method (test_window1.Window1Tests.test_self_call_resolves_unique_base_method) ... ok
+test_imported_module_function_resolves_unique_top_level (test_window1_d1.Window1D1Tests.test_imported_module_function_resolves_unique_top_level) ... ok
+test_mechanical_contract_confidence_is_capped_at_point_six (test_window1_d1.Window1D1Tests.test_mechanical_contract_confidence_is_capped_at_point_six) ... ok
+test_nested_class_qualname_is_function_scoped (test_window1_d1.Window1D1Tests.test_nested_class_qualname_is_function_scoped) ... ok
+test_self_method_resolves_unique_inherited_base_method (test_window1_d1.Window1D1Tests.test_self_method_resolves_unique_inherited_base_method) ... ok
+test_field_test_harness_writes_plan_only (test_window1_d3.Window1D3Tests.test_field_test_harness_writes_plan_only) ... ok
+test_stats_reports_delete_missing_and_rename_counts (test_window1_d3.Window1D3Tests.test_stats_reports_delete_missing_and_rename_counts) ... ok
+test_assignment_without_global_is_local_not_write_edge (test_write_edges.WriteEdgeTests.test_assignment_without_global_is_local_not_write_edge) ... ok
+test_delete_with_global_writes_and_reconcile_removes_edge (test_write_edges.WriteEdgeTests.test_delete_with_global_writes_and_reconcile_removes_edge) ... ok
+test_global_assignment_creates_write_edge_with_anchors_and_reverse_partial (test_write_edges.WriteEdgeTests.test_global_assignment_creates_write_edge_with_anchors_and_reverse_partial) ... ok
+test_write_edge_freshness_both_ends_and_unrelated_fresh (test_write_edges.WriteEdgeTests.test_write_edge_freshness_both_ends_and_unrelated_fresh) ... ok
+test_complex_yaml_degrades_to_no_config_nodes (test_yaml_sql_nodes.YamlSqlNodeChecks.test_complex_yaml_degrades_to_no_config_nodes) ... ok
+test_dynamic_sql_string_in_python_is_not_parsed (test_yaml_sql_nodes.YamlSqlNodeChecks.test_dynamic_sql_string_in_python_is_not_parsed) ... ok
+test_sql_create_table_and_view_nodes (test_yaml_sql_nodes.YamlSqlNodeChecks.test_sql_create_table_and_view_nodes) ... ok
+test_yaml_config_nodes_and_value_staleness (test_yaml_sql_nodes.YamlSqlNodeChecks.test_yaml_config_nodes_and_value_staleness) ... ok
+
+----------------------------------------------------------------------
+Ran 615 tests in 65.850s
+
+OK (skipped=5)
+```
+exit_code=0 duration_s=67
+
+## compileall
+```text
+```
+exit_code=0 duration_s=0
+
+## diff check
+```text
+```
+exit_code=0 duration_s=0
+

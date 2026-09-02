@@ -75,7 +75,7 @@ TMF has substantial bounded Java/Spring **source-analysis** validation: declarat
 | Multi-language mixed repos | Not fully proven | Low | Python exists historically; Java is current focus; mixed Python+Java repo behavior needs explicit gate. |
 | Real long-running repo maintenance tasks | Not fully proven | Low/Medium | Some real Java evidence exists, but today's ROI pass is synthetic/bounded agent A/B fixtures. |
 | Runtime framework behavior | Not proven | Low | Source analysis does not certify Spring runtime, DI container behavior, database migration, or message broker runtime semantics. |
-| Release packaging | Preflight passed, unreleased | Medium/Strong for packaging | rc3 audit says package builds/installs, but publication/tag/upload not authorized. |
+| Release packaging / current HEAD preflight | Current HEAD local re-preflight passed; publication unreleased | Strong for local preflight, not publication | 2026-09-02 run passed Java qualifications, source-only smoke, 615 unittests, compileall, and diff check; no tag/upload authorized. |
 | Production operations / CI integration | Partially documented | Medium | Reflex hook docs and workflows exist; product rollout, latency, cache ops, rollback and support playbooks remain open. |
 
 ## 4. What is fair to claim now
@@ -118,14 +118,15 @@ Not fair yet:
    - Exercise MCP tool path, CLI warm/retrieve, reflex hook warning, and fallback-to-source behavior in one scripted flow.
    - Success criterion: no unsafe blocking, stale claims clearly labeled, source remains authoritative.
 
-5. **Release re-preflight on current HEAD**
-   - Rerun the current full local release gates because rc3 evidence is dated 2026-08-10 and the worktree has changed.
-   - Minimum commands:
-     - `python3 tools/run_java_qualifications.py`
-     - `python3 tools/verify_java_source_only_smoke.py`
-     - `python3 -Werror -m unittest discover -s tests -v`
-     - `python3 -m compileall -q tmf tests scripts tools`
-     - `git diff --check`
+5. **Release re-preflight on current HEAD — DONE 2026-09-02**
+   - Evidence: `TMF_CURRENT_HEAD_REPREFLIGHT_20260902.md`.
+   - Result: PASS.
+   - `python3 tools/run_java_qualifications.py`: 46/46 qualifiers, 731/731 checks.
+   - `python3 tools/verify_java_source_only_smoke.py`: PASS; exported_files=435.
+   - `python3 -Werror -m unittest discover -s tests -v`: 615 tests OK, skipped=5.
+   - `python3 -m compileall -q tmf tests scripts tools`: PASS.
+   - `git diff --check`: PASS.
+   - Remaining boundary: this does not authorize publication and does not certify runtime framework behavior.
 
 ## 6. Current recommended status label
 
@@ -135,4 +136,4 @@ Recommended label for external/internal tracking:
 
 Reason:
 
-The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment. But full TMF capability validation still requires real-repo stale A/B, graph-query oracle coverage, mixed-language freshness, integration smoke, and current-HEAD release preflight.
+The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, and current HEAD also passes local release re-preflight. But full TMF capability validation still requires real-repo stale A/B, graph-query oracle coverage, mixed-language freshness, and production integration smoke.
