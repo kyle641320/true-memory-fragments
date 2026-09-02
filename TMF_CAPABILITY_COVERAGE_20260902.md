@@ -146,3 +146,5 @@ Recommended label for external/internal tracking:
 Reason:
 
 The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires a new discriminating real-repo stale A/B, larger mixed-repo validation, and production rollout evidence.
+
+- Equal-budget SOURCE_ONLY control also answered correctly under the same four-file framing, so the latest V3 evidence supports efficiency differences only, not correctness superiority.

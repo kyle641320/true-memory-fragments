@@ -1,0 +1,15 @@
+1) Old note: **blocked**. The source shows the owner module publishes `VisitScheduled`, not `VisitBooked` (`VisitScheduled.java:20-25`, `VisitScheduler.java:44-49`).
+
+2) Current event type: **`VisitScheduled`** (`VisitScheduled.java:20-25`).
+
+3) Direct flow:
+- Producer: `VisitScheduler.bookVisit(...)` publishes `new VisitScheduled(...)` (`VisitScheduler.java:44-49`).
+- Listener: `VetEventListener.on(VisitScheduled event)` handles the module event (`VetEventListener.java:41-44`).
+- Assignment consumer: `VetRoster.assignVet(VisitScheduled event)` performs vet assignment (`VetRoster.java:61-74`).
+
+4) Smallest files to change for required `clinicRoomId`:
+- **Definitely** `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java` to add the new record component (`VisitScheduled.java:20-25`).
+- **Definitely** `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java` to pass the new value when publishing (`VisitScheduler.java:44-49`).
+- `VetEventListener.java` and `VetRoster.java` only need changes if they must actually read/use `clinicRoomId`; as written, they can keep compiling unchanged (`VetEventListener.java:41-44`, `VetRoster.java:61-74`).
+
+METRICS_JSON={"source_files":["src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java","src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"],"source_lines":0,"tool_calls":0,"stale_trusted":false,"stale_blocked":true,"local_reread_lines":0}

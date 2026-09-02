@@ -63,3 +63,12 @@ Result: valid pair is now available by pairing the previous valid `SOURCE_ONLY` 
 - `TMF_MAP_MIN_RETRY`: valid and correct; freshness check blocked stale `VisitBooked`, then reread only four source files; metrics: 4 source files, 218 source lines, 2 tool calls.
 
 Scoring: both arms were correct, so there is no correctness superiority claim. Efficiency observation: TMF_MAP_MIN_RETRY reached the same required conclusion with fewer reread lines and fewer tool calls under the constrained retry protocol. Evidence: `results/subagent_min_retry_eval.json`, `raw/subagent_RV3F01_SOURCE_ONLY.answer.txt`, `raw/subagent_RV3F01_TMF_MAP_MIN_RETRY.answer.txt`.
+
+## Equal-budget SOURCE_ONLY control (2026-09-02 17:04)
+
+A second SOURCE_ONLY arm was run under the same 4-file control framing, but without TMF freshness checks. It also answered correctly:
+
+- `SOURCE_ONLY_MIN_RETRY`: blocked stale `VisitBooked`, identified `VisitScheduled`, and pointed to the same minimal change set. Evidence: `raw/subagent_RV3F01_SOURCE_ONLY_MIN_RETRY.answer.txt`.
+- `TMF_MAP_MIN_RETRY`: still correct with explicit freshness confirmation, and still cheaper on reread lines/tool calls.
+
+Scoring under equal-budget control: `results/equal_budget_eval.json` records `valid_pairs=1`, `correct_pairs=1`, and no correctness superiority claim. This means the current evidence supports efficiency differences, not correctness differences.

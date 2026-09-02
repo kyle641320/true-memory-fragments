@@ -1,0 +1,53 @@
+{
+  "schema": "java_real_stale_v3_equal_budget_eval",
+  "arms": [
+    {
+      "arm": "SOURCE_ONLY_MIN_RETRY",
+      "valid_transport": true,
+      "correct": true,
+      "response_sha256": "ba1676e7996c712ae945d166ddcc2eaacd10356c3c3baf8099c5bd2f06719005",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+        ],
+        "source_lines": 0,
+        "tool_calls": 0,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 0
+      }
+    },
+    {
+      "arm": "TMF_MAP_MIN_RETRY",
+      "valid_transport": true,
+      "correct": true,
+      "response_sha256": "ac9302f618af045f020197073f27d692771902c7e262a8c28187b9949c506399",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+        ],
+        "source_lines": 218,
+        "tool_calls": 2,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 218
+      }
+    }
+  ],
+  "valid_pairs": 1,
+  "correct_pairs": 1,
+  "correctness_superiority_claim": false,
+  "efficiency_observation": {
+    "source_only_source_lines": 0,
+    "tmf_map_source_lines": 218,
+    "source_only_tool_calls": 0,
+    "tmf_map_tool_calls": 2
+  },
+  "verdict": "EQUAL_BUDGET_PAIR_BOTH_CORRECT__TMF_MORE_EXPLICIT_FRESHNESS_AND_LOW_CALLS"
+}
