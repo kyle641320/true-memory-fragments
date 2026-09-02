@@ -1,0 +1,58 @@
+1) **Old note trusted or blocked**
+
+- **Blocked / not trusted.** I did not rely on any old note; the current source shows the authoritative event API and flow.
+- Source evidence:
+  - `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:20-25` defines the current public event payload.
+  - `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49` publishes that event directly.
+  - `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44` listens for that event and forwards it.
+  - `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-74` consumes the event for assignment.
+
+2) **Current event type**
+
+- Current event type is:
+  - `org.springframework.samples.petclinic.owner.VisitScheduled`
+  - Defined as `public record VisitScheduled(int visitId, int petId, LocalDate date)`
+  - Exact range: `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:20-25`
+  - Exact declaration line: `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:25`
+
+3) **Direct producer method, listener method, assignment consumer method**
+
+- **Direct producer method**
+  - `VisitScheduler.bookVisit(Owner owner, Integer petId, Visit visit)`
+  - Exact range: `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50`
+  - Direct publish call: `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:49`
+
+- **Listener method**
+  - `VetEventListener.on(VisitScheduled event)`
+  - Exact range: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44`
+  - Forwarding call: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:43`
+
+- **Assignment consumer method**
+  - `VetRoster.assignVet(VisitScheduled event)`
+  - Exact range: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-74`
+  - Reads current event payload at:
+    - `event.date()`: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:63`
+    - `event.visitId()`: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:70`, `:72`
+    - `event.petId()`: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:72`
+
+4) **Smallest files to change if event payload adds required `clinicRoomId`**
+
+Smallest required source changes in the inspected direct flow:
+
+- `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:25`
+  - Add required `clinicRoomId` as a new record component.
+
+- `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-49`
+  - Update `bookVisit(...)` / event construction so `new VisitScheduled(...)` supplies the required `clinicRoomId`.
+
+Likely **not required for compilation** if the listener continues forwarding the whole event unchanged:
+
+- `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44`
+  - No change needed unless routing/filtering by `clinicRoomId` is added.
+
+Only required if vet assignment must actually consume/use `clinicRoomId`:
+
+- `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-74`
+  - Add use of `event.clinicRoomId()` in assignment persistence, load balancing, or logging.
+
+METRICS_JSON={"source_files":["src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java","src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"],"source_lines":218,"tool_calls":4,"stale_trusted":false,"stale_blocked":true,"local_reread_lines":0}

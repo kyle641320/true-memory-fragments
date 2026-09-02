@@ -148,3 +148,5 @@ Reason:
 The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires a new discriminating real-repo stale A/B, larger mixed-repo validation, and production rollout evidence.
 
 - Equal-budget SOURCE_ONLY control also answered correctly under the same four-file framing, so the latest V3 evidence supports efficiency differences only, not correctness superiority.
+
+- Real SOURCE_ONLY_MIN_RETRY completion scored: same four-file budget, both SOURCE_ONLY and TMF_MAP correct; no correctness superiority. TMF retains explicit freshness evidence and lower reported tool-call count (2 vs 4), with same source files/lines (4 files/218 lines).

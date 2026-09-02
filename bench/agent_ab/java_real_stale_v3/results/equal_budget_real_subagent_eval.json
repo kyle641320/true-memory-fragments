@@ -1,0 +1,56 @@
+{
+  "schema": "java_real_stale_v3_equal_budget_real_subagent_eval",
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY_MIN_RETRY_REAL",
+      "valid_transport": true,
+      "correct": true,
+      "response_sha256": "e4ca4883059115272177fde41f1df697a2666672be1e9395324e780562a709fa",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+        ],
+        "source_lines": 218,
+        "tool_calls": 4,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 0
+      }
+    },
+    {
+      "arm": "TMF_MAP_MIN_RETRY",
+      "valid_transport": true,
+      "correct": true,
+      "response_sha256": "ac9302f618af045f020197073f27d692771902c7e262a8c28187b9949c506399",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+        ],
+        "source_lines": 218,
+        "tool_calls": 2,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 218
+      }
+    }
+  ],
+  "valid_pairs": 1,
+  "correct_pairs": 1,
+  "correctness_superiority_claim": false,
+  "efficiency_observation": {
+    "source_only_source_files": 4,
+    "tmf_map_source_files": 4,
+    "source_only_source_lines": 218,
+    "tmf_map_source_lines": 218,
+    "source_only_tool_calls": 4,
+    "tmf_map_tool_calls": 2,
+    "tmf_extra_freshness_check": true
+  },
+  "verdict": "EQUAL_BUDGET_REAL_PAIR_BOTH_CORRECT__NO_CORRECTNESS_SUPERIORITY__TMF_HAS_EXPLICIT_FRESHNESS_AT_LOWER_TOOL_CALLS"
+}

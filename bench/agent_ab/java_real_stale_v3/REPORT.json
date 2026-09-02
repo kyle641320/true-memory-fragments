@@ -8,14 +8,17 @@
   "transport_blocker": "Compact-prompt rerun produced no valid pair: SOURCE_ONLY subprocess timeout exit 124; TMF_MAP CLI exit 0 but JSON status=timeout summary=aborted timeoutPhase=provider",
   "superiority_claim": false,
   "next_step": "do not keep blind-running openclaw agent with this provider profile; either use sessions_spawn/subagent completion, raise model/provider timeout explicitly, or switch to deterministic harness scoring",
-  "latest_verdict": "VALID_PAIR_BOTH_CORRECT__TMF_LOWER_REREAD_LINES_AND_TOOL_CALLS",
+  "latest_verdict": "EQUAL_BUDGET_REAL_PAIR_BOTH_CORRECT__NO_CORRECTNESS_SUPERIORITY__TMF_HAS_EXPLICIT_FRESHNESS_AT_LOWER_TOOL_CALLS",
   "correct_pairs": 1,
   "correctness_superiority_claim": false,
   "efficiency_observation": {
-    "source_only_source_lines": 413,
+    "source_only_source_files": 4,
+    "tmf_map_source_files": 4,
+    "source_only_source_lines": 218,
     "tmf_map_source_lines": 218,
     "source_only_tool_calls": 4,
-    "tmf_map_tool_calls": 2
+    "tmf_map_tool_calls": 2,
+    "tmf_extra_freshness_check": true
   },
-  "latest_agent_eval": "results/subagent_min_retry_eval.json"
+  "latest_agent_eval": "results/equal_budget_real_subagent_eval.json"
 }

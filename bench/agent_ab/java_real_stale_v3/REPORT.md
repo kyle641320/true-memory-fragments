@@ -72,3 +72,12 @@ A second SOURCE_ONLY arm was run under the same 4-file control framing, but with
 - `TMF_MAP_MIN_RETRY`: still correct with explicit freshness confirmation, and still cheaper on reread lines/tool calls.
 
 Scoring under equal-budget control: `results/equal_budget_eval.json` records `valid_pairs=1`, `correct_pairs=1`, and no correctness superiority claim. This means the current evidence supports efficiency differences, not correctness differences.
+
+## Equal-budget real subagent control (2026-09-02 17:59)
+
+A real push-based `SOURCE_ONLY_MIN_RETRY` subagent completion was received and scored against `TMF_MAP_MIN_RETRY` under the same four-file source budget.
+
+- `SOURCE_ONLY_MIN_RETRY_REAL`: valid and correct; blocked stale `VisitBooked`, identified `VisitScheduled`, and answered from the four direct-flow files. Metrics: 4 source files, 218 source lines, 4 tool calls. Evidence: `raw/subagent_RV3F01_SOURCE_ONLY_MIN_RETRY.real.answer.txt`.
+- `TMF_MAP_MIN_RETRY`: valid and correct; explicit TMF freshness check blocked stale `VisitBooked`, then reread the same four direct-flow files. Metrics: 4 source files, 218 source lines, 2 tool calls. Evidence: `raw/subagent_RV3F01_TMF_MAP_MIN_RETRY.answer.txt`.
+
+Scoring: `results/equal_budget_real_subagent_eval.json` records `valid_pairs=1`, `correct_pairs=1`, and no correctness superiority claim. Under this constrained four-file framing, SOURCE_ONLY can also solve the task; TMF's supported distinction here is explicit freshness validation and lower reported tool-call count, not higher correctness.
