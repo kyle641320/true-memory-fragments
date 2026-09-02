@@ -70,7 +70,7 @@ TMF has substantial bounded Java/Spring **source-analysis** validation: declarat
 | Localized reread / refreshed map | Proven for stale-context ROI fixtures | Strong | Direct-refresh oracle and agent-loop ROI scorecard pass. |
 | Agent productivity ROI | Proven for scoped product segment | Strong within segment | `STRONG_PRODUCT_ROI_PASS` for retained Java stale-context benchmark set. |
 | Boundary / semantic stopping | Partially proven | Medium | Boundary precision evidence exists, but attribution distinguishes semantic failures from protocol/harness failures; not a universal proof. |
-| Reverse graph queries (readers/writers/callers/subtypes) | Partially proven | Medium | Tooling and tests exist, but product-level precision/recall across real repos is not fully established. |
+| Reverse graph queries (readers/writers/callers/subtypes/implementors) | Proven on bounded mixed oracle; larger real-repo oracle pending | Strong for bounded fixture, Medium for real repos | `TMF_GRAPH_QUERY_ORACLE_20260902.md`: 6/6 cases, micro/macro precision/recall 1.000/1.000 across Python callers/readers/writers and Java subtypes/implementors. |
 | API/Config/YAML/SQL nodes | Partially proven | Medium | Unit and source-analysis evidence exists for selected adapters; not fully validated as multi-language product surface. |
 | Multi-language mixed repos | Not fully proven | Low | Python exists historically; Java is current focus; mixed Python+Java repo behavior needs explicit gate. |
 | Real long-running repo maintenance tasks | Not fully proven | Low/Medium | Some real Java evidence exists, but today's ROI pass is synthetic/bounded agent A/B fixtures. |
@@ -104,10 +104,12 @@ Not fair yet:
    - Compare SOURCE_ONLY vs TMF refreshed map with hidden tests.
    - Success criterion: TMF improves semantic pass rate without over-reading or stale leakage.
 
-2. **Graph query precision/recall gate**
-   - Pick 2–3 real Java repos with known callers/readers/writers/subtypes.
-   - Evaluate `tmf_callers`, `tmf_readers`, `tmf_writers`, `tmf_subtypes` against hand-checked oracle.
-   - Success criterion: report precision/recall separately and mark dynamic/reflection unknowns as out of scope, not false certainty.
+2. **Graph query precision/recall gate — BOUNDED ORACLE DONE 2026-09-02**
+   - Evidence: `TMF_GRAPH_QUERY_ORACLE_20260902.md` and `reports/graph-query-oracle-20260902.json`.
+   - Result: PASS on a small hand-checked mixed Python/Java fixture.
+   - Cases: reverse callers, readers, writers, subtypes, implementors.
+   - Micro precision/recall: 1.000 / 1.000; macro precision/recall: 1.000 / 1.000; TP/FP/FN: 8/0/0.
+   - Remaining boundary: run larger real-repo oracle coverage for dynamic/reflection/DI-heavy Java and mixed repos before claiming complete blast-radius validation.
 
 3. **Mixed-language freshness gate**
    - Build a small Python+Java fixture or use a real mixed repo.
@@ -136,4 +138,4 @@ Recommended label for external/internal tracking:
 
 Reason:
 
-The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, and current HEAD also passes local release re-preflight. But full TMF capability validation still requires real-repo stale A/B, graph-query oracle coverage, mixed-language freshness, and production integration smoke.
+The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, and reverse graph queries now have a bounded mixed-language precision/recall oracle. But full TMF capability validation still requires real-repo stale A/B, larger real-repo graph oracle coverage, mixed-language freshness, and production integration smoke.
