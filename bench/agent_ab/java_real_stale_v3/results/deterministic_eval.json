@@ -1,0 +1,270 @@
+{
+  "schema": "java_real_stale_v3_deterministic_eval",
+  "repo": "/root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type",
+  "summary": {
+    "old_visitbooked_claims": 19,
+    "event_contract_relevant_claims": 5,
+    "stale_relevant_claims": 5,
+    "all_event_contract_relevant_claims_stale": true,
+    "current_event_type": "VisitScheduled",
+    "current_sources_have_no_VisitBooked": true,
+    "verdict": "DETERMINISTIC_STALE_TASK_VALID"
+  },
+  "claims": [
+    {
+      "id": "claim_contract_ed7a738edc2f5072",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:VetRoster.assignVet: java_hash mismatch"
+      ],
+      "kind": "method",
+      "qualname": "VetRoster.assignVet"
+    },
+    {
+      "id": "claim_contract_f4e9b4ac792962c5",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "method",
+      "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+    },
+    {
+      "id": "claim_edge_080e7a58ed4522b9",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "calls",
+      "qualname": null
+    },
+    {
+      "id": "claim_edge_46e66c385b02bd2d",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "calls",
+      "qualname": null
+    },
+    {
+      "id": "claim_edge_9982c6e9afafbfb1",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "calls",
+      "qualname": null
+    },
+    {
+      "id": "claim_edge_a08d8cc24bf354fd",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "calls",
+      "qualname": null
+    },
+    {
+      "id": "claim_event_type_edge_3ac4e3ac9fb02a3c",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:VisitScheduler.bookVisit: java node missing",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:VisitScheduler.bookVisit: java node missing"
+      ],
+      "kind": "publishes_type",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_event_type_edge_5f39327b6af66b9f",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java node missing",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java node missing"
+      ],
+      "kind": "listens_type",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_file_118d2a548327b604",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": null,
+      "qualname": null
+    },
+    {
+      "id": "claim_java_0bcdedb34df9cc4d",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:VetRoster.assignVet: java_hash mismatch"
+      ],
+      "kind": "method",
+      "qualname": "VetRoster.assignVet"
+    },
+    {
+      "id": "claim_java_24facfea08ca808b",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:VisitScheduler.bookVisit: java_hash mismatch"
+      ],
+      "kind": "method",
+      "qualname": "VisitScheduler.bookVisit"
+    },
+    {
+      "id": "claim_java_3377c8f1b1737ebe",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": "class",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_java_9cb7c5015dffa661",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "method",
+      "qualname": "VetAssignmentTests.visitBookedEventShouldTriggerVetAssignment"
+    },
+    {
+      "id": "claim_java_9e67e1991aa71f09",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "method",
+      "qualname": "VisitSchedulerTests.bookVisitShouldPublishVisitBookedEvent"
+    },
+    {
+      "id": "claim_java_a869f404efc38d1d",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java_hash mismatch"
+      ],
+      "kind": "method",
+      "qualname": "VetEventListener.on"
+    },
+    {
+      "id": "claim_java_fb0e49d18c3f7227",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "field",
+      "qualname": "VisitSchedulerTests.owners"
+    },
+    {
+      "id": "claim_read_edge_72e09f8ab6146c4b",
+      "fresh": true,
+      "stale_bindings": [],
+      "kind": "reads",
+      "qualname": null
+    },
+    {
+      "id": "claim_type_use_edge_13a4e386e2c73734",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:VetRoster.assignVet: java_hash mismatch",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": "uses_type",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_type_use_edge_6f2f30a914ab9f87",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java_hash mismatch",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": "uses_type",
+      "qualname": "VisitBooked"
+    }
+  ],
+  "event_contract_relevant_claims": [
+    {
+      "id": "claim_event_type_edge_3ac4e3ac9fb02a3c",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:VisitScheduler.bookVisit: java node missing",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing",
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:VisitScheduler.bookVisit: java node missing"
+      ],
+      "kind": "publishes_type",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_event_type_edge_5f39327b6af66b9f",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java node missing",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing",
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java node missing"
+      ],
+      "kind": "listens_type",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_java_3377c8f1b1737ebe",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": "class",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_type_use_edge_13a4e386e2c73734",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:VetRoster.assignVet: java_hash mismatch",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": "uses_type",
+      "qualname": "VisitBooked"
+    },
+    {
+      "id": "claim_type_use_edge_6f2f30a914ab9f87",
+      "fresh": false,
+      "stale_bindings": [
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:VetEventListener.on: java_hash mismatch",
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitBooked.java: missing"
+      ],
+      "kind": "uses_type",
+      "qualname": "VisitBooked"
+    }
+  ],
+  "source_checks": {
+    "event": {
+      "path": "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+      "has_VisitScheduled": true,
+      "has_VisitBooked": false,
+      "lines": [
+        25
+      ]
+    },
+    "producer": {
+      "path": "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+      "has_VisitScheduled": true,
+      "has_VisitBooked": false,
+      "lines": [
+        19,
+        29,
+        49
+      ]
+    },
+    "listener": {
+      "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+      "has_VisitScheduled": true,
+      "has_VisitBooked": false,
+      "lines": [
+        21,
+        29,
+        42,
+        43,
+        47
+      ]
+    },
+    "consumer": {
+      "path": "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+      "has_VisitScheduled": true,
+      "has_VisitBooked": false,
+      "lines": [
+        23,
+        31,
+        58,
+        62
+      ]
+    }
+  }
+}

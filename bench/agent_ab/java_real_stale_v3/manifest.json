@@ -1,0 +1,24 @@
+{
+  "schema": "java_real_stale_v3",
+  "frozen_at": "2026-09-02T15:32:00+08:00",
+  "seed": "java_real_stale_v3:2026-09-02:rv3f01-smoke",
+  "model": {"id": "aisz/gpt-5.6-sol", "thinking": "off", "timeout_seconds": 240},
+  "budgets": {"tool_calls": 12, "source_files": 6, "source_lines": 700, "wall_seconds": 240},
+  "arms": ["SOURCE_ONLY", "TMF_MAP"],
+  "repositories": [
+    {"id": "petclinic_event_mutated", "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type", "base_commit": "58c3310e36c7d827959df6af4d64bdeb8d81f1ea", "mutation": "rename VisitBooked event contract to VisitScheduled across producer and consumers"}
+  ],
+  "tasks": [
+    {
+      "id": "RV3F01",
+      "repo": "petclinic_event_mutated",
+      "type": "real_stale_event_contract_discriminating",
+      "prompt": "Answer the current direct impact surface for the visit-booking event contract after an old note says VisitBooked is produced and consumed by the vet module. Identify the current event type, direct producer/consumer methods, and smallest files to change if the event payload adds required clinicRoomId. Cite exact file:line ranges and state whether the old note was trusted or blocked.",
+      "paired": true,
+      "freshness": true
+    }
+  ],
+  "agent_task_order": ["RV3F01"],
+  "runner_golden_isolation": true,
+  "metrics": ["correct", "citation_correct", "source_files", "source_lines", "tool_calls", "wall_seconds", "stale_trusted", "stale_blocked", "local_reread_lines"]
+}

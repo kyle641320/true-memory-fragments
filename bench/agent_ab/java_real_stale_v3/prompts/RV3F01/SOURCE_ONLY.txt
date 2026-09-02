@@ -1,0 +1,9 @@
+You are one isolated benchmark coding-investigation agent. Repository: /root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type. Arm: SOURCE_ONLY. Budget: at most 12 tool calls, 6 source files, 700 source lines. No edits.
+
+Old note (may be stale): booking publishes VisitBooked and the veterinary listener consumes VisitBooked to assign a veterinarian.
+
+Do not use TMF, .tmf, repo_tmf_locator, tmf python modules, or any precomputed memory/index. Inspect current source only.
+
+Task: Answer the current direct impact surface for the visit-booking event contract after the old note above. Identify the current event type, direct producer/consumer methods, and smallest files to change if the event payload adds required clinicRoomId. Cite exact file:line ranges and state whether the old note was trusted or blocked.
+
+Return a concise answer with exact file:line citations, then final line exactly METRICS_JSON={"source_files": [...], "source_lines": integer, "tool_calls": integer, "stale_trusted": boolean, "stale_blocked": boolean, "local_reread_lines": integer}.

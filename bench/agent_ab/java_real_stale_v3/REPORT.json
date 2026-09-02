@@ -1,0 +1,9 @@
+{
+  "schema": "java_real_stale_v3_report",
+  "verdict": "AGENT_PAIR_NOT_COMPLETED__DETERMINISTIC_TASK_VALIDATED",
+  "deterministic_eval": "results/deterministic_eval.json",
+  "agent_pair_completed": false,
+  "transport_blocker": "RV3F01_SOURCE_ONLY timed out before producing a usable payload (openclaw agent --timeout 240; subprocess timeout 285s)",
+  "superiority_claim": false,
+  "next_step": "rerun with a more reliable runner/session strategy or smaller prompt/tool budget; score only valid paired payloads"
+}
