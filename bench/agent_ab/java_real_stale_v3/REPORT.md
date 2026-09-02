@@ -34,3 +34,12 @@ Relevant stale old claims include the `VisitBooked` declaration, event publish/l
 This advances the real-repo stale A/B work by producing a bounded, source-validated discriminating fixture/protocol. It does **not** yet prove real-repo stale-context superiority, because the paired agent run did not complete.
 
 Next step: rerun with a more reliable runner/session strategy or smaller prompt/tool budget, then score only valid paired payloads.
+
+## Compact-prompt rerun (2026-09-02 15:51)
+
+The prompts were shortened and `run_agents.py` was made timeout-safe. The rerun still did not produce a valid pair:
+
+- `RV3F01_SOURCE_ONLY`: subprocess timeout, exit 124 after ~285s, empty payload.
+- `RV3F01_TMF_MAP`: CLI exit 0 after ~262s, but agent JSON reported `status=timeout`, `summary=aborted`, `stopReason=rpc`, `timeoutPhase=provider`; payload was only the standard timeout message.
+
+`evaluate_agents.py` treats both as invalid transport, because valid payloads require CLI transport success **and** JSON `status=ok` / `summary=completed`. Current valid pairs: 0. No A/B superiority claim is made.

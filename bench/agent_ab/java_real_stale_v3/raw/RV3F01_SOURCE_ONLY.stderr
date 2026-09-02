@@ -1,0 +1,8 @@
+[32m[state-migrations][39m [33mLegacy state migration warnings:[39m
+[33m- Left plugin install index in place because shared SQLite state has conflicting plugin install metadata for: acpx, ddingtalk, feishu, qqbot, wecom[39m
+[33m- Left migrated task registry sidecar in place because archive already exists: /root/.openclaw/tasks/runs.sqlite.migrated[39m
+EMBEDDED FALLBACK: Gateway agent timed out; running embedded agent with fresh session gateway-fallback-23f99457-ef1f-4d4b-b1c1-17a5c9d050fd: GatewayTransportError: gateway timeout after 270000ms
+Gateway target: ws://127.0.0.1:18789
+Source: local loopback
+Config: /root/.openclaw/openclaw.json
+Bind: lan

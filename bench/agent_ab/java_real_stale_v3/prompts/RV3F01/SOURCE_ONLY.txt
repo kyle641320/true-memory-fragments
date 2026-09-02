@@ -1,9 +1,15 @@
-You are one isolated benchmark coding-investigation agent. Repository: /root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type. Arm: SOURCE_ONLY. Budget: at most 12 tool calls, 6 source files, 700 source lines. No edits.
+Repo: /root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type
+Arm: SOURCE_ONLY. No edits. Do not use TMF/.tmf/precomputed indexes.
+Budget: 6 files, 700 source lines.
 
-Old note (may be stale): booking publishes VisitBooked and the veterinary listener consumes VisitBooked to assign a veterinarian.
+Old note, maybe stale: booking publishes VisitBooked and vet module consumes VisitBooked to assign a vet.
 
-Do not use TMF, .tmf, repo_tmf_locator, tmf python modules, or any precomputed memory/index. Inspect current source only.
+Task: From current source only, answer:
+1) Is the old note trusted or blocked?
+2) Current event type.
+3) Direct producer method, listener method, assignment consumer method.
+4) Smallest files to change if event payload adds required clinicRoomId.
+Cite file:line ranges.
 
-Task: Answer the current direct impact surface for the visit-booking event contract after the old note above. Identify the current event type, direct producer/consumer methods, and smallest files to change if the event payload adds required clinicRoomId. Cite exact file:line ranges and state whether the old note was trusted or blocked.
-
-Return a concise answer with exact file:line citations, then final line exactly METRICS_JSON={"source_files": [...], "source_lines": integer, "tool_calls": integer, "stale_trusted": boolean, "stale_blocked": boolean, "local_reread_lines": integer}.
+End with exactly:
+METRICS_JSON={"source_files":[...],"source_lines":0,"tool_calls":0,"stale_trusted":false,"stale_blocked":true,"local_reread_lines":0}

@@ -1,0 +1,815 @@
+{
+  "runId": "e1f1e1da-855e-4f32-abca-76dea2bd86fd",
+  "status": "timeout",
+  "summary": "aborted",
+  "stopReason": "rpc",
+  "timeoutPhase": "provider",
+  "providerStarted": true,
+  "result": {
+    "payloads": [
+      {
+        "text": "LLM request timed out.",
+        "mediaUrl": null
+      },
+      {
+        "text": "The model did not produce a response before the model idle timeout. Please try again, or increase `models.providers.<id>.timeoutSeconds` for slow local or self-hosted providers. If `agents.defaults.timeoutSeconds` or a run-specific timeout is lower, raise that ceiling too; provider timeouts cannot extend the whole agent run.",
+        "mediaUrl": null
+      }
+    ],
+    "meta": {
+      "durationMs": 237885,
+      "agentMeta": {
+        "sessionId": "java-real-stale-v3-RV3F01-tmf_map-5adc8898",
+        "sessionFile": "/root/.openclaw/agents/main/sessions/java-real-stale-v3-RV3F01-tmf_map-5adc8898.jsonl",
+        "provider": "aisz",
+        "model": "gpt-5.6-sol",
+        "contextTokens": 200000,
+        "agentHarnessId": "openclaw",
+        "usage": {
+          "input": 31706,
+          "output": 242,
+          "reasoningTokens": 55,
+          "total": 31948
+        },
+        "lastCallUsage": {
+          "input": 0,
+          "output": 0,
+          "cacheRead": 0,
+          "cacheWrite": 0,
+          "total": 0
+        },
+        "contextBudgetStatus": {
+          "schemaVersion": 1,
+          "source": "pre-prompt-estimate",
+          "updatedAt": 1788335957710,
+          "provider": "aisz",
+          "model": "gpt-5.6-sol",
+          "route": "fits",
+          "shouldCompact": false,
+          "estimatedPromptTokens": 21750,
+          "contextTokenBudget": 200000,
+          "promptBudgetBeforeReserve": 183616,
+          "reserveTokens": 16384,
+          "effectiveReserveTokens": 16384,
+          "remainingPromptBudgetTokens": 161866,
+          "overflowTokens": 0,
+          "toolResultReducibleChars": 0,
+          "messageCount": 0,
+          "unwindowedMessageCount": 0,
+          "sessionId": "java-real-stale-v3-RV3F01-tmf_map-5adc8898"
+        }
+      },
+      "aborted": true,
+      "systemPromptReport": {
+        "source": "run",
+        "generatedAt": 1788335955584,
+        "sessionId": "java-real-stale-v3-RV3F01-tmf_map-5adc8898",
+        "sessionKey": "agent:main:explicit:java-real-stale-v3-rv3f01-tmf_map-5adc8898",
+        "provider": "aisz",
+        "model": "gpt-5.6-sol",
+        "workspaceDir": "/root/.openclaw/workspace",
+        "bootstrapMaxChars": 20000,
+        "bootstrapTotalMaxChars": 60000,
+        "bootstrapTruncation": {
+          "warningMode": "always",
+          "warningShown": false,
+          "truncatedFiles": 0,
+          "nearLimitFiles": 0,
+          "totalNearLimit": false
+        },
+        "sandbox": {
+          "mode": "off",
+          "sandboxed": false
+        },
+        "systemPrompt": {
+          "chars": 52287,
+          "hash": "b4b4c676bb0e7a3fe978d8985f6e132a9c6a1244436e3ce099305914f28905b8",
+          "projectContextChars": 23686,
+          "nonProjectContextChars": 28601
+        },
+        "injectedWorkspaceFiles": [
+          {
+            "name": "AGENTS.md",
+            "path": "/root/.openclaw/workspace/AGENTS.md",
+            "missing": false,
+            "rawChars": 9108,
+            "injectedChars": 9108,
+            "truncated": false
+          },
+          {
+            "name": "SOUL.md",
+            "path": "/root/.openclaw/workspace/SOUL.md",
+            "missing": false,
+            "rawChars": 252,
+            "injectedChars": 252,
+            "truncated": false
+          },
+          {
+            "name": "TOOLS.md",
+            "path": "/root/.openclaw/workspace/TOOLS.md",
+            "missing": false,
+            "rawChars": 1675,
+            "injectedChars": 1675,
+            "truncated": false
+          },
+          {
+            "name": "IDENTITY.md",
+            "path": "/root/.openclaw/workspace/IDENTITY.md",
+            "missing": false,
+            "rawChars": 544,
+            "injectedChars": 544,
+            "truncated": false
+          },
+          {
+            "name": "USER.md",
+            "path": "/root/.openclaw/workspace/USER.md",
+            "missing": false,
+            "rawChars": 89,
+            "injectedChars": 89,
+            "truncated": false
+          },
+          {
+            "name": "HEARTBEAT.md",
+            "path": "/root/.openclaw/workspace/HEARTBEAT.md",
+            "missing": false,
+            "rawChars": 697,
+            "injectedChars": 697,
+            "truncated": false
+          },
+          {
+            "name": "MEMORY.md",
+            "path": "/root/.openclaw/workspace/MEMORY.md",
+            "missing": false,
+            "rawChars": 11490,
+            "injectedChars": 11490,
+            "truncated": false
+          }
+        ],
+        "skills": {
+          "promptChars": 9444,
+          "hash": "8194d8bde841c5f6bf57c5a709d7060a3f5de13827016dac1a6cf00258c45d9f",
+          "entries": [
+            {
+              "name": "acp-router",
+              "blockChars": 164
+            },
+            {
+              "name": "Agent Browser",
+              "blockChars": 173
+            },
+            {
+              "name": "akshare-stock",
+              "blockChars": 173
+            },
+            {
+              "name": "browser-automation",
+              "blockChars": 180
+            },
+            {
+              "name": "canvas",
+              "blockChars": 193
+            },
+            {
+              "name": "diagram-maker",
+              "blockChars": 207
+            },
+            {
+              "name": "eastmoney_financial_data",
+              "blockChars": 201
+            },
+            {
+              "name": "eastmoney_financial_search",
+              "blockChars": 205
+            },
+            {
+              "name": "feishu-doc",
+              "blockChars": 164
+            },
+            {
+              "name": "feishu-drive",
+              "blockChars": 168
+            },
+            {
+              "name": "feishu-perm",
+              "blockChars": 166
+            },
+            {
+              "name": "feishu-wiki",
+              "blockChars": 166
+            },
+            {
+              "name": "find-skills",
+              "blockChars": 169
+            },
+            {
+              "name": "fundamental-screening",
+              "blockChars": 197
+            },
+            {
+              "name": "gh-issues",
+              "blockChars": 199
+            },
+            {
+              "name": "github",
+              "blockChars": 159
+            },
+            {
+              "name": "glm-understand-image",
+              "blockChars": 187
+            },
+            {
+              "name": "glm-v-model",
+              "blockChars": 169
+            },
+            {
+              "name": "healthcheck",
+              "blockChars": 203
+            },
+            {
+              "name": "Image Edit Agent",
+              "blockChars": 179
+            },
+            {
+              "name": "java-enterprise-workflow",
+              "blockChars": 195
+            },
+            {
+              "name": "lark-calendar",
+              "blockChars": 173
+            },
+            {
+              "name": "meme-maker",
+              "blockChars": 201
+            },
+            {
+              "name": "minimax-multimodal-toolkit",
+              "blockChars": 191
+            },
+            {
+              "name": "minimax-understand-image",
+              "blockChars": 195
+            },
+            {
+              "name": "newsmcp",
+              "blockChars": 167
+            },
+            {
+              "name": "node-connect",
+              "blockChars": 205
+            },
+            {
+              "name": "node-inspect-debugger",
+              "blockChars": 223
+            },
+            {
+              "name": "portfolio-generator",
+              "blockChars": 185
+            },
+            {
+              "name": "proactive-agent",
+              "blockChars": 177
+            },
+            {
+              "name": "python-dataviz",
+              "blockChars": 175
+            },
+            {
+              "name": "python-debugpy",
+              "blockChars": 209
+            },
+            {
+              "name": "self-improvement",
+              "blockChars": 183
+            },
+            {
+              "name": "skill-creator",
+              "blockChars": 207
+            },
+            {
+              "name": "skill-vetter",
+              "blockChars": 171
+            },
+            {
+              "name": "skillhub-preference",
+              "blockChars": 185
+            },
+            {
+              "name": "spike",
+              "blockChars": 191
+            },
+            {
+              "name": "stock-market-pro",
+              "blockChars": 179
+            },
+            {
+              "name": "stock-research-engine",
+              "blockChars": 189
+            },
+            {
+              "name": "taskflow",
+              "blockChars": 197
+            },
+            {
+              "name": "taskflow-inbox-triage",
+              "blockChars": 223
+            },
+            {
+              "name": "tavily",
+              "blockChars": 166
+            },
+            {
+              "name": "tencent-cloud-cos",
+              "blockChars": 181
+            },
+            {
+              "name": "tencentcloud-lighthouse-skill",
+              "blockChars": 205
+            },
+            {
+              "name": "tmux",
+              "blockChars": 189
+            },
+            {
+              "name": "video-frames",
+              "blockChars": 205
+            },
+            {
+              "name": "weather",
+              "blockChars": 161
+            }
+          ]
+        },
+        "tools": {
+          "listChars": 0,
+          "schemaChars": 49248,
+          "entries": [
+            {
+              "name": "read",
+              "summaryChars": 298,
+              "summaryHash": "f8a1d7cf1ecfe02b1b5865c93387e6a5891e5079117b4fe18614b6f912521727",
+              "schemaChars": 304,
+              "schemaHash": "134f19bcabe3e29d63c5cebb38f1d2556759fd08adad6bc90a4b4d3cd1fb8441",
+              "propertiesCount": 3
+            },
+            {
+              "name": "edit",
+              "summaryChars": 326,
+              "summaryHash": "c498a85576e187d069e8e8ea4f70f81bddd57829600d385ef61c4359fd634c9e",
+              "schemaChars": 834,
+              "schemaHash": "457e8bb9f800b21be76c4fd8c0e3078bf07ee9bf93ac82f39944c171bd8f6d84",
+              "propertiesCount": 2
+            },
+            {
+              "name": "write",
+              "summaryChars": 127,
+              "summaryHash": "cdb1c46027b22d1f1b923b47bfe297821d9fe589a9f9d92994961948060a4d89",
+              "schemaChars": 225,
+              "schemaHash": "e98a2484f667cf7c22d76ca103bf2022bf9113dc63fe38b899e71c328cb1e833",
+              "propertiesCount": 2
+            },
+            {
+              "name": "apply_patch",
+              "summaryChars": 132,
+              "summaryHash": "432bf38688a4f011d2b765a441ac07e1fdfa9faf2051679adee04abcd9332d93",
+              "schemaChars": 153,
+              "schemaHash": "05521268363ff4f191472c90d69ef08a503ba9acf1d2febc50b3ee68db32ab65",
+              "propertiesCount": 1
+            },
+            {
+              "name": "exec",
+              "summaryChars": 539,
+              "summaryHash": "4825198988fbfa8ebf5c2a8fbe3946da0be639b1e3b737ceaa4364195bba3f04",
+              "schemaChars": 1283,
+              "schemaHash": "2608ea36cf51376859b7204cda1bf1a2507134eb542097b9e8dbc8af617f216b",
+              "propertiesCount": 12
+            },
+            {
+              "name": "process",
+              "summaryChars": 456,
+              "summaryHash": "55297e65d460e0e1e06e7fad4cedb75ffda8fac9fa8b10aa06d6cead3c5a76ea",
+              "schemaChars": 1074,
+              "schemaHash": "a2d30a25569f409d7e8539844c89a088044535388b24031d014577b96ed27c5c",
+              "propertiesCount": 12
+            },
+            {
+              "name": "nodes",
+              "summaryChars": 143,
+              "summaryHash": "ea1b0a5498ca3c788b26d164245652e1aaa989806e0123715793ab25f9578121",
+              "schemaChars": 1764,
+              "schemaHash": "339c9b744f121ff6a5b2a8a2a7e19286c4114d8dc165a172d3708e993d8b0e55",
+              "propertiesCount": 32
+            },
+            {
+              "name": "cron",
+              "summaryChars": 3721,
+              "summaryHash": "8eb177e0cdf7d5bc0144f544bf0072e38b6bab267e0699a2859b4a8db97af0b3",
+              "schemaChars": 8601,
+              "schemaHash": "6905f52059cd7b0e4abca1251160f13877ced2a6b101158a6192f4e9a279665a",
+              "propertiesCount": 15
+            },
+            {
+              "name": "message",
+              "summaryChars": 332,
+              "summaryHash": "cb80e80b9312e1e36a97521bea1ebdd82973cd102aced12f07f01876e7af3205",
+              "schemaChars": 5981,
+              "schemaHash": "c2d92c7976b24ecc9695dfd6b40bef534e3166afcae81d49a09bd8d76b08dfe0",
+              "propertiesCount": 109
+            },
+            {
+              "name": "tts",
+              "summaryChars": 217,
+              "summaryHash": "652c1970c199d82b61061a40be2adddfc7e5634df5d896d776a8a0047c8a6b75",
+              "schemaChars": 264,
+              "schemaHash": "e40695f92ef72d913ee5eb13ef738a15d6f33ae3af3ec609975c45991ef99a78",
+              "propertiesCount": 3
+            },
+            {
+              "name": "image_generate",
+              "summaryChars": 468,
+              "summaryHash": "d093313d17509b72795516c6ad7c92a9f1e8c7943239d570fd81347dc2557424",
+              "schemaChars": 2264,
+              "schemaHash": "1ff0d91a2a16769e27d71721f3307059944254c0567f9db718fe90e1665b088d",
+              "propertiesCount": 16
+            },
+            {
+              "name": "music_generate",
+              "summaryChars": 524,
+              "summaryHash": "67e4d3d73cbc844f2cc2ffb16cbbe3a6d4a58ec88a8cbe0bd0106515b6fec638",
+              "schemaChars": 1015,
+              "schemaHash": "e03b05b5176641e4edd24ddba66653b5f808eae6ab53c48c4c0d8cbe429bb577",
+              "propertiesCount": 10
+            },
+            {
+              "name": "video_generate",
+              "summaryChars": 307,
+              "summaryHash": "59fd08c3f2947e0394c7d1aae5219763bf201537bef536228c6c4fd63724e415",
+              "schemaChars": 2042,
+              "schemaHash": "ec3a2b299579c1c85d5cb3d5b18e1185c6bb62ca128aa508692098174393cb35",
+              "propertiesCount": 18
+            },
+            {
+              "name": "gateway",
+              "summaryChars": 566,
+              "summaryHash": "1bef48b95fc67d7dc10e2f5f0cc3522951b067b762de6c3e77bc446de0f608b1",
+              "schemaChars": 649,
+              "schemaHash": "1a4f609a948c183832ee8a11c0cfcbe1afddf0732c30c67a593dfcdb630a5ee7",
+              "propertiesCount": 14
+            },
+            {
+              "name": "agents_list",
+              "summaryChars": 63,
+              "summaryHash": "a7afb8adbaf98833df68160db0677ec2a6bc30b1b96f3592392c9df59e310c65",
+              "schemaChars": 33,
+              "schemaHash": "8243f0af367f188a376f2c17b5eabe872a2f7a979813e0d4e2be6d594c2aa259",
+              "propertiesCount": 0
+            },
+            {
+              "name": "get_goal",
+              "summaryChars": 71,
+              "summaryHash": "58dea7906d9e17e5f89a75fea24597ee068d8a56af824370dc27f8501374d6e3",
+              "schemaChars": 33,
+              "schemaHash": "8243f0af367f188a376f2c17b5eabe872a2f7a979813e0d4e2be6d594c2aa259",
+              "propertiesCount": 0
+            },
+            {
+              "name": "create_goal",
+              "summaryChars": 155,
+              "summaryHash": "f01e3a63d673a410ba55213ce6bd3fa2b0d2279e8e780c18aa0cb5aa991b29b3",
+              "schemaChars": 267,
+              "schemaHash": "27ee794432736471bd76390e236cc7d7e98f8469a02656e7a27109041eea0f8c",
+              "propertiesCount": 2
+            },
+            {
+              "name": "update_goal",
+              "summaryChars": 212,
+              "summaryHash": "285201690e5f2456b4cdcd252ff391709b84d69538df61bad694d3c0cfc19958",
+              "schemaChars": 207,
+              "schemaHash": "c37894492eedfad02f1e7fe1488900765bfe547f3b3f34cefbab4f7f57441c2c",
+              "propertiesCount": 2
+            },
+            {
+              "name": "skill_workshop",
+              "summaryChars": 171,
+              "summaryHash": "577c1d2b8f56bf3e9dd5e00463bbce8b8bf4cf201da9b21b588dcaa3bc6ed8cf",
+              "schemaChars": 2273,
+              "schemaHash": "15481d6889a320a46728ee32304f0a2b510c0bcf77d445052c1ef2fa5dd5368b",
+              "propertiesCount": 13
+            },
+            {
+              "name": "update_plan",
+              "summaryChars": 163,
+              "summaryHash": "ea18cc44224e849c68cdf0a4839c295c1b20daf2699e2fc2be4c4e1552327455",
+              "schemaChars": 489,
+              "schemaHash": "50cb08b8a29e72637eb6720e6f5f3786783824537574f05ee9ae7a5f4ecacc4b",
+              "propertiesCount": 2
+            },
+            {
+              "name": "sessions_list",
+              "summaryChars": 135,
+              "summaryHash": "c7e411ae02e3adff5504aaee48f02d262a8abb9152558a3172aae289e3b05faf",
+              "schemaChars": 435,
+              "schemaHash": "c29c6b82c36a2d95a88c8944f129929b2621ee2af6d17b2ab101d4d7e9633d89",
+              "propertiesCount": 9
+            },
+            {
+              "name": "sessions_history",
+              "summaryChars": 117,
+              "summaryHash": "f5d45b76f11a8ac63cc45d456fb6f675f0b1a2e191feb9671924cb5830058f03",
+              "schemaChars": 162,
+              "schemaHash": "ac33b8af2252262afe479236046f5a04bc018f1fcf24d1a8bf32743f0e867598",
+              "propertiesCount": 3
+            },
+            {
+              "name": "sessions_send",
+              "summaryChars": 282,
+              "summaryHash": "061e9ef3487676bb2a4fd4c0336bd973aaab5eea0725e7443c4cb17518cd1e78",
+              "schemaChars": 275,
+              "schemaHash": "f1fbaa412fe6b6aee102234c87c5aa140f39c9086f9bae6e1e9691309a602ffb",
+              "propertiesCount": 5
+            },
+            {
+              "name": "sessions_spawn",
+              "summaryChars": 717,
+              "summaryHash": "329fb544093380ab0a4f7113190b8633a5d647d243099494aede9a8a6c0c0b18",
+              "schemaChars": 1476,
+              "schemaHash": "01e01ea9da006889bf3728b351ceded24b5fcdba66228d436f2db594d299d1eb",
+              "propertiesCount": 17
+            },
+            {
+              "name": "sessions_yield",
+              "summaryChars": 79,
+              "summaryHash": "f3782fc41c1522657e1d3494f486a2df998fed38a6b89dcf7f6934fb41424320",
+              "schemaChars": 60,
+              "schemaHash": "b1c4c753820bc3096d85ef7a266a14c9fbe12450536db58076b75bb61d14dbbb",
+              "propertiesCount": 1
+            },
+            {
+              "name": "subagents",
+              "summaryChars": 132,
+              "summaryHash": "1c2ffd38549c0444b118d43736fc4b875ea1aaabc446bbf8bc1fc4ee9180cca4",
+              "schemaChars": 122,
+              "schemaHash": "c4a241d2c3d46ba7985abfce4d3fcd63298ce81f89d49183c8f3d584c48d0c33",
+              "propertiesCount": 2
+            },
+            {
+              "name": "session_status",
+              "summaryChars": 278,
+              "summaryHash": "71177e543dc6235bad4b1a26761995681dcec27ab58dcb4f4f8a7fc9a7b2b5aa",
+              "schemaChars": 89,
+              "schemaHash": "d2995f3d69d126e98ac93eec3c2a9fe5556925bd7979a8e4b6b5a2bf62d329dd",
+              "propertiesCount": 2
+            },
+            {
+              "name": "web_search",
+              "summaryChars": 65,
+              "summaryHash": "b38e9b3c079beaa988d3c576303660b91a55c2e72f56351da04160529173273f",
+              "schemaChars": 991,
+              "schemaHash": "3879e368875d824b14e0e683f81408824e9a2a5850fa2f8514a68caebda54d18",
+              "propertiesCount": 12
+            },
+            {
+              "name": "web_fetch",
+              "summaryChars": 93,
+              "summaryHash": "8875afbb51bd63673e5e6836ca31eeda73914a464862665cd73b346e28d28fd5",
+              "schemaChars": 317,
+              "schemaHash": "d2d8ad58a1b84d849dd16142282aff6c5606f7b0e3d08405e1b740a6a79e6bcc",
+              "propertiesCount": 3
+            },
+            {
+              "name": "image",
+              "summaryChars": 169,
+              "summaryHash": "a46820ca8952445d3663a8908bfa5d3adddff5b53d18b9d8e9eed8f9e593b494",
+              "schemaChars": 350,
+              "schemaHash": "49bb766071c935edca8c2d0df47fc2109bbffe3d4ba32d0b19fe90ec873736ce",
+              "propertiesCount": 6
+            },
+            {
+              "name": "pdf",
+              "summaryChars": 159,
+              "summaryHash": "9f323da0ccbf37f01fff7374ae5cba64b4c05b5f0fc9d982aee7c64040cc61d5",
+              "schemaChars": 448,
+              "schemaHash": "9e8e5acf6d543d3bf39ef65c5cad5326013243efbc32a78aeff5a86edc3947ed",
+              "propertiesCount": 7
+            },
+            {
+              "name": "browser",
+              "summaryChars": 1537,
+              "summaryHash": "8a4aab8d6a66131c4f065bc2672af8fbcc19555e55fb4fbb1c24261d02e63e28",
+              "schemaChars": 3570,
+              "schemaHash": "fcbd681856651c4d2817a3c0f9786a321a20a50a6c117866bf08d4df6f40486a",
+              "propertiesCount": 53
+            },
+            {
+              "name": "memory_search",
+              "summaryChars": 605,
+              "summaryHash": "0f918d28864d3682ae77731f149273997c84773592a466b18c7cd0121b599a05",
+              "schemaChars": 250,
+              "schemaHash": "088cd2a3d3a47b251429ff7c56844cdedd1c45c3af0fa8bfaf7aa795766976bf",
+              "propertiesCount": 4
+            },
+            {
+              "name": "memory_get",
+              "summaryChars": 239,
+              "summaryHash": "bff1141a3da31a345c550337417efc9ace4da2909004606c727c59ca1a294495",
+              "schemaChars": 241,
+              "schemaHash": "78f5d58460a82f9104deebad2f1873a8cde05d1ce7328b3ba4da6e994653e70a",
+              "propertiesCount": 4
+            },
+            {
+              "name": "feishu_doc",
+              "summaryChars": 321,
+              "summaryHash": "031518d7b24ffb1cfd3e02e3d4085e277c85d42dfbaebbfd2c3b98c40ad4bd03",
+              "schemaChars": 2898,
+              "schemaHash": "730bd6c68eccec4bb0af6297f1885d3e9e97428b9746aef7f6f90ee9e89679c8",
+              "propertiesCount": 27
+            },
+            {
+              "name": "feishu_app_scopes",
+              "summaryChars": 102,
+              "summaryHash": "f71bba3dfcb9a9135d998bba1cced2df3ec09cde4e8eeaabd1cc467ec2be266e",
+              "schemaChars": 33,
+              "schemaHash": "8243f0af367f188a376f2c17b5eabe872a2f7a979813e0d4e2be6d594c2aa259",
+              "propertiesCount": 0
+            },
+            {
+              "name": "feishu_chat",
+              "summaryChars": 59,
+              "summaryHash": "f3ae74823a824b50cf2b455b71236257fd1b3b6969c46b5cfed979f67d55739e",
+              "schemaChars": 633,
+              "schemaHash": "7b6881d5a964104bd334fc5d283b234868504cacf3c15a8b7d2b9777846fcf09",
+              "propertiesCount": 6
+            },
+            {
+              "name": "feishu_wiki",
+              "summaryChars": 83,
+              "summaryHash": "675a39b1647c164b1e1bc890f76bfef5b6890cfa1685b4b38adf74e4599a2baa",
+              "schemaChars": 1161,
+              "schemaHash": "320ee613d815aeb7487169c05cf4c6479170dfdcf7e6700aa26333abdc6a1605",
+              "propertiesCount": 10
+            },
+            {
+              "name": "feishu_drive",
+              "summaryChars": 146,
+              "summaryHash": "1617b9244112de63c385c835dc5b3d9618b2c9aaaa5813293e63835d0a28cc24",
+              "schemaChars": 1094,
+              "schemaHash": "6a3a0c178240856029fbbd6e47bd1cde0b8c82dc03e06acd6ec1432278d0d5cb",
+              "propertiesCount": 11
+            },
+            {
+              "name": "feishu_bitable_get_meta",
+              "summaryChars": 114,
+              "summaryHash": "8735e23554e6b76263da09b66da41b2b6f38393c345f4ccd9a1a64ed0b03611e",
+              "schemaChars": 170,
+              "schemaHash": "594d81258808d95c57a43b49a07619e3854b5f1ca7a2aa0fc5f9c5138157b84f",
+              "propertiesCount": 1
+            },
+            {
+              "name": "feishu_bitable_list_fields",
+              "summaryChars": 76,
+              "summaryHash": "897abf305d047625e7e62a5ebe8308242dda407b8e522ae45d65ab23b3dac0e3",
+              "schemaChars": 255,
+              "schemaHash": "9bede042b9cb0acaa416e7e674e8193f9e3a29120ab52105b3189edbab222151",
+              "propertiesCount": 2
+            },
+            {
+              "name": "feishu_bitable_list_records",
+              "summaryChars": 64,
+              "summaryHash": "d8d56f06be1a13ed70d8c7f6f205ff61025c3ab5f1a399a2135d73decba12ced",
+              "schemaChars": 463,
+              "schemaHash": "e257f8727c828190b45b17a8f98e7ef3f4e7f87553cf61ef9b3dd6c932c1ae2a",
+              "propertiesCount": 4
+            },
+            {
+              "name": "feishu_bitable_get_record",
+              "summaryChars": 46,
+              "summaryHash": "363c00179915caa5a60b445a24255d8f79b91d50f77fd78574b04226ae23fbb2",
+              "schemaChars": 335,
+              "schemaHash": "326588e725d9a063aac81bbd2ecdea5d15fa52d5e632d2ceb8172bfa1c84dff5",
+              "propertiesCount": 3
+            },
+            {
+              "name": "feishu_bitable_create_record",
+              "summaryChars": 44,
+              "summaryHash": "7e795f23e9aaf3e0f328476253e451225687b60f55c0d023976f196bb8f7a9dd",
+              "schemaChars": 547,
+              "schemaHash": "5f5f413cd01dcb2d0d59efb12093cbfb9cb02f6d3e4921288f41994bad108e3a",
+              "propertiesCount": 3
+            },
+            {
+              "name": "feishu_bitable_update_record",
+              "summaryChars": 50,
+              "summaryHash": "e9cbf372b1e00394d97d48d27ff2ba8c6e67bd503a11bcaff5cd397423db646c",
+              "schemaChars": 471,
+              "schemaHash": "50f9387255ac8f8c18feebf72a3a0c5f78d47dd59ed2870b7387b605ba1c2df9",
+              "propertiesCount": 4
+            },
+            {
+              "name": "feishu_bitable_create_app",
+              "summaryChars": 57,
+              "summaryHash": "addbb5cb2da3c87587c6d7b3b991e64a359fdc06a2141ab8554ca0d3ee86eee9",
+              "schemaChars": 243,
+              "schemaHash": "7bd158d54f4addd8d0835160504827c4620100de8baa64739a63ca6ac05783af",
+              "propertiesCount": 2
+            },
+            {
+              "name": "feishu_bitable_create_field",
+              "summaryChars": 46,
+              "summaryHash": "f3ec05238d6ae75152e1ccbcb8ecf71aed1177766885a515a2d227abb1b95ed4",
+              "schemaChars": 909,
+              "schemaHash": "d72f4843494162c68c36ffa2f45d6d0bd8ccd75e4ec579633375daed616e80ab",
+              "propertiesCount": 5
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_assist",
+              "summaryChars": 301,
+              "summaryHash": "f6a9dbf1b4562e018eaed943570f01878e34540e177e77374648b2e95d6adf28",
+              "schemaChars": 297,
+              "schemaHash": "b8bcdf782862b74a4f70ba642a8ac830e0a284fc10dfd803355ea670fb117108",
+              "propertiesCount": 5
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_callers",
+              "summaryChars": 197,
+              "summaryHash": "01eab9f07984523129961af634407de602e947f542f38c4e00406a4af68b29d0",
+              "schemaChars": 158,
+              "schemaHash": "e174eb71ab68560da7b9f841dbdbfb3228280d37ef0208b00e68f11f22ae15b1",
+              "propertiesCount": 3
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_context",
+              "summaryChars": 217,
+              "summaryHash": "d322b7b016fbb498f38f053b296a04b69a30b86366b39fa3f24a500989c703cb",
+              "schemaChars": 190,
+              "schemaHash": "2faefadc79486d32f5a59e4abef7de442bacf76cd1b91320dcca93416432ed42",
+              "propertiesCount": 2
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_explain",
+              "summaryChars": 188,
+              "summaryHash": "5ab096dd120aabd498fef4875fda1d10791dab0c640ef1d7fd57785dc73324d8",
+              "schemaChars": 140,
+              "schemaHash": "c7ea89787315cd138fd00ab26d07b76ff64b949dc66911c3f406694559575a45",
+              "propertiesCount": 2
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_readers",
+              "summaryChars": 209,
+              "summaryHash": "776291861db9200eefd9a730d48d415c86c7842c73a2bb888b1d4cf399dd3693",
+              "schemaChars": 158,
+              "schemaHash": "e174eb71ab68560da7b9f841dbdbfb3228280d37ef0208b00e68f11f22ae15b1",
+              "propertiesCount": 3
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_retrieve",
+              "summaryChars": 174,
+              "summaryHash": "21ac6096f60df49683ec6b51b0e44035b13d70aea23a4fedb45513fec8db6b96",
+              "schemaChars": 160,
+              "schemaHash": "0c09915c0ed0ee1e1c4586c31a6006e82419ed47d2a30775207f9fffb30c826e",
+              "propertiesCount": 2
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_status",
+              "summaryChars": 189,
+              "summaryHash": "7da05afc5133f6562194f78ecf0efa7e4c16eeff7accfd5501c25de0b0e586e0",
+              "schemaChars": 76,
+              "schemaHash": "ff1b2d8857c8e4a2cd87b566a798c5d1cd937fe8a13363e59a51231b4b328939",
+              "propertiesCount": 0
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_subtypes",
+              "summaryChars": 220,
+              "summaryHash": "06f4da1c16d3eb713495d40f2e8b297004a22328b19af21b9bdd91b4e98368da",
+              "schemaChars": 158,
+              "schemaHash": "e174eb71ab68560da7b9f841dbdbfb3228280d37ef0208b00e68f11f22ae15b1",
+              "propertiesCount": 3
+            },
+            {
+              "name": "zhihu-yanxuan-tmf__tmf_writers",
+              "summaryChars": 209,
+              "summaryHash": "025142f4160082ab0f7cd12b3031b4729412921781c2fd37f2d3f7e9e880edd1",
+              "schemaChars": 158,
+              "schemaHash": "e174eb71ab68560da7b9f841dbdbfb3228280d37ef0208b00e68f11f22ae15b1",
+              "propertiesCount": 3
+            }
+          ]
+        },
+        "currentTurn": {
+          "promptChars": 1280,
+          "runtimeContextChars": 0
+        }
+      },
+      "finalPromptText": "Repo: /root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type\nArm: TMF_MAP. No edits. Budget: 6 files, 700 source lines.\n\nOld note, maybe stale: booking publishes VisitBooked and vet module consumes VisitBooked to assign a vet.\n\nFirst check repo-local TMF freshness from /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0:\nPYTHONPATH=. python3 -c \"import json; from pathlib import Path; from tmf.store import Store; from tmf.git import GitRepo; from tmf.freshness import check_freshness; p=Path('/root/.openclaw/workspace/experiments/tmf-java-real-v3/petclinic-event-type'); g=GitRepo(p); print(json.dumps([{'id':c.id,'fresh':check_freshness(g,c).fresh,'stale_bindings':check_freshness(g,c).stale_bindings} for c in Store(p).iter_claims() if 'VisitBooked' in json.dumps(c.to_dict())],indent=2))\"\nThen reread current source minimally; do not trust stale output.\n\nTask: Answer:\n1) Is old note trusted or blocked?\n2) Current event type.\n3) Direct producer method, listener method, assignment consumer method.\n4) Smallest files to change if event payload adds required clinicRoomId.\nCite file:line ranges.\n\nEnd with exactly:\nMETRICS_JSON={\"source_files\":[...],\"source_lines\":0,\"tool_calls\":0,\"stale_trusted\":false,\"stale_blocked\":true,\"local_reread_lines\":0}",
+      "replayInvalid": true,
+      "livenessState": "working",
+      "timeoutPhase": "provider",
+      "providerStarted": true,
+      "toolSummary": {
+        "calls": 1,
+        "tools": [
+          "exec"
+        ],
+        "failures": 0
+      }
+    }
+  }
+}

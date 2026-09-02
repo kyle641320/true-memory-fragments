@@ -1,0 +1,95 @@
+{
+  "schema": "java_real_stale_v3_agent_eval",
+  "rows": [
+    {
+      "task_id": "RV3F01",
+      "arm": "SOURCE_ONLY",
+      "valid_transport": false,
+      "json_status": null,
+      "json_summary": null,
+      "exit_code": 124,
+      "timed_out": true,
+      "wall_seconds": 285.0096244812012,
+      "correct": false,
+      "citation_correct": false,
+      "citation_hits": {
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java": false,
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java": false,
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java": false,
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java": false
+      },
+      "stale_blocked": false,
+      "response_sha256": null
+    },
+    {
+      "task_id": "RV3F01",
+      "arm": "TMF_MAP",
+      "valid_transport": false,
+      "json_status": "timeout",
+      "json_summary": "aborted",
+      "exit_code": 0,
+      "timed_out": false,
+      "wall_seconds": 262.3564305305481,
+      "correct": false,
+      "citation_correct": false,
+      "citation_hits": {
+        "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java": false,
+        "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java": false,
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java": false,
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java": false
+      },
+      "stale_blocked": false,
+      "response_sha256": "c29ee6aa1fd94805cc5e9666485c91b72deb00cb3e2aa4183d70c69c47f9386d"
+    }
+  ],
+  "pairs": [
+    {
+      "task_id": "RV3F01",
+      "valid_pair": false,
+      "arms": {
+        "SOURCE_ONLY": {
+          "task_id": "RV3F01",
+          "arm": "SOURCE_ONLY",
+          "valid_transport": false,
+          "json_status": null,
+          "json_summary": null,
+          "exit_code": 124,
+          "timed_out": true,
+          "wall_seconds": 285.0096244812012,
+          "correct": false,
+          "citation_correct": false,
+          "citation_hits": {
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java": false,
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java": false,
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java": false,
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java": false
+          },
+          "stale_blocked": false,
+          "response_sha256": null
+        },
+        "TMF_MAP": {
+          "task_id": "RV3F01",
+          "arm": "TMF_MAP",
+          "valid_transport": false,
+          "json_status": "timeout",
+          "json_summary": "aborted",
+          "exit_code": 0,
+          "timed_out": false,
+          "wall_seconds": 262.3564305305481,
+          "correct": false,
+          "citation_correct": false,
+          "citation_hits": {
+            "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java": false,
+            "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java": false,
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java": false,
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java": false
+          },
+          "stale_blocked": false,
+          "response_sha256": "c29ee6aa1fd94805cc5e9666485c91b72deb00cb3e2aa4183d70c69c47f9386d"
+        }
+      }
+    }
+  ],
+  "valid_pairs": 0,
+  "superiority_claim": false
+}
