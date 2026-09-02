@@ -73,7 +73,7 @@ TMF has substantial bounded Java/Spring **source-analysis** validation: declarat
 | Reverse graph queries (readers/writers/callers/subtypes/implementors) | Proven on bounded mixed oracle; larger real-repo oracle pending | Strong for bounded fixture, Medium for real repos | `TMF_GRAPH_QUERY_ORACLE_20260902.md`: 6/6 cases, micro/macro precision/recall 1.000/1.000 across Python callers/readers/writers and Java subtypes/implementors. |
 | API/Config/YAML/SQL nodes | Partially proven | Medium | Unit and source-analysis evidence exists for selected adapters; not fully validated as multi-language product surface. |
 | Multi-language mixed repos / freshness | Proven on bounded Python+Java freshness oracle; larger real-repo validation pending | Strong for bounded fixture, Medium/Low for real repos | `TMF_MIXED_LANGUAGE_FRESHNESS_20260902.md`: 5/5 cases PASS; changed Python/Java symbols stale, unrelated Python/Java function/method claims remain fresh. Java class-level over-invalidation remains documented current behavior. |
-| Real long-running repo maintenance tasks | Not fully proven | Low/Medium | Some real Java evidence exists, but today's ROI pass is synthetic/bounded agent A/B fixtures. |
+| Real-repo agent A/B transfer | Baseline audited; stale-context transfer pending | Medium for baseline, Low for superiority | `TMF_REAL_REPO_AB_STATUS_20260902.md`: retained java_real_v2 real Petclinic/JHipster evidence has 17 valid arms, 6 ordinary pairs, 2 freshness pairs, pollution gate PASS 3/3, but shows no audited accuracy advantage and no latency advantage for TMF_MAP. New discriminating real-repo stale A/B still required. |
 | Runtime framework behavior | Not proven | Low | Source analysis does not certify Spring runtime, DI container behavior, database migration, or message broker runtime semantics. |
 | Release packaging / current HEAD preflight | Current HEAD local re-preflight passed; publication unreleased | Strong for local preflight, not publication | 2026-09-02 run passed Java qualifications, source-only smoke, 615 unittests, compileall, and diff check; no tag/upload authorized. |
 | Production CLI/MCP integration smoke | Bounded smoke passed; rollout playbooks pending | Strong for local CLI/MCP smoke, Medium for production ops | `TMF_PRODUCTION_INTEGRATION_SMOKE_20260902.md`: 15/15 checks PASS across CLI warm/retrieve/explain/callers, stale labeling, source fallback, MCP initialize/list/warm/retrieve/status, path traversal rejection, malformed JSON fail-closed, no traceback stderr. |
@@ -98,11 +98,12 @@ Not fair yet:
 
 ## 5. Minimal next validation to approach full capability coverage
 
-1. **Real-repo stale-context A/B gate**
-   - Use one existing real Java repo harness (`bench/agent_ab/java_real_v2/` or PetClinic-like flow).
-   - Force a stale architectural change across sessions.
-   - Compare SOURCE_ONLY vs TMF refreshed map with hidden tests.
-   - Success criterion: TMF improves semantic pass rate without over-reading or stale leakage.
+1. **Real-repo stale-context A/B gate — BASELINE AUDIT DONE 2026-09-02; TRANSFER STILL PENDING**
+   - Evidence: `TMF_REAL_REPO_AB_STATUS_20260902.md` over retained `bench/agent_ab/java_real_v2/`.
+   - Result: real-repo baseline evidence exists, but real-repo stale-context superiority is not proven.
+   - java_real_v2: 17 valid arms, 6 ordinary pairs, 2 freshness pairs, Petclinic/JHipster independent-store pollution gate PASS 3/3.
+   - Audited interpretation: no observed accuracy difference after correcting a lexical-rubric false negative; TMF_MAP did not show latency advantage; both freshness arms blocked stale memory; V2F02 failed in both arms.
+   - Remaining: run a new intentionally discriminating real-repo stale-context A/B across at least 2 real repos or 4 real-repo stale tasks before claiming transfer beyond bounded fixtures.
 
 2. **Graph query precision/recall gate — BOUNDED ORACLE DONE 2026-09-02**
    - Evidence: `TMF_GRAPH_QUERY_ORACLE_20260902.md` and `reports/graph-query-oracle-20260902.json`.
@@ -144,4 +145,4 @@ Recommended label for external/internal tracking:
 
 Reason:
 
-The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires real-repo stale A/B, larger real-repo graph oracle coverage, larger mixed-repo validation, and production rollout evidence.
+The strongest current result is not merely a demo: it is a product-level ROI pass for a precise segment, current HEAD passes local release re-preflight, reverse graph queries have a bounded mixed-language precision/recall oracle, mixed Python+Java freshness has a bounded oracle, and CLI/MCP production integration smoke passes locally. But full TMF capability validation still requires a new discriminating real-repo stale A/B, larger real-repo graph oracle coverage, larger mixed-repo validation, and production rollout evidence.
