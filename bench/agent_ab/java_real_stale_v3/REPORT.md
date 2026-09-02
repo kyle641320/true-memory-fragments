@@ -43,3 +43,12 @@ The prompts were shortened and `run_agents.py` was made timeout-safe. The rerun 
 - `RV3F01_TMF_MAP`: CLI exit 0 after ~262s, but agent JSON reported `status=timeout`, `summary=aborted`, `stopReason=rpc`, `timeoutPhase=provider`; payload was only the standard timeout message.
 
 `evaluate_agents.py` treats both as invalid transport, because valid payloads require CLI transport success **and** JSON `status=ok` / `summary=completed`. Current valid pairs: 0. No A/B superiority claim is made.
+
+## Push-based subagent rerun (2026-09-02 16:12)
+
+Because the CLI runner suffered provider/transport timeouts, RV3F01 was rerun through native push-based subagents. Result:
+
+- `SOURCE_ONLY`: completed and produced a valid answer. It blocked the stale `VisitBooked` note, identified current `VisitScheduled`, cited producer/listener/consumer files, and provided `METRICS_JSON` with `stale_blocked=true`. Evidence: `raw/subagent_RV3F01_SOURCE_ONLY.answer.txt`.
+- `TMF_MAP`: failed before final answer. It did execute the TMF freshness command and surfaced stale `VisitBooked`-relevant claims, but the subagent turn aborted before producing the required final response and metrics. Evidence: `raw/subagent_RV3F01_TMF_MAP.abort.json`.
+
+Scoring: `results/subagent_eval.json` records `valid_pairs=0`, `superiority_claim=false`, verdict `SUBAGENT_PAIR_INCOMPLETE__SOURCE_ONLY_VALID__TMF_MAP_ABORTED`. This is still a runtime/harness blocker, not evidence for or against TMF semantic value.

@@ -1,0 +1,52 @@
+{
+  "schema": "java_real_stale_v3_subagent_eval",
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY",
+      "valid_transport": true,
+      "subagent_status": "done",
+      "correct": true,
+      "response_sha256": "de126a1bc66a3f76600e24f850508c988ff821c54b06ab282f86838df3b1be8a",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        "source_lines": 413,
+        "tool_calls": 4,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 0
+      }
+    },
+    {
+      "arm": "TMF_MAP",
+      "valid_transport": false,
+      "subagent_status": "failed",
+      "correct": false,
+      "abort": {
+        "sessionKey": "agent:main:subagent:9d6792bd-b9bf-479d-bb65-f6075f786e7e",
+        "runId": "c9da3617-396e-4198-8257-952e99603709",
+        "taskName": "rv3f01_tmf_map",
+        "status": "failed",
+        "observed_runtime": "8m39s",
+        "reason": "subagent produced TMF freshness tool result then assistant turn aborted before final answer",
+        "freshness_check_observed": true,
+        "freshness_summary": {
+          "visitbooked_claims_total": 19,
+          "stale_claims_seen": 10,
+          "event_contract_relevant_stale_claims_expected_by_deterministic_eval": "5/5"
+        },
+        "valid_answer": false,
+        "scoreable": false
+      }
+    }
+  ],
+  "valid_pairs": 0,
+  "superiority_claim": false,
+  "verdict": "SUBAGENT_PAIR_INCOMPLETE__SOURCE_ONLY_VALID__TMF_MAP_ABORTED"
+}

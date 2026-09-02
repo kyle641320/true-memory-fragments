@@ -1,0 +1,29 @@
+1. **Old note: blocked, not trusted.**  
+   The behavioral outline still exists—booking publishes an event that reaches the vet-assignment flow—but the named event `VisitBooked` is stale. Current source uses `VisitScheduled` throughout:
+   - Public event declaration: `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:20-26`
+   - Producer import/publication: `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:18-30,44-50`
+   - Vet listener: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44`
+
+2. **Current event type:**  
+   `org.springframework.samples.petclinic.owner.VisitScheduled`, currently:
+   ```java
+   public record VisitScheduled(int visitId, int petId, LocalDate date)
+   ```
+   Citation: `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:16-26`.
+
+3. **Current call chain:**
+   - Direct producer method: `VisitScheduler.bookVisit(Owner, Integer, Visit)`; publishes `new VisitScheduled(...)` after persistence and flush.  
+     `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50`
+   - Listener method: `VetEventListener.on(VisitScheduled)` annotated `@ApplicationModuleListener`; delegates unchanged to the roster.  
+     `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44`
+   - Assignment consumer method: `VetRoster.assignVet(VisitScheduled)`; selects the least-loaded vet and saves the assignment.  
+     `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:54-74`
+
+4. **Smallest files to change for a required `clinicRoomId` event component:**
+   - `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java` — add the required record component (`:20-26`).
+   - `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java` — supply it at the sole `VisitScheduled` constructor call (`:44-50`).
+   - An upstream source must also be introduced because `Visit` currently contains only `id`, `date`, and `description` (`src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java:41-50,59-80`). The smallest explicit-input route is to extend `bookVisit(...)` and its controller call in `src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java:96-104`.
+   - `VetEventListener.java` needs no change because it receives and forwards the complete event object (`:41-44`).
+   - `VetRoster.java` only needs changing if room assignment must actually read/use `event.clinicRoomId()`; adding an otherwise unused record component does not require a compile-time consumer change (`:62-73`).
+
+METRICS_JSON={"source_files":["src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java","src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java","src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java","src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"],"source_lines":413,"tool_calls":4,"stale_trusted":false,"stale_blocked":true,"local_reread_lines":0}
