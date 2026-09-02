@@ -1,0 +1,629 @@
+{
+  "task_id": "ORDER_M21",
+  "arm": "SOURCE_ONLY",
+  "rep": 3,
+  "fixture_meta": {
+    "fixture": "synthetic bounded Maven order creation fulfillment-gate chain",
+    "phase_a": "PaymentIntentService.createIntent always returns CONFIRMED; createOrder reserves inventory, creates intent, marks READY, saves, and publishes ORDER_CREATED through FulfillmentPolicy.shouldPublishOrderCreated(order).",
+    "phase_b": "PaymentIntentService may return CONFIRMED or PENDING_REVIEW; pending review must persist as AWAITING_REVIEW and suppress ORDER_CREATED. The old shouldPublishOrderCreated gate remains compilable but is semantically unsafe unless combined with current payment/status checks; canStartFulfillment is the preferred current API, reported as an observation not a hard oracle requirement.",
+    "hidden_tests_visible_to_agent": false
+  },
+  "phase_a_orientation": {
+    "action": "orientation",
+    "summary": "OrderService.createOrder runs transactionally: reserves inventory first, creates and saves a CONFIRMED PaymentIntent, marks the order READY, saves the order, then conditionally publishes ORDER_CREATED with the order ID when FulfillmentPolicy allows. It returns the updated order; failures before completion occur within the transaction."
+  },
+  "phase_a_telemetry": {
+    "tool_calls": 5,
+    "source_reads": 3,
+    "source_bytes": 2520,
+    "source_files": [
+      "src/main/java/com/example/order/InventoryReservationService.java",
+      "src/main/java/com/example/order/OrderService.java",
+      "src/main/java/com/example/order/PaymentIntentService.java"
+    ],
+    "prompt_tokens": 4691,
+    "completion_tokens": 388,
+    "invalid": 0,
+    "edits_rejected": 0,
+    "compile_calls": 0
+  },
+  "phase_a_transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        },
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "pom.xml",
+              "src/main/java/com/example/order/FulfillmentPolicy.java",
+              "src/main/java/com/example/order/InventoryReservationRepository.java",
+              "src/main/java/com/example/order/InventoryReservationService.java",
+              "src/main/java/com/example/order/Order.java",
+              "src/main/java/com/example/order/OrderEventPublisher.java",
+              "src/main/java/com/example/order/OrderRepository.java",
+              "src/main/java/com/example/order/OrderService.java",
+              "src/main/java/com/example/order/OrderStatus.java",
+              "src/main/java/com/example/order/PaymentIntent.java",
+              "src/main/java/com/example/order/PaymentIntentRepository.java",
+              "src/main/java/com/example/order/PaymentIntentService.java",
+              "src/main/java/com/example/order/PaymentIntentStatus.java",
+              "src/main/java/com/example/order/Transactional.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"start\":1,\"end\":220}{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"start\":1,\"end\":220}{\"action\":\"search\",\"query\":\"createOrder\"}{\"action\":\"read_symbol\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"symbol\":\"OrderService\"}{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"start\":1,\"end\":220}{\"action\":\"orientation\",\"summary\":\"Order creation is coordinated by OrderService. After submission it persists the Order, creates a PaymentIntent through PaymentIntentService, reserves inventory through InventoryReservationService, applies FulfillmentPolicy, and publishes an order event via OrderEventPublisher; repository classes provide persistence for the order, payment intent, and inventory reservation records.\"}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "start": 1,
+          "end": 220
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "start": 1,
+          "end": 220
+        },
+        {
+          "action": "search",
+          "query": "createOrder"
+        },
+        {
+          "action": "read_symbol",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "symbol": "OrderService"
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "start": 1,
+          "end": 220
+        },
+        {
+          "action": "orientation",
+          "summary": "Order creation is coordinated by OrderService. After submission it persists the Order, creates a PaymentIntent through PaymentIntentService, reserves inventory through InventoryReservationService, applies FulfillmentPolicy, and publishes an order event via OrderEventPublisher; repository classes provide persistence for the order, payment intent, and inventory reservation records."
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "content": "1: package com.example.order;\n2: \n3: public class OrderService {\n4:     private final OrderRepository orderRepository;\n5:     private final InventoryReservationService inventoryReservationService;\n6:     private final PaymentIntentService paymentIntentService;\n7:     private final OrderEventPublisher eventPublisher;\n8:     private final FulfillmentPolicy fulfillmentPolicy;\n9: \n10:     public OrderService(OrderRepository orderRepository,\n11:                         InventoryReservationService inventoryReservationService,\n12:                         PaymentIntentService paymentIntentService,\n13:                         OrderEventPublisher eventPublisher,\n14:                         FulfillmentPolicy fulfillmentPolicy) {\n15:         this.orderRepository = orderRepository;\n16:         this.inventoryReservationService = inventoryReservationService;\n17:         this.paymentIntentService = paymentIntentService;\n18:         this.eventPublisher = eventPublisher;\n19:         this.fulfillmentPolicy = fulfillmentPolicy;\n20:     }\n21: \n22:     @Transactional\n23:     public Order createOrder(Order order) {\n24:         inventoryReservationService.reserveFor(order);\n25:         paymentIntentService.createIntent(order);\n26:         order.markReady();\n27:         orderRepository.save(order);\n28:         if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\n29:             eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n30:         }\n31:         return order;\n32:     }\n33: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_symbol\",\"path\":\"src/main/java/com/example/order/InventoryReservationService.java\",\"symbol\":\"InventoryReservationService\"}",
+      "actions": [
+        {
+          "action": "read_symbol",
+          "path": "src/main/java/com/example/order/InventoryReservationService.java",
+          "symbol": "InventoryReservationService"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "src/main/java/com/example/order/InventoryReservationService.java",
+            "symbol": "InventoryReservationService"
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/InventoryReservationService.java",
+            "symbol": "InventoryReservationService",
+            "content": "1: package com.example.order;\n2: \n3: public class InventoryReservationService {\n4:     private final InventoryReservationRepository repository;\n5: \n6:     public InventoryReservationService(InventoryReservationRepository repository) {\n7:         this.repository = repository;\n8:     }\n9: \n10:     public void reserveFor(Order order) {\n11:         repository.reserve(order.getSku(), order.getQuantity());\n12:     }\n13: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_symbol\",\"path\":\"src/main/java/com/example/order/PaymentIntentService.java\",\"symbol\":\"PaymentIntentService\"}",
+      "actions": [
+        {
+          "action": "read_symbol",
+          "path": "src/main/java/com/example/order/PaymentIntentService.java",
+          "symbol": "PaymentIntentService"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_symbol",
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "symbol": "PaymentIntentService"
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "symbol": "PaymentIntentService",
+            "content": "1: package com.example.order;\n2: \n3: public class PaymentIntentService {\n4:     private final PaymentIntentRepository repository;\n5: \n6:     public PaymentIntentService(PaymentIntentRepository repository) {\n7:         this.repository = repository;\n8:     }\n9: \n10:     /**\n11:      * Creates the checkout intent. In this contract all created intents are final.\n12:      */\n13:     public PaymentIntent createIntent(Order order) {\n14:         PaymentIntent intent = new PaymentIntent(order.getId(), PaymentIntentStatus.CONFIRMED);\n15:         repository.save(intent);\n16:         return intent;\n17:     }\n18: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"orientation\",\"summary\":\"OrderService.createOrder runs transactionally: reserves inventory first, creates and saves a CONFIRMED PaymentIntent, marks the order READY, saves the order, then conditionally publishes ORDER_CREATED with the order ID when FulfillmentPolicy allows. It returns the updated order; failures before completion occur within the transaction.\"}",
+      "actions": [
+        {
+          "action": "orientation",
+          "summary": "OrderService.createOrder runs transactionally: reserves inventory first, creates and saves a CONFIRMED PaymentIntent, marks the order READY, saves the order, then conditionally publishes ORDER_CREATED with the order ID when FulfillmentPolicy allows. It returns the updated order; failures before completion occur within the transaction."
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "orientation",
+            "summary": "OrderService.createOrder runs transactionally: reserves inventory first, creates and saves a CONFIRMED PaymentIntent, marks the order READY, saves the order, then conditionally publishes ORDER_CREATED with the order ID when FulfillmentPolicy allows. It returns the updated order; failures before completion occur within the transaction."
+          },
+          "tool_output": {
+            "ok": true
+          }
+        }
+      ]
+    }
+  ],
+  "phase_a_old_source_excerpt": "package com.example.order;\n\npublic class OrderService {\n    private final OrderRepository orderRepository;\n    private final InventoryReservationService inventoryReservationService;\n    private final PaymentIntentService paymentIntentService;\n    private final OrderEventPublisher eventPublisher;\n    private final FulfillmentPolicy fulfillmentPolicy;\n\n    public OrderService(OrderRepository orderRepository,\n                        InventoryReservationService inventoryReservationService,\n                        PaymentIntentService paymentIntentService,\n                        OrderEventPublisher eventPublisher,\n                        FulfillmentPolicy fulfillmentPolicy) {\n        this.orderRepository = orderRepository;\n        this.inventoryReservationService = inventoryReservationService;\n        this.paymentIntentService = paymentIntentService;\n        this.eventPublisher = eventPublisher;\n        this.fulfillmentPolicy = fulfillmentPolicy;\n    }\n\n    @Transactional\n    public Order createOrder(Order order) {\n        inventoryReservationService.reserveFor(order);\n        paymentIntentService.createIntent(order);\n        order.markReady();\n        orderRepository.save(order);\n        if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\n            eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n        }\n        return order;\n    }\n}\n",
+  "hidden_oracle_visible_to_agent": false,
+  "compile_action_runs_tests": false,
+  "stale_claim_present": false,
+  "stale_claim_fresh": false,
+  "stale_claim_withheld": false,
+  "withheld_claim_id": null,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "创建订单时仅在支付意图确认后标记为可履约；复核中的订单进入等待复核状态，不发布履约事件。",
+    "files": [
+      "src/main/java/com/example/order/OrderService.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 10,
+    "source_bytes": 4325,
+    "source_reads": 5,
+    "source_files": [
+      "src/main/java/com/example/order/FulfillmentPolicy.java",
+      "src/main/java/com/example/order/Order.java",
+      "src/main/java/com/example/order/OrderService.java",
+      "src/main/java/com/example/order/PaymentIntent.java",
+      "src/main/java/com/example/order/PaymentIntentService.java"
+    ],
+    "prompt_tokens": 17549,
+    "completion_tokens": 701,
+    "invalid": 0,
+    "wall_seconds": 59.781,
+    "successful_edits": 1,
+    "successful_compile": true,
+    "rejected_finals": 1,
+    "post_edit_rejected_non_compile": 0,
+    "post_compile_rejected_non_final": 0,
+    "extra_actions_ignored": 8,
+    "compile_calls": 1
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "branches_on_payment_status": true,
+      "marks_awaiting_review": true,
+      "marks_ready": true,
+      "publishes_order_created": true,
+      "conditional_publish_after_status": true,
+      "uses_current_fulfillment_policy": true,
+      "uses_stale_policy_gate": false,
+      "visible_tests_present": false
+    },
+    "test": {
+      "ok": true,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "src/main/java/com/example/order/OrderService.java": "--- a/src/main/java/com/example/order/OrderService.java\n+++ b/src/main/java/com/example/order/OrderService.java\n@@ -22,10 +22,14 @@\n     @Transactional\n     public Order createOrder(Order order) {\n         inventoryReservationService.reserveFor(order);\n-        paymentIntentService.createIntent(order);\n-        order.markReady();\n+        PaymentIntent paymentIntent = paymentIntentService.createIntent(order);\n+        if (paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED) {\n+            order.markReady();\n+        } else {\n+            order.markAwaitingReview();\n+        }\n         orderRepository.save(order);\n-        if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\n+        if (fulfillmentPolicy.canStartFulfillment(order, paymentIntent)) {\n             eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n         }\n         return order;"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "hidden_oracle_ok": true,
+    "trap_pass": true,
+    "semantic_pass": true,
+    "trap_reason": {
+      "branches_on_payment_status": true,
+      "marks_awaiting_review": true,
+      "marks_ready": true,
+      "publishes_order_created": true,
+      "conditional_publish_after_status": true,
+      "uses_current_fulfillment_policy": true,
+      "uses_stale_policy_gate": false,
+      "visible_tests_present": false,
+      "post_message": "PASS"
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "pom.xml",
+              "src/main/java/com/example/order/FulfillmentPolicy.java",
+              "src/main/java/com/example/order/InventoryReservationRepository.java",
+              "src/main/java/com/example/order/InventoryReservationService.java",
+              "src/main/java/com/example/order/Order.java",
+              "src/main/java/com/example/order/OrderEventPublisher.java",
+              "src/main/java/com/example/order/OrderRepository.java",
+              "src/main/java/com/example/order/OrderService.java",
+              "src/main/java/com/example/order/OrderStatus.java",
+              "src/main/java/com/example/order/PaymentIntent.java",
+              "src/main/java/com/example/order/PaymentIntentRepository.java",
+              "src/main/java/com/example/order/PaymentIntentService.java",
+              "src/main/java/com/example/order/PaymentIntentStatus.java",
+              "src/main/java/com/example/order/Transactional.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"start\":1,\"end\":260}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "start": 1,
+          "end": 260
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "start": 1,
+            "end": 260
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "content": "1: package com.example.order;\n2: \n3: public class OrderService {\n4:     private final OrderRepository orderRepository;\n5:     private final InventoryReservationService inventoryReservationService;\n6:     private final PaymentIntentService paymentIntentService;\n7:     private final OrderEventPublisher eventPublisher;\n8:     private final FulfillmentPolicy fulfillmentPolicy;\n9: \n10:     public OrderService(OrderRepository orderRepository,\n11:                         InventoryReservationService inventoryReservationService,\n12:                         PaymentIntentService paymentIntentService,\n13:                         OrderEventPublisher eventPublisher,\n14:                         FulfillmentPolicy fulfillmentPolicy) {\n15:         this.orderRepository = orderRepository;\n16:         this.inventoryReservationService = inventoryReservationService;\n17:         this.paymentIntentService = paymentIntentService;\n18:         this.eventPublisher = eventPublisher;\n19:         this.fulfillmentPolicy = fulfillmentPolicy;\n20:     }\n21: \n22:     @Transactional\n23:     public Order createOrder(Order order) {\n24:         inventoryReservationService.reserveFor(order);\n25:         paymentIntentService.createIntent(order);\n26:         order.markReady();\n27:         orderRepository.save(order);\n28:         if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\n29:             eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n30:         }\n31:         return order;\n32:     }\n33: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/PaymentIntentService.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/PaymentIntentService.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "content": "1: package com.example.order;\n2: \n3: public class PaymentIntentService {\n4:     private final PaymentIntentRepository repository;\n5: \n6:     public PaymentIntentService(PaymentIntentRepository repository) {\n7:         this.repository = repository;\n8:     }\n9: \n10:     /**\n11:      * Creates the checkout intent. Risk review can leave the intent not final yet.\n12:      */\n13:     public PaymentIntent createIntent(Order order) {\n14:         PaymentIntentStatus status = requiresManualReview(order)\n15:                 ? PaymentIntentStatus.PENDING_REVIEW\n16:                 : PaymentIntentStatus.CONFIRMED;\n17:         PaymentIntent intent = new PaymentIntent(order.getId(), status);\n18:         repository.save(intent);\n19:         return intent;\n20:     }\n21: \n22:     private boolean requiresManualReview(Order order) {\n23:         return order.getCustomerId() < 0;\n24:     }\n25: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/FulfillmentPolicy.java\",\"start\":1,\"end\":180}\n{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/Order.java\",\"start\":1,\"end\":220}\n{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/FulfillmentPolicy.java\",\"start\":1,\"end\":180}\n{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/Order.java\",\"start\":1,\"end\":220}\n{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/PaymentIntent.java\",\"start\":1,\"end\":160}\n{\"action\":\"search\",\"query\":\"getStatus\"}\n{\"action\":\"edit\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"old\":\"        paymentIntentService.createIntent(order);\\n        order.markReady();\\n        orderRepository.save(order);\",\"new\":\"        PaymentIntent paymentIntent = paymentIntentService.createIntent(order);\\n        if (paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED) {\\n            order.markReady();\\n        }\\n        orderRepository.save(order);\"}\n{\"action\":\"compile\"}\n{\"action\":\"final\",\"answer\":\"创建订单时仅在支付意图确认后将订单标记为可履约，复核中的支付意图不会触发履约链路。\",\"files\":[\"src/main/java/com/example/order/OrderService.java\"]}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/FulfillmentPolicy.java",
+          "start": 1,
+          "end": 180
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/Order.java",
+          "start": 1,
+          "end": 220
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/FulfillmentPolicy.java",
+          "start": 1,
+          "end": 180
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/Order.java",
+          "start": 1,
+          "end": 220
+        },
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/PaymentIntent.java",
+          "start": 1,
+          "end": 160
+        },
+        {
+          "action": "search",
+          "query": "getStatus"
+        },
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "old": "        paymentIntentService.createIntent(order);\n        order.markReady();\n        orderRepository.save(order);",
+          "new": "        PaymentIntent paymentIntent = paymentIntentService.createIntent(order);\n        if (paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED) {\n            order.markReady();\n        }\n        orderRepository.save(order);"
+        },
+        {
+          "action": "compile"
+        },
+        {
+          "action": "final",
+          "answer": "创建订单时仅在支付意图确认后将订单标记为可履约，复核中的支付意图不会触发履约链路。",
+          "files": [
+            "src/main/java/com/example/order/OrderService.java"
+          ]
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/FulfillmentPolicy.java",
+            "start": 1,
+            "end": 180
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/FulfillmentPolicy.java",
+            "content": "1: package com.example.order;\n2: \n3: public class FulfillmentPolicy {\n4:     /** Deprecated compatibility method. Still returns true for old callers, but no longer gates fulfillment safely. */\n5:     public boolean shouldPublishOrderCreated(Order order) {\n6:         return true;\n7:     }\n8: \n9:     /** Current contract: only confirmed payment intents may start fulfillment. */\n10:     public boolean canStartFulfillment(Order order, PaymentIntent paymentIntent) {\n11:         return paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED && order.getStatus() == OrderStatus.READY;\n12:     }\n13: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"final\",\"answer\":\"创建订单时仅在支付意图确认后将订单标记为可履约，复核中的支付意图不会触发履约链路。\",\"files\":[\"src/main/java/com/example/order/OrderService.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "创建订单时仅在支付意图确认后将订单标记为可履约，复核中的支付意图不会触发履约链路。",
+          "files": [
+            "src/main/java/com/example/order/OrderService.java"
+          ]
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "final",
+            "answer": "创建订单时仅在支付意图确认后将订单标记为可履约，复核中的支付意图不会触发履约链路。",
+            "files": [
+              "src/main/java/com/example/order/OrderService.java"
+            ]
+          },
+          "tool_output": {
+            "error": "final rejected: no successful edit"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/Order.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/Order.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/Order.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/Order.java",
+            "content": "1: package com.example.order;\n2: \n3: public final class Order {\n4:     private final long id;\n5:     private final String sku;\n6:     private final int quantity;\n7:     private final long customerId;\n8:     private OrderStatus status = OrderStatus.DRAFT;\n9: \n10:     public Order(long id, String sku, int quantity, long customerId) {\n11:         this.id = id;\n12:         this.sku = sku;\n13:         this.quantity = quantity;\n14:         this.customerId = customerId;\n15:     }\n16: \n17:     public long getId() { return id; }\n18:     public String getSku() { return sku; }\n19:     public int getQuantity() { return quantity; }\n20:     public long getCustomerId() { return customerId; }\n21:     public OrderStatus getStatus() { return status; }\n22:     public void markReady() { this.status = OrderStatus.READY; }\n23:     public void markAwaitingReview() { this.status = OrderStatus.AWAITING_REVIEW; }\n24: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/PaymentIntent.java\",\"start\":1,\"end\":160}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/PaymentIntent.java",
+          "start": 1,
+          "end": 160
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/PaymentIntent.java",
+            "start": 1,
+            "end": 160
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/PaymentIntent.java",
+            "content": "1: package com.example.order;\n2: \n3: public final class PaymentIntent {\n4:     private final long orderId;\n5:     private final PaymentIntentStatus status;\n6: \n7:     public PaymentIntent(long orderId, PaymentIntentStatus status) {\n8:         this.orderId = orderId;\n9:         this.status = status;\n10:     }\n11: \n12:     public long getOrderId() { return orderId; }\n13:     public PaymentIntentStatus getStatus() { return status; }\n14: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"old\":\"        inventoryReservationService.reserveFor(order);\\n        paymentIntentService.createIntent(order);\\n        order.markReady();\\n        orderRepository.save(order);\\n        if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\\n            eventPublisher.publish(\\\"ORDER_CREATED\\\", order.getId());\\n        }\",\"new\":\"        inventoryReservationService.reserveFor(order);\\n        PaymentIntent paymentIntent = paymentIntentService.createIntent(order);\\n        if (paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED) {\\n            order.markReady();\\n        } else {\\n            order.markAwaitingReview();\\n        }\\n        orderRepository.save(order);\\n        if (fulfillmentPolicy.canStartFulfillment(order, paymentIntent)) {\\n            eventPublisher.publish(\\\"ORDER_CREATED\\\", order.getId());\\n        }\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "old": "        inventoryReservationService.reserveFor(order);\n        paymentIntentService.createIntent(order);\n        order.markReady();\n        orderRepository.save(order);\n        if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\n            eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n        }",
+          "new": "        inventoryReservationService.reserveFor(order);\n        PaymentIntent paymentIntent = paymentIntentService.createIntent(order);\n        if (paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED) {\n            order.markReady();\n        } else {\n            order.markAwaitingReview();\n        }\n        orderRepository.save(order);\n        if (fulfillmentPolicy.canStartFulfillment(order, paymentIntent)) {\n            eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n        }"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "old": "        inventoryReservationService.reserveFor(order);\n        paymentIntentService.createIntent(order);\n        order.markReady();\n        orderRepository.save(order);\n        if (fulfillmentPolicy.shouldPublishOrderCreated(order)) {\n            eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n        }",
+            "new": "        inventoryReservationService.reserveFor(order);\n        PaymentIntent paymentIntent = paymentIntentService.createIntent(order);\n        if (paymentIntent.getStatus() == PaymentIntentStatus.CONFIRMED) {\n            order.markReady();\n        } else {\n            order.markAwaitingReview();\n        }\n        orderRepository.save(order);\n        if (fulfillmentPolicy.canStartFulfillment(order, paymentIntent)) {\n            eventPublisher.publish(\"ORDER_CREATED\", order.getId());\n        }"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "bytes": 496
+          }
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 9,
+      "raw": "{\"action\":\"final\",\"answer\":\"创建订单时仅在支付意图确认后标记为可履约；复核中的订单进入等待复核状态，不发布履约事件。\",\"files\":[\"src/main/java/com/example/order/OrderService.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "创建订单时仅在支付意图确认后标记为可履约；复核中的订单进入等待复核状态，不发布履约事件。",
+          "files": [
+            "src/main/java/com/example/order/OrderService.java"
+          ]
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "final",
+            "answer": "创建订单时仅在支付意图确认后标记为可履约；复核中的订单进入等待复核状态，不发布履约事件。",
+            "files": [
+              "src/main/java/com/example/order/OrderService.java"
+            ]
+          },
+          "tool_output": {
+            "ok": true
+          }
+        }
+      ]
+    }
+  ],
+  "final_gate": "hard",
+  "phase_a_max_turns": 6,
+  "phase_b_max_turns": 24,
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [
+      "pass"
+    ],
+    "edit_errors": [],
+    "compile_action": {
+      "calls": 1,
+      "successes": 1,
+      "ok": true,
+      "failures": []
+    },
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [
+      {
+        "turn": 4,
+        "action": "final",
+        "error": "final rejected: no successful edit"
+      }
+    ],
+    "has_final": true,
+    "has_diff": true,
+    "hidden_oracle_ok": true,
+    "semantic_ok": true,
+    "extra_actions_ignored": 8,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true,
+    "compile_action_ok": true
+  }
+}

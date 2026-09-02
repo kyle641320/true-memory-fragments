@@ -1,0 +1,780 @@
+{
+  "schema": "tmf_direct_refresh_oracle_eval_v1",
+  "summary": {
+    "cases": 3,
+    "pass": 3,
+    "stale_withheld": 3,
+    "avg_required_precision": 0.5397,
+    "avg_tiered_useful_precision": 0.9444,
+    "avg_required_recall": 1.0,
+    "avg_side_effect_recall": 1.0
+  },
+  "rows": [
+    {
+      "case": "M15",
+      "claim_fresh": false,
+      "stale_bindings": [
+        "derivation version mismatch: java stored=None current='java.derive.v8'",
+        "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+      ],
+      "stale_claim_withheld": true,
+      "required_count": 6,
+      "expected_required": [
+        "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publishAfterCommit",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder"
+      ],
+      "required_reads": [
+        "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publish",
+        "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publishAfterCommit",
+        "src/main/java/com/example/order/Order.java::Order.getId",
+        "src/main/java/com/example/order/OrderRepository.java::OrderRepository.save",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/OrderService.java::OrderService.persistAndPublish"
+      ],
+      "tp_required": [
+        "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publishAfterCommit",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder"
+      ],
+      "missing_required": [],
+      "extra_required": [
+        "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publish",
+        "src/main/java/com/example/order/Order.java::Order.getId",
+        "src/main/java/com/example/order/OrderRepository.java::OrderRepository.save",
+        "src/main/java/com/example/order/OrderService.java::OrderService.persistAndPublish"
+      ],
+      "safe_extra_required": [
+        "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publish",
+        "src/main/java/com/example/order/OrderRepository.java::OrderRepository.save",
+        "src/main/java/com/example/order/OrderService.java::OrderService.persistAndPublish"
+      ],
+      "noise_extra_required": [],
+      "unclassified_extra_required": [
+        "src/main/java/com/example/order/Order.java::Order.getId"
+      ],
+      "required_precision": 0.3333,
+      "tiered_useful_precision": 0.8333,
+      "required_recall": 1.0,
+      "side_effect_kinds": [
+        "event_publish",
+        "persistence"
+      ],
+      "expected_side_effect_kinds": [
+        "event_publish",
+        "persistence"
+      ],
+      "side_effect_recall": 1.0,
+      "pass": true,
+      "plan": {
+        "mode": "task_relevant_stale_slice",
+        "claim_id": "outbox_m15:old:OrderService.createOrder",
+        "claim_fresh": false,
+        "stale_claim_withheld": true,
+        "principle": "A stale binding invalidates only its bound node/edge endpoint. Retain bindings/endpoints whose current signature/hash still matches; refresh by patching the stale slice, not by rebuilding the whole graph.",
+        "stale_bindings": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 12,
+            "line_end": 16,
+            "hash_kind": "java_node_hash",
+            "stored_file_blob_prefix": "608e3aadd069",
+            "current_file_blob_prefix": "cb32b2bce8bd",
+            "stored_node_hash_prefix": "049e276aa23e",
+            "status": "stale",
+            "reason": "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing",
+            "binding": {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "file_blob": "608e3aadd06951b51f6803dc28c20fdbf74f6691",
+              "fn_hash": "049e276aa23e0d820ea8fe91290a2c00a3c5fd5b88f10728adbb14be9cd2a2c2",
+              "commit": null,
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 12,
+              "line_end": 16,
+              "hash_kind": "java_node_hash"
+            }
+          }
+        ],
+        "retained_fresh_bindings": [],
+        "required_reads": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 12,
+            "line_end": 16,
+            "required": true,
+            "reason": "stale binding: refresh this source-bound node/signature only",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.persistAndPublish",
+            "role": "current_source_symbol",
+            "line_start": 17,
+            "line_end": 20,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "qualname": "EventPublisher.publish",
+            "role": "current_source_symbol",
+            "line_start": 8,
+            "line_end": 8,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "qualname": "EventPublisher.publishAfterCommit",
+            "role": "current_source_symbol",
+            "line_start": 10,
+            "line_end": 10,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderRepository.java",
+            "qualname": "OrderRepository.save",
+            "role": "current_source_symbol",
+            "line_start": 4,
+            "line_end": 4,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/Order.java",
+            "qualname": "Order.getId",
+            "role": "current_source_symbol",
+            "line_start": 6,
+            "line_end": 6,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          }
+        ],
+        "optional_fresh_neighbors": [],
+        "side_effect_checks": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.persistAndPublish",
+            "line": 18,
+            "kind": "persistence",
+            "source": "repository.save(order);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.persistAndPublish",
+            "line": 19,
+            "kind": "event_publish",
+            "source": "publisher.publish(\"ORDER_CREATED:\" + order.getId());",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+            "must_resolve_before_edit": true
+          },
+          {
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "qualname": "EventPublisher.publish",
+            "line": 8,
+            "kind": "event_publish",
+            "source": "void publish(String event);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+            "must_resolve_before_edit": true
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderRepository.java",
+            "qualname": "OrderRepository.save",
+            "line": 4,
+            "kind": "persistence",
+            "source": "void save(Order order);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          }
+        ],
+        "stop_rule": "Read each required stale node once. Resolve each must_resolve side-effect check (publish/save/status guard and ordering). Use retained fresh bindings and fresh one-hop neighbors as context. If those facts answer the task, stop searching and edit the smallest affected source block.",
+        "do_not_expand_to": [
+          "whole repository",
+          "whole package",
+          "all files sharing the stale file blob",
+          "full graph rebuild"
+        ],
+        "task_terms": [
+          "and",
+          "await",
+          "awaiting",
+          "boundary",
+          "call",
+          "calls",
+          "clas",
+          "class",
+          "com",
+          "confirm",
+          "confirmed",
+          "creat",
+          "create",
+          "created",
+          "createord",
+          "createorder",
+          "creation",
+          "deterministic",
+          "direct",
+          "eval",
+          "event",
+          "eventpublish",
+          "eventpublisher",
+          "example",
+          "final",
+          "get",
+          "getid",
+          "immediate",
+          "intent",
+          "known",
+          "old",
+          "oracle"
+        ],
+        "coverage": "partial"
+      }
+    },
+    {
+      "case": "M16",
+      "claim_fresh": false,
+      "stale_bindings": [
+        "derivation version mismatch: java stored=None current='java.derive.v8'"
+      ],
+      "stale_claim_withheld": true,
+      "required_count": 7,
+      "expected_required": [
+        "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+      ],
+      "required_reads": [
+        "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+        "src/main/java/com/example/order/PaymentIntentRepository.java::PaymentIntentRepository.save",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+      ],
+      "tp_required": [
+        "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+      ],
+      "missing_required": [],
+      "extra_required": [
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+        "src/main/java/com/example/order/PaymentIntentRepository.java::PaymentIntentRepository.save",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+      ],
+      "safe_extra_required": [
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+        "src/main/java/com/example/order/PaymentIntentRepository.java::PaymentIntentRepository.save",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+      ],
+      "noise_extra_required": [],
+      "unclassified_extra_required": [],
+      "required_precision": 0.5714,
+      "tiered_useful_precision": 1.0,
+      "required_recall": 1.0,
+      "side_effect_kinds": [
+        "event_publish",
+        "persistence",
+        "state_transition"
+      ],
+      "expected_side_effect_kinds": [
+        "event_publish",
+        "persistence",
+        "state_transition"
+      ],
+      "side_effect_recall": 1.0,
+      "pass": true,
+      "plan": {
+        "mode": "task_relevant_stale_slice",
+        "claim_id": "order_m16:old:OrderService.createOrder",
+        "claim_fresh": false,
+        "stale_claim_withheld": true,
+        "principle": "A stale binding invalidates only its bound node/edge endpoint. Retain bindings/endpoints whose current signature/hash still matches; refresh by patching the stale slice, not by rebuilding the whole graph.",
+        "stale_bindings": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 19,
+            "line_end": 27,
+            "hash_kind": "java_node_hash",
+            "stored_file_blob_prefix": "0fd67ee774eb",
+            "current_file_blob_prefix": "0fd67ee774eb",
+            "stored_node_hash_prefix": "04609d64e4b7",
+            "status": "fresh",
+            "reason": "file_blob match; bound node hash retained",
+            "binding": {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "file_blob": "0fd67ee774eb742e55bef0749c19bbc95fd0e994",
+              "fn_hash": "04609d64e4b76aaf7179088736131f3abc66fe620a755d5967092e74776701ee",
+              "commit": null,
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 19,
+              "line_end": 27,
+              "hash_kind": "java_node_hash"
+            }
+          }
+        ],
+        "retained_fresh_bindings": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 19,
+            "line_end": 27,
+            "required": false,
+            "reason": "binding still fresh by current signature/hash; retain, do not reread unless task evidence is missing",
+            "preferred_action": "read_symbol"
+          }
+        ],
+        "required_reads": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 19,
+            "line_end": 27,
+            "required": true,
+            "reason": "stale binding: refresh this source-bound node/signature only",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "qualname": "PaymentIntentService.requiresManualReview",
+            "role": "current_source_symbol",
+            "line_start": 22,
+            "line_end": 24,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/Order.java",
+            "qualname": "Order.markAwaitingReview",
+            "role": "current_source_symbol",
+            "line_start": 23,
+            "line_end": 23,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "qualname": "PaymentIntentService.createIntent",
+            "role": "current_source_symbol",
+            "line_start": 13,
+            "line_end": 20,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntent.java",
+            "qualname": "PaymentIntent.getOrderId",
+            "role": "current_source_symbol",
+            "line_start": 12,
+            "line_end": 12,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntent.java",
+            "qualname": "PaymentIntent.getStatus",
+            "role": "current_source_symbol",
+            "line_start": 13,
+            "line_end": 13,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentRepository.java",
+            "qualname": "PaymentIntentRepository.save",
+            "role": "current_source_symbol",
+            "line_start": 4,
+            "line_end": 4,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          }
+        ],
+        "optional_fresh_neighbors": [],
+        "side_effect_checks": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "line": 23,
+            "kind": "state_transition",
+            "source": "order.markReady();",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": true
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "line": 24,
+            "kind": "persistence",
+            "source": "orderRepository.save(order);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "line": 25,
+            "kind": "event_publish",
+            "source": "eventPublisher.publish(\"ORDER_CREATED\", order.getId());",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+            "must_resolve_before_edit": true
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "qualname": "PaymentIntentService.createIntent",
+            "line": 18,
+            "kind": "persistence",
+            "source": "repository.save(intent);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentRepository.java",
+            "qualname": "PaymentIntentRepository.save",
+            "line": 4,
+            "kind": "persistence",
+            "source": "void save(PaymentIntent paymentIntent);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          }
+        ],
+        "stop_rule": "Read each required stale node once. Resolve each must_resolve side-effect check (publish/save/status guard and ordering). Use retained fresh bindings and fresh one-hop neighbors as context. If those facts answer the task, stop searching and edit the smallest affected source block.",
+        "do_not_expand_to": [
+          "whole repository",
+          "whole package",
+          "all files sharing the stale file blob",
+          "full graph rebuild"
+        ],
+        "task_terms": [
+          "and",
+          "await",
+          "awaiting",
+          "call",
+          "calls",
+          "chain",
+          "clas",
+          "class",
+          "com",
+          "confirm",
+          "confirmed",
+          "creat",
+          "create",
+          "created",
+          "createintent",
+          "createord",
+          "createorder",
+          "creation",
+          "deterministic",
+          "direct",
+          "eval",
+          "event",
+          "eventpublish",
+          "eventpublisher",
+          "example",
+          "final",
+          "for",
+          "get",
+          "getid",
+          "immediately",
+          "intent",
+          "inventory"
+        ],
+        "coverage": "partial"
+      }
+    },
+    {
+      "case": "M21",
+      "claim_fresh": false,
+      "stale_bindings": [
+        "derivation version mismatch: java stored=None current='java.derive.v8'"
+      ],
+      "stale_claim_withheld": true,
+      "required_count": 7,
+      "expected_required": [
+        "src/main/java/com/example/order/FulfillmentPolicy.java::FulfillmentPolicy.shouldPublishOrderCreated",
+        "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+      ],
+      "required_reads": [
+        "src/main/java/com/example/order/FulfillmentPolicy.java::FulfillmentPolicy.shouldPublishOrderCreated",
+        "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+      ],
+      "tp_required": [
+        "src/main/java/com/example/order/FulfillmentPolicy.java::FulfillmentPolicy.shouldPublishOrderCreated",
+        "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+        "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+      ],
+      "missing_required": [],
+      "extra_required": [
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+      ],
+      "safe_extra_required": [
+        "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+        "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+      ],
+      "noise_extra_required": [],
+      "unclassified_extra_required": [],
+      "required_precision": 0.7143,
+      "tiered_useful_precision": 1.0,
+      "required_recall": 1.0,
+      "side_effect_kinds": [
+        "event_publish",
+        "persistence",
+        "state_transition"
+      ],
+      "expected_side_effect_kinds": [
+        "event_publish",
+        "persistence",
+        "state_transition"
+      ],
+      "side_effect_recall": 1.0,
+      "pass": true,
+      "plan": {
+        "mode": "task_relevant_stale_slice",
+        "claim_id": "order_m21:old:OrderService.createOrder",
+        "claim_fresh": false,
+        "stale_claim_withheld": true,
+        "principle": "A stale binding invalidates only its bound node/edge endpoint. Retain bindings/endpoints whose current signature/hash still matches; refresh by patching the stale slice, not by rebuilding the whole graph.",
+        "stale_bindings": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 22,
+            "line_end": 32,
+            "hash_kind": "java_node_hash",
+            "stored_file_blob_prefix": "f5b905a1eddb",
+            "current_file_blob_prefix": "f5b905a1eddb",
+            "stored_node_hash_prefix": "65aea69e10dc",
+            "status": "fresh",
+            "reason": "file_blob match; bound node hash retained",
+            "binding": {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "file_blob": "f5b905a1eddb408f7d6b11b618fd6b5c229a6739",
+              "fn_hash": "65aea69e10dcd7cde158ae7eefefa4ff8cddc256cbd3dc1f0092e758f064c193",
+              "commit": null,
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 22,
+              "line_end": 32,
+              "hash_kind": "java_node_hash"
+            }
+          }
+        ],
+        "retained_fresh_bindings": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 22,
+            "line_end": 32,
+            "required": false,
+            "reason": "binding still fresh by current signature/hash; retain, do not reread unless task evidence is missing",
+            "preferred_action": "read_symbol"
+          }
+        ],
+        "required_reads": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "role": "method",
+            "line_start": 22,
+            "line_end": 32,
+            "required": true,
+            "reason": "stale binding: refresh this source-bound node/signature only",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "qualname": "PaymentIntentService.requiresManualReview",
+            "role": "current_source_symbol",
+            "line_start": 22,
+            "line_end": 24,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/Order.java",
+            "qualname": "Order.markAwaitingReview",
+            "role": "current_source_symbol",
+            "line_start": 23,
+            "line_end": 23,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "qualname": "PaymentIntentService.createIntent",
+            "role": "current_source_symbol",
+            "line_start": 13,
+            "line_end": 20,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/FulfillmentPolicy.java",
+            "qualname": "FulfillmentPolicy.shouldPublishOrderCreated",
+            "role": "current_source_symbol",
+            "line_start": 5,
+            "line_end": 7,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntent.java",
+            "qualname": "PaymentIntent.getOrderId",
+            "role": "current_source_symbol",
+            "line_start": 12,
+            "line_end": 12,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntent.java",
+            "qualname": "PaymentIntent.getStatus",
+            "role": "current_source_symbol",
+            "line_start": 13,
+            "line_end": 13,
+            "required": true,
+            "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+            "preferred_action": "read_symbol"
+          }
+        ],
+        "optional_fresh_neighbors": [],
+        "side_effect_checks": [
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "line": 26,
+            "kind": "state_transition",
+            "source": "order.markReady();",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": true
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "line": 27,
+            "kind": "persistence",
+            "source": "orderRepository.save(order);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          },
+          {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "qualname": "OrderService.createOrder",
+            "line": 29,
+            "kind": "event_publish",
+            "source": "eventPublisher.publish(\"ORDER_CREATED\", order.getId());",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+            "must_resolve_before_edit": true
+          },
+          {
+            "path": "src/main/java/com/example/order/PaymentIntentService.java",
+            "qualname": "PaymentIntentService.createIntent",
+            "line": 18,
+            "kind": "persistence",
+            "source": "repository.save(intent);",
+            "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+            "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+            "must_resolve_before_edit": false
+          }
+        ],
+        "stop_rule": "Read each required stale node once. Resolve each must_resolve side-effect check (publish/save/status guard and ordering). Use retained fresh bindings and fresh one-hop neighbors as context. If those facts answer the task, stop searching and edit the smallest affected source block.",
+        "do_not_expand_to": [
+          "whole repository",
+          "whole package",
+          "all files sharing the stale file blob",
+          "full graph rebuild"
+        ],
+        "task_terms": [
+          "and",
+          "await",
+          "awaiting",
+          "call",
+          "calls",
+          "chain",
+          "clas",
+          "class",
+          "com",
+          "confirm",
+          "confirmed",
+          "creat",
+          "create",
+          "created",
+          "createintent",
+          "createord",
+          "createorder",
+          "creation",
+          "deterministic",
+          "direct",
+          "eval",
+          "event",
+          "eventpublish",
+          "eventpublisher",
+          "example",
+          "final",
+          "for",
+          "fulfill",
+          "fulfillment",
+          "fulfillmentpolicy",
+          "get",
+          "getid"
+        ],
+        "coverage": "partial"
+      }
+    }
+  ]
+}

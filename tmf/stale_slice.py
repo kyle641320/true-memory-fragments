@@ -259,6 +259,15 @@ def _current_source_symbol_reads(repo: GitRepo, stale_items: Iterable[dict[str, 
         text = p.read_text(encoding="utf-8", errors="replace")
         nodes = list(extract_java_classes(rel, text)) + list(extract_java_methods(rel, text))
         for node in nodes:
+            # Classes and constructors are usually containers for this stale-slice
+            # supplement.  Keeping them as required reads inflated M15 without
+            # adding contract/side-effect evidence; methods still carry the
+            # state transitions, collaborator contracts, and visible effects.
+            node_kind = getattr(node, "node_kind", "")
+            short_name = node.qualname.rsplit(".", 1)[-1]
+            owner_name = Path(rel).stem
+            if node_kind in {"class", "interface", "record", "enum"} or short_name == owner_name:
+                continue
             key = (rel, node.qualname)
             if key in seen:
                 continue

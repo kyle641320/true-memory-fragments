@@ -1,0 +1,446 @@
+{
+  "task_id": "OUTBOX_M15",
+  "arm": "SOURCE_ONLY",
+  "rep": 4,
+  "fixture_meta": {
+    "fixture": "synthetic bounded Maven order-outbox contract shift",
+    "phase_a": "old publisher contract publish(event) is correct",
+    "phase_b": "publisher gains publishAfterCommit; order creation must use it"
+  },
+  "phase_a_orientation": {
+    "action": "orientation",
+    "summary": "OrderService.createOrder(Order) is annotated @Transactional and synchronously performs two calls in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher is only an interface accepting a String, and no outbox or deferred/after-commit mechanism is present in the listed source, so the order-created event is currently emitted directly from the creation method immediately after save."
+  },
+  "phase_a_telemetry": {
+    "tool_calls": 6,
+    "source_reads": 4,
+    "source_bytes": 933,
+    "source_files": [
+      "src/main/java/com/example/order/EventPublisher.java",
+      "src/main/java/com/example/order/Order.java",
+      "src/main/java/com/example/order/OrderRepository.java",
+      "src/main/java/com/example/order/OrderService.java"
+    ],
+    "prompt_tokens": 3413,
+    "completion_tokens": 227,
+    "invalid": 0,
+    "edits_rejected": 0,
+    "compile_calls": 0
+  },
+  "phase_a_transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "pom.xml",
+              "src/main/java/com/example/order/EventPublisher.java",
+              "src/main/java/com/example/order/Order.java",
+              "src/main/java/com/example/order/OrderRepository.java",
+              "src/main/java/com/example/order/OrderService.java",
+              "src/main/java/com/example/order/Transactional.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"start\":1,\"end\":240}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "start": 1,
+          "end": 240
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "start": 1,
+            "end": 240
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "content": "1: package com.example.order;\n2: \n3: public class OrderService {\n4:     private final OrderRepository repository;\n5:     private final EventPublisher publisher;\n6: \n7:     public OrderService(OrderRepository repository, EventPublisher publisher) {\n8:         this.repository = repository;\n9:         this.publisher = publisher;\n10:     }\n11: \n12:     @Transactional\n13:     public void createOrder(Order order) {\n14:         repository.save(order);\n15:         publisher.publish(\"ORDER_CREATED:\" + order.getId());\n16:     }\n17: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/EventPublisher.java\",\"start\":1,\"end\":200}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/EventPublisher.java",
+          "start": 1,
+          "end": 200
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "start": 1,
+            "end": 200
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "content": "1: package com.example.order;\n2: \n3: public interface EventPublisher {\n4:     void publish(String event);\n5: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderRepository.java\",\"start\":1,\"end\":200}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderRepository.java",
+          "start": 1,
+          "end": 200
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/OrderRepository.java",
+            "start": 1,
+            "end": 200
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/OrderRepository.java",
+            "content": "1: package com.example.order;\n2: \n3: public interface OrderRepository {\n4:     void save(Order order);\n5: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/Order.java\",\"start\":1,\"end\":200}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/Order.java",
+          "start": 1,
+          "end": 200
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/Order.java",
+            "start": 1,
+            "end": 200
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/Order.java",
+            "content": "1: package com.example.order;\n2: \n3: public final class Order {\n4:     private final long id;\n5:     public Order(long id) { this.id = id; }\n6:     public long getId() { return id; }\n7: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"orientation\",\"summary\":\"OrderService.createOrder(Order) is annotated @Transactional and synchronously performs two calls in sequence: repository.save(order), then publisher.publish(\\\"ORDER_CREATED:\\\" + order.getId()). EventPublisher is only an interface accepting a String, and no outbox or deferred/after-commit mechanism is present in the listed source, so the order-created event is currently emitted directly from the creation method immediately after save.\"}",
+      "actions": [
+        {
+          "action": "orientation",
+          "summary": "OrderService.createOrder(Order) is annotated @Transactional and synchronously performs two calls in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher is only an interface accepting a String, and no outbox or deferred/after-commit mechanism is present in the listed source, so the order-created event is currently emitted directly from the creation method immediately after save."
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "orientation",
+            "summary": "OrderService.createOrder(Order) is annotated @Transactional and synchronously performs two calls in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher is only an interface accepting a String, and no outbox or deferred/after-commit mechanism is present in the listed source, so the order-created event is currently emitted directly from the creation method immediately after save."
+          },
+          "tool_output": {
+            "ok": true
+          }
+        }
+      ]
+    }
+  ],
+  "phase_a_old_source_excerpt": "package com.example.order;\n\npublic class OrderService {\n    private final OrderRepository repository;\n    private final EventPublisher publisher;\n\n    public OrderService(OrderRepository repository, EventPublisher publisher) {\n        this.repository = repository;\n        this.publisher = publisher;\n    }\n\n    @Transactional\n    public void createOrder(Order order) {\n        repository.save(order);\n        publisher.publish(\"ORDER_CREATED:\" + order.getId());\n    }\n}\n",
+  "stale_claim_present": false,
+  "stale_claim_fresh": false,
+  "stale_claim_withheld": false,
+  "withheld_claim_id": null,
+  "freshness": {
+    "fresh": false,
+    "stale_bindings": [
+      "derivation version mismatch: java stored=None current='java.derive.v8'",
+      "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+    ]
+  },
+  "final": {
+    "action": "final",
+    "answer": "订单保存流程保持不变；将订单创建事件由事务内立即发布改为提交后发布，避免订单已保存但后续事件处理状态不一致。编译已通过。",
+    "files": [
+      "src/main/java/com/example/order/OrderService.java"
+    ]
+  },
+  "telemetry": {
+    "tool_calls": 7,
+    "source_bytes": 2425,
+    "source_reads": 3,
+    "source_files": [
+      "src/main/java/com/example/order/EventPublisher.java",
+      "src/main/java/com/example/order/OrderService.java",
+      "src/test/java/com/example/order/OrderServiceContractTest.java"
+    ],
+    "prompt_tokens": 6849,
+    "completion_tokens": 187,
+    "invalid": 0,
+    "wall_seconds": 25.491,
+    "successful_edits": 1,
+    "rejected_finals": 0,
+    "extra_actions_ignored": 0
+  },
+  "post_test": {
+    "ok": true,
+    "placement": {
+      "has_after_commit_api": true,
+      "uses_after_commit": true,
+      "uses_immediate_publish": false,
+      "helper_present": true,
+      "create_order_transactional": true
+    },
+    "test": {
+      "ok": true,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "message": "PASS"
+  },
+  "diffs": {
+    "src/main/java/com/example/order/OrderService.java": "--- a/src/main/java/com/example/order/OrderService.java\n+++ b/src/main/java/com/example/order/OrderService.java\n@@ -16,6 +16,6 @@\n \n     private void persistAndPublish(Order order) {\n         repository.save(order);\n-        publisher.publish(\"ORDER_CREATED:\" + order.getId());\n+        publisher.publishAfterCommit(\"ORDER_CREATED:\" + order.getId());\n     }\n }"
+  },
+  "audit": {
+    "valid_answer": true,
+    "compile_ok": true,
+    "trap_pass": true,
+    "semantic_pass": true,
+    "trap_reason": {
+      "has_after_commit_api": true,
+      "uses_after_commit": true,
+      "uses_immediate_publish": false,
+      "helper_present": true,
+      "create_order_transactional": true,
+      "post_message": "PASS"
+    }
+  },
+  "transcript": [
+    {
+      "turn": 0,
+      "raw": "{\"action\":\"list\"}",
+      "actions": [
+        {
+          "action": "list"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "list"
+          },
+          "tool_output": {
+            "files": [
+              "pom.xml",
+              "src/main/java/com/example/order/EventPublisher.java",
+              "src/main/java/com/example/order/Order.java",
+              "src/main/java/com/example/order/OrderRepository.java",
+              "src/main/java/com/example/order/OrderService.java",
+              "src/main/java/com/example/order/Transactional.java",
+              "src/test/java/com/example/order/OrderServiceContractTest.java"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "turn": 1,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"start\":1,\"end\":220}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "start": 1,
+          "end": 220
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "start": 1,
+            "end": 220
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "content": "1: package com.example.order;\n2: \n3: public class OrderService {\n4:     private final OrderRepository repository;\n5:     private final EventPublisher publisher;\n6: \n7:     public OrderService(OrderRepository repository, EventPublisher publisher) {\n8:         this.repository = repository;\n9:         this.publisher = publisher;\n10:     }\n11: \n12:     @Transactional\n13:     public void createOrder(Order order) {\n14:         persistAndPublish(order);\n15:     }\n16: \n17:     private void persistAndPublish(Order order) {\n18:         repository.save(order);\n19:         publisher.publish(\"ORDER_CREATED:\" + order.getId());\n20:     }\n21: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/test/java/com/example/order/OrderServiceContractTest.java\",\"start\":1,\"end\":260}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/test/java/com/example/order/OrderServiceContractTest.java",
+          "start": 1,
+          "end": 260
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/test/java/com/example/order/OrderServiceContractTest.java",
+            "start": 1,
+            "end": 260
+          },
+          "tool_output": {
+            "path": "src/test/java/com/example/order/OrderServiceContractTest.java",
+            "content": "1: package com.example.order;\n2: \n3: import static org.junit.jupiter.api.Assertions.*;\n4: import java.util.ArrayList;\n5: import java.util.List;\n6: import org.junit.jupiter.api.Test;\n7: \n8: class OrderServiceContractTest {\n9:     @Test\n10:     void createOrderSchedulesEventAfterCommit() {\n11:         FakeRepository repository = new FakeRepository();\n12:         FakePublisher publisher = new FakePublisher();\n13:         OrderService service = new OrderService(repository, publisher);\n14: \n15:         service.createOrder(new Order(42L));\n16: \n17:         assertEquals(List.of(42L), repository.saved);\n18:         assertEquals(List.of(\"ORDER_CREATED:42\"), publisher.afterCommitEvents);\n19:         assertTrue(publisher.immediateEvents.isEmpty(), \"order-created event must not publish immediately inside transaction\");\n20:     }\n21: \n22:     static final class FakeRepository implements OrderRepository {\n23:         final List<Long> saved = new ArrayList<>();\n24:         public void save(Order order) { saved.add(order.getId()); }\n25:     }\n26: \n27:     static final class FakePublisher implements EventPublisher {\n28:         final List<String> immediateEvents = new ArrayList<>();\n29:         final List<String> afterCommitEvents = new ArrayList<>();\n30:         public void publish(String event) { immediateEvents.add(event); }\n31:         public void publishAfterCommit(String event) { afterCommitEvents.add(event); }\n32:     }\n33: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "raw": "{\"action\":\"read_range\",\"path\":\"src/main/java/com/example/order/EventPublisher.java\",\"start\":1,\"end\":160}",
+      "actions": [
+        {
+          "action": "read_range",
+          "path": "src/main/java/com/example/order/EventPublisher.java",
+          "start": 1,
+          "end": 160
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "read_range",
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "start": 1,
+            "end": 160
+          },
+          "tool_output": {
+            "path": "src/main/java/com/example/order/EventPublisher.java",
+            "content": "1: package com.example.order;\n2: \n3: public interface EventPublisher {\n4:     /**\n5:      * Legacy immediate publication. Still available for non-transactional maintenance flows only.\n6:      * Order creation events must be scheduled after commit.\n7:      */\n8:     void publish(String event);\n9: \n10:     void publishAfterCommit(String event);\n11: }"
+          }
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "raw": "{\"action\":\"edit\",\"path\":\"src/main/java/com/example/order/OrderService.java\",\"old\":\"        publisher.publish(\\\"ORDER_CREATED:\\\" + order.getId());\",\"new\":\"        publisher.publishAfterCommit(\\\"ORDER_CREATED:\\\" + order.getId());\"}",
+      "actions": [
+        {
+          "action": "edit",
+          "path": "src/main/java/com/example/order/OrderService.java",
+          "old": "        publisher.publish(\"ORDER_CREATED:\" + order.getId());",
+          "new": "        publisher.publishAfterCommit(\"ORDER_CREATED:\" + order.getId());"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "edit",
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "old": "        publisher.publish(\"ORDER_CREATED:\" + order.getId());",
+            "new": "        publisher.publishAfterCommit(\"ORDER_CREATED:\" + order.getId());"
+          },
+          "tool_output": {
+            "ok": true,
+            "path": "src/main/java/com/example/order/OrderService.java",
+            "bytes": 71
+          }
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "raw": "{\"action\":\"compile\"}",
+      "actions": [
+        {
+          "action": "compile"
+        }
+      ],
+      "tool_outputs": [
+        {
+          "action": {
+            "action": "compile"
+          },
+          "tool_output": {
+            "ok": true,
+            "exit": 0,
+            "stdout": "",
+            "stderr": ""
+          }
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "raw": "{\"action\":\"final\",\"answer\":\"订单保存流程保持不变；将订单创建事件由事务内立即发布改为提交后发布，避免订单已保存但后续事件处理状态不一致。编译已通过。\",\"files\":[\"src/main/java/com/example/order/OrderService.java\"]}",
+      "actions": [
+        {
+          "action": "final",
+          "answer": "订单保存流程保持不变；将订单创建事件由事务内立即发布改为提交后发布，避免订单已保存但后续事件处理状态不一致。编译已通过。",
+          "files": [
+            "src/main/java/com/example/order/OrderService.java"
+          ]
+        }
+      ]
+    }
+  ],
+  "final_gate": "hard",
+  "phase_a_max_turns": 6,
+  "phase_b_max_turns": 16,
+  "failure_classification": {
+    "pass": true,
+    "primary": "pass",
+    "categories": [],
+    "edit_errors": [],
+    "compile_tool_failures": [],
+    "parse_or_invalid_turns": 0,
+    "tool_errors": [],
+    "has_final": true,
+    "has_diff": true,
+    "extra_actions_ignored": 0,
+    "result_ok_but_raw_failed": false
+  },
+  "metrics": {
+    "raw_pass": true,
+    "protocol_clean": true,
+    "semantic_evaluable": true,
+    "semantic_pass": true,
+    "task_result_pass": true,
+    "post_test_ok": true
+  }
+}

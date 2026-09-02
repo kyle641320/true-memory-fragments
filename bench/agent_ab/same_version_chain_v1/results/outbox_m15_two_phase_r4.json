@@ -1,0 +1,1949 @@
+{
+  "schema": "outbox_m15_two_phase_contract_shift",
+  "model": "gpt-5.6-sol",
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two synchronous steps in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher only exposes publish(String), so the order-created event is currently an ad hoc string emitted directly from the service immediately after save, within the same annotated method; there is no visible outbox, event object, or explicit after-commit handling."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2520,
+        "completion_tokens": 209,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件从事务内立即发布改为提交后发布，保留原有订单保存流程与顺序，避免事务未提交或回滚时出现后续事件状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7032,
+        "completion_tokens": 234,
+        "invalid": 0,
+        "wall_seconds": 25.021,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is marked @Transactional and performs two synchronous steps in sequence: repository.save(order), then EventPublisher.publish(\"ORDER_CREATED:\" + order.getId()). The repository and publisher are injected interfaces; there is no outbox/event record or deferred/after-commit mechanism in the workflow, so the order-created event is currently emitted directly from the service immediately after save using a plain String payload."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 933,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 3426,
+        "completion_tokens": 232,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "订单仍按原流程先保存，创建事件改为事务提交后触发，避免事务内立即发布导致订单与后续处理状态不一致；同时保持仓储保存接口不变。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/OrderRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 16,
+        "source_bytes": 4543,
+        "source_reads": 8,
+        "source_files": [
+          "pom.xml",
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/Transactional.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 47518,
+        "completion_tokens": 620,
+        "invalid": 0,
+        "wall_seconds": 96.55,
+        "successful_edits": 4,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [
+          {
+            "turn": 7,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__PREREAD_STALE_SOURCE__r1.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two synchronous steps in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher and OrderRepository are simple void-returning interfaces. The order-created event is therefore emitted directly from the service immediately after save, using a colon-delimited String payload; there is no visible outbox, post-commit hook, retry, or explicit coordination ensuring publication occurs only after a successful transaction commit."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2526,
+        "completion_tokens": 231,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated order creation to save the order as before, then schedule the ORDER_CREATED event through publishAfterCommit, preventing downstream processing before the transaction commits.",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7581,
+        "completion_tokens": 263,
+        "invalid": 0,
+        "wall_seconds": 24.384,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and synchronously calls repository.save(order), then directly invokes EventPublisher.publish with the string payload \"ORDER_CREATED:\" + order.getId(). EventPublisher and OrderRepository are simple void interfaces; there is no visible outbox, deferred publication, or explicit after-commit handling, so publication currently occurs inline immediately after save within the method."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2525,
+        "completion_tokens": 204,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "outbox_m15:old:OrderService.createOrder",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件从事务内立即发布改为事务提交后发布，保留原有 repository.save(order) 保存流程和调用顺序，避免订单已保存但后续事件处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7729,
+        "completion_tokens": 195,
+        "invalid": 0,
+        "wall_seconds": 22.367,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "SOURCE_ONLY",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two synchronous steps in order: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher is a simple void publish(String) interface, and OrderRepository exposes void save(Order). Thus the order-created event is currently emitted directly from the service immediately after save, as an ad hoc string, with no separate outbox/event record or explicit after-commit mechanism visible in the workflow."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2520,
+        "completion_tokens": 221,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "订单保存流程保持不变；将订单创建事件从事务内立即发布改为提交后发布，避免订单已保存但后续事件处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7032,
+        "completion_tokens": 232,
+        "invalid": 0,
+        "wall_seconds": 23.42,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__SOURCE_ONLY__r2.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional, calls OrderRepository.save(order), then immediately invokes EventPublisher.publish with the string \"ORDER_CREATED:\" + order.getId(). EventPublisher and OrderRepository are simple interfaces, and the local @Transactional type is only a runtime annotation. There is currently no outbox/persisted event or explicit after-commit coordination, so event emission is a direct synchronous-looking call following the save in the same workflow."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 1085,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/Transactional.java"
+        ],
+        "prompt_tokens": 3470,
+        "completion_tokens": 244,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件从立即发布改为事务提交后发布，保留原有订单保存流程和事件内容不变，避免订单事务未完成时触发后续处理导致状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 6,
+        "source_bytes": 986,
+        "source_reads": 2,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 12244,
+        "completion_tokens": 182,
+        "invalid": 0,
+        "wall_seconds": 24.873,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__PREREAD_STALE_SOURCE__r2.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two synchronous steps in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher only exposes publish(String), and OrderRepository only exposes save(Order). Thus the order-created event is currently emitted directly from the service immediately after save, as a plain string, with no visible outbox, after-commit hook, retry mechanism, or atomic persistence of the event; a publish failure can occur after the save call, and transaction semantics depend on the custom @Transactional infrastructure."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2526,
+        "completion_tokens": 250,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "订单保存流程保持不变；将 ORDER_CREATED 事件改为通过 publishAfterCommit 在事务提交后触发，避免订单已创建但后续事件处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7581,
+        "completion_tokens": 239,
+        "invalid": 0,
+        "wall_seconds": 23.436,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__STALE_DOC_CONTROL__r2.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated with the local @Transactional marker, synchronously calls repository.save(order), then immediately emits a plain String event through EventPublisher.publish using the format \"ORDER_CREATED:\" + order.getId(). EventPublisher and OrderRepository are minimal interfaces with no visible implementation or transaction/after-commit coordination, so the event is currently published inline after save rather than explicitly deferred until commit."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2525,
+        "completion_tokens": 215,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "outbox_m15:old:OrderService.createOrder",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件由事务内立即发布改为事务提交后发布，保留原有订单保存流程不变，避免保存成功但后续事件状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7729,
+        "completion_tokens": 188,
+        "invalid": 0,
+        "wall_seconds": 26.242,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__TMF_STALE_GATED__r2.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "SOURCE_ONLY",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two sequential calls: repository.save(order), then EventPublisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher and OrderRepository are simple interfaces. The order-created event is therefore emitted directly and synchronously from the creation method after save, as a plain string; there is no visible outbox/persisted event or separate post-commit publication step."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2520,
+        "completion_tokens": 207,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件由事务内立即发布改为提交后发布，保留原有先保存订单的流程，避免事务未提交时后续事件提前处理导致状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7032,
+        "completion_tokens": 234,
+        "invalid": 0,
+        "wall_seconds": 22.751,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__SOURCE_ONLY__r3.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two synchronous steps in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher is a simple interface with publish(String). Thus the order-created event is currently emitted directly from the service immediately after save, using a string payload, with no visible outbox or after-commit mechanism in this workflow."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 2,
+        "source_bytes": 639,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 1760,
+        "completion_tokens": 177,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件从事务内立即发布改为通过 publishAfterCommit 在事务提交后触发；订单保存流程及事件内容保持不变，避免保存成功但后续事件状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 11,
+        "source_bytes": 3931,
+        "source_reads": 7,
+        "source_files": [
+          "pom.xml",
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/Transactional.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 23818,
+        "completion_tokens": 291,
+        "invalid": 0,
+        "wall_seconds": 37.488,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__PREREAD_STALE_SOURCE__r3.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional; it synchronously calls repository.save(order) and then immediately invokes EventPublisher.publish with the plain string \"ORDER_CREATED:\" plus order.getId(). EventPublisher and OrderRepository are interfaces, so transaction-boundary behavior and delivery guarantees are not implemented here; there is no visible outbox, after-commit hook, or persisted event in the creation flow."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2526,
+        "completion_tokens": 204,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件从事务内立即发布调整为提交后发布，保存流程及调用顺序保持不变，避免订单已保存但后续事件处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7398,
+        "completion_tokens": 188,
+        "invalid": 0,
+        "wall_seconds": 22.561,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__STALE_DOC_CONTROL__r3.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and synchronously performs repository.save(order) followed immediately by publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher and OrderRepository are simple interfaces with publish(String) and save(Order); there is no visible after-commit hook, outbox, retry, or typed event abstraction, so event emission is directly coupled to the create workflow and occurs after save within the annotated method."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2525,
+        "completion_tokens": 213,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "outbox_m15:old:OrderService.createOrder",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将订单创建事件由事务内立即发布改为提交后发布，保留原有订单保存流程不变，避免事务未提交或回滚时出现事件处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7729,
+        "completion_tokens": 189,
+        "invalid": 0,
+        "wall_seconds": 23.805,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__TMF_STALE_GATED__r3.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "SOURCE_ONLY",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and synchronously performs two calls in sequence: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher is only an interface accepting a String, and no outbox or deferred/after-commit mechanism is present in the listed source, so the order-created event is currently emitted directly from the creation method immediately after save."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 933,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 3413,
+        "completion_tokens": 227,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "订单保存流程保持不变；将订单创建事件由事务内立即发布改为提交后发布，避免订单已保存但后续事件处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 6849,
+        "completion_tokens": 187,
+        "invalid": 0,
+        "wall_seconds": 25.491,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__SOURCE_ONLY__r4.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder(Order) is annotated @Transactional and performs two synchronous steps in order: repository.save(order), then publisher.publish(\"ORDER_CREATED:\" + order.getId()). EventPublisher only exposes publish(String), so the event is currently an inline string emitted directly from the service after save, with no outbox or explicit after-commit handling visible."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 933,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/Order.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 3426,
+        "completion_tokens": 213,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "订单创建仍先按原流程保存订单，但事件触发已改为通过 publishAfterCommit 安排在事务成功提交后发布，避免事务回滚或未提交时下游提前处理导致状态不一致。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 6,
+        "source_bytes": 1325,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/Transactional.java"
+        ],
+        "prompt_tokens": 12174,
+        "completion_tokens": 201,
+        "invalid": 0,
+        "wall_seconds": 24.105,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__PREREAD_STALE_SOURCE__r4.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder is annotated @Transactional, saves the Order through OrderRepository, then immediately calls EventPublisher.publish with the string \"ORDER_CREATED:\" plus order.getId(). EventPublisher and OrderRepository are simple interfaces, and the local Transactional annotation provides no visible commit/after-commit behavior. There is no outbox or deferred publication in the current source, so event emission occurs inline after save within the creation method."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 6,
+        "source_reads": 4,
+        "source_bytes": 1085,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/main/java/com/example/order/Transactional.java"
+        ],
+        "prompt_tokens": 3466,
+        "completion_tokens": 239,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Updated order creation event emission to use publishAfterCommit after the existing repository save, preventing downstream processing before the transaction commits while preserving the original save flow.",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7398,
+        "completion_tokens": 223,
+        "invalid": 0,
+        "wall_seconds": 23.204,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__STALE_DOC_CONTROL__r4.raw.json",
+      "diff_bytes": 360
+    },
+    {
+      "task_id": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 6,
+      "phase_b_max_turns": 16,
+      "phase_a_orientation": {
+        "action": "orientation",
+        "summary": "OrderService.createOrder is annotated @Transactional, calls repository.save(order), then immediately and synchronously calls EventPublisher.publish with the raw string \"ORDER_CREATED:\" plus order.getId(). EventPublisher and OrderRepository are simple interfaces; there is no visible outbox, after-commit hook, retry, or transaction-success gating in the creation path."
+      },
+      "phase_a_telemetry": {
+        "tool_calls": 5,
+        "source_reads": 3,
+        "source_bytes": 746,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderRepository.java",
+          "src/main/java/com/example/order/OrderService.java"
+        ],
+        "prompt_tokens": 2525,
+        "completion_tokens": 186,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "outbox_m15:old:OrderService.createOrder",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "订单创建仍先按原流程保存订单，但创建事件改为事务提交成功后再发布，避免事务内即时触发导致后续处理状态不一致。编译已通过。",
+        "files": [
+          "src/main/java/com/example/order/OrderService.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 7,
+        "source_bytes": 2425,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/order/EventPublisher.java",
+          "src/main/java/com/example/order/OrderService.java",
+          "src/test/java/com/example/order/OrderServiceContractTest.java"
+        ],
+        "prompt_tokens": 7911,
+        "completion_tokens": 232,
+        "invalid": 0,
+        "wall_seconds": 23.743,
+        "successful_edits": 1,
+        "rejected_finals": 0,
+        "extra_actions_ignored": 0
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_after_commit_api": true,
+          "uses_after_commit": true,
+          "uses_immediate_publish": false,
+          "helper_present": true,
+          "create_order_transactional": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/outbox_m15_two_phase_r4/OUTBOX_M15__TMF_STALE_GATED__r4.raw.json",
+      "diff_bytes": 360
+    }
+  ],
+  "summary": {
+    "mode": "outbox_m15_two_phase_contract_shift",
+    "runs": 16,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 0,
+        "uses_after_commit": 4,
+        "uses_immediate_publish": 0,
+        "primary": {
+          "pass": 4
+        }
+      },
+      "PREREAD_STALE_SOURCE": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 0,
+        "uses_after_commit": 4,
+        "uses_immediate_publish": 0,
+        "primary": {
+          "pass": 4
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 0,
+        "uses_after_commit": 4,
+        "uses_immediate_publish": 0,
+        "primary": {
+          "pass": 4
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 4,
+        "uses_after_commit": 4,
+        "uses_immediate_publish": 0,
+        "primary": {
+          "pass": 4
+        }
+      }
+    }
+  }
+}

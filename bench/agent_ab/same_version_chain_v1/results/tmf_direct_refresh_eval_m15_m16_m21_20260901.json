@@ -1,0 +1,332 @@
+{
+  "scope": "direct-separated-eval over retained M15/M16/M21 R4 TMF arms only",
+  "summary": {
+    "rows": 12,
+    "withheld_expected": 12,
+    "withheld_ok": 12,
+    "post_ok": 9,
+    "semantic_pass": 9
+  },
+  "rows": [
+    {
+      "file": "outbox_m15_two_phase_r4.json",
+      "task": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/EventPublisher.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/test/java/com/example/order/OrderServiceContractTest.java"
+      ],
+      "placement": {
+        "has_after_commit_api": true,
+        "uses_after_commit": true,
+        "uses_immediate_publish": false,
+        "helper_present": true,
+        "create_order_transactional": true
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "outbox_m15_two_phase_r4.json",
+      "task": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 2,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/EventPublisher.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/test/java/com/example/order/OrderServiceContractTest.java"
+      ],
+      "placement": {
+        "has_after_commit_api": true,
+        "uses_after_commit": true,
+        "uses_immediate_publish": false,
+        "helper_present": true,
+        "create_order_transactional": true
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "outbox_m15_two_phase_r4.json",
+      "task": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 3,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/EventPublisher.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/test/java/com/example/order/OrderServiceContractTest.java"
+      ],
+      "placement": {
+        "has_after_commit_api": true,
+        "uses_after_commit": true,
+        "uses_immediate_publish": false,
+        "helper_present": true,
+        "create_order_transactional": true
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "outbox_m15_two_phase_r4.json",
+      "task": "OUTBOX_M15",
+      "arm": "TMF_STALE_GATED",
+      "rep": 4,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/EventPublisher.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/test/java/com/example/order/OrderServiceContractTest.java"
+      ],
+      "placement": {
+        "has_after_commit_api": true,
+        "uses_after_commit": true,
+        "uses_immediate_publish": false,
+        "helper_present": true,
+        "create_order_transactional": true
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "order_m16_corevalue_r4.json",
+      "task": "ORDER_M16",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 1,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": false,
+      "task_pass": false,
+      "semantic_pass": false,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "visible_tests_present": false
+      },
+      "failure": "hidden_oracle_fail"
+    },
+    {
+      "file": "order_m16_corevalue_r4.json",
+      "task": "ORDER_M16",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 2,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": false,
+      "task_pass": false,
+      "semantic_pass": false,
+      "source_reads": 4,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntent.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "visible_tests_present": false
+      },
+      "failure": "hidden_oracle_fail"
+    },
+    {
+      "file": "order_m16_corevalue_r4.json",
+      "task": "ORDER_M16",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 3,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 4,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntent.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "visible_tests_present": false
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "order_m16_corevalue_r4.json",
+      "task": "ORDER_M16",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 4,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 4,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntent.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "visible_tests_present": false
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "order_m21_stale_api_trap_r4.json",
+      "task": "ORDER_M21",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 1,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": false,
+      "task_pass": false,
+      "semantic_pass": false,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": false,
+        "marks_awaiting_review": false,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": false,
+        "uses_current_fulfillment_policy": false,
+        "uses_stale_policy_gate": true,
+        "visible_tests_present": false
+      },
+      "failure": "hidden_oracle_fail"
+    },
+    {
+      "file": "order_m21_stale_api_trap_r4.json",
+      "task": "ORDER_M21",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 2,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "uses_current_fulfillment_policy": false,
+        "uses_stale_policy_gate": true,
+        "visible_tests_present": false
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "order_m21_stale_api_trap_r4.json",
+      "task": "ORDER_M21",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 3,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 4,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntent.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "uses_current_fulfillment_policy": false,
+        "uses_stale_policy_gate": true,
+        "visible_tests_present": false
+      },
+      "failure": "pass"
+    },
+    {
+      "file": "order_m21_stale_api_trap_r4.json",
+      "task": "ORDER_M21",
+      "arm": "TMF_REFRESHED_MAP",
+      "rep": 4,
+      "stale_fresh": false,
+      "withheld": true,
+      "post_ok": true,
+      "task_pass": true,
+      "semantic_pass": true,
+      "source_reads": 3,
+      "source_files": [
+        "src/main/java/com/example/order/Order.java",
+        "src/main/java/com/example/order/OrderService.java",
+        "src/main/java/com/example/order/PaymentIntentService.java"
+      ],
+      "placement": {
+        "branches_on_payment_status": true,
+        "marks_awaiting_review": true,
+        "marks_ready": true,
+        "publishes_order_created": true,
+        "conditional_publish_after_status": true,
+        "uses_current_fulfillment_policy": false,
+        "uses_stale_policy_gate": true,
+        "visible_tests_present": false
+      },
+      "failure": "pass"
+    }
+  ]
+}
