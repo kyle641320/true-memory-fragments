@@ -1,0 +1,1785 @@
+{
+  "schema": "tmf.product_roi_scorecard.v2",
+  "datasets": [
+    {
+      "id": "M12_R4",
+      "family": "cdc-search",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/cdc_m12_projection_stale_workflow.json",
+      "repeat_qualified": true,
+      "product_semantics": "CDC/search projection freshness and checkpoint safety",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 87233.0,
+            "wall_seconds": 235.081,
+            "source_reads": 12.0,
+            "tool_calls": 38.0,
+            "source_bytes": 26720.0
+          },
+          "cost_mean": {
+            "tokens": 21808.25,
+            "wall_seconds": 58.77025,
+            "source_reads": 3.0,
+            "tool_calls": 9.5,
+            "source_bytes": 6680.0
+          },
+          "pass_per_1k_tokens": 0.045854206550273405,
+          "pass_per_hour": 61.25548215296004
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 71526.0,
+            "wall_seconds": 261.609,
+            "source_reads": 13.0,
+            "tool_calls": 32.0,
+            "source_bytes": 26890.0
+          },
+          "cost_mean": {
+            "tokens": 17881.5,
+            "wall_seconds": 65.40225,
+            "source_reads": 3.25,
+            "tool_calls": 8.0,
+            "source_bytes": 6722.5
+          },
+          "pass_per_1k_tokens": 0.05592372004585745,
+          "pass_per_hour": 55.043977844798924
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 88559.0,
+            "wall_seconds": 276.95799999999997,
+            "source_reads": 17.0,
+            "tool_calls": 38.0,
+            "source_bytes": 28210.0
+          },
+          "cost_mean": {
+            "tokens": 22139.75,
+            "wall_seconds": 69.23949999999999,
+            "source_reads": 4.25,
+            "tool_calls": 9.5,
+            "source_bytes": 7052.5
+          },
+          "pass_per_1k_tokens": 0.04516762836075385,
+          "pass_per_hour": 51.99344304912659
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 77610.0,
+            "wall_seconds": 264.687,
+            "source_reads": 14.0,
+            "tool_calls": 34.0,
+            "source_bytes": 27060.0
+          },
+          "cost_mean": {
+            "tokens": 19402.5,
+            "wall_seconds": 66.17175,
+            "source_reads": 3.5,
+            "tool_calls": 8.5,
+            "source_bytes": 6765.0
+          },
+          "pass_per_1k_tokens": 0.051539750032212346,
+          "pass_per_hour": 54.40388081016446
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    },
+    {
+      "id": "M13_R4",
+      "family": "rpc-api",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/rpc_m13_two_phase_stale_context.json",
+      "repeat_qualified": true,
+      "product_semantics": "RPC/API response contract migration under stale context",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 123281.0,
+            "wall_seconds": 381.01599999999996,
+            "source_reads": 21.0,
+            "tool_calls": 47.0,
+            "source_bytes": 13979.0
+          },
+          "cost_mean": {
+            "tokens": 30820.25,
+            "wall_seconds": 95.25399999999999,
+            "source_reads": 5.25,
+            "tool_calls": 11.75,
+            "source_bytes": 3494.75
+          },
+          "pass_per_1k_tokens": 0.03244620014438559,
+          "pass_per_hour": 37.79368845402818
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 63421.0,
+            "wall_seconds": 176.494,
+            "source_reads": 25.0,
+            "tool_calls": 46.0,
+            "source_bytes": 29308.0
+          },
+          "cost_mean": {
+            "tokens": 15855.25,
+            "wall_seconds": 44.1235,
+            "source_reads": 6.25,
+            "tool_calls": 11.5,
+            "source_bytes": 7327.0
+          },
+          "pass_per_1k_tokens": 0.06307059175982718,
+          "pass_per_hour": 81.58917583600575
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 59939.0,
+            "wall_seconds": 151.627,
+            "source_reads": 24.0,
+            "tool_calls": 44.0,
+            "source_bytes": 28048.0
+          },
+          "cost_mean": {
+            "tokens": 14984.75,
+            "wall_seconds": 37.90675,
+            "source_reads": 6.0,
+            "tool_calls": 11.0,
+            "source_bytes": 7012.0
+          },
+          "pass_per_1k_tokens": 0.06673451342197902,
+          "pass_per_hour": 94.96989322482143
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 63308.0,
+            "wall_seconds": 176.33100000000002,
+            "source_reads": 24.0,
+            "tool_calls": 45.0,
+            "source_bytes": 28048.0
+          },
+          "cost_mean": {
+            "tokens": 15827.0,
+            "wall_seconds": 44.082750000000004,
+            "source_reads": 6.0,
+            "tool_calls": 11.25,
+            "source_bytes": 7012.0
+          },
+          "pass_per_1k_tokens": 0.06318316800404372,
+          "pass_per_hour": 81.66459669598652
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    },
+    {
+      "id": "M14_R4",
+      "family": "scheduler",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/scheduler_m14_two_phase_stale_context.json",
+      "repeat_qualified": true,
+      "product_semantics": "scheduler/idempotency retry boundary under stale context",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 2,
+          "semantic_adjusted_pass": 2,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 2,
+          "raw_pass_rate": 0.5,
+          "protocol_clean": 2,
+          "protocol_clean_rate": 0.5,
+          "post_test_pass": 3,
+          "post_test_pass_rate": 0.75,
+          "cost_total": {
+            "tokens": 157002.0,
+            "wall_seconds": 401.71,
+            "source_reads": 35.0,
+            "tool_calls": 62.0,
+            "source_bytes": 28158.0
+          },
+          "cost_mean": {
+            "tokens": 39250.5,
+            "wall_seconds": 100.4275,
+            "source_reads": 8.75,
+            "tool_calls": 15.5,
+            "source_bytes": 7039.5
+          },
+          "pass_per_1k_tokens": 0.012738691226863351,
+          "pass_per_hour": 17.923377560927037
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 69014.0,
+            "wall_seconds": 169.551,
+            "source_reads": 24.0,
+            "tool_calls": 48.0,
+            "source_bytes": 27314.0
+          },
+          "cost_mean": {
+            "tokens": 17253.5,
+            "wall_seconds": 42.38775,
+            "source_reads": 6.0,
+            "tool_calls": 12.0,
+            "source_bytes": 6828.5
+          },
+          "pass_per_1k_tokens": 0.057959254643985283,
+          "pass_per_hour": 84.93019799352409
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 100537.0,
+            "wall_seconds": 219.099,
+            "source_reads": 27.0,
+            "tool_calls": 55.0,
+            "source_bytes": 29914.0
+          },
+          "cost_mean": {
+            "tokens": 25134.25,
+            "wall_seconds": 54.77475,
+            "source_reads": 6.75,
+            "tool_calls": 13.75,
+            "source_bytes": 7478.5
+          },
+          "pass_per_1k_tokens": 0.03978634731491888,
+          "pass_per_hour": 65.7237139375351
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 76469.0,
+            "wall_seconds": 175.942,
+            "source_reads": 25.0,
+            "tool_calls": 49.0,
+            "source_bytes": 28851.0
+          },
+          "cost_mean": {
+            "tokens": 19117.25,
+            "wall_seconds": 43.9855,
+            "source_reads": 6.25,
+            "tool_calls": 12.25,
+            "source_bytes": 7212.75
+          },
+          "pass_per_1k_tokens": 0.05230877872078882,
+          "pass_per_hour": 81.84515351649975
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    },
+    {
+      "id": "M15_R4",
+      "family": "outbox-event",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/outbox_m15_two_phase_r4.json",
+      "repeat_qualified": true,
+      "product_semantics": "outbox/event ordering; non-regression and stale withholding",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 109996.0,
+            "wall_seconds": 183.016,
+            "source_reads": 34.0,
+            "tool_calls": 61.0,
+            "source_bytes": 14375.0
+          },
+          "cost_mean": {
+            "tokens": 27499.0,
+            "wall_seconds": 45.754,
+            "source_reads": 8.5,
+            "tool_calls": 15.25,
+            "source_bytes": 3593.75
+          },
+          "pass_per_1k_tokens": 0.03636495872577185,
+          "pass_per_hour": 78.68164532062771
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 40669.0,
+            "wall_seconds": 96.683,
+            "source_reads": 25.0,
+            "tool_calls": 49.0,
+            "source_bytes": 12871.0
+          },
+          "cost_mean": {
+            "tokens": 10167.25,
+            "wall_seconds": 24.17075,
+            "source_reads": 6.25,
+            "tool_calls": 12.25,
+            "source_bytes": 3217.75
+          },
+          "pass_per_1k_tokens": 0.09835501241732032,
+          "pass_per_hour": 148.9403514578571
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 42839.0,
+            "wall_seconds": 93.58500000000001,
+            "source_reads": 25.0,
+            "tool_calls": 49.0,
+            "source_bytes": 13023.0
+          },
+          "cost_mean": {
+            "tokens": 10709.75,
+            "wall_seconds": 23.396250000000002,
+            "source_reads": 6.25,
+            "tool_calls": 12.25,
+            "source_bytes": 3255.75
+          },
+          "pass_per_1k_tokens": 0.09337286117789864,
+          "pass_per_hour": 153.87081263022918
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 42820.0,
+            "wall_seconds": 96.157,
+            "source_reads": 24.0,
+            "tool_calls": 48.0,
+            "source_bytes": 12684.0
+          },
+          "cost_mean": {
+            "tokens": 10705.0,
+            "wall_seconds": 24.03925,
+            "source_reads": 6.0,
+            "tool_calls": 12.0,
+            "source_bytes": 3171.0
+          },
+          "pass_per_1k_tokens": 0.09341429238673517,
+          "pass_per_hour": 149.75508803311251
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    },
+    {
+      "id": "M16_R4",
+      "family": "order-side-effect",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/order_m16_corevalue_r4.json",
+      "repeat_qualified": true,
+      "product_semantics": "side-effect guard around payment review and event publication",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 0,
+          "semantic_adjusted_pass_rate": 0.0,
+          "raw_pass": 0,
+          "raw_pass_rate": 0.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 0,
+          "post_test_pass_rate": 0.0,
+          "cost_total": {
+            "tokens": 154682.0,
+            "wall_seconds": 248.323,
+            "source_reads": 43.0,
+            "tool_calls": 66.0,
+            "source_bytes": 25343.0
+          },
+          "cost_mean": {
+            "tokens": 38670.5,
+            "wall_seconds": 62.08075,
+            "source_reads": 10.75,
+            "tool_calls": 16.5,
+            "source_bytes": 6335.75
+          },
+          "pass_per_1k_tokens": 0.0,
+          "pass_per_hour": 0.0
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 0,
+          "semantic_adjusted_pass_rate": 0.0,
+          "raw_pass": 0,
+          "raw_pass_rate": 0.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 0,
+          "post_test_pass_rate": 0.0,
+          "cost_total": {
+            "tokens": 83694.0,
+            "wall_seconds": 184.963,
+            "source_reads": 43.0,
+            "tool_calls": 64.0,
+            "source_bytes": 27431.0
+          },
+          "cost_mean": {
+            "tokens": 20923.5,
+            "wall_seconds": 46.24075,
+            "source_reads": 10.75,
+            "tool_calls": 16.0,
+            "source_bytes": 6857.75
+          },
+          "pass_per_1k_tokens": 0.0,
+          "pass_per_hour": 0.0
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 81572.0,
+            "wall_seconds": 176.19,
+            "source_reads": 41.0,
+            "tool_calls": 61.0,
+            "source_bytes": 27210.0
+          },
+          "cost_mean": {
+            "tokens": 20393.0,
+            "wall_seconds": 44.0475,
+            "source_reads": 10.25,
+            "tool_calls": 15.25,
+            "source_bytes": 6802.5
+          },
+          "pass_per_1k_tokens": 0.04903643407051439,
+          "pass_per_hour": 81.72995062148816
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 2,
+          "semantic_adjusted_pass_rate": 0.5,
+          "raw_pass": 2,
+          "raw_pass_rate": 0.5,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 2,
+          "post_test_pass_rate": 0.5,
+          "cost_total": {
+            "tokens": 109273.0,
+            "wall_seconds": 189.619,
+            "source_reads": 32.0,
+            "tool_calls": 53.0,
+            "source_bytes": 20086.0
+          },
+          "cost_mean": {
+            "tokens": 27318.25,
+            "wall_seconds": 47.40475,
+            "source_reads": 8.0,
+            "tool_calls": 13.25,
+            "source_bytes": 5021.5
+          },
+          "pass_per_1k_tokens": 0.018302782938145745,
+          "pass_per_hour": 37.970878445725376
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    },
+    {
+      "id": "M16B_R4",
+      "family": "order-side-effect-complex",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/order_m16_complex_two_phase_payment_review_r4.json",
+      "repeat_qualified": true,
+      "product_semantics": "complex payment-review side-effect guard under stale sliced context",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 2,
+          "semantic_adjusted_pass_rate": 0.5,
+          "raw_pass": 2,
+          "raw_pass_rate": 0.5,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 2,
+          "post_test_pass_rate": 0.5,
+          "cost_total": {
+            "tokens": 142319.0,
+            "wall_seconds": 275.878,
+            "source_reads": 40.0,
+            "tool_calls": 63.0,
+            "source_bytes": 22359.0
+          },
+          "cost_mean": {
+            "tokens": 35579.75,
+            "wall_seconds": 68.9695,
+            "source_reads": 10.0,
+            "tool_calls": 15.75,
+            "source_bytes": 5589.75
+          },
+          "pass_per_1k_tokens": 0.014052937415243223,
+          "pass_per_hour": 26.098492812040107
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 0,
+          "semantic_adjusted_pass_rate": 0.0,
+          "raw_pass": 0,
+          "raw_pass_rate": 0.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 0,
+          "post_test_pass_rate": 0.0,
+          "cost_total": {
+            "tokens": 86423.0,
+            "wall_seconds": 183.709,
+            "source_reads": 44.0,
+            "tool_calls": 65.0,
+            "source_bytes": 27525.0
+          },
+          "cost_mean": {
+            "tokens": 21605.75,
+            "wall_seconds": 45.92725,
+            "source_reads": 11.0,
+            "tool_calls": 16.25,
+            "source_bytes": 6881.25
+          },
+          "pass_per_1k_tokens": 0.0,
+          "pass_per_hour": 0.0
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 4,
+          "semantic_adjusted_pass_rate": 1.0,
+          "raw_pass": 4,
+          "raw_pass_rate": 1.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 4,
+          "post_test_pass_rate": 1.0,
+          "cost_total": {
+            "tokens": 84187.0,
+            "wall_seconds": 179.996,
+            "source_reads": 40.0,
+            "tool_calls": 62.0,
+            "source_bytes": 27332.0
+          },
+          "cost_mean": {
+            "tokens": 21046.75,
+            "wall_seconds": 44.999,
+            "source_reads": 10.0,
+            "tool_calls": 15.5,
+            "source_bytes": 6833.0
+          },
+          "pass_per_1k_tokens": 0.0475132740209296,
+          "pass_per_hour": 80.00177781728482
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 3,
+          "semantic_adjusted_pass_rate": 0.75,
+          "raw_pass": 3,
+          "raw_pass_rate": 0.75,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 3,
+          "post_test_pass_rate": 0.75,
+          "cost_total": {
+            "tokens": 113480.0,
+            "wall_seconds": 183.438,
+            "source_reads": 34.0,
+            "tool_calls": 54.0,
+            "source_bytes": 20498.0
+          },
+          "cost_mean": {
+            "tokens": 28370.0,
+            "wall_seconds": 45.8595,
+            "source_reads": 8.5,
+            "tool_calls": 13.5,
+            "source_bytes": 5124.5
+          },
+          "pass_per_1k_tokens": 0.026436376454000703,
+          "pass_per_hour": 58.875478363261706
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    },
+    {
+      "id": "M21_R4",
+      "family": "stale-api-gate",
+      "path": "/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/order_m21_stale_api_trap_classfix_checkerfix_r4.json",
+      "repeat_qualified": true,
+      "product_semantics": "stale API/policy gate and ordering trap",
+      "rows": 16,
+      "by_arm": {
+        "PREREAD_STALE_SOURCE": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 0,
+          "semantic_adjusted_pass_rate": 0.0,
+          "raw_pass": 0,
+          "raw_pass_rate": 0.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 0,
+          "post_test_pass_rate": 0.0,
+          "cost_total": {
+            "tokens": 107141.0,
+            "wall_seconds": 176.359,
+            "source_reads": 27.0,
+            "tool_calls": 48.0,
+            "source_bytes": 22786.0
+          },
+          "cost_mean": {
+            "tokens": 26785.25,
+            "wall_seconds": 44.08975,
+            "source_reads": 6.75,
+            "tool_calls": 12.0,
+            "source_bytes": 5696.5
+          },
+          "pass_per_1k_tokens": 0.0,
+          "pass_per_hour": 0.0
+        },
+        "SOURCE_ONLY": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 2,
+          "semantic_adjusted_pass_rate": 0.5,
+          "raw_pass": 2,
+          "raw_pass_rate": 0.5,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 2,
+          "post_test_pass_rate": 0.5,
+          "cost_total": {
+            "tokens": 105987.0,
+            "wall_seconds": 348.908,
+            "source_reads": 37.0,
+            "tool_calls": 62.0,
+            "source_bytes": 29675.0
+          },
+          "cost_mean": {
+            "tokens": 26496.75,
+            "wall_seconds": 87.227,
+            "source_reads": 9.25,
+            "tool_calls": 15.5,
+            "source_bytes": 7418.75
+          },
+          "pass_per_1k_tokens": 0.01887023880287205,
+          "pass_per_hour": 20.63581230582274
+        },
+        "STALE_DOC_CONTROL": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 0,
+          "semantic_adjusted_pass_rate": 0.0,
+          "raw_pass": 0,
+          "raw_pass_rate": 0.0,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 0,
+          "post_test_pass_rate": 0.0,
+          "cost_total": {
+            "tokens": 125670.0,
+            "wall_seconds": 396.61199999999997,
+            "source_reads": 44.0,
+            "tool_calls": 68.0,
+            "source_bytes": 33390.0
+          },
+          "cost_mean": {
+            "tokens": 31417.5,
+            "wall_seconds": 99.15299999999999,
+            "source_reads": 11.0,
+            "tool_calls": 17.0,
+            "source_bytes": 8347.5
+          },
+          "pass_per_1k_tokens": 0.0,
+          "pass_per_hour": 0.0
+        },
+        "TMF_REFRESHED_MAP": {
+          "runs": 4,
+          "semantic_evaluable": 4,
+          "semantic_adjusted_pass": 2,
+          "semantic_adjusted_pass_rate": 0.5,
+          "raw_pass": 2,
+          "raw_pass_rate": 0.5,
+          "protocol_clean": 4,
+          "protocol_clean_rate": 1.0,
+          "post_test_pass": 2,
+          "post_test_pass_rate": 0.5,
+          "cost_total": {
+            "tokens": 138280.0,
+            "wall_seconds": 212.076,
+            "source_reads": 25.0,
+            "tool_calls": 53.0,
+            "source_bytes": 18404.0
+          },
+          "cost_mean": {
+            "tokens": 34570.0,
+            "wall_seconds": 53.019,
+            "source_reads": 6.25,
+            "tool_calls": 13.25,
+            "source_bytes": 4601.0
+          },
+          "pass_per_1k_tokens": 0.014463407578825572,
+          "pass_per_hour": 33.950093362756746
+        }
+      },
+      "tmf_stale_withheld": 4,
+      "tmf_stale_withholding_expected": 4
+    }
+  ],
+  "missing_datasets": [],
+  "combined": {
+    "SOURCE_ONLY": {
+      "runs": 28,
+      "semantic_evaluable": 28,
+      "semantic_adjusted_pass": 18,
+      "semantic_adjusted_pass_rate": 0.6428571428571429,
+      "raw_pass": 18,
+      "raw_pass_rate": 0.6428571428571429,
+      "protocol_clean": 28,
+      "protocol_clean_rate": 1.0,
+      "post_test_pass": 18,
+      "post_test_pass_rate": 0.6428571428571429,
+      "cost_total": {
+        "tokens": 520734.0,
+        "wall_seconds": 1421.917,
+        "source_reads": 211.0,
+        "tool_calls": 366.0,
+        "source_bytes": 181014.0
+      },
+      "cost_mean": {
+        "tokens": 18597.64285714286,
+        "wall_seconds": 50.78275,
+        "source_reads": 7.535714285714286,
+        "tool_calls": 13.071428571428571,
+        "source_bytes": 6464.785714285715
+      },
+      "pass_per_1k_tokens": 0.03456659254052933,
+      "pass_per_hour": 45.57228023857933
+    },
+    "TMF_REFRESHED_MAP": {
+      "runs": 28,
+      "semantic_evaluable": 28,
+      "semantic_adjusted_pass": 23,
+      "semantic_adjusted_pass_rate": 0.8214285714285714,
+      "raw_pass": 23,
+      "raw_pass_rate": 0.8214285714285714,
+      "protocol_clean": 28,
+      "protocol_clean_rate": 1.0,
+      "post_test_pass": 23,
+      "post_test_pass_rate": 0.8214285714285714,
+      "cost_total": {
+        "tokens": 621240.0,
+        "wall_seconds": 1298.25,
+        "source_reads": 178.0,
+        "tool_calls": 336.0,
+        "source_bytes": 155631.0
+      },
+      "cost_mean": {
+        "tokens": 22187.14285714286,
+        "wall_seconds": 46.36607142857143,
+        "source_reads": 6.357142857142857,
+        "tool_calls": 12.0,
+        "source_bytes": 5558.25
+      },
+      "pass_per_1k_tokens": 0.03702272873607623,
+      "pass_per_hour": 63.77816291161179
+    },
+    "PREREAD_STALE_SOURCE": {
+      "runs": 28,
+      "semantic_evaluable": 26,
+      "semantic_adjusted_pass": 16,
+      "semantic_adjusted_pass_rate": 0.6153846153846154,
+      "raw_pass": 16,
+      "raw_pass_rate": 0.5714285714285714,
+      "protocol_clean": 26,
+      "protocol_clean_rate": 0.9285714285714286,
+      "post_test_pass": 17,
+      "post_test_pass_rate": 0.6071428571428571,
+      "cost_total": {
+        "tokens": 881654.0,
+        "wall_seconds": 1901.383,
+        "source_reads": 212.0,
+        "tool_calls": 385.0,
+        "source_bytes": 153720.0
+      },
+      "cost_mean": {
+        "tokens": 31487.64285714286,
+        "wall_seconds": 67.90653571428571,
+        "source_reads": 7.571428571428571,
+        "tool_calls": 13.75,
+        "source_bytes": 5490.0
+      },
+      "pass_per_1k_tokens": 0.018147708738348603,
+      "pass_per_hour": 30.2937388206374
+    },
+    "STALE_DOC_CONTROL": {
+      "runs": 28,
+      "semantic_evaluable": 28,
+      "semantic_adjusted_pass": 24,
+      "semantic_adjusted_pass_rate": 0.8571428571428571,
+      "raw_pass": 24,
+      "raw_pass_rate": 0.8571428571428571,
+      "protocol_clean": 28,
+      "protocol_clean_rate": 1.0,
+      "post_test_pass": 24,
+      "post_test_pass_rate": 0.8571428571428571,
+      "cost_total": {
+        "tokens": 583303.0,
+        "wall_seconds": 1494.067,
+        "source_reads": 218.0,
+        "tool_calls": 377.0,
+        "source_bytes": 187127.0
+      },
+      "cost_mean": {
+        "tokens": 20832.25,
+        "wall_seconds": 53.35953571428571,
+        "source_reads": 7.785714285714286,
+        "tool_calls": 13.464285714285714,
+        "source_bytes": 6683.107142857143
+      },
+      "pass_per_1k_tokens": 0.04114499668268464,
+      "pass_per_hour": 57.82873191095179
+    }
+  },
+  "direct_refresh_oracle": {
+    "schema": "tmf_direct_refresh_oracle_eval_v1",
+    "summary": {
+      "cases": 3,
+      "pass": 3,
+      "stale_withheld": 3,
+      "avg_required_precision": 0.5397,
+      "avg_tiered_useful_precision": 0.9444,
+      "avg_required_recall": 1.0,
+      "avg_side_effect_recall": 1.0
+    },
+    "rows": [
+      {
+        "case": "M15",
+        "claim_fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing"
+        ],
+        "stale_claim_withheld": true,
+        "required_count": 6,
+        "expected_required": [
+          "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publishAfterCommit",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder"
+        ],
+        "required_reads": [
+          "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publish",
+          "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publishAfterCommit",
+          "src/main/java/com/example/order/Order.java::Order.getId",
+          "src/main/java/com/example/order/OrderRepository.java::OrderRepository.save",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/OrderService.java::OrderService.persistAndPublish"
+        ],
+        "tp_required": [
+          "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publishAfterCommit",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder"
+        ],
+        "missing_required": [],
+        "extra_required": [
+          "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publish",
+          "src/main/java/com/example/order/Order.java::Order.getId",
+          "src/main/java/com/example/order/OrderRepository.java::OrderRepository.save",
+          "src/main/java/com/example/order/OrderService.java::OrderService.persistAndPublish"
+        ],
+        "safe_extra_required": [
+          "src/main/java/com/example/order/EventPublisher.java::EventPublisher.publish",
+          "src/main/java/com/example/order/OrderRepository.java::OrderRepository.save",
+          "src/main/java/com/example/order/OrderService.java::OrderService.persistAndPublish"
+        ],
+        "noise_extra_required": [],
+        "unclassified_extra_required": [
+          "src/main/java/com/example/order/Order.java::Order.getId"
+        ],
+        "required_precision": 0.3333,
+        "tiered_useful_precision": 0.8333,
+        "required_recall": 1.0,
+        "side_effect_kinds": [
+          "event_publish",
+          "persistence"
+        ],
+        "expected_side_effect_kinds": [
+          "event_publish",
+          "persistence"
+        ],
+        "side_effect_recall": 1.0,
+        "pass": true,
+        "plan": {
+          "mode": "task_relevant_stale_slice",
+          "claim_id": "outbox_m15:old:OrderService.createOrder",
+          "claim_fresh": false,
+          "stale_claim_withheld": true,
+          "principle": "A stale binding invalidates only its bound node/edge endpoint. Retain bindings/endpoints whose current signature/hash still matches; refresh by patching the stale slice, not by rebuilding the whole graph.",
+          "stale_bindings": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 12,
+              "line_end": 16,
+              "hash_kind": "java_node_hash",
+              "stored_file_blob_prefix": "608e3aadd069",
+              "current_file_blob_prefix": "cb32b2bce8bd",
+              "stored_node_hash_prefix": "049e276aa23e",
+              "status": "stale",
+              "reason": "src/main/java/com/example/order/OrderService.java:OrderService.createOrder: java node missing",
+              "binding": {
+                "path": "src/main/java/com/example/order/OrderService.java",
+                "file_blob": "608e3aadd06951b51f6803dc28c20fdbf74f6691",
+                "fn_hash": "049e276aa23e0d820ea8fe91290a2c00a3c5fd5b88f10728adbb14be9cd2a2c2",
+                "commit": null,
+                "qualname": "OrderService.createOrder",
+                "role": "method",
+                "line_start": 12,
+                "line_end": 16,
+                "hash_kind": "java_node_hash"
+              }
+            }
+          ],
+          "retained_fresh_bindings": [],
+          "required_reads": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 12,
+              "line_end": 16,
+              "required": true,
+              "reason": "stale binding: refresh this source-bound node/signature only",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.persistAndPublish",
+              "role": "current_source_symbol",
+              "line_start": 17,
+              "line_end": 20,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/EventPublisher.java",
+              "qualname": "EventPublisher.publish",
+              "role": "current_source_symbol",
+              "line_start": 8,
+              "line_end": 8,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/EventPublisher.java",
+              "qualname": "EventPublisher.publishAfterCommit",
+              "role": "current_source_symbol",
+              "line_start": 10,
+              "line_end": 10,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderRepository.java",
+              "qualname": "OrderRepository.save",
+              "role": "current_source_symbol",
+              "line_start": 4,
+              "line_end": 4,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/Order.java",
+              "qualname": "Order.getId",
+              "role": "current_source_symbol",
+              "line_start": 6,
+              "line_end": 6,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            }
+          ],
+          "optional_fresh_neighbors": [],
+          "side_effect_checks": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.persistAndPublish",
+              "line": 18,
+              "kind": "persistence",
+              "source": "repository.save(order);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.persistAndPublish",
+              "line": 19,
+              "kind": "event_publish",
+              "source": "publisher.publish(\"ORDER_CREATED:\" + order.getId());",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+              "must_resolve_before_edit": true
+            },
+            {
+              "path": "src/main/java/com/example/order/EventPublisher.java",
+              "qualname": "EventPublisher.publish",
+              "line": 8,
+              "kind": "event_publish",
+              "source": "void publish(String event);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+              "must_resolve_before_edit": true
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderRepository.java",
+              "qualname": "OrderRepository.save",
+              "line": 4,
+              "kind": "persistence",
+              "source": "void save(Order order);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            }
+          ],
+          "stop_rule": "Read each required stale node once. Resolve each must_resolve side-effect check (publish/save/status guard and ordering). Use retained fresh bindings and fresh one-hop neighbors as context. If those facts answer the task, stop searching and edit the smallest affected source block.",
+          "do_not_expand_to": [
+            "whole repository",
+            "whole package",
+            "all files sharing the stale file blob",
+            "full graph rebuild"
+          ],
+          "task_terms": [
+            "and",
+            "await",
+            "awaiting",
+            "boundary",
+            "call",
+            "calls",
+            "clas",
+            "class",
+            "com",
+            "confirm",
+            "confirmed",
+            "creat",
+            "create",
+            "created",
+            "createord",
+            "createorder",
+            "creation",
+            "deterministic",
+            "direct",
+            "eval",
+            "event",
+            "eventpublish",
+            "eventpublisher",
+            "example",
+            "final",
+            "get",
+            "getid",
+            "immediate",
+            "intent",
+            "known",
+            "old",
+            "oracle"
+          ],
+          "coverage": "partial"
+        }
+      },
+      {
+        "case": "M16",
+        "claim_fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'"
+        ],
+        "stale_claim_withheld": true,
+        "required_count": 7,
+        "expected_required": [
+          "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+        ],
+        "required_reads": [
+          "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+          "src/main/java/com/example/order/PaymentIntentRepository.java::PaymentIntentRepository.save",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+        ],
+        "tp_required": [
+          "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+        ],
+        "missing_required": [],
+        "extra_required": [
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+          "src/main/java/com/example/order/PaymentIntentRepository.java::PaymentIntentRepository.save",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+        ],
+        "safe_extra_required": [
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+          "src/main/java/com/example/order/PaymentIntentRepository.java::PaymentIntentRepository.save",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+        ],
+        "noise_extra_required": [],
+        "unclassified_extra_required": [],
+        "required_precision": 0.5714,
+        "tiered_useful_precision": 1.0,
+        "required_recall": 1.0,
+        "side_effect_kinds": [
+          "event_publish",
+          "persistence",
+          "state_transition"
+        ],
+        "expected_side_effect_kinds": [
+          "event_publish",
+          "persistence",
+          "state_transition"
+        ],
+        "side_effect_recall": 1.0,
+        "pass": true,
+        "plan": {
+          "mode": "task_relevant_stale_slice",
+          "claim_id": "order_m16:old:OrderService.createOrder",
+          "claim_fresh": false,
+          "stale_claim_withheld": true,
+          "principle": "A stale binding invalidates only its bound node/edge endpoint. Retain bindings/endpoints whose current signature/hash still matches; refresh by patching the stale slice, not by rebuilding the whole graph.",
+          "stale_bindings": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 19,
+              "line_end": 27,
+              "hash_kind": "java_node_hash",
+              "stored_file_blob_prefix": "0fd67ee774eb",
+              "current_file_blob_prefix": "0fd67ee774eb",
+              "stored_node_hash_prefix": "04609d64e4b7",
+              "status": "fresh",
+              "reason": "file_blob match; bound node hash retained",
+              "binding": {
+                "path": "src/main/java/com/example/order/OrderService.java",
+                "file_blob": "0fd67ee774eb742e55bef0749c19bbc95fd0e994",
+                "fn_hash": "04609d64e4b76aaf7179088736131f3abc66fe620a755d5967092e74776701ee",
+                "commit": null,
+                "qualname": "OrderService.createOrder",
+                "role": "method",
+                "line_start": 19,
+                "line_end": 27,
+                "hash_kind": "java_node_hash"
+              }
+            }
+          ],
+          "retained_fresh_bindings": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 19,
+              "line_end": 27,
+              "required": false,
+              "reason": "binding still fresh by current signature/hash; retain, do not reread unless task evidence is missing",
+              "preferred_action": "read_symbol"
+            }
+          ],
+          "required_reads": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 19,
+              "line_end": 27,
+              "required": true,
+              "reason": "stale binding: refresh this source-bound node/signature only",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentService.java",
+              "qualname": "PaymentIntentService.requiresManualReview",
+              "role": "current_source_symbol",
+              "line_start": 22,
+              "line_end": 24,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/Order.java",
+              "qualname": "Order.markAwaitingReview",
+              "role": "current_source_symbol",
+              "line_start": 23,
+              "line_end": 23,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentService.java",
+              "qualname": "PaymentIntentService.createIntent",
+              "role": "current_source_symbol",
+              "line_start": 13,
+              "line_end": 20,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntent.java",
+              "qualname": "PaymentIntent.getOrderId",
+              "role": "current_source_symbol",
+              "line_start": 12,
+              "line_end": 12,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntent.java",
+              "qualname": "PaymentIntent.getStatus",
+              "role": "current_source_symbol",
+              "line_start": 13,
+              "line_end": 13,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentRepository.java",
+              "qualname": "PaymentIntentRepository.save",
+              "role": "current_source_symbol",
+              "line_start": 4,
+              "line_end": 4,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            }
+          ],
+          "optional_fresh_neighbors": [],
+          "side_effect_checks": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "line": 23,
+              "kind": "state_transition",
+              "source": "order.markReady();",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": true
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "line": 24,
+              "kind": "persistence",
+              "source": "orderRepository.save(order);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "line": 25,
+              "kind": "event_publish",
+              "source": "eventPublisher.publish(\"ORDER_CREATED\", order.getId());",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+              "must_resolve_before_edit": true
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentService.java",
+              "qualname": "PaymentIntentService.createIntent",
+              "line": 18,
+              "kind": "persistence",
+              "source": "repository.save(intent);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentRepository.java",
+              "qualname": "PaymentIntentRepository.save",
+              "line": 4,
+              "kind": "persistence",
+              "source": "void save(PaymentIntent paymentIntent);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            }
+          ],
+          "stop_rule": "Read each required stale node once. Resolve each must_resolve side-effect check (publish/save/status guard and ordering). Use retained fresh bindings and fresh one-hop neighbors as context. If those facts answer the task, stop searching and edit the smallest affected source block.",
+          "do_not_expand_to": [
+            "whole repository",
+            "whole package",
+            "all files sharing the stale file blob",
+            "full graph rebuild"
+          ],
+          "task_terms": [
+            "and",
+            "await",
+            "awaiting",
+            "call",
+            "calls",
+            "chain",
+            "clas",
+            "class",
+            "com",
+            "confirm",
+            "confirmed",
+            "creat",
+            "create",
+            "created",
+            "createintent",
+            "createord",
+            "createorder",
+            "creation",
+            "deterministic",
+            "direct",
+            "eval",
+            "event",
+            "eventpublish",
+            "eventpublisher",
+            "example",
+            "final",
+            "for",
+            "get",
+            "getid",
+            "immediately",
+            "intent",
+            "inventory"
+          ],
+          "coverage": "partial"
+        }
+      },
+      {
+        "case": "M21",
+        "claim_fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'"
+        ],
+        "stale_claim_withheld": true,
+        "required_count": 7,
+        "expected_required": [
+          "src/main/java/com/example/order/FulfillmentPolicy.java::FulfillmentPolicy.shouldPublishOrderCreated",
+          "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+        ],
+        "required_reads": [
+          "src/main/java/com/example/order/FulfillmentPolicy.java::FulfillmentPolicy.shouldPublishOrderCreated",
+          "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+        ],
+        "tp_required": [
+          "src/main/java/com/example/order/FulfillmentPolicy.java::FulfillmentPolicy.shouldPublishOrderCreated",
+          "src/main/java/com/example/order/Order.java::Order.markAwaitingReview",
+          "src/main/java/com/example/order/OrderService.java::OrderService.createOrder",
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getStatus",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.createIntent"
+        ],
+        "missing_required": [],
+        "extra_required": [
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+        ],
+        "safe_extra_required": [
+          "src/main/java/com/example/order/PaymentIntent.java::PaymentIntent.getOrderId",
+          "src/main/java/com/example/order/PaymentIntentService.java::PaymentIntentService.requiresManualReview"
+        ],
+        "noise_extra_required": [],
+        "unclassified_extra_required": [],
+        "required_precision": 0.7143,
+        "tiered_useful_precision": 1.0,
+        "required_recall": 1.0,
+        "side_effect_kinds": [
+          "event_publish",
+          "persistence",
+          "state_transition"
+        ],
+        "expected_side_effect_kinds": [
+          "event_publish",
+          "persistence",
+          "state_transition"
+        ],
+        "side_effect_recall": 1.0,
+        "pass": true,
+        "plan": {
+          "mode": "task_relevant_stale_slice",
+          "claim_id": "order_m21:old:OrderService.createOrder",
+          "claim_fresh": false,
+          "stale_claim_withheld": true,
+          "principle": "A stale binding invalidates only its bound node/edge endpoint. Retain bindings/endpoints whose current signature/hash still matches; refresh by patching the stale slice, not by rebuilding the whole graph.",
+          "stale_bindings": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 22,
+              "line_end": 32,
+              "hash_kind": "java_node_hash",
+              "stored_file_blob_prefix": "f5b905a1eddb",
+              "current_file_blob_prefix": "f5b905a1eddb",
+              "stored_node_hash_prefix": "65aea69e10dc",
+              "status": "fresh",
+              "reason": "file_blob match; bound node hash retained",
+              "binding": {
+                "path": "src/main/java/com/example/order/OrderService.java",
+                "file_blob": "f5b905a1eddb408f7d6b11b618fd6b5c229a6739",
+                "fn_hash": "65aea69e10dcd7cde158ae7eefefa4ff8cddc256cbd3dc1f0092e758f064c193",
+                "commit": null,
+                "qualname": "OrderService.createOrder",
+                "role": "method",
+                "line_start": 22,
+                "line_end": 32,
+                "hash_kind": "java_node_hash"
+              }
+            }
+          ],
+          "retained_fresh_bindings": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 22,
+              "line_end": 32,
+              "required": false,
+              "reason": "binding still fresh by current signature/hash; retain, do not reread unless task evidence is missing",
+              "preferred_action": "read_symbol"
+            }
+          ],
+          "required_reads": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "role": "method",
+              "line_start": 22,
+              "line_end": 32,
+              "required": true,
+              "reason": "stale binding: refresh this source-bound node/signature only",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentService.java",
+              "qualname": "PaymentIntentService.requiresManualReview",
+              "role": "current_source_symbol",
+              "line_start": 22,
+              "line_end": 24,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/Order.java",
+              "qualname": "Order.markAwaitingReview",
+              "role": "current_source_symbol",
+              "line_start": 23,
+              "line_end": 23,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentService.java",
+              "qualname": "PaymentIntentService.createIntent",
+              "role": "current_source_symbol",
+              "line_start": 13,
+              "line_end": 20,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/FulfillmentPolicy.java",
+              "qualname": "FulfillmentPolicy.shouldPublishOrderCreated",
+              "role": "current_source_symbol",
+              "line_start": 5,
+              "line_end": 7,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntent.java",
+              "qualname": "PaymentIntent.getOrderId",
+              "role": "current_source_symbol",
+              "line_start": 12,
+              "line_end": 12,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntent.java",
+              "qualname": "PaymentIntent.getStatus",
+              "role": "current_source_symbol",
+              "line_start": 13,
+              "line_end": 13,
+              "required": true,
+              "reason": "current source-local symbol matched stale-slice/task terms; refresh before editing",
+              "preferred_action": "read_symbol"
+            }
+          ],
+          "optional_fresh_neighbors": [],
+          "side_effect_checks": [
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "line": 26,
+              "kind": "state_transition",
+              "source": "order.markReady();",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": true
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "line": 27,
+              "kind": "persistence",
+              "source": "orderRepository.save(order);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            },
+            {
+              "path": "src/main/java/com/example/order/OrderService.java",
+              "qualname": "OrderService.createOrder",
+              "line": 29,
+              "kind": "event_publish",
+              "source": "eventPublisher.publish(\"ORDER_CREATED\", order.getId());",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "If a refreshed branch is pending/review/not-confirmed, keep this publish/effect out of that branch unless current source proves it is safe.",
+              "must_resolve_before_edit": true
+            },
+            {
+              "path": "src/main/java/com/example/order/PaymentIntentService.java",
+              "qualname": "PaymentIntentService.createIntent",
+              "line": 18,
+              "kind": "persistence",
+              "source": "repository.save(intent);",
+              "required_decision": "decide whether this side effect remains valid for every refreshed status/contract branch",
+              "guard_hint": "Check ordering and branch consistency against the refreshed contract.",
+              "must_resolve_before_edit": false
+            }
+          ],
+          "stop_rule": "Read each required stale node once. Resolve each must_resolve side-effect check (publish/save/status guard and ordering). Use retained fresh bindings and fresh one-hop neighbors as context. If those facts answer the task, stop searching and edit the smallest affected source block.",
+          "do_not_expand_to": [
+            "whole repository",
+            "whole package",
+            "all files sharing the stale file blob",
+            "full graph rebuild"
+          ],
+          "task_terms": [
+            "and",
+            "await",
+            "awaiting",
+            "call",
+            "calls",
+            "chain",
+            "clas",
+            "class",
+            "com",
+            "confirm",
+            "confirmed",
+            "creat",
+            "create",
+            "created",
+            "createintent",
+            "createord",
+            "createorder",
+            "creation",
+            "deterministic",
+            "direct",
+            "eval",
+            "event",
+            "eventpublish",
+            "eventpublisher",
+            "example",
+            "final",
+            "for",
+            "fulfill",
+            "fulfillment",
+            "fulfillmentpolicy",
+            "get",
+            "getid"
+          ],
+          "coverage": "partial"
+        }
+      }
+    ]
+  },
+  "verdict": {
+    "label": "STRONG_PRODUCT_ROI_PASS",
+    "reasons": [
+      "all product ROI conditions satisfied"
+    ],
+    "conditions": {
+      "overall_semantic_uplift_at_least_10pp": true,
+      "repeat_qualified_fixtures_at_least_6": true,
+      "families_at_least_4": true,
+      "tmf_ties_or_beats_source_on_at_least_4_fixtures": true,
+      "no_catastrophic_fixture_regression": true,
+      "cost_efficiency_ok_pp1k_or_uplift": true,
+      "wall_time_efficiency_ok": true,
+      "stale_containment_perfect_on_expected_rows": true,
+      "direct_refresh_oracle_passes": true
+    }
+  }
+}

@@ -1,0 +1,2056 @@
+{
+  "schema": "scheduler_m14_two_phase_stale_context",
+  "model": "gpt-5.6-sol",
+  "final_gate": "hard",
+  "phase_a_turns": 4,
+  "phase_b_turns": 12,
+  "preflight": {
+    "protocol": "tmf-agent-broker-v1",
+    "model": "gpt-5.6-sol",
+    "stateless": true,
+    "tools": [],
+    "network_owner": "broker",
+    "credential_owner": "broker"
+  },
+  "rows": [
+    {
+      "task_id": "RPC_M14",
+      "arm": "SOURCE_ONLY",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1044,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 1934,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将调度改为先原子领取待处理任务，再执行发送；仅在发送成功后标记为 SENT。发送失败的任务保持 PROCESSING，后续普通重跑不会重复通知用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 14672,
+        "completion_tokens": 519,
+        "invalid": 0,
+        "wall_seconds": 43.949,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__SOURCE_ONLY__r1.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1044,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 1974,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度改为先通过仓储原子领取待处理任务并标记为 PROCESSING，再执行通知发送；仅在发送成功后标记 SENT。发送失败时任务保持处理中，不会被错误完成或被后续普通待处理重跑重复发送。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 3608,
+        "source_reads": 5,
+        "source_files": [
+          "README.md",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 39199,
+        "completion_tokens": 986,
+        "invalid": 0,
+        "wall_seconds": 119.628,
+        "successful_edits": 4,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [
+          {
+            "turn": 5,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__PREREAD_STALE_SOURCE__r1.raw.json",
+      "diff_bytes": 1455
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2070,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "改为先原子领取待处理任务，再发送通知；仅在发送成功后标记为 SENT。发送失败的任务保持 PROCESSING，后续普通扫描不会重复发送，从而避免并发重复通知和失败时状态误标。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 6033,
+        "source_reads": 4,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 21720,
+        "completion_tokens": 527,
+        "invalid": 0,
+        "wall_seconds": 54.426,
+        "successful_edits": 3,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__STALE_DOC_CONTROL__r1.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "TMF_STALE_GATED",
+      "rep": 1,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2069,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "scheduler_m14:old:NotificationScheduler.runOnce",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "修复通知调度的两阶段处理：先原子认领 PENDING 任务，再调用发送端，且仅在发送成功后标记 SENT。发送失败时任务保持 PROCESSING，不会被错误完成；后续普通重跑只认领仍为 PENDING 的任务，避免重复通知用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6054,
+        "source_reads": 4,
+        "source_files": [
+          "README.md",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 18707,
+        "completion_tokens": 513,
+        "invalid": 0,
+        "wall_seconds": 50.194,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__TMF_STALE_GATED__r1.raw.json",
+      "diff_bytes": 1179
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "SOURCE_ONLY",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2065,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度改为先原子领取 PENDING 任务并置为处理中，再执行通知发送；仅发送成功后标记 SENT。发送失败时任务保持 PROCESSING，后续普通重跑不会重复发送，避免状态提前完成导致丢通知，也减少重复打扰用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 14672,
+        "completion_tokens": 527,
+        "invalid": 0,
+        "wall_seconds": 43.997,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__SOURCE_ONLY__r2.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1044,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 1974,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度器改为先通过仓储原子领取待处理任务，再执行通知发送；仅在发送成功后标记为 SENT。发送失败时任务保持 PROCESSING，后续常规重跑不会再次发送该任务，避免状态错乱和重复打扰。已通过编译。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 10,
+        "source_bytes": 6675,
+        "source_reads": 5,
+        "source_files": [
+          "README.md",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 28569,
+        "completion_tokens": 644,
+        "invalid": 0,
+        "wall_seconds": 57.252,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 3,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 3,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__PREREAD_STALE_SOURCE__r2.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2070,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "Added the atomic claimPendingBatch repository contract and updated runOnce to claim tasks before dispatch, mark them SENT only after successful delivery, and leave failed tasks PROCESSING so later pending scans do not duplicate notifications.",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 6406,
+        "source_reads": 4,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 32311,
+        "completion_tokens": 796,
+        "invalid": 0,
+        "wall_seconds": 60.371,
+        "successful_edits": 4,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": true,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": true,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [
+          {
+            "turn": 7,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__STALE_DOC_CONTROL__r2.raw.json",
+      "diff_bytes": 982
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "TMF_STALE_GATED",
+      "rep": 2,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2069,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "scheduler_m14:old:NotificationScheduler.runOnce",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "将调度流程改为先原子领取待处理任务，再执行发送，并且仅在发送成功后标记为 SENT。发送失败的任务保持 PROCESSING，后续普通重跑不会重复发送，避免状态提前完成导致丢消息及重复打扰。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 15731,
+        "completion_tokens": 524,
+        "invalid": 0,
+        "wall_seconds": 44.806,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__TMF_STALE_GATED__r2.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "SOURCE_ONLY",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1044,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 1966,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度改为先原子领取 PENDING 任务，再发送通知，且仅在发送成功后标记 SENT；发送失败的任务保持 PROCESSING，避免后续普通重跑重复通知用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 14542,
+        "completion_tokens": 488,
+        "invalid": 0,
+        "wall_seconds": 36.901,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__SOURCE_ONLY__r3.raw.json",
+      "diff_bytes": 1156
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2073,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 4349,
+        "source_reads": 6,
+        "source_files": [
+          "README.md",
+          "pom.xml",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 39386,
+        "completion_tokens": 981,
+        "invalid": 0,
+        "wall_seconds": 114.584,
+        "successful_edits": 4,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": true,
+        "trap_pass": false,
+        "semantic_pass": false,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "no_final_after_success",
+        "categories": [
+          "no_final_after_success",
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [
+          {
+            "turn": 6,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": true
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__PREREAD_STALE_SOURCE__r3.raw.json",
+      "diff_bytes": 1457
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2070,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "新增仓储原子领取待处理任务的契约；调度器改为先领取任务、发送成功后再标记 SENT。发送失败时任务保持 PROCESSING，后续待处理扫描不会重复发送，也不会提前写成已发送。编译已通过。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 9,
+        "source_bytes": 6247,
+        "source_reads": 4,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 18917,
+        "completion_tokens": 550,
+        "invalid": 0,
+        "wall_seconds": 43.864,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__STALE_DOC_CONTROL__r3.raw.json",
+      "diff_bytes": 1156
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "TMF_STALE_GATED",
+      "rep": 3,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2069,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "scheduler_m14:old:NotificationScheduler.runOnce",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度器改为先通过仓储原子领取 PENDING 任务，再执行通知发送；仅在发送成功后标记 SENT。发送失败时任务保持 PROCESSING，后续常规重跑不会再次领取并重复通知用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 15601,
+        "completion_tokens": 491,
+        "invalid": 0,
+        "wall_seconds": 36.99,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__TMF_STALE_GATED__r3.raw.json",
+      "diff_bytes": 1156
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "SOURCE_ONLY",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2065,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": false,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度器改为通过 claimPendingBatch 原子领取待处理任务，避免并发重复发送；发送成功后才标记 SENT，发送失败时任务保持 PROCESSING，后续普通重跑不会重复打扰用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 14672,
+        "completion_tokens": 524,
+        "invalid": 0,
+        "wall_seconds": 44.704,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__SOURCE_ONLY__r4.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "PREREAD_STALE_SOURCE",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 1974,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": null,
+      "telemetry": {
+        "tool_calls": 12,
+        "source_bytes": 8336,
+        "source_reads": 7,
+        "source_files": [
+          "README.md",
+          "pom.xml",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 38112,
+        "completion_tokens": 762,
+        "invalid": 0,
+        "wall_seconds": 110.246,
+        "successful_edits": 3,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 1,
+        "post_test_pass_observed": false
+      },
+      "post_test": {
+        "ok": false,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": false,
+          "uses_find_pending": true,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true
+        },
+        "test": {
+          "ok": false,
+          "exit": 1,
+          "stdout": "[\u001b[1;31mERROR\u001b[m] COMPILATION ERROR : \n[\u001b[1;31mERROR\u001b[m] /root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/scheduler_m14_two_phase_stale_context/RPC_M14__PREREAD_STALE_SOURCE__r4/src/main/java/com/example/scheduler/NotificationScheduler.java:[23,24] cannot find symbol\n  symbol:   method markProcessing(long)\n  location: variable repository of type com.example.scheduler.NotificationTaskRepository\n[\u001b[1;31mERROR\u001b[m] Failed to execute goal \u001b[32morg.apache.maven.plugins:maven-compiler-plugin:3.1:compile\u001b[m \u001b[1m(default-compile)\u001b[m on project \u001b[36mscheduler-partial-failure-idempotency-fixture\u001b[m: \u001b[1;31mCompilation failure\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m/root/.openclaw/workspace/worktrees/tmf-java-nodes-step0/bench/agent_ab/same_version_chain_v1/results/work/scheduler_m14_two_phase_stale_context/RPC_M14__PREREAD_STALE_SOURCE__r4/src/main/java/com/example/scheduler/NotificationScheduler.java:[23,24] cannot find symbol\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m  symbol:   method markProcessing(long)\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m  location: variable repository of type com.example.scheduler.NotificationTaskRepository\u001b[m\n[\u001b[1;31mERROR\u001b[m] \u001b[1;31m\u001b[m\n[\u001b[1;31mERROR\u001b[m] -> \u001b[1m[Help 1]\u001b[m\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] To see the full stack trace of the errors, re-run Maven with the \u001b[1m-e\u001b[m switch.\n[\u001b[1;31mERROR\u001b[m] Re-run Maven using the \u001b[1m-X\u001b[m switch to enable full debug logging.\n[\u001b[1;31mERROR\u001b[m] \n[\u001b[1;31mERROR\u001b[m] For more information about the errors and possible solutions, please read the following articles:\n[\u001b[1;31mERROR\u001b[m] \u001b[1m[Help 1]\u001b[m http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException\n",
+          "stderr": ""
+        },
+        "message": "mvn test failed; scheduler does not claim pending batch"
+      },
+      "audit": {
+        "valid_answer": false,
+        "compile_ok": false,
+        "trap_pass": false,
+        "semantic_pass": false,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": false,
+          "uses_find_pending": true,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": true,
+          "post_message": "mvn test failed; scheduler does not claim pending batch"
+        }
+      },
+      "failure_classification": {
+        "pass": false,
+        "primary": "edit_protocol_fail",
+        "categories": [
+          "edit_protocol_fail",
+          "compile_fail",
+          "no_final",
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [
+          {
+            "turn": 4,
+            "action": "edit",
+            "error": "old text occurrences=0"
+          }
+        ],
+        "compile_tool_failures": [
+          {
+            "turn": 7,
+            "exit": 1,
+            "stderr_tail": ""
+          }
+        ],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": false,
+        "has_diff": true,
+        "extra_actions_ignored": 1,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": false,
+        "protocol_clean": false,
+        "semantic_evaluable": false,
+        "semantic_pass": null,
+        "task_result_pass": false,
+        "post_test_ok": false
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__PREREAD_STALE_SOURCE__r4.raw.json",
+      "diff_bytes": 829
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "STALE_DOC_CONTROL",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1044,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationSender.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 1971,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": false,
+      "withheld_claim_id": null,
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "修复通知调度：通过原子 claim 获取待处理任务，发送成功后才标记 SENT；发送失败的任务保持 PROCESSING，避免状态误报及后续扫描重复发送。编译已通过。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 16332,
+        "completion_tokens": 835,
+        "invalid": 0,
+        "wall_seconds": 60.438,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 3,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [
+          "extra_actions_ignored"
+        ],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 3,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__STALE_DOC_CONTROL__r4.raw.json",
+      "diff_bytes": 1166
+    },
+    {
+      "task_id": "RPC_M14",
+      "arm": "TMF_STALE_GATED",
+      "rep": 4,
+      "final_gate": "hard",
+      "phase_a_max_turns": 4,
+      "phase_b_max_turns": 12,
+      "phase_a_orientation": null,
+      "phase_a_telemetry": {
+        "tool_calls": 4,
+        "source_reads": 3,
+        "source_bytes": 1551,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTask.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ],
+        "prompt_tokens": 2069,
+        "completion_tokens": 92,
+        "invalid": 0,
+        "edits_rejected": 0,
+        "compile_calls": 0
+      },
+      "stale_claim_present": true,
+      "stale_claim_fresh": false,
+      "stale_claim_withheld": true,
+      "withheld_claim_id": "scheduler_m14:old:NotificationScheduler.runOnce",
+      "freshness": {
+        "fresh": false,
+        "stale_bindings": [
+          "derivation version mismatch: java stored=None current='java.derive.v8'",
+          "src/main/java/com/example/scheduler/NotificationScheduler.java:NotificationScheduler.runOnce: java_hash mismatch"
+        ]
+      },
+      "final": {
+        "action": "final",
+        "answer": "调度器改为通过 claimPendingBatch 原子领取待处理任务，避免并发重复发送；发送成功后才标记 SENT，发送失败时任务保持 PROCESSING，不污染完成状态，也不会在后续普通重跑中重复打扰用户。",
+        "files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java"
+        ]
+      },
+      "telemetry": {
+        "tool_calls": 8,
+        "source_bytes": 5531,
+        "source_reads": 3,
+        "source_files": [
+          "src/main/java/com/example/scheduler/NotificationScheduler.java",
+          "src/main/java/com/example/scheduler/NotificationTaskRepository.java",
+          "src/test/java/com/example/scheduler/NotificationSchedulerContractTest.java"
+        ],
+        "prompt_tokens": 15731,
+        "completion_tokens": 527,
+        "invalid": 0,
+        "wall_seconds": 43.952,
+        "successful_edits": 2,
+        "rejected_finals": 0,
+        "duplicate_edit_suppressed": 0,
+        "extra_actions_ignored": 0,
+        "post_test_pass_observed": true
+      },
+      "post_test": {
+        "ok": true,
+        "placement": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false
+        },
+        "test": {
+          "ok": true,
+          "exit": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "message": "PASS"
+      },
+      "audit": {
+        "valid_answer": true,
+        "compile_ok": true,
+        "trap_pass": true,
+        "semantic_pass": true,
+        "trap_reason": {
+          "has_claim_api": true,
+          "uses_claim": true,
+          "uses_find_pending": false,
+          "mark_before_send": false,
+          "send_before_mark": true,
+          "catches_runtime": false,
+          "legacy_helper": false,
+          "post_message": "PASS"
+        }
+      },
+      "failure_classification": {
+        "pass": true,
+        "primary": "pass",
+        "categories": [],
+        "edit_errors": [],
+        "compile_tool_failures": [],
+        "parse_or_invalid_turns": 0,
+        "tool_errors": [],
+        "has_final": true,
+        "has_diff": true,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": false
+      },
+      "metrics": {
+        "raw_pass": true,
+        "protocol_clean": true,
+        "semantic_evaluable": true,
+        "semantic_pass": true,
+        "task_result_pass": true,
+        "post_test_ok": true
+      },
+      "raw_path": "results/raw/scheduler_m14_two_phase_stale_context/SCHEDULER_M14__TMF_STALE_GATED__r4.raw.json",
+      "diff_bytes": 1166
+    }
+  ],
+  "summary": {
+    "mode": "scheduler_m14_two_phase_stale_context",
+    "runs": 16,
+    "by_arm": {
+      "SOURCE_ONLY": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 0,
+        "uses_claim": 4,
+        "mark_before_send": 0,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 4
+        }
+      },
+      "PREREAD_STALE_SOURCE": {
+        "runs": 4,
+        "raw_pass": 2,
+        "task_result_pass": 3,
+        "post_test_ok": 3,
+        "semantic_evaluable": 2,
+        "semantic_adjusted_pass": 2,
+        "stale_claim_withheld": 0,
+        "uses_claim": 3,
+        "mark_before_send": 0,
+        "uses_find_pending": 1,
+        "extra_actions_ignored": 6,
+        "result_ok_but_raw_failed": 1,
+        "primary": {
+          "pass": 2,
+          "no_final_after_success": 1,
+          "edit_protocol_fail": 1
+        }
+      },
+      "STALE_DOC_CONTROL": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 0,
+        "uses_claim": 4,
+        "mark_before_send": 1,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 5,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 4
+        }
+      },
+      "TMF_STALE_GATED": {
+        "runs": 4,
+        "raw_pass": 4,
+        "task_result_pass": 4,
+        "post_test_ok": 4,
+        "semantic_evaluable": 4,
+        "semantic_adjusted_pass": 4,
+        "stale_claim_withheld": 4,
+        "uses_claim": 4,
+        "mark_before_send": 0,
+        "uses_find_pending": 0,
+        "extra_actions_ignored": 0,
+        "result_ok_but_raw_failed": 0,
+        "primary": {
+          "pass": 4
+        }
+      }
+    }
+  }
+}
