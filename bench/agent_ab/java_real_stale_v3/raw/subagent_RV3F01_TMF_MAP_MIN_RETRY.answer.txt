@@ -1,0 +1,16 @@
+1) Old note is **blocked, not trusted**. TMF freshness check found all relevant `VisitBooked` claims stale/missing, including `VisitBooked.java: missing` and stale/mismatched nodes. Current source must override it.
+
+2) Current event type: `VisitScheduled`, record payload `(int visitId, int petId, LocalDate date)` in `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:20-26`.
+
+3) Current flow:
+- Direct producer method: `VisitScheduler.bookVisit(...)` publishes `new VisitScheduled(...)` at `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50`.
+- Listener method: `VetEventListener.on(VisitScheduled event)` at `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44`.
+- Assignment consumer method: `VetRoster.assignVet(VisitScheduled event)` at `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-74`.
+
+4) Smallest files to change if event payload adds required `clinicRoomId`:
+- `VisitScheduled.java` — add required record component, likely docs too: `src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java:20-26`.
+- `VisitScheduler.java` — producer must supply `clinicRoomId` when constructing event: `src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java:44-50`.
+- `VetRoster.java` — assignment consumer likely must read/use/pass/log the new required payload as needed: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java:61-74`.
+- `VetEventListener.java` only needs change if listener naming/signature/docs are adjusted beyond the event type’s changed record shape; current listener just forwards the event: `src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java:41-44`.
+
+METRICS_JSON={"source_files":["src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java","src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java","src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"],"source_lines":218,"tool_calls":2,"stale_trusted":false,"stale_blocked":true,"local_reread_lines":218}

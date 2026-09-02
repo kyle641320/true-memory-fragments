@@ -52,3 +52,14 @@ Because the CLI runner suffered provider/transport timeouts, RV3F01 was rerun th
 - `TMF_MAP`: failed before final answer. It did execute the TMF freshness command and surfaced stale `VisitBooked`-relevant claims, but the subagent turn aborted before producing the required final response and metrics. Evidence: `raw/subagent_RV3F01_TMF_MAP.abort.json`.
 
 Scoring: `results/subagent_eval.json` records `valid_pairs=0`, `superiority_claim=false`, verdict `SUBAGENT_PAIR_INCOMPLETE__SOURCE_ONLY_VALID__TMF_MAP_ABORTED`. This is still a runtime/harness blocker, not evidence for or against TMF semantic value.
+
+## TMF_MAP minimal retry completed (2026-09-02 16:47)
+
+To avoid rerunning the already-valid SOURCE_ONLY answer, only the missing TMF arm was retried with a minimal prompt: one freshness check plus at most four source files and no broad repository search.
+
+Result: valid pair is now available by pairing the previous valid `SOURCE_ONLY` subagent answer with `TMF_MAP_MIN_RETRY`.
+
+- `SOURCE_ONLY`: valid and correct; blocked stale `VisitBooked`, identified `VisitScheduled`; metrics: 6 source files, 413 source lines, 4 tool calls.
+- `TMF_MAP_MIN_RETRY`: valid and correct; freshness check blocked stale `VisitBooked`, then reread only four source files; metrics: 4 source files, 218 source lines, 2 tool calls.
+
+Scoring: both arms were correct, so there is no correctness superiority claim. Efficiency observation: TMF_MAP_MIN_RETRY reached the same required conclusion with fewer reread lines and fewer tool calls under the constrained retry protocol. Evidence: `results/subagent_min_retry_eval.json`, `raw/subagent_RV3F01_SOURCE_ONLY.answer.txt`, `raw/subagent_RV3F01_TMF_MAP_MIN_RETRY.answer.txt`.

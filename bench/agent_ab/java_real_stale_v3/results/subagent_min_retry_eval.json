@@ -1,0 +1,55 @@
+{
+  "schema": "java_real_stale_v3_min_retry_eval",
+  "rows": [
+    {
+      "arm": "SOURCE_ONLY",
+      "valid_transport": true,
+      "correct": true,
+      "response_sha256": "de126a1bc66a3f76600e24f850508c988ff821c54b06ab282f86838df3b1be8a",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/domain/Visit.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/ui/VisitController.java"
+        ],
+        "source_lines": 413,
+        "tool_calls": 4,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 0
+      }
+    },
+    {
+      "arm": "TMF_MAP_MIN_RETRY",
+      "valid_transport": true,
+      "correct": true,
+      "response_sha256": "ac9302f618af045f020197073f27d692771902c7e262a8c28187b9949c506399",
+      "metrics": {
+        "source_files": [
+          "src/main/java/org/springframework/samples/petclinic/owner/VisitScheduled.java",
+          "src/main/java/org/springframework/samples/petclinic/owner/application/VisitScheduler.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetEventListener.java",
+          "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRoster.java"
+        ],
+        "source_lines": 218,
+        "tool_calls": 2,
+        "stale_trusted": false,
+        "stale_blocked": true,
+        "local_reread_lines": 218
+      }
+    }
+  ],
+  "valid_pairs": 1,
+  "correct_pairs": 1,
+  "correctness_superiority_claim": false,
+  "efficiency_observation": {
+    "source_only_source_lines": 413,
+    "tmf_map_source_lines": 218,
+    "source_only_tool_calls": 4,
+    "tmf_map_tool_calls": 2
+  },
+  "verdict": "VALID_PAIR_BOTH_CORRECT__TMF_LOWER_REREAD_LINES_AND_TOOL_CALLS"
+}
