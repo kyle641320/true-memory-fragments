@@ -1,0 +1,114 @@
+{
+  "schema": "java_real_stale_v4_deterministic_eval",
+  "rows": [
+    {
+      "task_id": "RV4F01",
+      "repo": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-api-route",
+      "old_note": "OwnerController.showOwner is exposed at GET /owners/{ownerId}.",
+      "claim_count": 1,
+      "stale_claim_count": 1,
+      "all_claims_stale": true,
+      "source_checks": {
+        "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java": {
+          "has_new": true,
+          "has_target_old": false,
+          "lines": [
+            168
+          ]
+        }
+      },
+      "claims": [
+        {
+          "id": "claim_api_1acfc1b04a9f7475",
+          "fresh": false,
+          "kind": null,
+          "qualname": "OwnerController.showOwner",
+          "stale_bindings": [
+            "src/main/java/org/springframework/samples/petclinic/owner/ui/OwnerController.java:OwnerController.showOwner: api missing"
+          ]
+        }
+      ],
+      "verdict": "DETERMINISTIC_STALE_TASK_VALID"
+    },
+    {
+      "task_id": "RV4F02",
+      "repo": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-cache-name",
+      "old_note": "VetRepository read methods use @Cacheable(\"vets\").",
+      "claim_count": 2,
+      "stale_claim_count": 2,
+      "all_claims_stale": true,
+      "source_checks": {
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java": {
+          "has_new": true,
+          "has_target_old": false,
+          "lines": [
+            45,
+            55
+          ]
+        }
+      },
+      "claims": [
+        {
+          "id": "claim_cache_decl_3fcdbf15eb085e43",
+          "fresh": false,
+          "kind": "declares_cache_metadata",
+          "qualname": null,
+          "stale_bindings": [
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java:VetRepository.findAll: java node missing"
+          ]
+        },
+        {
+          "id": "claim_cache_decl_e69909391cf9e2f0",
+          "fresh": false,
+          "kind": "declares_cache_metadata",
+          "qualname": null,
+          "stale_bindings": [
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java:VetRepository.findAll: java node missing"
+          ]
+        }
+      ],
+      "verdict": "DETERMINISTIC_STALE_TASK_VALID"
+    },
+    {
+      "task_id": "RV4F03",
+      "repo": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-transaction-readonly",
+      "old_note": "VetRepository.findAll is @Transactional(readOnly = true).",
+      "claim_count": 2,
+      "stale_claim_count": 2,
+      "all_claims_stale": true,
+      "source_checks": {
+        "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java": {
+          "has_new": true,
+          "has_target_old": false,
+          "lines": [
+            44,
+            54
+          ]
+        }
+      },
+      "claims": [
+        {
+          "id": "claim_transaction_decl_e2c9c3d8d43855e5",
+          "fresh": false,
+          "kind": "declares_transaction_metadata",
+          "qualname": "VetRepository.findAll",
+          "stale_bindings": [
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java:VetRepository.findAll: java node missing"
+          ]
+        },
+        {
+          "id": "claim_transaction_decl_fab83cc839a744ab",
+          "fresh": false,
+          "kind": "declares_transaction_metadata",
+          "qualname": "VetRepository.findAll",
+          "stale_bindings": [
+            "src/main/java/org/springframework/samples/petclinic/vet/internal/VetRepository.java:VetRepository.findAll: java node missing"
+          ]
+        }
+      ],
+      "verdict": "DETERMINISTIC_STALE_TASK_VALID"
+    }
+  ],
+  "valid_tasks": 3,
+  "all_valid": true
+}

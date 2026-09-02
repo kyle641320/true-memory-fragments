@@ -1,0 +1,18 @@
+Repository: /root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-cache-name
+Task id: RV4F02
+Old note: VetRepository read methods use @Cacheable("vets").
+
+Question: Answer the current VetRepository cache contract after an old note says read methods use @Cacheable("vets"). Identify whether the old cache note is trusted or blocked, the current cache name(s), the affected repository methods, and smallest files to update if cache eviction/config still targets the old name. Cite exact file:line ranges.
+
+Rules:
+- Current source is authoritative.
+- Cite exact file:line ranges.
+- Explicitly state whether the old note was trusted or blocked.
+- Stay within budget: max 8 source files, max 900 source lines, max 12 tool calls.
+- End with exactly one METRICS_JSON line: METRICS_JSON={"source_files":[...],"source_lines":<count>,"tool_calls":<count>,"stale_trusted":<bool>,"stale_blocked":<bool>,"local_reread_lines":<count>}
+
+TMF_MAP arm:
+- First inspect repo-local TMF claims related to the stale old note/query: VetRepository read methods use @Cacheable("vets").
+- Run/check freshness for relevant old claims. Treat stale TMF output only as a locator/guard.
+- Then reread minimal current source before answering.
+- Do not trust TMF over current source.

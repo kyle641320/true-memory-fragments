@@ -1,0 +1,62 @@
+{
+  "schema": "java_real_stale_v4",
+  "frozen_at": "2026-09-02T18:35:00+08:00",
+  "seed": "java_real_stale_v4:2026-09-02:three-fixture-stability",
+  "model": {"id": "aisz/gpt-5.5", "thinking": "off", "timeout_seconds": 10800},
+  "budgets": {"tool_calls": 12, "source_files": 8, "source_lines": 900, "wall_seconds": 10800},
+  "arms": ["SOURCE_ONLY", "TMF_MAP"],
+  "source_repository": {
+    "id": "spring_petclinic_modulith_base",
+    "path": "/root/.openclaw/workspace/experiments/tmf-java-validation-20260806/spring-petclinic-modulith",
+    "note": "real Spring Petclinic modulith tree used as mutation base"
+  },
+  "repositories": [
+    {
+      "id": "petclinic_api_route_mutated",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-api-route",
+      "mutation": "Owner detail endpoint mapping changes from /owners/{ownerId} to /owners/{ownerId}/profile"
+    },
+    {
+      "id": "petclinic_cache_name_mutated",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-cache-name",
+      "mutation": "VetRepository cache declaration changes from cache name vets to activeVets"
+    },
+    {
+      "id": "petclinic_transaction_readonly_mutated",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-transaction-readonly",
+      "mutation": "VetRepository.findAll transaction declaration changes from readOnly=true to readOnly=false"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "RV4F01",
+      "repo": "petclinic_api_route_mutated",
+      "type": "real_stale_api_route_contract",
+      "old_note": "OwnerController.showOwner is exposed at GET /owners/{ownerId}.",
+      "prompt": "Answer the current owner detail HTTP route after an old note says OwnerController.showOwner is GET /owners/{ownerId}. Identify whether the old route note is trusted or blocked, the current route path/method, the controller method, and smallest files to update if callers/docs still use the old route. Cite exact file:line ranges.",
+      "paired": true,
+      "freshness": true
+    },
+    {
+      "id": "RV4F02",
+      "repo": "petclinic_cache_name_mutated",
+      "type": "real_stale_cache_contract",
+      "old_note": "VetRepository read methods use @Cacheable(\"vets\").",
+      "prompt": "Answer the current VetRepository cache contract after an old note says read methods use @Cacheable(\"vets\"). Identify whether the old cache note is trusted or blocked, the current cache name(s), the affected repository methods, and smallest files to update if cache eviction/config still targets the old name. Cite exact file:line ranges.",
+      "paired": true,
+      "freshness": true
+    },
+    {
+      "id": "RV4F03",
+      "repo": "petclinic_transaction_readonly_mutated",
+      "type": "real_stale_transaction_contract",
+      "old_note": "VetRepository.findAll is @Transactional(readOnly = true).",
+      "prompt": "Answer the current transaction annotation for VetRepository.findAll after an old note says it is @Transactional(readOnly = true). Identify whether the old transaction note is trusted or blocked, the current annotation value, the affected method, and smallest files to update if callers/docs assume read-only semantics. Cite exact file:line ranges.",
+      "paired": true,
+      "freshness": true
+    }
+  ],
+  "agent_task_order": ["RV4F01", "RV4F02", "RV4F03"],
+  "runner_golden_isolation": true,
+  "metrics": ["correct", "citation_correct", "source_files", "source_lines", "tool_calls", "wall_seconds", "stale_trusted", "stale_blocked", "local_reread_lines"]
+}

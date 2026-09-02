@@ -1,0 +1,26 @@
+{
+  "schema": "java_real_stale_v4_setup",
+  "repositories": [
+    {
+      "id": "petclinic_api_route_mutated",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-api-route",
+      "base_commit": "77bdb27b00fe1a9901e81caab851eebf0386304a",
+      "mutation_commit": "d3000aca92b8fa39a9e215f256a5915c4418f66f",
+      "mutation": "Owner detail endpoint mapping changes from /owners/{ownerId} to /owners/{ownerId}/profile"
+    },
+    {
+      "id": "petclinic_cache_name_mutated",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-cache-name",
+      "base_commit": "0261ed1b4c41dd6f9c3ee8b1f91123f610a279c3",
+      "mutation_commit": "8d742f4b8bc2c32c752b3cc9eef2549b142e54e9",
+      "mutation": "VetRepository cache declaration changes from cache name vets to activeVets"
+    },
+    {
+      "id": "petclinic_transaction_readonly_mutated",
+      "path": "/root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-transaction-readonly",
+      "base_commit": "b5d662e6380e39a0f7ad4d2db5ed47bcaca3d077",
+      "mutation_commit": "26a17901fd83847cef56e83d3b92efed7533ef6c",
+      "mutation": "VetRepository.findAll transaction declaration changes from readOnly=true to readOnly=false"
+    }
+  ]
+}

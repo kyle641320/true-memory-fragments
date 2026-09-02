@@ -1,0 +1,18 @@
+Repository: /root/.openclaw/workspace/experiments/tmf-java-real-v4/petclinic-api-route
+Task id: RV4F01
+Old note: OwnerController.showOwner is exposed at GET /owners/{ownerId}.
+
+Question: Answer the current owner detail HTTP route after an old note says OwnerController.showOwner is GET /owners/{ownerId}. Identify whether the old route note is trusted or blocked, the current route path/method, the controller method, and smallest files to update if callers/docs still use the old route. Cite exact file:line ranges.
+
+Rules:
+- Current source is authoritative.
+- Cite exact file:line ranges.
+- Explicitly state whether the old note was trusted or blocked.
+- Stay within budget: max 8 source files, max 900 source lines, max 12 tool calls.
+- End with exactly one METRICS_JSON line: METRICS_JSON={"source_files":[...],"source_lines":<count>,"tool_calls":<count>,"stale_trusted":<bool>,"stale_blocked":<bool>,"local_reread_lines":<count>}
+
+TMF_MAP arm:
+- First inspect repo-local TMF claims related to the stale old note/query: OwnerController.showOwner is exposed at GET /owners/{ownerId}.
+- Run/check freshness for relevant old claims. Treat stale TMF output only as a locator/guard.
+- Then reread minimal current source before answering.
+- Do not trust TMF over current source.
