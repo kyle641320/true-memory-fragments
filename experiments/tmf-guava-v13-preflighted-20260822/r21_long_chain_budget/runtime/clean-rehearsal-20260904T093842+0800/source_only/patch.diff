@@ -1,0 +1,11 @@
+diff --git a/guava/src/com/google/common/cache/LocalCache.java b/guava/src/com/google/common/cache/LocalCache.java
+--- a/guava/src/com/google/common/cache/LocalCache.java
++++ b/guava/src/com/google/common/cache/LocalCache.java
+@@ -2346,6 +2346,7 @@ class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K, V> {
+         }
+         statsCounter.recordLoadSuccess(loadingValueReference.elapsedNanos());
+         storeLoadedValue(key, hash, loadingValueReference, value);
++        recordRefreshCompletionHook(key);
+         return value;
+       } finally {
+         if (value == null) {

@@ -1,0 +1,40 @@
+{
+  "schema": "r21-rehearsal-eval-v1",
+  "base": "experiments/tmf-guava-v13-preflighted-20260822/r21_long_chain_budget/runtime/rehearsal-20260904T092311+0800",
+  "rows": [
+    {
+      "arm": "source_only",
+      "patch_apply_ok": false,
+      "apply": {
+        "apply_status": 2,
+        "apply_msg": "patch: **** Only garbage was found in the patch input."
+      },
+      "oracle": {
+        "schema": "r21-refresh-hook-oracle-v1",
+        "ok": false,
+        "overall": "protocol_patch_apply_failed",
+        "hook_count": 0,
+        "findings": [],
+        "apply_status": 2
+      },
+      "note_first_line": "Placed `recordRefreshCompletionHook(key);` in the async refresh listener immediately after `getAndRecordStats(...)` returns. That keeps the hook on the refresh completion/publication path, not the refresh-start path."
+    },
+    {
+      "arm": "tmf_localized",
+      "patch_apply_ok": false,
+      "apply": {
+        "apply_status": 1,
+        "apply_msg": "1 out of 1 hunk FAILED -- saving rejects to file experiments/tmf-guava-v13-preflighted-20260822/r21_long_chain_budget/runtime/rehearsal-20260904T092311+0800/tmf_localized/LocalCache.patched.java.rej"
+      },
+      "oracle": {
+        "schema": "r21-refresh-hook-oracle-v1",
+        "ok": false,
+        "overall": "protocol_patch_apply_failed",
+        "hook_count": 0,
+        "findings": [],
+        "apply_status": 1
+      },
+      "note_first_line": "Placed `recordRefreshCompletionHook(key);` in the async refresh listener immediately after `getAndRecordStats(...)` returns, so it runs only after the refresh has completed and the loaded value has been recorded/published. This avoids the stale placement after `loadAsync(...)` in `refresh(...)`."
+    }
+  ]
+}

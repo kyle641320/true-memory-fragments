@@ -1,0 +1,37 @@
+{
+  "schema": "r21-oracle-preflight-v1",
+  "pass": true,
+  "errors": [],
+  "rows": [
+    {
+      "case": "good",
+      "expected_ok": true,
+      "actual_ok": true,
+      "returncode": 0,
+      "overall": "pass_completion_listener_after_publication",
+      "hook_lines": [
+        2324
+      ]
+    },
+    {
+      "case": "bad_initiation",
+      "expected_ok": false,
+      "actual_ok": false,
+      "returncode": 2,
+      "overall": "fail",
+      "hook_lines": [
+        2393
+      ]
+    },
+    {
+      "case": "bad_transform",
+      "expected_ok": false,
+      "actual_ok": false,
+      "returncode": 2,
+      "overall": "fail",
+      "hook_lines": [
+        3573
+      ]
+    }
+  ]
+}

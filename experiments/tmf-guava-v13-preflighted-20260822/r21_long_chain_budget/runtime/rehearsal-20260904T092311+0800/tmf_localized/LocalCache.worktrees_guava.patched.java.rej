@@ -1,0 +1,15 @@
+--- LocalCache.java
++++ LocalCache.java
+@@ -2314,11 +2314,12 @@
+     ListenableFuture<V> loadAsync(
+         K key, int hash, LoadingValueReference<K, V> loadingValueReference,
+         CacheLoader<? super K, V> loader) {
+       ListenableFuture<V> loadingFuture = loadingValueReference.loadFuture(key, loader);
+       loadingFuture.addListener(
+           () -> {
+             try {
+               getAndRecordStats(key, hash, loadingValueReference, loadingFuture);
++              recordRefreshCompletionHook(key);
+             } catch (Throwable t) {
+               logger.log(Level.WARNING, "Exception thrown during refresh", t);
+               loadingValueReference.setException(t);

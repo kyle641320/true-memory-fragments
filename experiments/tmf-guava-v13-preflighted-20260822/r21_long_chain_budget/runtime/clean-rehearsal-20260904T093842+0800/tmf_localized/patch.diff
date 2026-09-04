@@ -1,0 +1,23 @@
+diff --git a/guava/src/com/google/common/cache/LocalCache.java b/guava/src/com/google/common/cache/LocalCache.java
+--- a/guava/src/com/google/common/cache/LocalCache.java
++++ b/guava/src/com/google/common/cache/LocalCache.java
+@@ -2314,18 +2314,19 @@
+     ListenableFuture<V> loadAsync(
+         K key,
+         int hash,
+         LoadingValueReference<K, V> loadingValueReference,
+         CacheLoader<? super K, V> loader) {
+       ListenableFuture<V> loadingFuture = loadingValueReference.loadFuture(key, loader);
+       loadingFuture.addListener(
+           () -> {
+             try {
+               getAndRecordStats(key, hash, loadingValueReference, loadingFuture);
++              recordRefreshCompletionHook(key);
+             } catch (Throwable t) {
+               logger.log(Level.WARNING, "Exception thrown during refresh", t);
+               loadingValueReference.setException(t);
+             }
+           },
+           directExecutor());
+       return loadingFuture;
+     }

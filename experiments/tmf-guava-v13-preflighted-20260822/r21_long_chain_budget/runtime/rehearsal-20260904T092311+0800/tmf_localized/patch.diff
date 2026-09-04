@@ -1,0 +1,12 @@
+diff --git a/guava/src/com/google/common/cache/LocalCache.java b/guava/src/com/google/common/cache/LocalCache.java
+--- a/guava/src/com/google/common/cache/LocalCache.java
++++ b/guava/src/com/google/common/cache/LocalCache.java
+@@ -2320,6 +2320,7 @@ public class LocalCache<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K
+       loadingFuture.addListener(
+           () -> {
+             try {
+               getAndRecordStats(key, hash, loadingValueReference, loadingFuture);
++              recordRefreshCompletionHook(key);
+             } catch (Throwable t) {
+               logger.log(Level.WARNING, "Exception thrown during refresh", t);
+               loadingValueReference.setException(t);

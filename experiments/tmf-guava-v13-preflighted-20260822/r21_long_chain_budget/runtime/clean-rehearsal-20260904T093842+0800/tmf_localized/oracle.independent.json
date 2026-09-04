@@ -1,0 +1,42 @@
+{
+  "schema": "r21-refresh-hook-oracle-v1",
+  "file": "experiments/tmf-guava-v13-preflighted-20260822/r21_long_chain_budget/runtime/clean-rehearsal-20260904T093842+0800/tmf_localized/LocalCache.patched.independent.java",
+  "hook": "recordRefreshCompletionHook",
+  "ok": true,
+  "overall": "pass_completion_listener_after_publication",
+  "hook_count": 1,
+  "findings": [
+    {
+      "hook_pos": 72825,
+      "hook_line": 2324,
+      "in_refresh": false,
+      "in_load_async": true,
+      "in_get_and_record_stats": false,
+      "in_load_future": false,
+      "classification": "pass_completion_listener_after_publication"
+    }
+  ],
+  "anchor_lines": {
+    "refresh_span": [
+      2386,
+      2402
+    ],
+    "load_async_span": [
+      2314,
+      2332
+    ],
+    "get_and_record_stats_span": [
+      2336,
+      2357
+    ],
+    "load_future_span": [
+      3557,
+      3585
+    ],
+    "load_async_call": 2393,
+    "listener": 2320,
+    "get_and_record_stats_call": 2311,
+    "store_loaded_value": 2349,
+    "transform_set": 3574
+  }
+}

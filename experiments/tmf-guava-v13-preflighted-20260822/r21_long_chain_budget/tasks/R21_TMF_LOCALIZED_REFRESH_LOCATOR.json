@@ -1,0 +1,39 @@
+{
+  "schema": "r21-tmf-localized-refresh-locator-v1",
+  "stale_claim": {
+    "text": "Refresh completion happens when LocalCache.Segment.refresh returns from loadAsync; a hook immediately after loadAsync observes completed refreshes.",
+    "expected_status": "stale_or_blocked"
+  },
+  "fresh_boundary_anchors": [
+    {
+      "path": "guava/src/com/google/common/cache/LocalCache.java",
+      "symbol": "LocalCache.Segment.refresh",
+      "why": "refresh initiation calls loadAsync and may return before async completion"
+    },
+    {
+      "path": "guava/src/com/google/common/cache/LocalCache.java",
+      "symbol": "LocalCache.Segment.loadAsync",
+      "why": "registers loadingFuture.addListener completion callback"
+    },
+    {
+      "path": "guava/src/com/google/common/cache/LocalCache.java",
+      "symbol": "LocalCache.Segment.getAndRecordStats",
+      "why": "waits for future and calls storeLoadedValue"
+    },
+    {
+      "path": "guava/src/com/google/common/cache/LocalCache.java",
+      "symbol": "LocalCache.LoadingValueReference.loadFuture",
+      "why": "CacheLoader.reload may return an async future and transform sets the value"
+    },
+    {
+      "path": "guava/src/com/google/common/cache/CacheLoader.java",
+      "symbol": "CacheLoader.reload",
+      "why": "default sync reload but async reload is recommended/available"
+    }
+  ],
+  "recommended_local_slices": [
+    "LocalCache.java:2302-2404",
+    "LocalCache.java:3550-3580",
+    "CacheLoader.java:79-105"
+  ]
+}

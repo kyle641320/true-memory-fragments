@@ -1,0 +1,27 @@
+{
+  "schema": "r21-rehearsal-final-eval-v2",
+  "base": "experiments/tmf-guava-v13-preflighted-20260822/r21_long_chain_budget/runtime/rehearsal-20260904T092311+0800",
+  "rows": [
+    {
+      "arm": "source_only",
+      "final_patch_apply_ok": true,
+      "final_oracle_ok": true,
+      "overall": "pass_completion_listener_after_publication",
+      "hook_count": 1,
+      "raw_protocol_issue_before_parent_fix": false,
+      "semantic_placement": "pass",
+      "patch_lines": 12
+    },
+    {
+      "arm": "tmf_localized",
+      "final_patch_apply_ok": true,
+      "final_oracle_ok": true,
+      "overall": "pass_completion_listener_after_publication",
+      "hook_count": 1,
+      "raw_protocol_issue_before_parent_fix": true,
+      "semantic_placement": "pass",
+      "patch_lines": 12
+    }
+  ],
+  "summary": "Both arms converged to same correct completion-path placement; raw run exposed patch protocol failures, including TMF patchfix self-report mismatch before parent correction. No TMF superiority claim from this rehearsal."
+}
