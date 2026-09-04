@@ -1,0 +1,7 @@
+diff --git a/guava/src/com/google/common/cache/LocalCache.java b/guava/src/com/google/common/cache/LocalCache.java
+--- a/guava/src/com/google/common/cache/LocalCache.java
++++ b/guava/src/com/google/common/cache/LocalCache.java
+@@ -2388,6 +2388,7 @@
+       ListenableFuture<V> result = loadAsync(key, hash, loadingValueReference, loader);
++      recordRefreshCompletionHook(key);
+       return null;

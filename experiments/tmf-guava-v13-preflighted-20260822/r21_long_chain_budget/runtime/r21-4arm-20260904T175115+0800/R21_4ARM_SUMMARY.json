@@ -1,0 +1,43 @@
+{
+  "schema": "r21-4arm-summary-v1",
+  "runtime_root": "/root/.openclaw/workspace/repos/guava/experiments/tmf-guava-v13-preflighted-20260822/r21_long_chain_budget/runtime/r21-4arm-20260904T175115+0800",
+  "arms": [
+    {
+      "arm": "a1_stale_note",
+      "required_files_present": true,
+      "verify_exit_code": 128,
+      "independent_oracle": "fail",
+      "raw_status": "ok",
+      "protocol_clean": false,
+      "semantic_status": "fail"
+    },
+    {
+      "arm": "a2_entry_hints",
+      "required_files_present": true,
+      "verify_exit_code": 0,
+      "independent_oracle": "pass_completion_listener_after_publication",
+      "raw_status": "ok",
+      "protocol_clean": true,
+      "semantic_status": "pass"
+    },
+    {
+      "arm": "a3_locator_min",
+      "required_files_present": true,
+      "verify_exit_code": 0,
+      "independent_oracle": "pass_completion_listener_after_publication",
+      "raw_status": "ok",
+      "protocol_clean": true,
+      "semantic_status": "pass"
+    },
+    {
+      "arm": "a4_locator_full",
+      "required_files_present": true,
+      "verify_exit_code": 0,
+      "independent_oracle": "pass_completion_listener_after_publication",
+      "raw_status": "ok",
+      "protocol_clean": true,
+      "semantic_status": "pass"
+    }
+  ],
+  "mechanical_checker_exit_code": 0
+}

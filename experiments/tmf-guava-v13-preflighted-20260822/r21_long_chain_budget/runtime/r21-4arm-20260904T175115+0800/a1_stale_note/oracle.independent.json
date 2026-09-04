@@ -1,0 +1,42 @@
+{
+  "schema": "r21-refresh-hook-oracle-v1",
+  "file": "/root/.openclaw/workspace/repos/guava/experiments/tmf-guava-v13-preflighted-20260822/r21_long_chain_budget/runtime/r21-4arm-20260904T175115+0800/a1_stale_note/LocalCache.patched.java",
+  "hook": "recordRefreshCompletionHook",
+  "ok": false,
+  "overall": "fail",
+  "hook_count": 1,
+  "findings": [
+    {
+      "hook_pos": 75341,
+      "hook_line": 2393,
+      "in_refresh": true,
+      "in_load_async": false,
+      "in_get_and_record_stats": false,
+      "in_load_future": false,
+      "classification": "fail_initiation_path"
+    }
+  ],
+  "anchor_lines": {
+    "refresh_span": [
+      2385,
+      2402
+    ],
+    "load_async_span": [
+      2314,
+      2331
+    ],
+    "get_and_record_stats_span": [
+      2335,
+      2356
+    ],
+    "load_future_span": [
+      3557,
+      3585
+    ],
+    "load_async_call": 2392,
+    "listener": 2320,
+    "get_and_record_stats_call": 2311,
+    "store_loaded_value": 2348,
+    "transform_set": 3574
+  }
+}
