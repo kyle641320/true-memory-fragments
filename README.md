@@ -258,3 +258,6 @@ The repository description and external launch materials should use the same voc
 ## License
 
 MIT
+
+- Guava M10 scoped case study: [docs/case-studies/guava-m10-stale-gating.md](docs/case-studies/guava-m10-stale-gating.md)
+- Offline stale-gate demo: `python3 scripts/demo_stale_gate.py` (recording: [recordings/stale-gate.cast](recordings/stale-gate.cast))
