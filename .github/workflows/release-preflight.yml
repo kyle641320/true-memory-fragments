@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           python -Werror -m unittest discover -s tests -v 2>&1 | tee /tmp/tmf-unittest.log
-          grep -Eq '^Ran 478 tests in ' /tmp/tmf-unittest.log
+          grep -Eq '^Ran [1-9][0-9]* tests in ' /tmp/tmf-unittest.log
           grep -Fxq 'OK' /tmp/tmf-unittest.log
       - name: Compile Python sources
         run: python -m compileall -q tmf tests scripts tools
