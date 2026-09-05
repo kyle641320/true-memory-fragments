@@ -78,16 +78,21 @@ That is the whole loop: TMF keeps claims bound to source, refuses to reuse stale
 
 ## Demo
 
-The current repository includes a reproducible stale-boundary case under the validation fixtures. The smallest honest demo should show this sequence:
+The current repository includes a deterministic offline demo:
 
-```text
-1. derive a claim for the original source
-2. change the bound function or endpoint
-3. retrieve the old claim
-4. observe stale detection, omission, source fallback, and reread guidance
+```bash
+python3 scripts/demo_stale_gate.py
 ```
 
-The existing `warm` + `retrieve` commands are the library quick start, not yet a self-contained 30-second stale-behavior demo. See [`docs/OPEN_SOURCE_MINIMUM_CHECKLIST_20260905.md`](docs/OPEN_SOURCE_MINIMUM_CHECKLIST_20260905.md) for the release-blocking demo requirement.
+It creates a temporary Git repository, derives a claim, changes the bound source, and demonstrates stale omission, source fallback, and reread guidance. It needs no model, network, Java parser, or pre-existing `.tmf/` store.
+
+Expected markers:
+
+```text
+STALE CLAIM BLOCKED: PASS
+SOURCE FALLBACK PROVIDED: PASS
+REREAD REQUIRED: PASS
+```
 
 The point of the demo is not that TMF answers every query. The point is that it refuses to reuse obsolete code understanding and tells the agent what to reread next.
 
@@ -160,33 +165,18 @@ Runtime dependencies are intentionally small. Optional model, embedder, and rout
 ### 30-second demo
 
 ```bash
-# Build local source-bound memory for a repo
-python -m tmf.cli warm --repo /path/to/repo
-
-# Ask for a thin context view by symbol, path, or lexical query
-python -m tmf.cli retrieve --repo /path/to/repo "PaymentService charge"
-
-# Drill into one selected claim when needed
-python -m tmf.cli explain --repo /path/to/repo --json <claim-id>
+python3 scripts/demo_stale_gate.py
 ```
 
-Expected stale behavior:
+This deterministic offline demo creates a temporary repository, derives a claim, changes its bound source, and shows stale omission, source fallback, and reread guidance. It needs no model, network, Java parser, or pre-existing `.tmf/` store.
 
-```json
-{
-  "coverage": "partial",
-  "stale_or_unknown": [
-    {
-      "claim_id": "...",
-      "path": "src/payment/PaymentService.java",
-      "reason": "source binding changed"
-    }
-  ],
-  "action_hint": "reread current source before using this memory"
-}
+Expected markers:
+
+```text
+STALE CLAIM BLOCKED: PASS
+SOURCE FALLBACK PROVIDED: PASS
+REREAD REQUIRED: PASS
 ```
-
-The exact JSON shape depends on the query surface, but the contract is stable: **stale memory is not silently returned as usable context.**
 
 ### Offline Java verifier
 
