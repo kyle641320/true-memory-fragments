@@ -177,7 +177,7 @@ def cmd_stats(args: argparse.Namespace) -> int:
     return 0
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="tmf", description="True Memory Fragments: lazy, source-bound code memory")
+    parser = argparse.ArgumentParser(prog="tmf", description="True Memory Fragments: explicit-refresh, source-bound code memory")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     retrieve = sub.add_parser("retrieve", help="retrieve a thin view by path or lexical query; use --full for one thick claim")

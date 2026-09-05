@@ -5,8 +5,8 @@ This checklist is the minimum bar for publishing TMF and promoting it to externa
 ## P0 — release blockers
 
 - [ ] Clean-environment install smoke passes on Python 3.10–3.12.
-- [ ] `tmf --help` and the documented `warm` / `retrieve` / `explain` commands work from a fresh checkout or wheel.
-- [ ] A self-contained stale-behavior demo is runnable in 3–5 minutes: derive a claim, mutate its bound source, retrieve it, and visibly show stale omission, source fallback, and reread guidance.
+- [ ] `tmf --help` and the documented `warm` / `retrieve` / `explain` commands work from a fresh checkout or wheel. **Verified locally with an isolated venv on 2026-09-05.**
+- [ ] A self-contained stale-behavior demo is runnable in 3–5 minutes: derive a claim, mutate its bound source, retrieve it, and visibly show stale omission, source fallback, and reread guidance. **Verified locally with `python3 scripts/demo_stale_gate.py` on 2026-09-05.**
 - [ ] README does not imply that `retrieve` automatically re-derives claims. Refresh is explicit through `refresh_path` / `warm`.
 - [ ] The README states the evidence boundary on the first screen: mechanics validated; stale-boundary safety is scoped-positive; productivity, token savings, general bug reduction, adoption, and ROI are unproven.
 - [ ] Published code, demo fixture, and result paths are separated from dirty local benchmark artifacts.

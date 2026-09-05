@@ -59,9 +59,7 @@ With TMF:     remembered A → B → C  → C is stale → stop → reread curre
 
 Fresh means the source binding still matches. **Correctness still comes from source and validation.**
 
-## Current evidence status
-
-The strongest current evidence is scoped: middleware mechanics are validated, and stale-context safety has positive evidence in the GUAVA M10 pre-read experiment. Broader productivity, speed, token savings, and general bug-prevention claims remain unproven. See the [authoritative evidence status](docs/AGENT_RUNTIME_VALUE_STATUS.md) before making broader claims.
+The repository also contains an unreleased Java qualification suite: **46/46 qualifiers and 731/731 checks**. The current repository test baseline is **478/478 tests**. These are source-analysis and regression-test results, not a claim of production readiness or a general Agent outcome. Middleware mechanics are validated, and stale-context safety has positive evidence in the GUAVA M10 pre-read experiment. Broader productivity, speed, token savings, and general bug-prevention claims remain unproven. See the [authoritative evidence status](docs/AGENT_RUNTIME_VALUE_STATUS.md) before making broader claims.
 
 ## Flow
 
