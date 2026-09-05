@@ -1,159 +1,100 @@
 # True Memory Fragments
 
-> **Agent evidence status:** See the single authoritative [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md). Current ruling: middleware mechanics qualify, and GUAVA_M10_PREREAD_R50 provides positive evidence for stale-context safety: stale claims/docs can catastrophically mislead agents, while TMF stale-gating blocks that stale boundary pollution. Broader Agent outcome/productivity value remains limited to this class until replicated. Read the authority page before mixing modes. (TMF)
+### Stale-context protection for AI coding agents
 
-## Bionic Design Philosophy
+AI coding agents often remember a call chain from an earlier session. When the code changes, that remembered chain can become dangerous: the agent may edit against an obsolete understanding of the repository.
 
-TMF is designed around how biological memory and cognition actually work. The core premise: **AI and biological thinking are both electrical signal processing** — the memory-cognition-update-pain loop that works for organisms can be directly applied to AI systems.
+**TMF binds code-graph claims to source fingerprints. When a claim becomes stale, TMF blocks the affected expansion and sends the agent back to current source.**
 
-### 1. Progressive Cognition (渐进认知)
+- 🧭 **Source-aware memory** for calls, reads, writes, inheritance, and API relationships
+- 🛑 **Hard stale-context stop** instead of silently returning obsolete facts
+- 🔎 **Localized reread guidance** instead of pretending memory is authoritative
+- 🧩 Works as a library and integrates with AI coding-agent hooks
 
-Organisms don't understand things all at once. First encounter creates a coarse impression — "this book is on that shelf" — not every word on every page. Later encounters refine that impression as needed.
+> **One-line summary:** TMF does not make an agent remember more. It prevents the agent from trusting code understanding that is no longer fresh.
 
-**TMF correspondence:**
-- Agent's first pass through a codebase generates relationship claims: `calls`, `reads`, `writes`, inheritance edges, type uses
-- These claims form a **cognitive map**, not a content cache
-- Later tasks query the map to locate what needs closer reading
-- Progressive refinement happens on-demand, not upfront
+[30-second demo](#quick-start) · [Install](#install) · [Architecture](DESIGN.md) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md)
 
-### 2. Fresh/Stale Comparison (新旧比对)
+## The problem
 
-Every time an organism uses a memory, it compares "current observation" with "remembered impression". Mismatch triggers re-encoding.
+A coding agent may understand `A → B → C` in session 1. In session 2, `C` changes, but the agent still acts as if yesterday's call chain were valid. Ordinary chat memory and vector retrieval can return the old explanation without knowing that the source changed.
 
-**TMF correspondence:**
-- Every claim binds to source blob hash
-- Before using a claim, TMF checks: does the hash still match?
-- Mismatch → claim marked `stale`
-- Agent must re-read source to update
+TMF attaches every derived claim to the source blob or function hash. On reuse, it checks freshness. If the claim is stale, the graph expansion is stopped and the agent is told which source must be reread.
 
-### 3. Pain Reflex — Multi-Alert Forced Attention (痛觉机制)
-
-When an organism acts on stale memory and makes a mistake, pain isn't a gentle suggestion — it's a **strong, repeated neural signal** that forces you to stop.
-
-**TMF correspondence: `bounded_fragment` forced stop**
-
-When querying call chains, if TMF encounters a stale claim:
-
-- **Does not return partial results**
-- **Does not silently warn**
-- **Immediately stops expansion** and returns:
-  - `stale_or_unknown` list (multiple entries for multiple stale claims)
-  - `stop_reason` (explicit: `"entry_stale_or_unknown"`, `"edge_stale_or_unverified"`)
-  - `coverage: "partial"`
-
-Three separate alert fields, all present simultaneously — this is the **pain reflex**. Not a soft "FYI, might be stale", but a hard **"this chain is broken, you cannot proceed"**.
-
-Agent must acknowledge and re-read before continuing. Source is authoritative.
-
-### 4. Four Types of Stop (Not All Are "Pain")
-
-`bounded_fragment` stops expansion for four distinct reasons, each with different cognitive meaning:
-
-#### Stop Type 1: Boundary (Semantic End-of-Chain)
-
-```python
-if is_semantic_boundary(node):
-    boundaries.append({...})  # Report reached
-    # But do not add to next_frontier
+```text
+Without TMF:  remembered A → B → C  → edit using obsolete C
+With TMF:     remembered A → B → C  → C is stale → stop → reread current C
 ```
 
-**What it means:** Chain reached a recognized semantic boundary:
-- `writes` edge → persistence layer (database write)
-- `publishes_to` edge → message queue
+## What TMF is — and is not
 
-**Not a failure.** TMF knows this is where the synchronous call chain ends. Reporting the boundary as "reached" is success — it's like tracking money transfer to "payment confirmed", you don't need to follow the bank's internal ledger.
+**TMF is for:**
 
-**Boundary detection:**
-- `semantic_boundaries=True` (default): uses indexed `writes` / `publishes_to` edges
-- `semantic_boundaries=False`: uses scope-based `boundary_types` (legacy)
-- Declaration annotations like `@Transactional` / `@Async` are not currently indexed as reverse edges; too expensive to scan all claims
+- AI coding agents working across sessions on changing codebases
+- Preventing stale call-chain and dependency assumptions
+- Source-bound code memory and conservative code-graph navigation
+- Agent integrations that need an explicit stale/unknown result
 
-#### Stop Type 2: Async Handoff
+**TMF is not:**
 
-```python
-is_async = kind in ASYNC_RELATIONS  # publishes_to, subscribes_to, ...
-edges.append({..., "async_handoff": is_async})
-if not is_async:
-    next_frontier.append(node)  # Only sync edges continue
+- A general chat-memory product or vector database
+- A replacement for reading source code
+- A guarantee that every claim is correct because it is fresh
+- A proven general productivity or token-saving solution
+
+Fresh means the source binding still matches. **Correctness still comes from source and validation.**
+
+## Current evidence status
+
+The strongest current evidence is scoped: middleware mechanics are validated, and stale-context safety has positive evidence in the GUAVA M10 pre-read experiment. Broader productivity, speed, token savings, and general bug-prevention claims remain unproven. See the [authoritative evidence status](docs/AGENT_RUNTIME_VALUE_STATUS.md) before making broader claims.
+
+## Demo
+
+A tiny stale-context example:
+
+```bash
+# 1) Warm a repo once
+python -m tmf.cli warm --repo /path/to/repo
+
+# 2) Ask for the call-chain around one symbol
+python -m tmf.cli retrieve --repo /path/to/repo "OrderService submit"
 ```
 
-**What it means:** Edge is async message-passing, not synchronous call flow.
+Possible stale result:
 
-**Not a failure.** The edge is recorded, marked `async_handoff: true`, but doesn't contribute to synchronous frontier expansion. This prevents TMF from pretending a Kafka producer → consumer flow is the same as a direct function call.
-
-#### Stop Type 3: Stale (Cognitive Failure — PAIN)
-
-```python
-if not freshness.fresh or _foreign(edge):
-    stale_or_unknown.append({...})
-    continue  # Do not add to nodes, do not add to edges
+```json
+{
+  "coverage": "partial",
+  "stale_or_unknown": [
+    {
+      "claim_id": "call:OrderService.submit -> PaymentClient.charge",
+      "path": "src/main/java/.../PaymentClient.java",
+      "reason": "source binding changed"
+    }
+  ],
+  "action_hint": "reread current source before using this memory"
+}
 ```
 
-**This is the pain reflex.** Node/edge doesn't enter result at all — only goes into `stale_or_unknown`. If entry itself is stale, `bounded_fragment` early-returns with empty `verified_hops`.
+The point of the demo is not that TMF answers every query. The point is that it refuses to reuse obsolete code understanding and tells the agent what to reread next.
 
-**Agent receives:**
-- `stale_or_unknown`: list of broken claims
-- `stop_reason`: explicit stale reason
-- `coverage: "partial"`
+## How it works
 
-**Must re-read source.** No workaround, no "use what you have". Stale memory is rejected completely.
+TMF keeps a conservative code-memory graph. Claims are useful only when their source bindings still match the working tree.
 
-#### Stop Type 4: Resource Limit
+1. **Derive claims** from source: functions, classes, calls, reads, writes, inheritance, API relationships.
+2. **Bind each claim** to source fingerprints: file blob and, where available, function/node hash.
+3. **Check freshness on retrieval** before a claim is used.
+4. **Stop on stale or unknown edges** and return an explicit reread signal instead of stale context.
 
-```python
-HARD_MAX_HOPS = 4
-HARD_MAX_NODES = 64
-HARD_MAX_EDGES = 128
-
-if len(nodes) + len(new_ids) > max_nodes:
-    stop_reason = "max_nodes"
+```text
+claim: A calls B
+binding: B.java@hash123
+current: B.java@hash999
+result: stale_or_unknown → reread B.java before continuing
 ```
 
-**What it means:** Working-memory capacity exhausted. Like biological cognition, TMF can only hold bounded context in one query.
-
-**Not a failure of memory quality.** Just finite resources. Agent can:
-- Make multiple bounded queries (split the work)
-- Increase limits (if allowed)
-- Refine the query to target a narrower subgraph
-
-`stop_reason` will be `"max_nodes"`, `"max_edges"`, or `"hop_limit"`. Coverage marked `"partial"`.
-
-### Summary: Pain vs Boundary vs Limit
-
-| Stop Type | Meaning | What Agent Should Do | Appears in Result? |
-|---|---|---|---|
-| **Boundary** | Chain reached semantic end-point (persistence/async) | Accept boundary as valid terminus | ✅ nodes + edges + boundaries list |
-| **Async** | Edge is message-passing, not sync call | Treat as architectural boundary | ✅ edges (marked `async_handoff: true`) |
-| **Stale** | Memory failed freshness check — **PAIN** | Re-read source, update memory | ❌ only in `stale_or_unknown` |
-| **Limit** | Working memory full (hop/node/edge limit) | Split query or increase limit | ✅ partial result up to limit |
-
-## Core Value Proposition
-
-TMF is a **cross-session call-chain continuity system** for AI coding agents. It solves the "tunnel vision bug" problem:
-
-**The problem:** Agent understands a complete call chain `A → B → C → D` in session t₀. Code changes at t₁ (e.g., `C` logic modified). Agent receives task "modify A" at t₂. If the agent only looks at `A`, it may introduce bugs because it doesn't see the downstream impact on the changed `C`.
-
-**TMF's solution:**
-1. **Precise staleness detection:** When the agent queries the `A → B → C → D` chain from memory, TMF detects that `C` has changed and blocks stale memory (pain reflex)
-2. **Localized reread:** Forces the agent to reread only `C` and its direct neighbors, not the entire codebase
-3. **Complete chain understanding:** Ensures the agent sees the full call chain when making changes, avoiding "tunnel vision" bugs
-
-**What TMF is for:**
-- Preventing bugs caused by incomplete call-chain understanding
-- Cross-session cognitive continuity through precise staleness detection
-- Efficient localized rereads (only changed nodes, not entire codebase)
-- Boundary-aware navigation (knows where sync chains end: DB writes, message queues)
-
-**What TMF is NOT for:**
-- Helping agents understand code on first encounter
-- Reducing source rereads through cached "facts"
-- Providing "remembered truths" for direct reuse
-
-Fresh claims don't replace source — they tell you **which source to re-read** and **whether your remembered chain is still valid**.
-
-**Current status:** Mechanics proven (freshness detection, stale blocking, boundary detection work). Agent outcome value is now **partially proven for stale-context safety** by `GUAVA_M10_PREREAD_R50`: stale pre-read/doc arms were strongly pulled to the obsolete inline queue loop, while TMF stale-gating withheld the stale boundary and avoided wrong-inline placements. This does **not** yet prove broad productivity, speed, token savings, or all cross-session bug-prevention value.
-
-**Current unreleased Java qualification baseline:** the aggregate runner is `python3 tools/run_java_qualifications.py`; its manifest-governed baseline is **46/46 qualifiers and 731/731 checks**. The full unittest baseline for this unreleased checkpoint is **478/478 tests**. These are local unreleased evidence counts, not a commit, tag, package, publication, runtime framework behavior, or enterprise-wide certification claim.
+This is intentionally conservative. Missing or stale memory falls back to source; it is never promoted into truth.
 
 ## Proven Assets
 
@@ -181,35 +122,63 @@ Fresh claims don't replace source — they tell you **which source to re-read** 
 
 ## Install
 
-From PyPI:
+Python-only install:
 
 ```bash
 python -m pip install true-memory-fragments
 ```
 
-For development from a source checkout:
-
-```bash
-python -m pip install -e .
-```
-
-Runtime dependencies are intentionally empty. Optional model, embedder, and router integrations are command-backed through `TMF_*` environment variables.
-
-Java step0 nodes are optional and dependency-isolated. Enable them with:
+Java parsing support is optional:
 
 ```bash
 python -m pip install "true-memory-fragments[java]"
 ```
 
-From a source checkout: `python -m pip install -e ".[java]"`. This installs `tree_sitter==0.25.2` and `tree_sitter_java==0.23.5`.
+Development checkout:
 
-If those packages are absent, `.java` reads still return a file/source fallback claim plus a degrade hint; Python behavior remains unchanged.
+```bash
+python -m pip install -e .
+python -m pip install -e ".[java]"   # optional Java support
+```
 
-### Offline Java verifier (Linux x86_64 / CPython 3.12)
+Runtime dependencies are intentionally small. Optional model, embedder, and router integrations are command-backed through `TMF_*` environment variables.
 
-This package vendors prebuilt MIT-licensed wheels for offline Java step0 review on Linux x86_64, CPython 3.12, glibc 2.39 / Ubuntu 24.04 compatible systems. MIT license texts are copied into `vendor/licenses/`.
+## Quick Start
 
-The offline verifier never installs into system Python. It creates a repository-local venv and installs only from `vendor/wheels` with `--no-index`:
+### 30-second demo
+
+```bash
+# Build local source-bound memory for a repo
+python -m tmf.cli warm --repo /path/to/repo
+
+# Ask for a thin context view by symbol, path, or lexical query
+python -m tmf.cli retrieve --repo /path/to/repo "PaymentService charge"
+
+# Drill into one selected claim when needed
+python -m tmf.cli explain --repo /path/to/repo --json <claim-id>
+```
+
+Expected stale behavior:
+
+```json
+{
+  "coverage": "partial",
+  "stale_or_unknown": [
+    {
+      "claim_id": "...",
+      "path": "src/payment/PaymentService.java",
+      "reason": "source binding changed"
+    }
+  ],
+  "action_hint": "reread current source before using this memory"
+}
+```
+
+The exact JSON shape depends on the query surface, but the contract is stable: **stale memory is not silently returned as usable context.**
+
+### Offline Java verifier
+
+For Linux x86_64 / CPython 3.12 source checkouts, the repository includes an offline verifier for Java step0 review:
 
 ```bash
 bash scripts/verify_java_offline.sh
@@ -220,38 +189,6 @@ Expected success marker:
 ```text
 JAVA OFFLINE VERIFY: PASS
 ```
-
-## Quick Start
-
-### Store claims for a repository
-
-```bash
-tmf store /path/to/repo
-```
-
-Claims are written to `/path/to/repo/.tmf/`.
-
-### Query a node
-
-```bash
-tmf get <claim-id>
-```
-
-Returns JSON with claim body, freshness, and blob bindings.
-
-### Bounded fragment query
-
-```bash
-tmf fragment <entry-claim-id> --relations calls reads --hops 3
-```
-
-Returns a bounded call/read graph starting from `entry-claim-id`, expanding up to 3 hops, respecting semantic boundaries (persistence, async handoff), and reporting stale claims as `stale_or_unknown` with explicit `stop_reason`.
-
-**Four stop types:**
-- `boundaries`: reached semantic end-points (DB writes, message queues)
-- `async_handoff: true`: edge is async, not sync call flow
-- `stale_or_unknown`: memory failure — must re-read source
-- `stop_reason: max_nodes/max_edges/hop_limit`: working memory full
 
 ## Reflex Hook: Git-Aware Staleness Blocking for AI Agents
 
@@ -304,6 +241,12 @@ Reflex integration code lives in `integrations/reflex/`. See that directory's `R
 - Git hook setup (`git-hooks/`)
 - Claude Code / Codex harness configuration (`examples/`)
 - Health validation tests (`tests/`)
+
+## SEO and discoverability plan
+
+Search terms this project is intended to match include **AI coding agent memory**, **stale context prevention**, **source-aware code memory**, **code graph for LLM agents**, **Claude Code memory**, and **cross-session code understanding**. These describe the user problem; they are not claims that every integration is already production-ready.
+
+The repository description and external launch materials should use the same vocabulary, link to a reproducible demo, and distinguish validated mechanics from still-open productivity claims.
 
 ## Documentation
 

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "true-memory-fragments"
 version = "0.1.0rc3"
-description = "True Memory Fragments: lazy, source-bound code memory for AI coding agents"
+description = "Stale-context protection and source-aware code memory for AI coding agents"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
@@ -24,6 +24,13 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Topic :: Software Development :: Documentation",
   "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = [
+  "ai-coding-agent",
+  "agent-memory",
+  "code-graph",
+  "source-aware-memory",
+  "stale-context",
 ]
 dependencies = []
 
