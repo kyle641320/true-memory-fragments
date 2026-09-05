@@ -1,0 +1,24 @@
+name: Integration / use case
+description: Share an agent integration or real stale-context use case
+labels: [integration]
+body:
+  - type: textarea
+    id: scenario
+    attributes:
+      label: What agent workflow are you integrating?
+      description: Tell us what becomes stale and what action should be blocked.
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent / runtime
+      placeholder: Claude Code, OpenClaw, Codex, custom runtime
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: What did you observe?
+    validations:
+      required: true

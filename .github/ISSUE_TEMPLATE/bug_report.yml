@@ -1,0 +1,41 @@
+name: Bug report
+description: Report a reproducible TMF problem
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please avoid including private source code or secrets. Attach a minimal sanitized fixture when possible.
+  - type: input
+    id: version
+    attributes:
+      label: TMF version / commit
+      placeholder: 0.1.0rc3 or commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: OS, Python version, integration (core/OpenClaw/Claude Code)
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Include commands and a minimal sanitized fixture.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true

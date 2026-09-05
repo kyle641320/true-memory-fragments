@@ -1,0 +1,24 @@
+name: Freshness / stale-gate report
+description: Report an incorrect freshness decision or an unexpected gate
+labels: [freshness]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please include the claim scope, binding type, source change, and sanitized output. Do not include confidential code.
+  - type: textarea
+    id: claim
+    attributes:
+      label: Claim and binding context
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Source change and observed decision
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Relevant JSON / logs
