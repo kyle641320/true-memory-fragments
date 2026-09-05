@@ -1,5 +1,9 @@
 # True Memory Fragments
 
+[![PyPI](https://img.shields.io/pypi/v/true-memory-fragments.svg)](https://pypi.org/project/true-memory-fragments/)
+[![License](https://img.shields.io/github/license/kyle641320/true-memory-fragments.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+
 ### Stale-context protection for AI coding agents
 
 AI coding agents often remember a call chain from an earlier session. When the code changes, that remembered chain can become dangerous: the agent may edit against an obsolete understanding of the repository.
@@ -15,7 +19,18 @@ AI coding agents often remember a call chain from an earlier session. When the c
 
 [30-second demo](#demo) · [Install](#install) · [Architecture](DESIGN.md) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Launch copy](docs/LAUNCH_COPY_20260905.md)
 
-## The problem
+## Who it is for
+
+- AI coding agents that work across sessions on changing repositories
+- Developers who need source-aware memory instead of stale cached facts
+- Tool authors who want conservative graph expansion with explicit stale/unknown handling
+
+## Current status
+
+- Mechanics: validated
+- Stale-context safety: scoped evidence exists
+- Broad productivity/token-savings claims: unproven
+
 
 A coding agent may understand `A → B → C` in session 1. In session 2, `C` changes, but the agent still acts as if yesterday's call chain were valid. Ordinary chat memory and vector retrieval can return the old explanation without knowing that the source changed.
 
@@ -48,33 +63,31 @@ Fresh means the source binding still matches. **Correctness still comes from sou
 
 The strongest current evidence is scoped: middleware mechanics are validated, and stale-context safety has positive evidence in the GUAVA M10 pre-read experiment. Broader productivity, speed, token savings, and general bug-prevention claims remain unproven. See the [authoritative evidence status](docs/AGENT_RUNTIME_VALUE_STATUS.md) before making broader claims.
 
+## Flow
+
+```mermaid
+flowchart TD
+  A[source code] --> B[TMF derive / warm]
+  B --> C[source-bound claims]
+  C --> D[freshness check]
+  D -->|fresh| E[bounded graph context]
+  D -->|stale / unknown| F[stop + reread current source]
+```
+
+That is the whole loop: TMF keeps claims bound to source, refuses to reuse stale context, and sends the agent back to the exact code that changed.
+
 ## Demo
 
-A tiny stale-context example:
+The current repository includes a reproducible stale-boundary case under the validation fixtures. The smallest honest demo should show this sequence:
 
-```bash
-# 1) Warm a repo once
-python -m tmf.cli warm --repo /path/to/repo
-
-# 2) Ask for the call-chain around one symbol
-python -m tmf.cli retrieve --repo /path/to/repo "OrderService submit"
+```text
+1. derive a claim for the original source
+2. change the bound function or endpoint
+3. retrieve the old claim
+4. observe stale detection, omission, source fallback, and reread guidance
 ```
 
-Possible stale result:
-
-```json
-{
-  "coverage": "partial",
-  "stale_or_unknown": [
-    {
-      "claim_id": "call:OrderService.submit -> PaymentClient.charge",
-      "path": "src/main/java/.../PaymentClient.java",
-      "reason": "source binding changed"
-    }
-  ],
-  "action_hint": "reread current source before using this memory"
-}
-```
+The existing `warm` + `retrieve` commands are the library quick start, not yet a self-contained 30-second stale-behavior demo. See [`docs/OPEN_SOURCE_MINIMUM_CHECKLIST_20260905.md`](docs/OPEN_SOURCE_MINIMUM_CHECKLIST_20260905.md) for the release-blocking demo requirement.
 
 The point of the demo is not that TMF answers every query. The point is that it refuses to reuse obsolete code understanding and tells the agent what to reread next.
 
@@ -111,8 +124,7 @@ This is intentionally conservative. Missing or stale memory falls back to source
 
 ## Core Premises
 
-- **Self-maintaining memory:** TMF stores derived claims in `.tmf/` and refreshes them on read-through
-- **Fully lazy read-through:** reads detect missing or stale claims and synchronously re-derive
+- **Explicit refresh/warm maintenance:** `retrieve` checks existing claims without mutating or re-deriving the store; `refresh_path` and `warm` perform explicit derivation/refresh operations.
 - **Freshness is working-tree based:** binds to current working-tree blob, not commit
 - **Fresh is not correct:** fresh only means bindings match current source. Correctness comes from validation and source support
 - **Confidence comes from validation:** usage frequency doesn't raise confidence
@@ -250,6 +262,7 @@ The repository description and external launch materials should use the same voc
 
 ## Documentation
 
+- [Open-source minimum checklist](docs/OPEN_SOURCE_MINIMUM_CHECKLIST_20260905.md) — release and promotion gates
 - [Agent runtime value status](docs/AGENT_RUNTIME_VALUE_STATUS.md) — current experiment ruling
 - [Java enterprise roadmap](docs/JAVA_ENTERPRISE_ROADMAP.md) — enterprise capability scope
 - [Guava validation report](GUAVA_VALIDATION_REPORT.md) — routing shape + boundary detection validation
