@@ -17,16 +17,18 @@ class BindingLinesTests(unittest.TestCase):
     def test_java_method_binding_has_lines_role_and_hash_kind(self):
         """Java 方法 Binding 必须包含 line_start/line_end/role/hash_kind"""
         guava_root = Path(__file__).parent.parent / 'fixtures' / 'guava'
-        if not guava_root.exists():
-            guava_root = Path('/root/.openclaw/workspace/repos/guava')
-        if not guava_root.exists():
-            self.skipTest('Guava fixture/repository is unavailable in this runner')
+        try:
+            available = guava_root.exists()
+        except PermissionError:
+            available = False
+        if not available:
+            self.skipTest('Guava fixture is unavailable in this runner')
         repo = GitRepo(str(guava_root))
         p = 'guava/src/com/google/common/base/Preconditions.java'
         try:
             src = repo.read_file(p)
         except PermissionError as exc:
-            self.skipTest(f'Guava repository is not readable in this runner: {exc}')
+            self.skipTest(f'Guava fixture is not readable in this runner: {exc}')
         methods = extract_java_methods(p, src)
         self.assertGreater(len(methods), 0, "Should extract at least one Java method")
         
