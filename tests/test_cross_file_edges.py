@@ -134,9 +134,11 @@ class CrossFileEdgesTests(unittest.TestCase):
             })
             refresh_path(repo, "a.py")
             edge_path = next((repo / ".tmf" / "claims").glob("claim_edge_*.json"))
-            before = edge_path.read_text(encoding="utf-8")
+            before = json.loads(edge_path.read_text(encoding="utf-8"))
             refresh_path(repo, "a.py")
-            after = edge_path.read_text(encoding="utf-8")
+            after = json.loads(edge_path.read_text(encoding="utf-8"))
+            before.pop("generated_at", None)
+            after.pop("generated_at", None)
             self.assertEqual(before, after)
 
     def test_legacy_binding_without_qualname_falls_back_to_body_qualname(self):
