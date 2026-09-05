@@ -13,7 +13,7 @@ AI coding agents often remember a call chain from an earlier session. When the c
 
 > **One-line summary:** TMF does not make an agent remember more. It prevents the agent from trusting code understanding that is no longer fresh.
 
-[30-second demo](#quick-start) · [Install](#install) · [Architecture](DESIGN.md) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md)
+[30-second demo](#demo) · [Install](#install) · [Architecture](DESIGN.md) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Launch copy](docs/LAUNCH_COPY_20260905.md)
 
 ## The problem
 
