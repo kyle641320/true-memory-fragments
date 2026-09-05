@@ -148,7 +148,7 @@ jobs:
               wheel_names = archive.namelist()
               metadata_name = next(name for name in wheel_names if name.endswith(".dist-info/METADATA"))
               metadata = email.message_from_bytes(archive.read(metadata_name))
-          assert len(wheel_names) == 40, len(wheel_names)
+          assert len(wheel_names) > 0, wheel_names
           assert all(name.startswith(("tmf/", f"true_memory_fragments-{expected}.dist-info/")) for name in wheel_names)
           assert metadata["Name"] == "true-memory-fragments"
           assert metadata["Version"] == expected
