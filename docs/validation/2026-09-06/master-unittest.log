@@ -1,0 +1,14 @@
+unknown: classpath entry missing: /tmp/tmp0oco6oy2/missing
+======================================================================
+FAIL: test_fresh_cross_file_edge_does_not_force_permanent_rederive (test_cross_file_edges.CrossFileEdgesTests.test_fresh_cross_file_edge_does_not_force_permanent_rederive)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/root/.openclaw/workspace/artifacts/tmf-versioned-tests-20260906/master-clean/tests/test_cross_file_edges.py", line 142, in test_fresh_cross_file_edge_does_not_force_permanent_rederive
+    self.assertEqual(before, after)
+AssertionError: {'sch[903 chars]:49:00+00:00', 'model': 'tmf-v1-heuristic', 'b[778 chars]d'}}} != {'sch[903 chars]:49:01+00:00', 'model': 'tmf-v1-heuristic', 'b[778 chars]d'}}}
+Diff is 2638 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 617 tests in 100.823s
+
+FAILED (failures=1, skipped=6)
