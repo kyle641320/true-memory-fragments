@@ -1,4 +1,4 @@
-# True Memory Fragments
+# True Memory Fragments — Stale-Context Protection for AI Coding Agents
 
 [![PyPI](https://img.shields.io/pypi/v/true-memory-fragments.svg)](https://pypi.org/project/true-memory-fragments/)
 [![License](https://img.shields.io/github/license/kyle641320/true-memory-fragments.svg)](LICENSE)
@@ -25,11 +25,16 @@ AI coding agents often remember a call chain from an earlier session. When the c
 - Developers who need source-aware memory instead of stale cached facts
 - Tool authors who want conservative graph expansion with explicit stale/unknown handling
 
-## Current status
+## Validated so far
 
-- Mechanics: validated
-- Stale-context safety: scoped evidence exists
-- Broad productivity/token-savings claims: unproven
+- Source-bound freshness and stale-claim detection
+- Hard stale gates that stop unsafe graph expansion
+- Deterministic Python and Java validation
+- Scoped agent experiments demonstrating stale-context prevention
+
+TMF’s core stale-context protection mechanism has been validated in the covered
+scenarios. Evaluation across more languages, repositories, and long-running
+production workflows is ongoing.
 
 
 A coding agent may understand `A → B → C` in session 1. In session 2, `C` changes, but the agent still acts as if yesterday's call chain were valid. Ordinary chat memory and vector retrieval can return the old explanation without knowing that the source changed.
