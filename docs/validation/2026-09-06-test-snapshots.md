@@ -27,9 +27,9 @@ Skipped tests are included in Ran, not in Passed. The later successful run does 
 
 ## Failure and skip observations
 
-The master ordinary run failed `test_fresh_cross_file_edge_does_not_force_permanent_rederive` in `test_cross_file_edges`: the before/after comparison shows a one-second timestamp difference. The subsequent warning-strict run passed. This is an observed intermittent discrepancy; its root cause and functional impact remain unresolved here. No engine or test changes were made to hide it.
+The master ordinary run failed `test_fresh_cross_file_edge_does_not_force_permanent_rederive` in `test_cross_file_edges`: the before/after comparison showed a one-second difference in `last_verified`. The test already excluded `generated_at` as refresh metadata but omitted `last_verified`, which is also set by `now_utc()` on every derivation. A boundary-forced reproduction confirmed that this metadata-only difference appears when the two refreshes cross a UTC-second boundary. The regression assertion now excludes both refresh metadata fields while continuing to compare every source-backed field.
 
-Five skip reasons shared by both verbose runs: no publishes_to edges; no overrides edges; no call edges in each of two routing checks; no inferred semantic contracts/model command. The master run additionally skipped a Java binding test because its Guava fixture was unavailable. The underlying reason for the fixture availability difference remains to be confirmed; it is not evidence of a test regression or improvement by itself.
+Five skip reasons shared by both verbose runs: no publishes_to edges; no overrides edges; no call edges in each of two routing checks; no inferred semantic contracts/model command. The master run additionally skipped a Java binding test because commit `5896859` removed its machine-local Guava fallback, while `fixtures/guava` is not tracked. Thus a clean checkout necessarily skipped that regression. The test now uses the tracked `fixtures/java-kafka-heldout/.../Messaging.java` corpus, which contains ordinary Java methods sufficient to verify binding line, role, and hash metadata without an external repository.
 
 ## Historical counts and separate units
 
@@ -46,4 +46,4 @@ The Java qualification baseline of 46 qualifiers / 731 checks is separately repo
 - [master warning-strict](2026-09-06/master-unittest-werror.log)
 - [master revision](2026-09-06/master-revision.log)
 
-Release rc3 retains its historical notes and links this dated rc3 re-verification. README links the master snapshot without presenting it as an unconditional all-green baseline.
+Release rc3 retains its historical notes and links this dated rc3 re-verification. README links the master snapshot without presenting it as an unconditional all-green baseline. A subsequent fix and post-fix verification are documented in the repository history; the snapshot table above remains an immutable record of the original runs.

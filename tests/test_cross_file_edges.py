@@ -137,8 +137,12 @@ class CrossFileEdgesTests(unittest.TestCase):
             before = json.loads(edge_path.read_text(encoding="utf-8"))
             refresh_path(repo, "a.py")
             after = json.loads(edge_path.read_text(encoding="utf-8"))
-            before.pop("generated_at", None)
-            after.pop("generated_at", None)
+
+            # Re-derivation refreshes observation metadata even when the
+            # source-backed claim is semantically unchanged.
+            for claim in (before, after):
+                claim.pop("generated_at", None)
+                claim.pop("last_verified", None)
             self.assertEqual(before, after)
 
     def test_legacy_binding_without_qualname_falls_back_to_body_qualname(self):
