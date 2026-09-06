@@ -4,6 +4,10 @@
 [![License](https://img.shields.io/github/license/kyle641320/true-memory-fragments.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
+**[▶ 30-second demo](#demo) · [Experiment results](docs/case-studies/guava-m10-stale-gating.md) · [Feedback / Discussion #1](https://github.com/kyle641320/true-memory-fragments/discussions/1)**
+
+[Install rc3](#install) · [Release notes](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc3) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Architecture](DESIGN.md)
+
 ### Stale-context protection for AI coding agents
 
 AI coding agents often remember a call chain from an earlier session. When the code changes, that remembered chain can become dangerous: the agent may edit against an obsolete understanding of the repository.
@@ -16,8 +20,6 @@ AI coding agents often remember a call chain from an earlier session. When the c
 - 🧩 Works as a library and integrates with AI coding-agent hooks
 
 > **One-line summary:** TMF does not make an agent remember more. It prevents the agent from trusting code understanding that is no longer fresh.
-
-[30-second demo](#demo) · [Install](#install) · [Architecture](DESIGN.md) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Launch copy](docs/LAUNCH_COPY_20260905.md)
 
 ## Who it is for
 
@@ -81,11 +83,15 @@ That is the whole loop: TMF keeps claims bound to source, refuses to reuse stale
 
 ## Demo
 
-The current repository includes a deterministic offline demo:
+From a source checkout (Python 3.10+ and Git required):
 
 ```bash
+git clone https://github.com/kyle641320/true-memory-fragments.git
+cd true-memory-fragments
 python3 scripts/demo_stale_gate.py
 ```
+
+Already cloned? Run only the final command from the repository root. This demo imports the checkout's source; it is not a standalone PyPI wheel verification, and installing the package alone does not download the demo script.
 
 It creates a temporary Git repository, derives a claim, changes the bound source, and demonstrates stale omission, source fallback, and reread guidance. It needs no model, network, Java parser, or pre-existing `.tmf/` store.
 
@@ -142,16 +148,18 @@ This is intentionally conservative. Missing or stale memory falls back to source
 
 ## Install
 
-Python-only install:
+Current release candidate (Python 3.10+):
 
 ```bash
-python -m pip install true-memory-fragments
+python -m pip install --pre "true-memory-fragments==0.1.0rc3"
 ```
+
+See the [rc3 release notes](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc3) for version scope.
 
 Java parsing support is optional:
 
 ```bash
-python -m pip install "true-memory-fragments[java]"
+python -m pip install --pre "true-memory-fragments[java]==0.1.0rc3"
 ```
 
 Development checkout:
@@ -165,21 +173,7 @@ Runtime dependencies are intentionally small. Optional model, embedder, and rout
 
 ## Quick Start
 
-### 30-second demo
-
-```bash
-python3 scripts/demo_stale_gate.py
-```
-
-This deterministic offline demo creates a temporary repository, derives a claim, changes its bound source, and shows stale omission, source fallback, and reread guidance. It needs no model, network, Java parser, or pre-existing `.tmf/` store.
-
-Expected markers:
-
-```text
-STALE CLAIM BLOCKED: PASS
-SOURCE FALLBACK PROVIDED: PASS
-REREAD REQUIRED: PASS
-```
+Start with the [30-second stale-gate demo](#demo) above. Share installation or reproduction feedback in [Discussion #1](https://github.com/kyle641320/true-memory-fragments/discussions/1).
 
 ### Offline Java verifier
 
