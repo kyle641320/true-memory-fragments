@@ -7,9 +7,13 @@ The narrow claim is intentional: TMF can identify stale source-backed claims and
 ## 30-second demo
 
 ```bash
+git clone https://github.com/kyle641320/true-memory-fragments.git
+cd true-memory-fragments
 python -m pip install --pre true-memory-fragments==0.1.0rc3
 python scripts/demo_stale_gate.py
 ```
+
+Run the demo from the repository root; the PyPI install does not include repository demo scripts.
 
 The demo changes a source function after a claim has been derived. The stale claim is blocked, the source fallback is shown, and an explicit reread is required.
 
