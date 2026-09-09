@@ -3,6 +3,7 @@ import { spawnSync } from "node:child_process";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import * as crypto from "node:crypto";
+import * as os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -17,20 +18,33 @@ export interface PluginConfig { enabled?: boolean; mode?: "block"|"approval"; py
 interface HookContext { sessionKey?: string; sessionId?: string; runId?: string; toolCallId?: string; }
 interface StalePath { path: string; qualname?: string; current_source_blob: string|null; anchor?: {line_start?: number|null; line_end?: number|null; reliable?: boolean}; }
 interface Collision { schema_version: string; collision_id: string; canonical_repo_root: string; canonical_state_root: string; blocked_action_fingerprint: string; blocked_tool: string; blocked_target_path: string; stale_paths: StalePath[]; recovery_commands?: string[]; reason?: string; session_identity?: string; run_identity?: string|null; }
-interface Pending { collision: Collision; session: string; repoKey: string; createdAt: number; expiresAt: number; notices: number; observed: Set<string>; sourceChanged: boolean; }
-interface ReadCandidate { pendingKey: string; paths: string[]; blobs: Map<string,string>; }
-interface MutationCandidate { pendingKey: string; fingerprint: string; }
+interface Pending { generation: symbol; ttlMs: number; collision: Collision; session: string; cleanupKey?: string; repoKey: string; createdAt: number; expiresAt: number; notices: number; observed: Set<string>; sourceChanged: boolean; }
+interface ReadCandidate { pendingKey: string; generation: symbol; paths: string[]; blobs: Map<string,string>; params: Record<string,unknown>; file: string; }
+interface MutationCandidate { pendingKey: string; generation: symbol; fingerprint: string; }
 
 const pending = new Map<string, Pending>();
 const reads = new Map<string, ReadCandidate>();
 const mutations = new Map<string, MutationCandidate>();
+// No eviction: late public receipts have no invocation-instance token. This
+// registry survives cleanup/reset but NOT module/process replacement.
+export const RECEIPT_IDENTITY_CAPACITY = 4096;
+const MAX_IDENTITY_LENGTH = 256;
+const identities = new Map<string, { tool: string; tainted: boolean }>();
 
 function inside(candidate: string, root: string): boolean {
   const c = path.resolve(candidate), r = path.resolve(root);
   return c === r || c.startsWith(r + path.sep);
 }
+function canonicalPath(value:string):string {
+  const expanded=value==="~"?os.homedir():value.startsWith("~/")?path.join(os.homedir(),value.slice(2)):value;
+  let parent=path.resolve(expanded); const tail:string[]=[];
+  while(!fs.existsSync(parent) && path.dirname(parent)!==parent) { tail.unshift(path.basename(parent)); parent=path.dirname(parent); }
+  return path.join(fs.realpathSync(parent),...tail);
+}
 function canonicalRepo(repo: RepoConfig): RepoConfig {
-  return {repoRoot: path.resolve(repo.repoRoot), stateRoot: path.resolve(repo.stateRoot || path.join(repo.repoRoot, ".tmf"))};
+  const stateRoot=canonicalPath(repo.stateRoot || path.join(repo.repoRoot, ".tmf"));
+  if (path.basename(stateRoot)!==".tmf") throw new Error("TMF state_root_error: stateRoot must resolve to a directory named .tmf");
+  return {repoRoot: canonicalPath(repo.repoRoot), stateRoot};
 }
 export function resolveFile(params: Record<string, unknown>, cwd: string): string | undefined {
   const value = params.file_path || params.path || params.file || params.filePath || params.filepath;
@@ -48,13 +62,36 @@ function sessionIdentity(ctx: HookContext, event?: any): string | undefined {
 function repoKey(repo: RepoConfig): string { const r=canonicalRepo(repo); return `${r.repoRoot}\0${r.stateRoot}`; }
 function pendingKey(session: string, repo: RepoConfig): string { return `${session}\0${repoKey(repo)}`; }
 function callKey(ctx: HookContext, event: any): string | undefined {
-  const session=sessionIdentity(ctx,event), id=event.toolCallId || ctx.toolCallId;
-  return session && id ? `${session}\0${id}` : undefined;
+  const values: Record<string,string> = {};
+  for (const field of ["sessionKey", "sessionId", "runId", "toolCallId"] as const) {
+    const a=ctx[field], b=event?.[field];
+    for (const v of [a,b]) if (v!==undefined && (typeof v!=="string" || !v.trim() || v.length>MAX_IDENTITY_LENGTH)) return undefined;
+    if (a!==undefined && b!==undefined && a!==b) return undefined;
+    if (a!==undefined || b!==undefined) values[field]=(a??b)!;
+  }
+  const session=values.sessionKey || values.sessionId;
+  return session && values.runId && values.toolCallId ? JSON.stringify([session,values.runId,values.toolCallId]) : undefined;
+}
+function reserveIdentity(key:string|undefined, tool:string): string|undefined {
+  if (!key) return "identity_missing_or_mismatched";
+  const prior=identities.get(key);
+  if (prior) {
+    prior.tainted=true;
+    reads.delete(key); mutations.delete(key);
+    return "identity_reused";
+  }
+  if (identities.size>=RECEIPT_IDENTITY_CAPACITY) return "identity_capacity";
+  identities.set(key,{tool,tainted:false});
+  return undefined;
+}
+function identityBlock(code:string):any {
+  // Ambiguous identity is not safely overridable with approval.
+  return {block:true,blockReason:`TMF dual gate [${code}]: receipt identity unavailable; use unique session/run/tool-call IDs. Registry exhaustion requires a quiescent isolated lifecycle, not TTL retry.`};
 }
 function expire(now=Date.now()): void {
   for (const [key,value] of pending) if (value.expiresAt <= now) pending.delete(key);
-  for (const [key,value] of reads) if (!pending.has(value.pendingKey)) reads.delete(key);
-  for (const [key,value] of mutations) if (!pending.has(value.pendingKey)) mutations.delete(key);
+  for (const [key,value] of reads) if (pending.get(value.pendingKey)?.generation!==value.generation) reads.delete(key);
+  for (const [key,value] of mutations) if (pending.get(value.pendingKey)?.generation!==value.generation) mutations.delete(key);
 }
 function blobSha(file: string): string|null {
   try { const data=fs.readFileSync(file); return crypto.createHash("sha1").update(`blob ${data.length}\0`).update(data).digest("hex"); }
@@ -96,6 +133,8 @@ function sameRequiredBlobs(value:Pending): "same"|"changed"|"missing" {
   return "same";
 }
 function rearmSource(value:Pending): void {
+  // A source rearm is a new authority epoch even if target/collision/blob recur.
+  value.generation=Symbol("pending-generation");
   for (const item of value.collision.stale_paths) {
     item.current_source_blob=blobSha(path.join(value.collision.canonical_repo_root,item.path));
   }
@@ -103,8 +142,8 @@ function rearmSource(value:Pending): void {
   value.observed.clear();
   value.notices=0;
   value.createdAt=Date.now();
-  value.expiresAt=value.createdAt+DEFAULT_TTL_MS;
-  for (const [key,candidate] of reads) if(candidate.pendingKey===pendingKey(value.session,{repoRoot:value.collision.canonical_repo_root,stateRoot:value.collision.canonical_state_root})) reads.delete(key);
+  value.expiresAt=value.createdAt+value.ttlMs;
+  expire(); // discard both Read and mutation authority from the superseded epoch
 }
 function paginationInt(value:unknown, fallback:number|null):number|null {
   if (value==null) return fallback;
@@ -116,6 +155,7 @@ function coversAnchor(params:Record<string,unknown>, item:StalePath, totalLines?
   const start=paginationInt(params.offset,1);
   const limit=paginationInt(params.limit,null);
   if (start==null || start<1) return false;
+  if (item.anchor?.reliable && (!Number.isSafeInteger(item.anchor.line_start) || !Number.isSafeInteger(item.anchor.line_end) || item.anchor.line_start!<1 || item.anchor.line_end!<item.anchor.line_start!)) return false;
   if (!item.anchor?.reliable || !Number.isInteger(item.anchor.line_start) || !Number.isInteger(item.anchor.line_end)) {
     // Some parser bindings do not carry line anchors. In that case require a
     // demonstrable whole-file Read: start at line 1 and either omit the limit
@@ -131,6 +171,29 @@ function coversAnchor(params:Record<string,unknown>, item:StalePath, totalLines?
   if (limit==null || limit<=0) return false;
   return start<=item.anchor.line_start! && start+limit-1>=item.anchor.line_end!;
 }
+/** Supported: OpenClaw single text-block Read, exact offset/limit slice, optionally
+ * its user-limit continuation notice. No custom probe metadata is trusted.
+ * Truncated/adaptive/sanitized/unknown shapes fail closed; use an explicit narrow
+ * offset/limit Read covering the anchor to recover. No substring source search. */
+export function actualReadCovers(result:any, params:Record<string,unknown>, item:StalePath, source:string):boolean {
+  if (!result || result.isError || result.error || !Array.isArray(result.content) || result.content.length!==1) return false;
+  if (result.details != null && (typeof result.details!=="object" || Object.keys(result.details).length>0)) return false;
+  const block=result.content[0];
+  if(block?.type!=="text" || typeof block.text!=="string") return false;
+  const start=paginationInt(params.offset,1), limit=paginationInt(params.limit,null);
+  if(start==null || start<1 || (params.limit!=null && (limit==null || limit<1))) return false;
+  const lines=source.split("\n");
+  if(start>lines.length) return false;
+  const end=limit==null?lines.length:Math.min(lines.length,start-1+limit);
+  const selected=lines.slice(start-1,end).join("\n");
+  // Built-in base Read caps at 2000 lines/51200 bytes. Refuse larger receipts,
+  // including adaptive concatenation, even if they resemble complete source.
+  if(end-start+1>2000 || Buffer.byteLength(selected,"utf8")>51200) return false;
+  const expected=end<lines.length ? `${selected}\n\n[${lines.length-end} more lines in file. Use offset=${end+1} to continue.]` : selected;
+  if(block.text!==expected) return false;
+  const total=source.length===0?0:lines.length-(source.endsWith("\n")?1:0);
+  return coversAnchor({offset:start,limit:end-start+1},item,total);
+}
 function actionFingerprint(toolName:string,params:Record<string,unknown>,rel:string):string {
   const stable=(v:any):string=>Array.isArray(v)?`[${v.map(stable).join(",")}]`:v&&typeof v==="object"?`{${Object.keys(v).sort().map(k=>`${JSON.stringify(k)}:${stable(v[k])}`).join(",")}}`:JSON.stringify(v);
   return crypto.createHash("sha256").update(stable({tool_name:toolName,path:rel,input:params})).digest("hex");
@@ -145,8 +208,12 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
   const toolName=String(event.toolName||"").toLowerCase(), params=event.params||{};
   if (!touchTools.has(toolName)) return undefined; // shell cannot unlock
   const file=resolveFile(params,cwd); if (!file) return undefined; // documented pathless fail-open
-  const repo=route(file,config.repos||[]); if (!repo) return undefined;
-  const session=sessionIdentity(ctx,event);
+  let repo:RepoConfig|undefined;
+  try { repo=route(file,config.repos||[]); } catch { return block(config,"state_root_error"); }
+  if (!repo) return undefined;
+  const identity=callKey(ctx,event), identityError=reserveIdentity(identity,toolName);
+  if (identityError) return identityBlock(identityError);
+  const session=JSON.parse(identity!)[0] as string;
   const key=session?pendingKey(session,repo):undefined;
   const active=key?pending.get(key):undefined;
 
@@ -166,7 +233,7 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
       catch { return false; }
       return coversAnchor(params,item,totalLines);
     })) return block(config,"need_read",active);
-    const ck=callKey(ctx,event); if (ck) reads.set(ck,{pendingKey:key!,paths:matches.map(x=>x.path),blobs:new Map(matches.map(x=>[x.path,x.current_source_blob!]))});
+    const ck=callKey(ctx,event); if (ck) reads.set(ck,{pendingKey:key!,generation:active.generation,paths:matches.map(x=>x.path),blobs:new Map(matches.map(x=>[x.path,x.current_source_blob!])),params:{...params},file:path.resolve(file)});
     return undefined;
   }
 
@@ -182,7 +249,7 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
     if (actionFingerprint(toolName,params,rel)===active.collision.blocked_action_fingerprint) return block(config,"stale_retry",active);
     const ck=callKey(ctx,event);
     if (!ck) return block(config,"engine_error",active);
-    mutations.set(ck,{pendingKey:key!,fingerprint:actionFingerprint(toolName,params,rel)});
+    mutations.set(ck,{pendingKey:key!,generation:active.generation,fingerprint:actionFingerprint(toolName,params,rel)});
     return undefined;
   }
 
@@ -191,38 +258,91 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
   const collision=check.decision as Collision;
   if (session) {
     collision.session_identity=session; collision.run_identity=event.runId||ctx.runId||null;
-    const now=Date.now(), value:Pending={collision,session,repoKey:repoKey(repo),createdAt:now,expiresAt:now+(config.pendingTtlMs||DEFAULT_TTL_MS),notices:0,observed:new Set(),sourceChanged:false};
+    const now=Date.now(), value:Pending={generation:Symbol("pending-generation"),ttlMs:config.pendingTtlMs||DEFAULT_TTL_MS,collision,session,cleanupKey:ctx.sessionKey ?? event.sessionKey,repoKey:repoKey(repo),createdAt:now,expiresAt:now+(config.pendingTtlMs||DEFAULT_TTL_MS),notices:0,observed:new Set(),sourceChanged:false};
     pending.set(pendingKey(session,repo),value);
+    expire(); // a reused map slot must not retain the previous generation
+
     return block(config,"need_warm",value);
   }
   return block(config,"need_warm");
+}
+
+/** Positive receipts for the installed built-in Edit/Write contract only.
+ * Unknown/custom/apply_patch shapes retain pending (pathless patch is outside
+ * this gate). This is receipt evidence, not an independent filesystem oracle. */
+function successfulMutation(tool:string, event:any):boolean {
+  const result=event.result;
+  if (event.error!==undefined && event.error!==null) return false;
+  if (!result || typeof result!=="object" || Array.isArray(result)) return false;
+  if ((result.error!==undefined && result.error!==null) ||
+      (result.isError!==undefined && result.isError!==false) ||
+      result.status!==undefined || (result.ok!==undefined && result.ok!==true)) return false;
+  if (!Array.isArray(result.content) || result.content.length!==1) return false;
+  const text=result.content[0];
+  if (text?.type!=="text" || typeof text.text!=="string") return false;
+  const params=event.params||{};
+  const file=params.path ?? params.file_path;
+  if (typeof file!=="string" || !file) return false;
+  if (tool==="edit" && Array.isArray(params.edits) && params.edits.length>0 &&
+      params.edits.every((e:any)=>e && typeof e.oldText==="string" && typeof e.newText==="string"))
+    return text.text===`Successfully replaced ${params.edits.length} block(s) in ${file}.`;
+  // Installed Write says "bytes" but uses JS string.length (UTF-16 units).
+  if (tool==="write" && typeof params.content==="string")
+    return text.text===`Successfully wrote ${params.content.length} bytes to ${file}`;
+  return false;
 }
 
 export function runAfterToolCall(event:any,cwd:string,config:PluginConfig,ctx:HookContext={}):void {
   expire();
   const ck=callKey(ctx,event); if(!ck) return;
   const tool=String(event.toolName||"").toLowerCase();
+  const ownership=identities.get(ck);
+  if (!ownership || ownership.tainted || ownership.tool!==tool) return;
   if(tool==="read") {
     const candidate=reads.get(ck); reads.delete(ck); if(!candidate || event.error) return;
-    const active=pending.get(candidate.pendingKey); if(!active) return;
-    for(const rel of candidate.paths) if(blobSha(path.join(active.collision.canonical_repo_root,rel))===candidate.blobs.get(rel)) active.observed.add(rel);
+    const active=pending.get(candidate.pendingKey); if(!active || active.generation!==candidate.generation) return;
+    if (resolveFile(event.params||{},cwd)!==candidate.file ||
+        paginationInt(event.params?.offset,1)!==paginationInt(candidate.params.offset,1) ||
+        paginationInt(event.params?.limit,null)!==paginationInt(candidate.params.limit,null)) return;
+    for(const rel of candidate.paths) {
+      const file=path.join(active.collision.canonical_repo_root,rel);
+      const items=active.collision.stale_paths.filter(x=>x.path===rel);
+      try {
+        const bytes=fs.readFileSync(file), text=bytes.toString("utf8");
+        const digest=crypto.createHash("sha1").update(`blob ${bytes.length}\0`).update(bytes).digest("hex");
+        if(digest!==candidate.blobs.get(rel) || !Buffer.from(text,"utf8").equals(bytes)) continue;
+        if(items.every(item=>actualReadCovers(event.result,candidate.params,item,text)) && blobSha(file)===digest) active.observed.add(rel);
+      } catch { /* missing/unreadable is not an observation */ }
+    }
     return;
   }
-  const candidate=mutations.get(ck); mutations.delete(ck); if(!candidate || event.error) return;
-  const active=pending.get(candidate.pendingKey); if(!active) return;
+  const candidate=mutations.get(ck); mutations.delete(ck); if(!candidate || !successfulMutation(tool,event)) return;
+  const active=pending.get(candidate.pendingKey); if(!active || active.generation!==candidate.generation) return;
   const file=resolveFile(event.params||{},cwd);
   if(!file) return;
   const rel=path.relative(active.collision.canonical_repo_root,file).split(path.sep).join("/");
   if(actionFingerprint(tool,event.params||{},rel)===candidate.fingerprint) pending.delete(candidate.pendingKey);
 }
 export function cleanupSession(event:any,ctx:HookContext={}):void {
-  const ids=new Set([event?.sessionKey,event?.sessionId,event?.runId,ctx.sessionKey,ctx.sessionId,ctx.runId].filter(Boolean).map(String));
-  for(const [key,value] of pending) if(ids.has(value.session)) pending.delete(key);
-  for(const key of reads.keys()) if([...ids].some(id=>key.startsWith(`${id}\0`))) reads.delete(key);
-  for(const key of mutations.keys()) if([...ids].some(id=>key.startsWith(`${id}\0`))) mutations.delete(key);
+  // session_end supplies a key and a UUID, not interchangeable aliases.
+  // Without an authoritative key (including legacy sessionId-only calls),
+  // leave transients alone; no guessed UUID -> key mapping or run alias.
+  for (const field of ["sessionKey", "sessionId"] as const) {
+    const a=ctx[field], b=event?.[field];
+    for (const v of [a,b]) if (v!==undefined && (typeof v!=="string" || !v.trim() || v.length>MAX_IDENTITY_LENGTH)) return;
+    if (a!==undefined && b!==undefined && a!==b) return;
+  }
+  const session=ctx.sessionKey ?? event?.sessionKey;
+  if (!session) return;
+  const removed=new Set<string>();
+  for(const [key,value] of pending) if(value.cleanupKey===session) { pending.delete(key); removed.add(key); }
+  for(const [key,value] of reads) if(removed.has(value.pendingKey)) reads.delete(key);
+  for(const [key,value] of mutations) if(removed.has(value.pendingKey)) mutations.delete(key);
 }
 export function debugState():any { expire(); return {pending:pending.size,reads:reads.size,mutations:mutations.size}; }
+/** Clear transient state only. Never reopen a previously seen receipt tuple. */
 export function resetState():void { pending.clear(); reads.clear(); mutations.clear(); }
+export function debugReceiptIdentityState():any { return {size:identities.size,capacity:RECEIPT_IDENTITY_CAPACITY}; }
 
 export function runSessionStart(repo:RepoConfig,config:PluginConfig):string|undefined {
   const stateRoot=canonicalRepo(repo).stateRoot!; if(!fs.existsSync(stateRoot)) return undefined;
@@ -231,6 +351,7 @@ export function runSessionStart(repo:RepoConfig,config:PluginConfig):string|unde
 }
 const plugin={id:"tmf-reflex",register(api:any){
   const config:PluginConfig=api.pluginConfig||{}; if(config.enabled===false)return;
+  for(const repo of config.repos||[]) canonicalRepo(repo); // reject invalid configuration at registration
   const cwd=(()=>{try{return api.runtime.agent.resolveAgentWorkspaceDir(api.config)||process.cwd()}catch{return process.cwd()}})();
   api.on("before_tool_call",async(event:any,ctx:any)=>runPreToolUse(event,cwd,config,ctx));
   api.on("after_tool_call",async(event:any,ctx:any)=>runAfterToolCall(event,cwd,config,ctx));

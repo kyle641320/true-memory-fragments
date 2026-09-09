@@ -33,6 +33,8 @@ import os
 import textwrap
 import shlex
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
+from state_root import canonical_state_root
 
 # ── 配置 ──────────────────────────────────────────────────────────
 # 代码文件后缀（我们追踪的文件类型）
@@ -87,7 +89,7 @@ def resolve_file_path(tool_input: dict, cwd: str) -> str | None:
 def resolve_state_root(repo_root: str) -> Path:
     """Use TMF_STATE_ROOT when set, otherwise the repository-local .tmf."""
     configured = os.environ.get("TMF_STATE_ROOT")
-    return Path(configured).expanduser().resolve() if configured else Path(repo_root) / ".tmf"
+    return canonical_state_root(repo_root, configured)
 
 
 def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dict:
@@ -104,7 +106,7 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
     from tmf.freshness import check_freshness
 
     repo = GitRepo(repo_root)
-    store = Store(state_root.parent if state_root.name == ".tmf" else repo_root)
+    store = Store(canonical_state_root(repo_root, state_root).parent)
 
     # 收集该文件的所有 function-scope claim IDs
     claim_ids: set[str] = set()
@@ -232,7 +234,7 @@ def resolve_unique_function_claim(repo_root: str, symbol: str, state_root: Path)
 
     from tmf.store import Store
 
-    store = Store(state_root.parent if state_root.name == ".tmf" else repo_root)
+    store = Store(canonical_state_root(repo_root, state_root).parent)
     matches = []
     for claim in store.iter_claims():
         if claim.scope != "function":
@@ -406,7 +408,11 @@ def main() -> None:
         sys.exit(EXIT_ALLOW)
 
     # 5. 检查 TMF 是否已初始化
-    state_root = resolve_state_root(repo_root)
+    try:
+        state_root = resolve_state_root(repo_root)
+    except ValueError as exc:
+        sys.stderr.write(json.dumps({"decision": "block", "code": "state_root_error", "error": str(exc)}) + "\n")
+        sys.exit(EXIT_BLOCK)
     tmf_dir = state_root / "claims"
     if not tmf_dir.exists():
         # TMF 未 warm — 放行（这是初始状态，无可比对）
