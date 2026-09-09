@@ -20,6 +20,7 @@ import argparse
 import os
 import sys
 from pathlib import Path
+from state_root import canonical_state_root
 
 # 确保 TMF 可导入
 _TMF_WORKTREE = Path(__file__).resolve().parent.parent / "tmf-worktree"
@@ -41,8 +42,8 @@ def local_warm(repo_root: str, rel_path: str, state_root: str | None = None) -> 
     from tmf.freshness import check_freshness
 
     repo = GitRepo(repo_root)
-    state_path = Path(state_root).expanduser().resolve() if state_root else Path(repo_root).resolve() / ".tmf"
-    store = Store(state_path.parent if state_path.name == ".tmf" else repo_root)
+    state_path = canonical_state_root(repo_root, state_root or os.environ.get("TMF_STATE_ROOT"))
+    store = Store(state_path.parent)
     store.init()
 
     text = repo.read_file(rel_path)
