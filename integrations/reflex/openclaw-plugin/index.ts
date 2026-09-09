@@ -14,13 +14,13 @@ const DEFAULT_TTL_MS = 30 * 60 * 1000;
 const MAX_REASON = 1800;
 
 export interface RepoConfig { repoRoot: string; stateRoot?: string; }
-export interface PluginConfig { enabled?: boolean; mode?: "block"|"approval"; python?: string; tmfRoot?: string; repos?: RepoConfig[]; pendingTtlMs?: number; }
+export interface PluginConfig { recoveryObservationRoot?: string; enabled?: boolean; mode?: "block"|"approval"; python?: string; tmfRoot?: string; repos?: RepoConfig[]; pendingTtlMs?: number; }
 interface HookContext { sessionKey?: string; sessionId?: string; runId?: string; toolCallId?: string; }
 interface StalePath { path: string; qualname?: string; current_source_blob: string|null; anchor?: {line_start?: number|null; line_end?: number|null; reliable?: boolean}; }
 interface Collision { schema_version: string; collision_id: string; canonical_repo_root: string; canonical_state_root: string; blocked_action_fingerprint: string; blocked_tool: string; blocked_target_path: string; stale_paths: StalePath[]; recovery_commands?: string[]; reason?: string; session_identity?: string; run_identity?: string|null; }
 interface Pending { generation: symbol; ttlMs: number; collision: Collision; session: string; cleanupKey?: string; repoKey: string; createdAt: number; expiresAt: number; notices: number; observed: Set<string>; sourceChanged: boolean; }
 interface ReadCandidate { pendingKey: string; generation: symbol; paths: string[]; blobs: Map<string,string>; params: Record<string,unknown>; file: string; }
-interface MutationCandidate { pendingKey: string; generation: symbol; fingerprint: string; }
+interface MutationCandidate { pendingKey: string; generation: symbol; fingerprint: string; observationIdentity?: string; }
 
 const pending = new Map<string, Pending>();
 const reads = new Map<string, ReadCandidate>();
@@ -249,7 +249,8 @@ export function runPreToolUse(event:any,cwd:string,config:PluginConfig,ctx:HookC
     if (actionFingerprint(toolName,params,rel)===active.collision.blocked_action_fingerprint) return block(config,"stale_retry",active);
     const ck=callKey(ctx,event);
     if (!ck) return block(config,"engine_error",active);
-    mutations.set(ck,{pendingKey:key!,generation:active.generation,fingerprint:actionFingerprint(toolName,params,rel)});
+    mutations.set(ck,{pendingKey:key!,generation:active.generation,fingerprint:actionFingerprint(toolName,params,rel),
+      observationIdentity:config.recoveryObservationRoot ? recoveryIdentity(ctx,event) : undefined});
     return undefined;
   }
 
@@ -321,7 +322,10 @@ export function runAfterToolCall(event:any,cwd:string,config:PluginConfig,ctx:Ho
   const file=resolveFile(event.params||{},cwd);
   if(!file) return;
   const rel=path.relative(active.collision.canonical_repo_root,file).split(path.sep).join("/");
-  if(actionFingerprint(tool,event.params||{},rel)===candidate.fingerprint) pending.delete(candidate.pendingKey);
+  if(actionFingerprint(tool,event.params||{},rel)===candidate.fingerprint) {
+    pending.delete(candidate.pendingKey); // release authority unchanged; recording is downstream
+    observeRecovery(active,ck,tool,rel,candidate.fingerprint,config,ctx,event,candidate.observationIdentity);
+  }
 }
 export function cleanupSession(event:any,ctx:HookContext={}):void {
   // session_end supplies a key and a UUID, not interchangeable aliases.
@@ -359,3 +363,55 @@ const plugin={id:"tmf-reflex",register(api:any){
   api.on("session_end",async(event:any,ctx:any)=>cleanupSession(event,ctx));
 }};
 export default plugin;
+
+// Isolated trusted-local experiment. Disabled without explicit observation root.
+// No automatic cognition submit/validate/adopt or agent mental-state claims.
+const recoveryGaps:any[]=[];
+export function debugRecoveryGaps():any[] { return recoveryGaps.slice(); }
+function recoveryIdentity(ctx:HookContext,event:any):string {
+ return JSON.stringify(['sessionKey','sessionId','runId','toolCallId'].map(k=>(ctx as any)[k]??event[k]??null));
+}
+function observeRecovery(active:Pending, receiptKey:string, tool:string, target:string,
+ fingerprint:string, config:PluginConfig, ctx:HookContext, event:any, expectedIdentity?:string):void {
+ if(!config.recoveryObservationRoot) return;
+ let id:string|null=null;
+ try {
+  id=crypto.randomUUID();
+  if(!expectedIdentity || expectedIdentity!==recoveryIdentity(ctx,event)) throw new Error('observation_identity_drift');
+  const repo=active.collision.canonical_repo_root;
+  const paths=[...new Set([...active.collision.stale_paths.map(x=>x.path),target])].sort();
+  if(paths.length>16) throw new Error("binding_budget");
+  const vector=paths.map(rel=>{
+   const file=fs.realpathSync(path.join(repo,rel));
+   if(path.isAbsolute(rel) || rel.split('/').includes('..') || !inside(file,repo)) throw new Error("source_escape");
+   const fd=fs.openSync(file,'r'); let bytes:Buffer;
+   try { if(!fs.fstatSync(fd).isFile() || fs.fstatSync(fd).size>8192) throw new Error("snapshot_budget");
+    const buffer=Buffer.alloc(8193);const n=fs.readSync(fd,buffer,0,8193,0);if(n>8192)throw new Error("snapshot_budget");bytes=buffer.subarray(0,n);
+   } finally {fs.closeSync(fd);}
+   const snippet=bytes.toString('utf8');if(!Buffer.from(snippet).equals(bytes))throw new Error("non_utf8");
+   return {path:rel,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),
+    git_blob:crypto.createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex'),snippet};
+  });
+  for(const b of vector)if(blobSha(path.join(repo,b.path))!==b.git_blob)throw new Error("capture_drift");
+  const identity:any={};const identityGaps:string[]=[];
+  for(const k of ['sessionKey','sessionId','runId','toolCallId'] as const){
+    identity[k]=ctx[k]??event[k]??null;if(identity[k]===null)identityGaps.push(k+':not_provided_by_host');
+  }
+  const observation={schema:'tmf.recovery-observation.v1',id,status:'recovery_released_without_consolidation',
+   canonical_repo_root:repo,canonical_state_root:active.collision.canonical_state_root,
+   collision_id:active.collision.collision_id,identity,identity_gaps:identityGaps,receipt_key:receiptKey,
+   mutation:{tool,target,fingerprint,assurance:'matched built-in-shaped host receipt; not semantic correctness'},
+   observed_dependencies:active.collision.stale_paths.map(x=>({path:x.path,qualname:x.qualname??null,
+    observed_git_blob:x.current_source_blob,read_observed:active.observed.has(x.path)})),
+   postmutation_vector:vector,limitations:['No candidate submitted','No semantic correctness or adoption inferred']};
+  const payload=JSON.stringify(observation);if(Buffer.byteLength(payload)>160*1024)throw new Error('observation_budget');
+  fs.mkdirSync(config.recoveryObservationRoot,{recursive:true});
+  // Fixed-size journal: retain observations, do not silently evict provenance.
+  if(fs.readdirSync(config.recoveryObservationRoot).length>=64)throw new Error('journal_capacity');
+  fs.writeFileSync(path.join(config.recoveryObservationRoot,id+'.json'),payload,{flag:'wx',mode:0o600});
+ } catch(e) {
+  const gap={id,status:'recovery_released_observation_gap',reason:String(e).slice(0,300)};
+  if(recoveryGaps.length<64)recoveryGaps.push(gap);
+  // Gap channel is bounded in-memory debug output, not a durable host notification contract.
+ }
+}

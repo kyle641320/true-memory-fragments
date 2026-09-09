@@ -56,3 +56,9 @@ requires a demonstrable whole-file Read: line 1 plus no limit, or a positive
 limit at least as large as the current file's line count. This preserves the
 conservative boundary without rejecting OpenClaw's normal `offset: 1,
 limit: 2000` whole-file request.
+
+## Experimental recovery cognition
+
+Optional, disabled-by-default post-release observations and an explicit trusted-local
+Python cognition bridge are described in [the experiment guide](../cognition/README.md).
+This does not change recovery release or session-start delivery authority.
