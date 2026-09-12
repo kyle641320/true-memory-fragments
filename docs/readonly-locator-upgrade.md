@@ -46,3 +46,13 @@ copy of the existing state: tool schemas, queries, stale behavior, and unchanged
 source/state fingerprints. Then validate the actual client registration after
 switching. A standalone SDK test does not prove that a running client switched.
 This document describes a compatibility candidate, not a completed live upgrade.
+
+## Legacy OpenClaw assist command
+
+The package also ships `python3 -m tmf.assist_openclaw`, used by legacy
+`TMF_ASSIST_COMMAND_JSON` configurations. The adapter preserves the configured
+OpenClaw binary, model and timeout, and remains opt-in. Its process entry point
+is tested with a local fake executable; that test does not certify a live
+provider connection. Validate the actual configured provider before completing
+a live upgrade. A generic injected assist provider test alone does not cover
+this module launch path.
