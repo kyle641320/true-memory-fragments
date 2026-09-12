@@ -6,7 +6,8 @@
 - Keep stale-binding checks unchanged; avoid spending supplement slots on already-required stale declarations.
 - Regression: moved/deleted declarations, sibling callees, explicit task suggestions, and side-effect checks. Full suite: 619 run, 618 passed, 1 optional skip. Held-out validation passed.
 - Real Guava two-file version-evolution replay replaces three unrelated suggestions for each changed hash-combination method with array-contract methods. This is planner validation, not a new agent trial or speed claim.
-- Self-validation remains incomplete: stopped after exceeding ten minutes without a final report. Interruption occurred in Java graph-coverage path enumeration; those modules are unchanged in this patch. This does not establish a baseline performance comparison.
+- Original local self-validation was incomplete: stopped after exceeding ten minutes without a final report. Subsequent CI at 77842c7 passed self-validation on Python 3.10–3.12. Interruption occurred in Java graph-coverage path enumeration; those modules are unchanged in this patch. This does not establish a baseline performance comparison.
+- Follow-up: reuse a local lazy Java snapshot within read-only graph-coverage validation; preserve statistics and next-run mutation visibility. Updated unit suite: 620 run, 619 passed, 1 optional skip. Current-head CI still determines readiness.
 - Call-name matching remains heuristic (not receiver/type resolution); comments, strings, same-name methods, and bounded sibling coverage can still affect suggestions. See docs/stale-slice-relevance.md.
 
 ## Stale lexical read-through revalidation (2026-08-10)

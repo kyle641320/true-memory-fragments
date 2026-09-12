@@ -40,16 +40,33 @@ or evidence of lower agent token/time cost.
 The added regression fails on the baseline and passes on the candidate. It covers
 moved and deleted declarations, exclusion of unrelated file/header identifiers,
 and preservation of a sibling callee. Existing explicit-task and side-effect
-checks pass. Full suite: 619 run, 618 passed, 1 optional skip. Held-out: pass.
+checks pass. Initial slice suite: 619 run, 618 passed, 1 optional skip. Held-out: pass.
 
-Self-validation did not produce a final report within a ten-minute budget and
-was interrupted; it is not counted as passed. The captured stack is in Java
+The original local self-validation did not produce a final report within a
+ten-minute budget and was interrupted; that run is not counted as passed.
+Subsequent CI at commit `77842c7` passed self-validation on Python 3.10–3.12. The captured stack is in Java
 inheritance resolution / graph-coverage file enumeration, outside modified
-modules. This is a pending release check, not proof that the patch caused (or
-could not contribute to) the runtime cost.
+modules. The interrupted run alone is not proof that the patch caused (or could not
+contribute to) the runtime cost. Current-head CI must be checked separately.
 
 Suggestions remain heuristic: call-shaped text in comments/strings and methods
 with the same name can match without receiver/type resolution. Sibling scanning
 is bounded and can omit distant declarations. Stale line numbers are still
 historical anchors; consumers should resolve `read_symbol` against current
 source. This is neither complete dependency coverage nor a mandatory write gate.
+
+## Validation enumeration follow-up
+
+The Java coverage audit used a fresh project fingerprint for each resolver call.
+It now reuses the existing lazy Java snapshot only within that audit's local
+`GitRepo` instance, over an unchanged validation fixture. A new audit creates a
+new view: added and deleted Java files are covered by regression tests. Runtime
+freshness/cache policy and validation scoring/coverage targets are unchanged.
+
+A mixed-language fixture with resolved and unresolved inheritance has identical
+before/after coverage statistics, with project enumeration reduced from eight
+to two calls. An additional nine-Java-file test fails on the old 20 enumerations
+and passes with a constant bound; subsequent addition/deletion changes remain
+visible. The updated full suite runs 620 tests: 619 passed, one optional skip.
+See the PR's current-head checks for final self-validation and release status;
+older successful checks must not be substituted for the current head.
