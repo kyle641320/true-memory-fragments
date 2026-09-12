@@ -1,0 +1,60 @@
+name: Early preview feedback
+description: Share a successful trial or a problem with the pinned TMF preview
+title: "[Preview] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Successful trials and failures are both useful. Share only sanitized details; no private source, credentials, or raw session archives. Paths may be anonymized consistently.
+  - type: input
+    id: version
+    attributes:
+      label: TMF source commit
+      description: Use the installed source revision; package version alone cannot identify the pinned preview.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and integration
+      description: OS, Python version, agent/client version, and transport (MCP stdio, direct API, or CLI).
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Task and worktree binding
+      description: Describe the task, worktrees/branches, and whether tmf_status.repo matched the task worktree. Private repository names and paths are not needed.
+    validations:
+      required: true
+  - type: dropdown
+    id: outcome
+    attributes:
+      label: Main outcome
+      options:
+        - Worked as expected
+        - Installation or transport failed
+        - Wrong worktree binding
+        - Missed stale source
+        - Unnecessary stale decisions or reads
+        - Refresh or recovery failed
+        - Other / not sure
+    validations:
+      required: true
+  - type: textarea
+    id: observations
+    attributes:
+      label: Expected and observed behavior
+      description: If source changed, describe the change, freshness response, whether the agent actually reread source before editing, and project test results. Mark unobserved steps as unknown, not passed.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction or sanitized evidence
+      description: Commands, small public examples, relevant response fields, or steps to reproduce. For a successful trial, a short sequence is enough.
+  - type: textarea
+    id: cost
+    attributes:
+      label: Optional cost and usability observations
+      description: Index/refresh time, extra reads, interruptions, and what made the workflow useful or difficult. Estimates are welcome if labeled.

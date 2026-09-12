@@ -88,6 +88,11 @@ acceptance, not a new autonomous-agent experiment.
 
 ## Feedback requested
 
+[Submit early-preview feedback](https://github.com/kyle641320/true-memory-fragments/issues/new?template=preview-feedback.yml)
+for either a successful trial or a problem. One report per workflow is enough;
+no private repository access is required. For other reports, use the
+[issue chooser](https://github.com/kyle641320/true-memory-fragments/issues/new/choose).
+
 Include source commit, Python/client versions, OS, worktree setup, expected versus
 actual behavior, and a minimal sanitized reproduction. Prioritize wrong-worktree
 binding, missed stale bindings, unnecessary reads, startup/refresh failures and
