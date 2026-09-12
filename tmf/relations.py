@@ -249,8 +249,9 @@ def bounded_fragment(
                     "async_handoff": is_async,
                 })
                 
-                # Collect for routing shape analysis
-                hop_edges.append((edge_id, kind, list(endpoint_ids.values())))
+                # Count destinations relative to this traversal endpoint, not
+                # the endpoint itself. Keep edge provenance unchanged above.
+                hop_edges.append((edge_id, kind, [value for value in endpoint_ids.values() if value != endpoint]))
                 
                 for claim_id in new_ids:
                     claim = endpoint_claims[claim_id]
