@@ -1,5 +1,14 @@
 # TMF Changes
 
+## Bound-source Java stale-slice relevance (2026-09-12)
+
+- Seed Java reading supplements from current bound declarations rather than entire files or historical ranges. Require explicit task-term or call-name matches; a shared owning class is not relevance evidence.
+- Keep stale-binding checks unchanged; avoid spending supplement slots on already-required stale declarations.
+- Regression: moved/deleted declarations, sibling callees, explicit task suggestions, and side-effect checks. Full suite: 619 run, 618 passed, 1 optional skip. Held-out validation passed.
+- Real Guava two-file version-evolution replay replaces three unrelated suggestions for each changed hash-combination method with array-contract methods. This is planner validation, not a new agent trial or speed claim.
+- Self-validation remains incomplete: stopped after exceeding ten minutes without a final report. Interruption occurred in Java graph-coverage path enumeration; those modules are unchanged in this patch. This does not establish a baseline performance comparison.
+- Call-name matching remains heuristic (not receiver/type resolution); comments, strings, same-name methods, and bounded sibling coverage can still affect suggestions. See docs/stale-slice-relevance.md.
+
 ## Stale lexical read-through revalidation (2026-08-10)
 
 - An old lexical match may trigger source re-derivation, but it can no longer
