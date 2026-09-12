@@ -10,6 +10,9 @@ ROOT.mkdir(parents=True, exist_ok=False)
 ENGINE=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ENGINE))
 os.environ['PYTHONDONTWRITEBYTECODE']='1'
+sys.dont_write_bytecode = True
+# This acceptance must remain offline even in a model-enabled host shell.
+os.environ.pop('TMF_MODEL_COMMAND', None)
 from tmf.mcp_server import McpService
 from tmf.freshness import check_freshness
 from tmf.git import GitRepo
