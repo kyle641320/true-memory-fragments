@@ -76,7 +76,7 @@ def _short_hash(value: str | None, n: int = 12) -> str | None:
     return value[:n]
 
 
-def explain_claim(repo: GitRepo, claim: Claim) -> dict:
+def explain_claim(repo: GitRepo, claim: Claim, *, store: Store | None = None) -> dict:
     freshness: Freshness = check_freshness(repo, claim)
     trust = trust_label(claim)
     model_candidate = claim.body.get("model_candidate", {})
@@ -85,7 +85,7 @@ def explain_claim(repo: GitRepo, claim: Claim) -> dict:
     provenance = _provenance_items(claim)
     confidence = 0.0 if _is_unverified_foreign(claim) else float(claim.confidence)
     raw_confidence = model_candidate.get("raw_confidence")
-    graph = _graph_with_fresh_edges(repo, claim)
+    graph = _graph_with_fresh_edges(repo, claim, store=store)
     unverified_foreign = _is_unverified_foreign(claim)
     view_claim = UNVERIFIED_FOREIGN_CLAIM_PLACEHOLDER if unverified_foreign else claim.claim
     explained = {
@@ -116,7 +116,7 @@ def explain_claim(repo: GitRepo, claim: Claim) -> dict:
         "feedback_events": claim.body.get("feedback_events", []),
         "hunches": claim.body.get("hunches", []),
         "graph": graph,
-        "graph_coverage": "complete" if warm_is_complete(repo.root) else "partial",
+        "graph_coverage": "complete" if store is None and warm_is_complete(repo.root) else "partial",
         "warnings": _warnings(fresh=freshness.fresh, trust=trust, claim=claim),
     }
     if unverified_foreign:
@@ -139,11 +139,11 @@ def _warnings(*, fresh: bool, trust: dict[str, str], claim: Claim) -> list[str]:
     return warnings
 
 
-def _graph_with_fresh_edges(repo: GitRepo, claim: Claim) -> dict:
+def _graph_with_fresh_edges(repo: GitRepo, claim: Claim, *, store: Store | None = None) -> dict:
     graph = dict(claim.body.get("graph", {}))
     if claim.scope not in {"function", "declaration"}:
         return graph
-    store = Store(repo.root)
+    store = store if store is not None else Store(repo.root)
     relation_kinds = {"calls", "reads"}
     edge_ids = store.index.edge_ids(claim.id, relation_kinds, 128)
     if edge_ids is None:
@@ -247,8 +247,8 @@ def thin_view(explained: dict) -> dict:
     }
 
 
-def full_view(repo: GitRepo, claim: Claim) -> dict:
-    explained = explain_claim(repo, claim)
+def full_view(repo: GitRepo, claim: Claim, *, store: Store | None = None) -> dict:
+    explained = explain_claim(repo, claim, store=store)
     payload = dict(explained)
     payload["claim_record"] = claim.to_dict()
     return payload

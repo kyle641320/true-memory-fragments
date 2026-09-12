@@ -365,6 +365,7 @@ def plan_stale_slice(
     question: str = "",
     max_required_reads: int = 4,
     max_optional_neighbors: int = 4,
+    store: Store | None = None,
 ) -> dict[str, Any]:
     """Plan a differential stale-slice refresh for one source-bound claim.
 
@@ -374,7 +375,7 @@ def plan_stale_slice(
     still current.  Callers may use this as a read-through plan before editing.
     """
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = store if store is not None else Store(repo.root)
     claim_freshness = check_freshness(repo, claim)
     bindings = binding_freshness_report(repo, claim)
     stale = [item for item in bindings if item["status"] != "fresh"]
