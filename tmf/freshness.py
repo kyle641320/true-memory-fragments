@@ -121,6 +121,12 @@ def _current_java_node_hashes(repo: GitRepo, path: str, qualname: str | None, no
 
 
 def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
+    # Only explicit locator loading selects legacy source-binding semantics.
+    from .readonly_store import LegacyLocatorClaim
+    if isinstance(claim, LegacyLocatorClaim):
+        from .legacy_freshness import check_freshness as check_legacy
+        result = check_legacy(repo, claim)
+        return Freshness(result.fresh, result.stale_bindings)
     stale: list[str] = []
     expected_versions: dict[str, str] = {}
     for binding in claim.bindings:

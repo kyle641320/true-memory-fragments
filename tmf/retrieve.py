@@ -115,9 +115,9 @@ def retrieve_path(repo_root: str | Path, path: str, *, use_model: bool = False) 
     return RetrieveResult(query=rel, claims=retrieved, source_fallback={rel: source}, gaps=gaps)
 
 
-def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_model: bool = False) -> RetrieveResult:
+def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_model: bool = False, store: Store | None = None, read_only: bool = False) -> RetrieveResult:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = store if store is not None else Store(repo.root)
     raw_terms = {t.lower() for t in re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query)}
     # Cheap language-neutral morphology helps natural-language questions meet
     # code identifiers (booking -> book, consumed -> consume) without a model,
@@ -194,8 +194,8 @@ def retrieve_text(repo_root: str | Path, query: str, limit: int = 5, *, use_mode
     # Keep explicitly configured semantic routing additive. With neither
     # configured, an indexed lexical miss stays bounded instead of scanning the
     # authoritative store for semantic candidates.
-    router_configured = bool(os.environ.get("TMF_ROUTER_COMMAND"))
-    embedding_configured = bool(os.environ.get("TMF_EMBED_COMMAND"))
+    router_configured = not read_only and bool(os.environ.get("TMF_ROUTER_COMMAND"))
+    embedding_configured = not read_only and bool(os.environ.get("TMF_EMBED_COMMAND"))
     semantic_configured = router_configured or embedding_configured
     semantic_candidates: list[Claim] = []
     if len(claims) < limit and (not terms or semantic_configured):
@@ -344,10 +344,10 @@ def _fresh_edge_neighbors(repo: GitRepo, store: Store, claim: Claim) -> list[Cla
     return out
 
 
-def reverse_callers(repo_root: str | Path, node_id: str) -> dict[str, Any]:
+def reverse_callers(repo_root: str | Path, node_id: str, *, store: Store | None = None, read_only: bool = False) -> dict[str, Any]:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
-    index = load_complete_reverse_index(repo.root)
+    store = store if store is not None else Store(repo.root)
+    index = None if read_only else load_complete_reverse_index(repo.root)
     if index is not None:
         indexed_callers = index.get("by_callee", {}).get(node_id, [])
         fresh_callers: list[dict[str, str | None]] = []
@@ -401,9 +401,9 @@ def _reverse_callers_lazy(repo: GitRepo, store: Store, node_id: str) -> dict[str
     return {"node_id": node_id, "callers": callers, "stale_skipped": stale_skipped, "coverage": "partial", "note": note}
 
 
-def reverse_readers(repo_root: str | Path, declaration_id: str) -> dict[str, Any]:
+def reverse_readers(repo_root: str | Path, declaration_id: str, *, store: Store | None = None, read_only: bool = False) -> dict[str, Any]:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = store if store is not None else Store(repo.root)
     readers: list[dict[str, str | None]] = []
     stale_skipped = 0
 
@@ -436,9 +436,9 @@ def reverse_readers(repo_root: str | Path, declaration_id: str) -> dict[str, Any
     return {"node_id": declaration_id, "readers": readers, "stale_skipped": stale_skipped, "coverage": "partial", "note": "Known readers from already-derived files only; not a complete blast radius."}
 
 
-def reverse_writers(repo_root: str | Path, declaration_id: str) -> dict[str, Any]:
+def reverse_writers(repo_root: str | Path, declaration_id: str, *, store: Store | None = None, read_only: bool = False) -> dict[str, Any]:
     repo = GitRepo(repo_root)
-    store = Store(repo.root)
+    store = store if store is not None else Store(repo.root)
     writers: list[dict[str, Any]] = []
     stale_skipped = 0
 

@@ -422,7 +422,12 @@ def serve(repo_root: str | Path, stdin: Any = None, stdout: Any = None) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="tmf mcp", description="Run TMF MCP stdio JSON-RPC server")
     parser.add_argument("--repo", default=".")
+    parser.add_argument("--state-root", default=__import__("os").environ.get("TMF_STATE_ROOT"))
+    parser.add_argument("--read-only", action="store_true")
     args = parser.parse_args(argv)
+    if args.state_root is not None or args.read_only:
+        from .locator_server import serve as serve_locator
+        return serve_locator(args.repo, args.state_root)
     return serve(args.repo)
 
 
