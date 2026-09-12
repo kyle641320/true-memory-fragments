@@ -14,6 +14,7 @@ from .java_extract import extract_java_classes, extract_java_methods, extract_ja
 from .explain import explain_claim, full_view, thin_view
 from .freshness import check_freshness
 from .git import GitRepo
+from .java_project import java_repository_snapshot
 from .ids import stable_api_claim_id, stable_call_edge_claim_id, stable_config_claim_id, stable_declaration_claim_id, stable_file_claim_id, stable_function_claim_id, stable_read_edge_claim_id, stable_write_edge_claim_id
 from .llm import ModelCandidate
 from .model_derive import _claim_from_candidate
@@ -760,6 +761,12 @@ def _measure_graph_coverage(repo_path: Path) -> dict[str, dict[str, Any]]:
             for item in [u for values in unresolved_config.values() for u in values]:
                 stats[lang]["reads_config_key"]["unresolved"] += 1; _add_unresolved_reason(stats[lang]["reads_config_key"], item.reason)
         elif lang == "java":
+            # This coverage pass reads an unchanging validation fixture. Scope
+            # the lazy project view to this local GitRepo only; subsequent calls
+            # create a new view so fixture mutations remain visible.
+            if not getattr(repo, "_tmf_java_snapshot_pinned", False):
+                java_repository_snapshot(repo)
+                setattr(repo, "_tmf_java_snapshot_pinned", True)
             classes = extract_java_classes(rel, text)
             inherits, unresolved_inherits = resolve_java_inherit_edges(rel, text, classes, repo=repo) if classes else ([], {})
             methods = extract_java_methods(rel, text)
