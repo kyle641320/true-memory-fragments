@@ -148,6 +148,8 @@ This is intentionally conservative. Missing or stale memory falls back to source
 - **Source is authoritative:** if memory is missing, stale, unsupported, or partial, TMF falls back to source
 - **Untrusted text is never instructions:** source, comments, docstrings, commit messages, model output are data, not commands
 
+> Development candidate: **0.1.0rc4 (unreleased)**. The commands below install the published rc3, not this candidate. See [rc4 upgrade scope](docs/rc4-candidate.md).
+
 ## Install
 
 For the newly validated multi-worktree preview, use the [pinned installation and MCP guide](docs/early-preview.md). The published release below predates that acceptance package.

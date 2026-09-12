@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.0rc4 — UNRELEASED
+
+- Reduce unrelated stale-slice reads.
+- Preserve external read-only locator state and legacy claim/interface compatibility.
+- Ship the legacy OpenClaw assist module adapter.
+- Gate release preflight on offline legacy locator and assist regressions.
+
+
 ## 0.1.0rc3 - UNRELEASED bounded Java/Spring handoff
 
 ### Added
