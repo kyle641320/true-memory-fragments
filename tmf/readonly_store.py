@@ -19,14 +19,18 @@ class LegacyLocatorClaim(Claim):
 class MemoryIndex(InvertedIndex):
     def __init__(self, claims):
         self._db = sqlite3.connect(':memory:', isolation_level=None)
-        self._db.execute('PRAGMA temp_store=MEMORY')
-        self.create()
-        self._db.execute('BEGIN')
-        for claim in claims:
-            self.upsert(claim)
-        self._db.execute("INSERT OR REPLACE INTO metadata VALUES('state', 'complete')")
-        self._db.execute('COMMIT')
-        self._db.execute('PRAGMA query_only=ON')
+        try:
+            self._db.execute('PRAGMA temp_store=MEMORY')
+            self.create()
+            self._db.execute('BEGIN')
+            for claim in claims:
+                self.upsert(claim)
+            self._db.execute("INSERT OR REPLACE INTO metadata VALUES('state', 'complete')")
+            self._db.execute('COMMIT')
+            self._db.execute('PRAGMA query_only=ON')
+        except BaseException:
+            self.close()
+            raise
     def _connect(self, *, rebuild=False):
         if self._db is None:
             raise RuntimeError('closed locator index')

@@ -1,17 +1,19 @@
 from __future__ import annotations
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import subprocess
+import sqlite3
 import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 from tmf.derive import derive_claims_for_path
 from tmf.git import GitRepo
-from tmf.locator_server import McpService, tools_list
-from tmf.readonly_store import ReadOnlyStore
+from tmf.locator_server import McpService, tools_list, serve
+from tmf.readonly_store import ReadOnlyStore, MemoryIndex
 from tmf.freshness import check_freshness
 from tmf.legacy_top_level import extract_module_top_levels
 
@@ -44,6 +46,59 @@ def fixture(root, name='helper'):
     return repo,state
 
 class ReadOnlyLocatorTests(unittest.TestCase):
+    def test_opt_in_assist_is_bounded_untrusted_and_nonpersistent(self):
+        class Provider:
+            provider_id = 'offline-test'
+            def infer(self, *, request):
+                self.request = request
+                return self.response
+        with tempfile.TemporaryDirectory() as td:
+            repo,state=fixture(Path(td));provider=Provider()
+            provider.response={'answer':'hypothesis','inferences':[], 'confidence':0.5,
+                               'evidence':[], 'assumptions':[], 'unresolved':[],
+                               'suggested_source_reads':[]}
+            service=McpService(repo,state,assist_provider=provider,load_assist_provider=False)
+            try:
+                before=fingerprint(Path(td))
+                result=service.tmf_assist('helper',max_context_chars=6000)
+                self.assertEqual(result['status'],'ok')
+                self.assertTrue(result['non_authoritative'])
+                self.assertFalse(result['persisted'])
+                self.assertLessEqual(service._request_size(provider.request),6000)
+                provider.response['evidence']=[{'path':'outside.py','line_start':1,'line_end':2}]
+                result=service.tmf_assist('helper')
+                self.assertEqual(result['error']['code'],'invalid_provider_response')
+                self.assertEqual(before,fingerprint(Path(td)))
+            finally:
+                service.close()
+
+    def test_index_is_closed_on_build_failure(self):
+        connection = sqlite3.connect(':memory:', isolation_level=None)
+        with patch('tmf.readonly_store.sqlite3.connect', return_value=connection):
+            with patch.object(MemoryIndex, 'upsert', side_effect=ValueError('bad record')):
+                with self.assertRaisesRegex(ValueError, 'bad record'):
+                    MemoryIndex([object()])
+        with self.assertRaises(sqlite3.ProgrammingError):
+            connection.execute('SELECT 1')
+
+    def test_service_closes_index_on_eof_and_stream_failure(self):
+        class BrokenInput:
+            def __iter__(self):
+                raise OSError('input disconnected')
+        with tempfile.TemporaryDirectory() as td:
+            repo,state=fixture(Path(td))
+            for stream in (io.StringIO(''), BrokenInput()):
+                service=McpService(repo,state,load_assist_provider=False)
+                connection=service.store.index._db
+                with patch('tmf.locator_server.McpService',return_value=service):
+                    if isinstance(stream, BrokenInput):
+                        with self.assertRaises(OSError):
+                            serve(repo,state,stdin=stream,stdout=io.StringIO())
+                    else:
+                        self.assertEqual(serve(repo,state,stdin=stream,stdout=io.StringIO()),0)
+                with self.assertRaises(sqlite3.ProgrammingError):
+                    connection.execute('SELECT 1')
+
     def test_all_tools_no_disk_writes_stale_and_module(self):
         with tempfile.TemporaryDirectory() as td:
             root=Path(td);repo,state=fixture(root)

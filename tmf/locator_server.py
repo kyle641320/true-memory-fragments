@@ -36,7 +36,14 @@ class McpService:
         self.store = ReadOnlyStore(self.repo.root, self.state_root)
         self.store.require_initialized()
         self._warm_complete_cache: bool | None = None
-        self.assist_provider = assist_provider if assist_provider is not None else (default_assist_provider() if load_assist_provider else None)
+        try:
+            self.assist_provider = assist_provider if assist_provider is not None else (default_assist_provider() if load_assist_provider else None)
+        except BaseException:
+            self.close()
+            raise
+
+    def close(self) -> None:
+        self.store.index.close()
 
     def _inside_repo_path(self, path: str | None) -> str | None:
         if path is None:
@@ -527,19 +534,22 @@ def handle(service: McpService, request: dict[str, Any]) -> dict[str, Any] | Non
 def serve(repo_root: str | Path, state_root: str | Path | None = None, stdin: Any = None, stdout: Any = None) -> int:
     service = McpService(repo_root, state_root)
     stdin, stdout = stdin or sys.stdin, stdout or sys.stdout
-    for line in stdin:
-        raw = line.strip()
-        if not raw:
-            continue
-        try:
-            request = json.loads(raw)
-            if not isinstance(request, dict):
-                raise ValueError("request must be an object")
-            response = handle(service, request)
-        except Exception as exc:
-            response = _error(None, -32700, f"parse error: {exc}")
-        if response is not None:
-            print(json.dumps(response, ensure_ascii=False, sort_keys=True), file=stdout, flush=True)
+    try:
+        for line in stdin:
+            raw = line.strip()
+            if not raw:
+                continue
+            try:
+                request = json.loads(raw)
+                if not isinstance(request, dict):
+                    raise ValueError("request must be an object")
+                response = handle(service, request)
+            except Exception as exc:
+                response = _error(None, -32700, f"parse error: {exc}")
+            if response is not None:
+                print(json.dumps(response, ensure_ascii=False, sort_keys=True), file=stdout, flush=True)
+    finally:
+        service.close()
     return 0
 
 
