@@ -6,26 +6,28 @@
 
 **[▶ 30-second demo](#demo) · [Experiment results](docs/case-studies/guava-m10-stale-gating.md) · [Feedback / Discussion #1](https://github.com/kyle641320/true-memory-fragments/discussions/1)**
 
-[Install rc3](#install) · [Release notes](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc3) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Architecture](DESIGN.md)
+[Pinned early preview](docs/early-preview.md) · [Install rc3](#install) · [Release notes](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc3) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Architecture](DESIGN.md)
 
 ### Stale-context protection for AI coding agents
 
 AI coding agents often remember a call chain from an earlier session. When the code changes, that remembered chain can become dangerous: the agent may edit against an obsolete understanding of the repository.
 
-**TMF binds code-graph claims to source fingerprints. When a claim becomes stale, TMF blocks the affected expansion and sends the agent back to current source.**
+**TMF binds code-graph claims to source fingerprints. When a claim becomes stale, TMF marks the binding stale, blocks covered graph expansion, and provides current-source reread guidance. Agents must follow the integration protocol.**
 
 - 🧭 **Source-aware memory** for calls, reads, writes, inheritance, and API relationships
 - 🛑 **Hard stale-context stop** instead of silently returning obsolete facts
 - 🔎 **Localized reread guidance** instead of pretending memory is authoritative
 - 🧩 Works as a library and integrates with AI coding-agent hooks
 
-> **One-line summary:** TMF does not make an agent remember more. It prevents the agent from trusting code understanding that is no longer fresh.
+> **One-line summary:** TMF does not make an agent remember more. It helps agents detect when source-bound code understanding is no longer fresh.
 
 ## Who it is for
 
 - AI coding agents that work across sessions on changing repositories
 - Developers who need source-aware memory instead of stale cached facts
 - Tool authors who want conservative graph expansion with explicit stale/unknown handling
+
+New: [multi-worktree and controlled Guava continuation evidence](docs/validation/2026-09-12-branch-freshness.md), with an [early-preview MCP stdio guide](docs/early-preview.md). This is developer-preview scope, not universal write enforcement.
 
 ## Validated so far
 
@@ -79,7 +81,7 @@ flowchart TD
   D -->|stale / unknown| F[stop + reread current source]
 ```
 
-That is the whole loop: TMF keeps claims bound to source, refuses to reuse stale context, and sends the agent back to the exact code that changed.
+That is the whole loop: TMF keeps claims bound to source, refuses to reuse stale context, and provides source anchors for rereading; guidance may include extra related or heuristic matches.
 
 ## Demo
 
@@ -132,7 +134,7 @@ This is intentionally conservative. Missing or stale memory falls back to source
 - Bounded fragment query with semantic boundary detection (`writes`, `publishes_to`)
 - Async handoff marking (`ASYNC_RELATIONS`: `publishes_to`, `subscribes_to`, `publishes_type`, `listens_type`)
 - Four-stop-type semantics (boundary / async / stale / limit) with distinct `stop_reason` values
-- Working-memory limits (4 hops / 64 nodes / 128 edges) matching biological cognition constraints
+- Bounded-query limits (4 hops / 64 nodes / 128 edges); engineering limits, not a biological validation claim
 - Held-out and self-dogfood validation harnesses
 - Local metrics and exact-blob-only rename identity
 
@@ -148,7 +150,9 @@ This is intentionally conservative. Missing or stale memory falls back to source
 
 ## Install
 
-Current release candidate (Python 3.10+):
+For the newly validated multi-worktree preview, use the [pinned installation and MCP guide](docs/early-preview.md). The published release below predates that acceptance package.
+
+Published release candidate (Python 3.10+):
 
 ```bash
 python -m pip install --pre "true-memory-fragments==0.1.0rc3"
@@ -191,14 +195,14 @@ JAVA OFFLINE VERIFY: PASS
 
 ## Reflex Hook: Git-Aware Staleness Blocking for AI Agents
 
-TMF includes a **reflex hook** integration that gives AI coding agents a biological-style reflex: when an agent is about to act on code understanding while that code has changed, the system **forces it to stop, re-read only the changed part, then proceed**.
+TMF includes a **reflex hook** integration that gives AI coding agents a biological-style reflex: when an agent is about to act on code understanding while that code has changed, the supported hook can request a stop and source reread. Enforcement depends on host interception, configuration and coverage.
 
 This is not a code memory cache — it's a **reflex arc** that intercepts agent tool calls before execution.
 
 ### Three Components
 
-- **Sensory organ** = TMF function-level `fn_hash` freshness (2ms precision: which function changed)
-- **Reflex arc** = OpenClaw `before_tool_call` hook / Claude Code PreToolUse harness (agent cannot bypass)
+- **Sensory organ** = TMF function-level `fn_hash` freshness (source-bound change detection; no fixed latency guarantee)
+- **Reflex arc** = OpenClaw `before_tool_call` hook / Claude Code PreToolUse harness (supported intercepted actions only)
 - **Reflex action** = Hard block + localized single-file re-warm
 
 ### Git Hook Auto-Calibration
@@ -216,7 +220,7 @@ These hooks call `integrations/reflex/scripts/git_calibrate.py`, which compares 
 
 The `tmf-reflex` OpenClaw plugin intercepts agent tool calls:
 
-- Checks TMF function-level freshness (2ms per file)
+- Checks TMF function-level freshness (latency depends on source, cache and host)
 - Hard-blocks when agent touches a file with stale function claims
 - Returns `requireApproval` with exact changed function names
 - Agent must run `integrations/reflex/scripts/local_warm.py` to re-warm that one file
@@ -230,7 +234,7 @@ On new session start, the plugin reads unconsumed invalidation manifests and inj
 - Function-level precision depends on TMF's language coverage (currently Python AST)
 - Files without function-scope claims fall back to pass-through
 - TMF engine remains read-only (reflex hook only uses `freshness` / `derive`)
-- Conservative: TMF unavailable / check errors → pass-through, never blocks valid work
+- Failure behavior depends on hook state and host integration; verify it on the intended host. If TMF is unavailable, disclose the failure and use current source rather than cached claims.
 
 ### Installation
 
