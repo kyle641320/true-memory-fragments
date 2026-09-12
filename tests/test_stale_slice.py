@@ -41,6 +41,40 @@ def _init_repo(root: Path) -> None:
 
 
 class StaleSliceTests(unittest.TestCase):
+    def test_moved_binding_supplements_callee_not_unrelated_file_symbols(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            _init_repo(root)
+            source = """class Hashing {
+    int combine() { return 1; }
+    int nextState() { return 2; }
+    int pickFunction() { return 3; }
+}
+"""
+            (root / "Hashing.java").write_text(source)
+            (root / "HashCode.java").write_text("""class HashCode {
+    static int getBytesInternal() { return 4; }
+    static int unrelatedReview() { return 5; }
+}
+""")
+            refresh_path(root, "Hashing.java")
+            claim = Store(root).get_claim(stable_java_node_claim_id("Hashing.java", "Hashing.combine", "method"))
+            # Old line numbers now point at unrelated text, not the bound method.
+            current = "// nextState pickFunction unrelatedReview\n" * 12 + source.replace(
+                "return 1;", "return HashCode.getBytesInternal();")
+            (root / "Hashing.java").write_text(current)
+            plan = plan_stale_slice(root, claim, question="", max_required_reads=8)
+            names = {item["qualname"] for item in plan["required_reads"]}
+            self.assertFalse(plan["claim_fresh"])
+            self.assertIn("Hashing.combine", names)
+            self.assertIn("HashCode.getBytesInternal", names)
+            self.assertTrue(names.isdisjoint({"Hashing.nextState", "Hashing.pickFunction", "HashCode.unrelatedReview"}), names)
+            # A deleted declaration must not borrow terms from its old range.
+            (root / "Hashing.java").write_text(source.replace("    int combine() { return 1; }\n", ""))
+            missing = plan_stale_slice(root, claim, max_required_reads=8)
+            self.assertFalse(missing["claim_fresh"])
+            self.assertEqual(["Hashing.combine"], [item["qualname"] for item in missing["required_reads"]])
+
     def test_binding_report_and_plan_refresh_only_stale_node(self):
         with tempfile.TemporaryDirectory() as td:
             repo = Path(td)

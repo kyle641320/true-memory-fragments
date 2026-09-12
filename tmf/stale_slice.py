@@ -120,6 +120,18 @@ def _task_terms(question: str) -> set[str]:
     return _expand_terms(_split_identifier(question or ""))
 
 
+def _bound_source(path: str, text: str, qualname: str | None) -> str:
+    if Path(path).suffix != ".java" or not qualname:
+        return text
+    # Resolve current spans, never old ranges or the whole file for a missing node.
+    nodes = list(extract_java_classes(path, text)) + list(extract_java_methods(path, text))
+    lines = text.splitlines()
+    return "\n".join(
+        "\n".join(lines[node.line_start - 1:node.line_end])
+        for node in nodes if node.qualname == qualname
+    )
+
+
 def _terms_from_claim_and_stale_source(repo: GitRepo, claim: Claim, stale_items: Iterable[dict[str, Any]]) -> set[str]:
     terms = _split_identifier(claim.claim)
     body = claim.body or {}
@@ -129,6 +141,7 @@ def _terms_from_claim_and_stale_source(repo: GitRepo, claim: Claim, stale_items:
         if not isinstance(path, str):
             continue
         text = (repo.root / path).read_text(encoding="utf-8", errors="replace") if (repo.root / path).exists() else ""
+        text = _bound_source(path, text, item.get("qualname"))
         terms |= _split_identifier(text)
     # Generic incident vocabulary that often appears only in newly introduced
     # status/API declarations, not in the stale claim text itself.  These terms
@@ -215,21 +228,28 @@ def _side_effect_checks(repo: GitRepo, items: Iterable[dict[str, Any]], question
     return checks
 
 
-def _current_source_symbol_reads(repo: GitRepo, stale_items: Iterable[dict[str, Any]], terms: set[str], max_reads: int) -> list[dict[str, Any]]:
+def _current_source_symbol_reads(repo: GitRepo, stale_items: Iterable[dict[str, Any]], terms: set[str], max_reads: int, *, question_terms: set[str] | None = None) -> list[dict[str, Any]]:
     """Find task-relevant declarations in files touched by stale bindings.
 
     This is a bounded source-local supplement for cases where the old stale
     binding sits in one method but the new contract introduced nearby enum/model
     members (for example `markAwaitingReview`) that have no fresh graph edge yet.
-    It is intentionally limited to current files already named by stale bindings.
+    It scans seed files and a bounded set of sibling Java files. Call-name
+    matching is a locator heuristic, not resolved receiver/type evidence.
     """
-    out: list[dict[str, Any]] = []
     seen: set[tuple[str, str]] = set()
+    stale_items = list(stale_items)
+    seen.update((item.get("path"), item.get("qualname")) for item in stale_items if item.get("status") != "fresh")
     seed_paths: list[str] = []
+    source_calls: set[str] = set()
     for item in stale_items:
         path = item.get("path")
         if isinstance(path, str) and path not in seed_paths:
             seed_paths.append(path)
+        if isinstance(path, str) and (repo.root / path).is_file():
+            text = (repo.root / path).read_text(encoding="utf-8", errors="replace")
+            bound = _bound_source(path, text, item.get("qualname"))
+            source_calls.update(name.lower() for name in re.findall(r"\b([A-Za-z_][A-Za-z0-9_]*)\s*\(", bound))
 
     candidate_paths: list[str] = []
     for rel in seed_paths:
@@ -272,16 +292,19 @@ def _current_source_symbol_reads(repo: GitRepo, stale_items: Iterable[dict[str, 
             if key in seen:
                 continue
             seen.add(key)
-            hay = _split_identifier(" ".join([node.qualname, " ".join(getattr(node, "keywords", []) or [])]))
-            overlap = hay & terms
-            if terms and not overlap:
+            # Sharing a container (e.g. Hashing) is not relevance evidence for
+            # every member of that container.
+            hay = _expand_terms(_split_identifier(short_name))
+            overlap = hay & (question_terms or set())
+            referenced = short_name.lower() in source_calls
+            if not referenced and not overlap:
                 continue
-            priority = len(overlap)
+            priority = len(overlap) + (20 + len(_split_identifier(short_name)) if referenced else 0)
             if {"awaiting", "review", "pending"} & hay:
                 priority += 8
             if {"intent", "status", "confirmed"} & hay:
                 priority += 4
-            if any(seed == rel for seed in seed_paths):
+            if not referenced and any(seed == rel for seed in seed_paths):
                 priority += 3
             candidates.append((priority, -order, _read_instruction({
                 "path": rel,
@@ -369,7 +392,7 @@ def plan_stale_slice(
     ]
 
     terms = _task_terms(question) | _terms_from_claim_and_stale_source(repo, claim, stale or fresh)
-    source_supplement = _current_source_symbol_reads(repo, stale or fresh, terms, max(0, max_required_reads - len(required)))
+    source_supplement = _current_source_symbol_reads(repo, stale or fresh, terms, max(0, max_required_reads - len(required)), question_terms=_task_terms(question))
     for item in source_supplement:
         if all(not (item.get("path") == existing.get("path") and item.get("qualname") == existing.get("qualname")) for existing in required):
             required.append(item)
