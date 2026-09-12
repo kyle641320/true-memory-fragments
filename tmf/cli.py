@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import json
 from pathlib import Path
 
@@ -169,6 +170,9 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 def cmd_mcp(args: argparse.Namespace) -> int:
     from .mcp_server import serve
+    if args.state_root is not None or args.read_only:
+        from .locator_server import serve as serve_locator
+        return serve_locator(args.repo, args.state_root)
     return serve(args.repo)
 
 
@@ -225,6 +229,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     mcp = sub.add_parser("mcp", help="run a minimal MCP stdio server")
     mcp.add_argument("--repo", default=".")
+    mcp.add_argument("--state-root", default=os.environ.get("TMF_STATE_ROOT"))
+    mcp.add_argument("--read-only", action="store_true", help="legacy nine-tool locator, no state writes")
     mcp.set_defaults(func=cmd_mcp)
 
     validate = sub.add_parser("validate", help="run held-out validation and/or self-dogfood validation")
