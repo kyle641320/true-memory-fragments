@@ -1,5 +1,12 @@
 # TMF Changes
 
+## Read-only context budget and expansion pointers (unreleased)
+
+- Bound the serialized inner JSON response even when the minimum character budget cannot hold fallback metadata. Return an explicit truncated, partial envelope instead of exceeding the budget.
+- Retain relation details or actionable callers/readers/writers pointers before packing claim details. Expansion continues through existing freshness checks; no new graph relationships are inferred.
+- Clarify local backend memory versus on-demand model context, per-tool limits, and explicit expansion in README.
+- Validation: four targeted budget/relationship regressions and eight locator compatibility tests pass; held-out validation passes. Full suite and CI results belong to the exact candidate commit.
+
 ## Bound-source Java stale-slice relevance (2026-09-12)
 
 - Seed Java reading supplements from current bound declarations rather than entire files or historical ranges. Require explicit task-term or call-name matches; a shared owning class is not relevance evidence.

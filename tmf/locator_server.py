@@ -218,25 +218,51 @@ class McpService:
         encode = lambda value: len(json.dumps(value, ensure_ascii=False, sort_keys=True))
         if encode(payload) <= budget:
             return payload
-        payload = dict(payload)
-        payload["truncated"] = True
-        payload["relations"] = []
-        packed = []
-        for claim in payload.get("claims", []):
-            trial = dict(payload)
-            trial["claims"] = [*packed, claim]
+        full_claims = payload.get("claims", [])
+        full_relations = payload.get("relations", [])
+        payload = dict(payload, truncated=True, claims=[], relations=[])
+        # Even the response envelope and fallback paths can exceed a tiny budget.
+        # Keep an honest partial result, rather than returning an oversized envelope.
+        if encode(payload) > budget:
+            payload = {"question": "", "view": "thin_context", "coverage": "partial",
+                       "truncated": True, "max_chars": budget, "claims": [],
+                       "relations": [], "source_fallback_paths": []}
+            question = str(question)
+            low, high = 0, len(question)
+            while low < high:
+                middle = (low + high + 1) // 2
+                if encode(dict(payload, question=question[:middle])) <= budget:
+                    low = middle
+                else:
+                    high = middle - 1
+            payload["question"] = question[:low]
+
+        # Preserve actionable relation continuations before claim details. These
+        # are pointers, not a claim that the returned subset is a complete graph.
+        for relation in full_relations:
+            trial = dict(payload, relations=[*payload["relations"], relation])
             if encode(trial) <= budget:
-                packed.append(claim)
+                payload = trial
+                continue
+            kind = relation.get("kind")
+            if kind not in {"callers", "readers", "writers"}:
+                continue
+            pointer = {"for": relation.get("for"), "kind": kind,
+                       "stub": True, "expand": "tmf_" + kind,
+                       "coverage": "partial"}
+            trial = dict(payload, relations=[*payload["relations"], pointer])
+            if encode(trial) <= budget:
+                payload = trial
+
+        for claim in full_claims:
+            trial = dict(payload, claims=[*payload["claims"], claim])
+            if encode(trial) <= budget:
+                payload = trial
                 continue
             stub = {"stub": True, "claim_id": claim.get("id"), "scope": claim.get("scope"), "qualname": claim.get("qualname"), "anchor": (claim.get("anchors") or [None])[0], "expand": "tmf_explain"}
-            trial["claims"] = [*packed, stub]
+            trial = dict(payload, claims=[*payload["claims"], stub])
             if encode(trial) <= budget:
-                packed.append(stub)
-            else:
-                break
-        payload["claims"] = packed
-        while encode(payload) > budget and payload.get("question"):
-            payload["question"] = payload["question"][:-10]
+                payload = trial
         return payload
 
     @staticmethod

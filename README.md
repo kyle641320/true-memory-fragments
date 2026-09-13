@@ -31,6 +31,31 @@ AI coding agents often remember a call chain from an earlier session. When the c
 
 New: [multi-worktree and controlled Guava continuation evidence](docs/validation/2026-09-12-branch-freshness.md), with an [early-preview MCP stdio guide](docs/early-preview.md). This is developer-preview scope, not universal write enforcement.
 
+## Does TMF put the whole index into the agent context?
+
+No. Stored code understanding, source bindings, and provenance remain in local
+state. Queries return selected records; default thin views include source anchors,
+short fingerprint references, freshness/trust information, and relation summaries,
+not every full record. Detailed records require an explicit `tmf_explain(full=true)`.
+
+Start with `tmf_context`: its default budget is **3,000 serialized JSON characters**,
+not tokens. This bounds the tool's inner JSON text, not MCP wrapping, client-added
+text, or accumulated conversation history. Other tools have different limits:
+`tmf_retrieve` defaults to five records rather than a total character budget;
+`tmf_explain` and explicit full expansion are not governed by the context budget.
+
+In read-only locator mode, a truncated context keeps relation details or actionable
+relation pointers when space permits. For a relation pointer, call its `expand` tool
+with `claim_id` set to `for`; for a claim stub, call `tmf_explain` with `claim_id`.
+`truncated=true` means the response is a subset, not a complete dependency graph.
+Very small budgets may return only a partial envelope: increase the budget or query
+a known claim directly. Expanding a pointer checks current source freshness again.
+
+On-demand **model context** is distinct from backend memory usage: the read-only
+compatibility service loads local JSON records and a service-local in-memory index.
+It does not inject that entire backend state into the model or automatically remove
+previous tool responses from the client's conversation.
+
 ## Validated so far
 
 - Source-bound freshness and stale-claim detection
