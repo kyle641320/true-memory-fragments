@@ -1,53 +1,63 @@
-# Early developer preview: pinned source and MCP stdio
+# Early developer preview: rc4 and MCP stdio
 
-This preview targets developers and integration authors. It is not a production
-write barrier. Use the exact source below; the published rc3 tag predates the
-branch-freshness acceptance package even though package metadata is still rc3.
+TMF helps coding agents detect outdated source context and retain traceable
+code-chain understanding, so edits consider related callers and dependencies.
 
-## Install the validated source
+## Install the released preview
 
-Python 3.10+ and Git are required. Commands below use a POSIX shell:
+Python 3.10+ and Git are required. Install the published package in an isolated
+environment (POSIX shell):
 
 ```sh
-git clone https://github.com/kyle641320/true-memory-fragments.git
-cd true-memory-fragments
-git checkout --detach 83f6ec8ef74c5eaebfb82bda494ef9dccde6ad63
 python3 -m venv .venv
-.venv/bin/python -m pip install '.[java]'
-.venv/bin/python scripts/demo_stale_gate.py
-.venv/bin/python scripts/verify_branch_freshness.py --output /tmp/tmf-preview-freshness-new
+.venv/bin/python -m pip install 'true-memory-fragments[java]==0.1.0rc4'
 ```
 
-Use a new output directory. Record `git rev-parse HEAD` when reporting results;
-`pip show` alone cannot distinguish this snapshot from the older rc3 release.
-The isolated package/install and Java preflight passed for this merged snapshot.
+- [PyPI package](https://pypi.org/project/true-memory-fragments/0.1.0rc4/)
+- [Release assets and SHA256 checksums](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc4)
+- [Official MCP Registry record](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc4)
+
+The directory version is `0.1.0-rc4`; the Python package version is `0.1.0rc4`.
+The released source is `4c45806d1ecffd333959fb51f4c1a9506472fa66`.
+The older rc3 source-pinned instructions are superseded by this release.
 
 ## Bind the server to the task worktree
 
-Launch the installed server (not from the source checkout):
+With [uv](https://docs.astral.sh/uv/) installed, start the server directly:
 
 ```sh
-/absolute/path/to/true-memory-fragments/.venv/bin/python -m tmf.cli mcp --repo /absolute/path/to/task-worktree
+uvx --from 'true-memory-fragments[java]==0.1.0rc4' tmf mcp --repo /absolute/path/to/task-worktree
 ```
 
-For clients using the common `mcpServers` JSON layout, the equivalent is:
+For clients using the common `mcpServers` JSON layout:
 
 ```json
 {
   "mcpServers": {
     "tmf-task": {
-      "command": "/absolute/path/to/true-memory-fragments/.venv/bin/python",
-      "args": ["-m", "tmf.cli", "mcp", "--repo", "/absolute/path/to/task-worktree"],
+      "command": "uvx",
+      "args": ["--from", "true-memory-fragments[java]==0.1.0rc4", "tmf", "mcp", "--repo", "/absolute/path/to/task-worktree"],
       "env": {"TMF_MODEL_COMMAND": ""}
     }
   }
 }
 ```
 
-Client configuration locations differ. This JSON is an example, not a claim of
-verified compatibility with every desktop client. For multiple worktrees use
-separately named server entries with explicit absolute `--repo` paths. Automatic
-branch routing is not provided by this example.
+Alternatively, use `/absolute/path/to/.venv/bin/tmf` from the isolated install
+with arguments `mcp --repo /absolute/path/to/task-worktree`.
+Client configuration locations differ. Use separately named server entries with
+explicit absolute paths for multiple worktrees; this selects which checkout is
+queried, not a limitation on supporting multiple worktrees.
+
+## A first fresh-to-stale check
+
+Use a disposable Git worktree with a small source file. Call `tmf_status` and
+confirm its `repo`, then `tmf_warm` and `tmf_retrieve` for a function in that file.
+Pass the returned claim ID to `tmf_explain`. After changing the function body,
+call `tmf_explain` again: the old binding should be stale. `tmf_stale_slice`
+provides reading suggestions; read the current source before refreshing with
+`tmf_warm` and checking again. Keep this demonstration out of your production
+working tree.
 
 ## Agent protocol
 
@@ -72,19 +82,18 @@ offline path above.
 
 ## Verified transport client
 
-The official MCP Python SDK **2.2.0**, Python **3.13.12**, and an independently
-installed TMF build of the pinned snapshot were exercised through real stdio
-subprocess communication, from outside the source checkout. Negotiated protocol:
-`2024-11-05`. Initialize, tool discovery, worktree binding, fresh-to-stale,
-required-read output, actual file reread and refresh recovery all passed.
+The published rc4 package was exercised through real stdio with the MCP Python
+SDK 2.2.0: initialize, tool discovery, worktree binding, fresh-to-stale,
+required-read output, actual file reread and refresh recovery passed. Public
+PyPI installation using uvx also passed. The Registry launch configuration was
+separately validated in GitHub Actions on Python 3.12.
 
-To reproduce using the [MCP verification script](../scripts/verify_mcp_preview.py) supplied with this guide (save it separately before checking out the pinned snapshot):
-install `mcp==2.2.0` alongside the pinned TMF package, then run that script with
-the same environment's Python. It creates a temporary Python fixture and talks
-only through MCP; it does not import TMF service internals. The SDK is a test
-client dependency, not a new TMF runtime dependency. Desktop agent UI integration
-and arbitrary client versions remain unverified. The scripted reread is transport
-acceptance, not a new autonomous-agent experiment.
+To reproduce, obtain `scripts/verify_registry_launch.py` and `server.json` from
+source commit `45a5ded` together. Install `mcp==2.2.0` in a test environment and
+run the script with uvx on PATH. It uses a temporary Git repository and the
+public PyPI package; no live client configuration is changed. This scripted
+transport check is not a new autonomous-agent experiment or proof of every
+client application's UI integration.
 
 ## Feedback requested
 
@@ -98,5 +107,12 @@ actual behavior, and a minimal sanitized reproduction. Prioritize wrong-worktree
 binding, missed stale bindings, unnecessary reads, startup/refresh failures and
 recovery. Do not post private source, tokens or raw private session archives.
 
-Known limits: partial dependency modeling, extra stale-slice reading noise, no
-universal write enforcement, no guaranteed zero overhead or productivity gain.
+Reading suggestions are conservative, not a complete semantic dependency graph:
+short same-name methods and call-shaped text can be ambiguous, and bounded
+scanning can miss distant declarations. Resolve historical anchors against
+current source. The protocol is not an atomic read/write lock.
+
+In the recorded Guava comparison, development token usage was 384,389 without
+TMF and 387,961 with TMF (about +0.93%); indexing cost is separate. This was a
+specific task with a post-hoc source-only retry, not a general productivity
+estimate.
