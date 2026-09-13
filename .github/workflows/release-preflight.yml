@@ -229,3 +229,6 @@ jobs:
           methods = extract_java_methods("App.java", "class App { void run() {} }")
           assert any(method.qualname == "App.run" for method in methods), methods
           PY
+
+      - name: Installed wheel legacy upgrade contract (offline)
+        run: python tools/verify_installed_upgrade.py --python "$PREFLIGHT_ROOT/java-venv/bin/python"

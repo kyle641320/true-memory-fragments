@@ -13,3 +13,13 @@ The assist adapter's offline tests use a fake OpenClaw executable: they do not e
 ## Rollout
 
 Build and test a uniquely versioned wheel in isolation; keep the previous installation and configuration for rollback. Switch the live client only after its registration/reconnect path and real calls are verified. No gateway restart, live replacement, tag or package publication is performed by this candidate PR.
+
+## Installed-artifact regression gate
+
+Release preflight also runs `tools/verify_installed_upgrade.py` with the isolated
+Java-extra wheel environment. It copies only the two upgrade test modules to a
+fresh temporary directory, removes inherited Python/TMF configuration, and checks
+that TMF imports from the venv site-packages before running the existing contracts.
+This covers the shipped legacy CLI and assist module as well as JSON compatibility
+and read-only behavior. It does not call a real assist provider or change a live
+client. A missing module in the wheel must fail this gate even if source tests pass.
