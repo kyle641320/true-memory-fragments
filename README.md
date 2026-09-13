@@ -1,5 +1,7 @@
 # True Memory Fragments — Stale-Context Protection for AI Coding Agents
 
+<!-- mcp-name: io.github.kyle641320/true-memory-fragments -->
+
 [![PyPI](https://img.shields.io/pypi/v/true-memory-fragments.svg)](https://pypi.org/project/true-memory-fragments/)
 [![License](https://img.shields.io/github/license/kyle641320/true-memory-fragments.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
