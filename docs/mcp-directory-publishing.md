@@ -70,3 +70,29 @@ Keep version, source commit, artifact checksum, directory URL and verification
 results together. A submitted listing is not editorial endorsement. Existing
 user state, installed services and frozen experiment artifacts are not inputs to
 publish; use isolated fixtures for validation.
+
+## Registry launch configuration
+
+`server.json` targets the released PyPI package `0.1.0rc4` (directory version
+`0.1.0-rc4`). Runtime arguments end with `--from`; the client then appends
+`true-memory-fragments@0.1.0rc4`, and package arguments start with the executable
+`tmf`. This follows the PyPI conversion order in VS Code's
+`src/vs/platform/mcp/common/mcpManagementService.ts`. Java dependencies are
+requested through an exact-version `--with` requirement.
+
+The resulting command is:
+
+```sh
+uvx --with 'true-memory-fragments[java]==0.1.0rc4' --from true-memory-fragments@0.1.0rc4 tmf mcp --repo /absolute/worktree
+```
+
+`scripts/verify_registry_launch.py` renders those fields and exercises the real
+public package over MCP stdio in a temporary Git worktree. It does not install
+into or alter an existing user's MCP configuration. Hosts with different
+registry translation behavior can use the explicit command above.
+
+The MCP Registry workflow validates the manifest, public ownership marker and
+launch command on relevant PRs. Manual dispatch from master publishes using
+GitHub OIDC; PRs cannot run the publishing job. The publisher binary is pinned
+and checksum-verified. No dedicated registry token is required. A successful
+workflow still needs a Registry GET receipt before claiming registration.
