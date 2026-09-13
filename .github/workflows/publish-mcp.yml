@@ -1,0 +1,53 @@
+name: MCP Registry
+on:
+  pull_request:
+    paths:
+      - server.json
+      - scripts/verify_registry_launch.py
+      - .github/workflows/publish-mcp.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - name: Install validation tools
+        run: python -m pip install 'uv==0.8.22' 'mcp==2.2.0' 'jsonschema==4.25.1'
+      - name: Check manifest and public package ownership
+        run: |
+          python - <<'PY'
+          import json, urllib.request, jsonschema
+          manifest = json.load(open('server.json'))
+          schema = json.load(urllib.request.urlopen(manifest['$schema']))
+          jsonschema.validate(manifest, schema)
+          package = manifest['packages'][0]
+          url = 'https://pypi.org/pypi/' + package['identifier'] + '/' + package['version'] + '/json'
+          published = json.load(urllib.request.urlopen(url))
+          assert 'mcp-name: ' + manifest['name'] in published['info']['description']
+          assert published['info']['version'] == package['version']
+          PY
+      - name: Exercise generated uvx command against public PyPI
+        run: python scripts/verify_registry_launch.py
+  publish:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/master'
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - name: Install pinned MCP publisher
+        run: |
+          curl -fsSL https://github.com/modelcontextprotocol/registry/releases/download/v1.8.1/mcp-publisher_linux_amd64.tar.gz -o publisher.tar.gz
+          echo 'a06c9096dcb9727c13555b6be26c7effa707b01f06a4c561ba7a3635443cf2cc  publisher.tar.gz' | sha256sum -c -
+          tar xzf publisher.tar.gz mcp-publisher
+      - name: Authenticate using GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+      - name: Publish directory metadata
+        run: ./mcp-publisher publish server.json
