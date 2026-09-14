@@ -1,4 +1,6 @@
-# True Memory Fragments — Stale-Context Protection for AI Coding Agents
+# True Memory Fragments
+
+<a id="true-memory-fragments--stale-context-protection-for-ai-coding-agents"></a>
 
 <!-- mcp-name: io.github.kyle641320/true-memory-fragments -->
 
@@ -6,30 +8,27 @@
 [![License](https://img.shields.io/github/license/kyle641320/true-memory-fragments.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 
-**[▶ 30-second demo](#demo) · [Experiment results](docs/case-studies/guava-m10-stale-gating.md) · [Feedback / Discussion #1](https://github.com/kyle641320/true-memory-fragments/discussions/1)**
+<a id="stale-context-protection-for-ai-coding-agents"></a>
 
-[Pinned early preview](docs/early-preview.md) · [Install rc3](#install) · [Release notes](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc3) · [Evidence and limits](docs/AGENT_RUNTIME_VALUE_STATUS.md) · [Architecture](DESIGN.md)
+**Code changed, but your AI coding agent still remembers the old call chain? TMF is source-bound code memory that flags stale claims and points back to current source.**
 
-### Stale-context protection for AI coding agents
+**[Try demo](#demo) · [MCP setup](docs/early-preview.md) · [Evidence](docs/AGENT_RUNTIME_VALUE_STATUS.md)**
 
-AI coding agents often remember a call chain from an earlier session. When the code changes, that remembered chain can become dangerous: the agent may edit against an obsolete understanding of the repository.
+![TMF demo: source changes, stale claims are omitted, and source reread is required.](docs/assets/tmf-stale-gate.gif)
 
-**TMF binds code-graph claims to source fingerprints. When a claim becomes stale, TMF marks the binding stale, blocks covered graph expansion, and provides current-source reread guidance. Agents must follow the integration protocol.**
+*30-second paced replay of real deterministic demo output, with labeled source excerpts—not an agent end-to-end test. Reread is requested, not executed.*
 
-- 🧭 **Source-aware memory** for calls, reads, writes, inheritance, and API relationships
-- 🛑 **Hard stale-context stop** instead of silently returning obsolete facts
-- 🔎 **Localized reread guidance** instead of pretending memory is authoritative
-- 🧩 Works as a library and integrates with AI coding-agent hooks
+- **Traceable code relationships:** bind call, read, write, inheritance, and API claims to source fingerprints.
+- **Explicit stale results:** omit stale claims and stop covered graph expansion instead of silently reusing old context.
+- **Targeted reread guidance:** return source anchors so an agent can check the changed code.
 
-> **One-line summary:** TMF does not make an agent remember more. It helps agents detect when source-bound code understanding is no longer fresh.
+Developer preview: enforcement depends on the host, configuration, and intercepted actions—not automatic blocking of all writes. Fresh does not mean correct; general token savings and production readiness are not established.
 
 ## Who it is for
 
 - AI coding agents that work across sessions on changing repositories
 - Developers who need source-aware memory instead of stale cached facts
 - Tool authors who want conservative graph expansion with explicit stale/unknown handling
-
-New: [multi-worktree and controlled Guava continuation evidence](docs/validation/2026-09-12-branch-freshness.md), with an [early-preview MCP stdio guide](docs/early-preview.md). This is developer-preview scope, not universal write enforcement.
 
 ## Validated so far
 
@@ -42,15 +41,6 @@ TMF’s core stale-context protection mechanism has been validated in the covere
 scenarios. Evaluation across more languages, repositories, and long-running
 production workflows is ongoing.
 
-
-A coding agent may understand `A → B → C` in session 1. In session 2, `C` changes, but the agent still acts as if yesterday's call chain were valid. Ordinary chat memory and vector retrieval can return the old explanation without knowing that the source changed.
-
-TMF attaches every derived claim to the source blob or function hash. On reuse, it checks freshness. If the claim is stale, the graph expansion is stopped and the agent is told which source must be reread.
-
-```text
-Without TMF:  remembered A → B → C  → edit using obsolete C
-With TMF:     remembered A → B → C  → C is stale → stop → reread current C
-```
 
 ## What TMF is — and is not
 
@@ -87,6 +77,8 @@ That is the whole loop: TMF keeps claims bound to source, refuses to reuse stale
 
 ## Demo
 
+The GIF above replays output from `scripts/demo_stale_gate.py` at commit `de0236a57939`. It shows deterministic stale-claim omission and source fallback, not an agent obeying the reread signal or completing a task. The 30-second timing is presentation pacing, not a runtime benchmark.
+
 From a source checkout (Python 3.10+ and Git required):
 
 ```bash
@@ -107,7 +99,9 @@ SOURCE FALLBACK PROVIDED: PASS
 REREAD REQUIRED: PASS
 ```
 
-The point of the demo is not that TMF answers every query. The point is that it refuses to reuse obsolete code understanding and tells the agent what to reread next.
+The demo stops at the reread requirement; it does not perform the subsequent reread or refresh.
+
+For agent-level results, see the [scoped Guava case study](docs/case-studies/guava-m10-stale-gating.md) and [multi-worktree / controlled continuation evidence](docs/validation/2026-09-12-branch-freshness.md). For implementation details, see the [architecture](DESIGN.md).
 
 ## How it works
 
