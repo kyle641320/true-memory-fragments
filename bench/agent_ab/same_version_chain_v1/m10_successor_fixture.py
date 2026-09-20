@@ -381,9 +381,11 @@ def _compiler_classpath() -> tuple[list[Path], str]:
     for entry in entries:
         candidate = Path(entry)
         candidate = candidate if candidate.is_absolute() else GUAVA / candidate
-        if not candidate.is_file() and override is None and "/.m2/repository/" in entry:
+        if override is None and "/.m2/repository/" in entry:
             # The historical classpath contains a developer's home.  Relocate
-            # only that known Maven-repository prefix, never search/download.
+            # the known Maven prefix *before* probing another user's home:
+            # is_file() raises PermissionError on older supported Pythons.
+            # Never search/download or silently reinterpret an explicit override.
             candidate = Path.home() / ".m2" / "repository" / entry.split("/.m2/repository/", 1)[1]
         if not candidate.is_file() or candidate.suffix != ".jar":
             raise PreflightInvariantError(f"required offline classpath jar missing: {candidate.name}")

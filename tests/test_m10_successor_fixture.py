@@ -33,6 +33,27 @@ class FrozenFixtureTests(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.addCleanup(self.temp.cleanup)
 
+    def test_default_maven_paths_relocate_before_probing_foreign_home(self) -> None:
+        home = self.root / "local-user"
+        raw = (fixture.GUAVA / "classpath.txt").read_text().strip().split(os.pathsep)
+        expected = []
+        for entry in raw:
+            path = home / ".m2/repository" / entry.split("/.m2/repository/", 1)[1]
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"only testing path resolution; inventory still verifies JAR bytes")
+            expected.append(path.resolve())
+        real_is_file = Path.is_file
+        def deny_foreign_home(path: Path) -> bool:
+            if str(path).startswith("/root/.m2/"):
+                raise PermissionError("inaccessible historical developer home")
+            return real_is_file(path)
+        with patch.object(Path, "home", return_value=home), \
+             patch.object(Path, "is_file", deny_foreign_home), \
+             patch.dict(os.environ):
+            os.environ.pop("TMF_M10_SUCCESSOR_CLASSPATH", None)
+            resolved, _ = fixture._compiler_classpath()
+        self.assertEqual(expected, resolved)
+
     def test_both_complete_eleven_file_states_match_static_spec(self) -> None:
         spec = fixture.load_fixture_spec()
         for phase in ("t0", "t1"):
