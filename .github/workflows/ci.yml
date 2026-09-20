@@ -27,3 +27,41 @@ jobs:
         run: tmf validate --repo . --heldout
       - name: Self-dogfood validation
         run: tmf validate --repo . --self
+
+  successor-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install parser and explicitly fetch frozen compilation dependencies
+        run: |
+          python -m pip install -e ".[java]"
+          for artifact in \
+            com.google.guava:guava:33.5.0-jre \
+            com.google.j2objc:j2objc-annotations:3.1 \
+            com.google.errorprone:error_prone_annotations:2.50.0 \
+            org.jspecify:jspecify:1.0.1 \
+            com.google.code.findbugs:jsr305:3.0.2
+          do
+            mvn -B -q org.apache.maven.plugins:maven-dependency-plugin:3.8.1:get -Dartifact="$artifact" -Dtransitive=false
+          done
+      - name: Successor regression tests (offline)
+        run: python -m unittest discover -s tests -p 'test_*m10_successor*.py' -q
+      - name: Mandatory production preflight and complete seal (cannot skip)
+        run: python -m bench.agent_ab.same_version_chain_v1.guava_m10_successor_runner prepare-seal --output "$RUNNER_TEMP/m10-successor-seal.json"
+      - name: Six-condition protocol rehearsal (scripted, zero model calls)
+        run: python -m bench.agent_ab.same_version_chain_v1.guava_m10_successor_runner protocol-rehearsal --manifest "$RUNNER_TEMP/m10-successor-seal.json" --output "$RUNNER_TEMP/m10-successor-rehearsal"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m10-successor-offline-evidence
+          path: |
+            ${{ runner.temp }}/m10-successor-seal.json
+            ${{ runner.temp }}/m10-successor-rehearsal
