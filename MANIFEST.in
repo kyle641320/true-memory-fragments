@@ -7,6 +7,9 @@ recursive-include fixtures *.java *.json *.xml *.gradle
 recursive-include scripts *.py *.sh
 recursive-include tests *.py
 recursive-include tools *.py *.json
+recursive-include integrations/reflex *.md *.py *.json *.toml *.ts *.cjs
+recursive-include integrations/reflex/git-hooks *
+prune integrations/reflex/openclaw-plugin/node_modules
 recursive-include vendor/wheels *.whl
 
 global-exclude uv.lock
