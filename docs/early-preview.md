@@ -16,14 +16,15 @@ python3 -m venv .venv
 - [PyPI package](https://pypi.org/project/true-memory-fragments/0.1.0rc5/)
 - [Release assets and SHA256 checksums](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc5)
 - [rc5 release notes](releases/0.1.0rc5.md)
-- [Existing rc4 MCP Registry record](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc4)
+- [rc5 MCP Registry record and live publication status](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc5)
 
-The Python package version for this preview is `0.1.0rc5`. The existing Registry
-record is still `0.1.0-rc4` and launches the rc4 package, which does not include
-`tmf doctor`. The Registry update follows public PyPI verification; the explicit
-rc5 commands below do not depend on that metadata update. MCP uses the same Python
-package, not a separate binary. Older rc3/rc4 installation commands are superseded
-by the rc5 commands here.
+The Python package version for this preview is `0.1.0rc5`. The `server.json`
+manifest maps Registry version `0.1.0-rc5` to that same package and pins its Java
+extra to `true-memory-fragments[java]==0.1.0rc5`. Registry publication is a separate
+step after public PyPI verification; the record linked above reports its live
+publication status. The explicit commands below do not depend on Registry
+metadata. MCP uses the same Python package, not a separate binary. Older rc3/rc4
+installation commands are superseded by the rc5 commands here.
 
 **This installs the engine, not the Claude Code reflex.** A warmed index and MCP
 connection do not register `PreToolUse`; without that separate hook the agent
@@ -90,6 +91,29 @@ If transport fails or the server is unavailable, disclose that fact and inspect
 current source directly. Do not silently trust cached TMF output. Reconnect and
 check `tmf_status.repo` before resuming TMF use. No credentials are needed for the
 offline path above.
+
+## rc5 public-package transport verification
+
+The `0.1.0rc5` wheel and sdist on public PyPI match the SHA256 checksums in the
+GitHub release. A fresh environment installed the version directly from
+`https://pypi.org/simple`; imports resolved to `site-packages`. An engine-only
+install returned the expected unarmed doctor warning and exit 1. The eight-check
+installed-package reflex smoke passed without changing live Claude settings.
+
+Real stdio verification with MCP Python SDK `2.2.0` passed initialize, tool
+discovery, worktree binding, fresh/stale transitions, required-read output,
+actual source reread, and refresh recovery. To check the manifest-generated
+launch, use `scripts/verify_registry_launch.py` and `server.json` from the same
+checkout, with `mcp==2.2.0` and `uv==0.8.22` installed, then run:
+
+```sh
+python scripts/verify_registry_launch.py
+```
+
+The Registry workflow repeats this check against the public package before
+publishing metadata. These are transport and diagnostic checks, not proof of
+Claude host hook dispatch, every client's UI integration, or a new autonomous
+agent A/B result. The older rc4 evidence below retains its original scope.
 
 ## Historical transport verification (rc4)
 
