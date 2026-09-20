@@ -42,7 +42,7 @@ jobs:
         run: python tools/verify_java_gradle_integration.py
 
   python-suite:
-    name: Python -Werror suite (478 tests)
+    name: Python -Werror suite
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -137,7 +137,7 @@ jobs:
           wheels = list(dist.glob("*.whl"))
           assert len(sdists) == len(wheels) == 1, (sdists, wheels)
           sdist, wheel = sdists[0], wheels[0]
-          expected = "0.1.0rc4"
+          expected = "0.1.0rc5"
           assert sdist.name == f"true_memory_fragments-{expected}.tar.gz", sdist
           assert wheel.name == f"true_memory_fragments-{expected}-py3-none-any.whl", wheel
 
@@ -171,6 +171,13 @@ jobs:
           assert any(name.endswith("/RELEASE_AUDIT.md") for name in sdist_names)
           assert any(name.endswith("/RELEASE_NOTES.md") for name in sdist_names)
           assert any("/vendor/wheels/" in name for name in sdist_names)
+          for suffix in (
+              "/integrations/reflex/hooks/pre_tool_use.py",
+              "/integrations/reflex/scripts/state_root.py",
+              "/integrations/reflex/examples/claude-settings.example.json",
+              "/tools/verify_reflex_arming.py",
+          ):
+              assert any(name.endswith(suffix) for name in sdist_names), suffix
           for name in sdist_names + wheel_names:
               parts = set(Path(name).parts)
               assert not (parts & forbidden_parts), name
@@ -198,7 +205,7 @@ jobs:
           import tmf.cli
           import tmf.java_extract
           assert "site-packages" in tmf.__file__, tmf.__file__
-          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc4"
+          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc5"
           status = tmf.java_extract.java_status()
           assert not status.available and status.degrade_hint, status
           subprocess.run([sys.executable, "-m", "tmf.cli", "--help"], check=True)
@@ -221,7 +228,7 @@ jobs:
           import tmf
           from tmf.java_extract import extract_java_methods, java_status
           assert "site-packages" in tmf.__file__, tmf.__file__
-          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc4"
+          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc5"
           assert importlib.metadata.version("tree-sitter") == "0.25.2"
           assert importlib.metadata.version("tree-sitter-java") == "0.23.5"
           status = java_status()
@@ -232,6 +239,27 @@ jobs:
 
       - name: Installed wheel reflex arming smoke (offline)
         run: python tools/verify_reflex_arming.py --python "$PREFLIGHT_ROOT/core-venv/bin/python"
+
+      - name: Sdist reflex assets and installed-wheel smoke (offline)
+        run: |
+          python - "$PREFLIGHT_ROOT" <<'PY'
+          from pathlib import Path
+          import subprocess
+          import sys
+          import tarfile
+
+          root = Path(sys.argv[1])
+          exported = root / "sdist-extracted"
+          exported.mkdir()
+          with tarfile.open(next((root / "dist").glob("*.tar.gz"))) as archive:
+              archive.extractall(exported, filter="data")
+          source = next(exported.iterdir())
+          subprocess.run([sys.executable, "-m", "unittest", "discover", "-s", "tests",
+                          "-p", "test_doctor.py", "-q"], cwd=source, check=True, timeout=60)
+          subprocess.run([sys.executable, "tools/verify_reflex_arming.py", "--python",
+                          str(root / "core-venv" / "bin" / "python")],
+                         cwd=source, check=True, timeout=90)
+          PY
 
       - name: Installed wheel legacy upgrade contract (offline)
         run: python tools/verify_installed_upgrade.py --python "$PREFLIGHT_ROOT/java-venv/bin/python"

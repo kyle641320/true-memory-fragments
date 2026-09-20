@@ -31,7 +31,7 @@ Copy and adapt `examples/claude-settings.example.json`. Its command assumes the 
 hook is registered.** Installing the engine, warming an index, and loading TMF
 usage rules alone leave it operating as opt-in memory.
 
-After installing the updated source and configuring the hook, run:
+After installing rc5 (or updated source) and configuring the hook, run:
 
 ```sh
 tmf doctor --repo /absolute/path/to/task-repo
@@ -41,7 +41,9 @@ It reads user, project, and project-local Claude settings without modifying
 them. Missing/disabled/invalid registration exits 1 with
 `reflex NOT armed — operating as opt-in memory`; exit 0 confirms static
 registration only, not host execution. `--json` provides a machine-readable
-report. Doctor is not included in the previously published rc3/rc4 wheels.
+report. Doctor is included in rc5; older rc3/rc4 wheels do not include it. The
+rc5 source distribution includes this integration directory, but the engine-only
+wheel does not install or register these hooks in a target repository.
 See [the diagnostic guide](../../docs/reflex-doctor.md) for scope, setup, and
 the separate runtime verification step.
 

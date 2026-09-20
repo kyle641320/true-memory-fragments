@@ -1,38 +1,43 @@
-# Early developer preview: rc4 and MCP stdio
+# Early developer preview: rc5 and MCP stdio
 
 TMF helps coding agents detect outdated source context and retain traceable
 code-chain understanding, so edits consider related callers and dependencies.
 
-## Install the released preview
+## Install the rc5 preview
 
-Python 3.10+ and Git are required. Install the published package in an isolated
+Python 3.10+ and Git are required. Install the package in an isolated
 environment (POSIX shell):
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install 'true-memory-fragments[java]==0.1.0rc4'
+.venv/bin/python -m pip install 'true-memory-fragments[java]==0.1.0rc5'
 ```
 
-- [PyPI package](https://pypi.org/project/true-memory-fragments/0.1.0rc4/)
-- [Release assets and SHA256 checksums](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc4)
-- [Official MCP Registry record](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc4)
+- [PyPI package](https://pypi.org/project/true-memory-fragments/0.1.0rc5/)
+- [Release assets and SHA256 checksums](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc5)
+- [rc5 release notes](releases/0.1.0rc5.md)
+- [Existing rc4 MCP Registry record](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc4)
 
-The directory version is `0.1.0-rc4`; the Python package version is `0.1.0rc4`.
-The released source is `4c45806d1ecffd333959fb51f4c1a9506472fa66`.
-The older rc3 source-pinned instructions are superseded by this release.
+The Python package version for this preview is `0.1.0rc5`. The existing Registry
+record is still `0.1.0-rc4` and launches the rc4 package, which does not include
+`tmf doctor`. The Registry update follows public PyPI verification; the explicit
+rc5 commands below do not depend on that metadata update. MCP uses the same Python
+package, not a separate binary. Older rc3/rc4 installation commands are superseded
+by the rc5 commands here.
 
 **This installs the engine, not the Claude Code reflex.** A warmed index and MCP
 connection do not register `PreToolUse`; without that separate hook the agent
 must opt in to TMF queries. Follow the [reflex diagnostic and setup guide](reflex-doctor.md).
-Its new `tmf doctor` command requires updated source and is not part of the
-published rc4 package above.
+The `tmf doctor` command is included in rc5. Run it after installation and after
+changing hook configuration; a successful static check is not proof that the
+host fired the hook.
 
 ## Bind the server to the task worktree
 
 With [uv](https://docs.astral.sh/uv/) installed, start the server directly:
 
 ```sh
-uvx --from 'true-memory-fragments[java]==0.1.0rc4' tmf mcp --repo /absolute/path/to/task-worktree
+uvx --from 'true-memory-fragments[java]==0.1.0rc5' tmf mcp --repo /absolute/path/to/task-worktree
 ```
 
 For clients using the common `mcpServers` JSON layout:
@@ -42,7 +47,7 @@ For clients using the common `mcpServers` JSON layout:
   "mcpServers": {
     "tmf-task": {
       "command": "uvx",
-      "args": ["--from", "true-memory-fragments[java]==0.1.0rc4", "tmf", "mcp", "--repo", "/absolute/path/to/task-worktree"],
+      "args": ["--from", "true-memory-fragments[java]==0.1.0rc5", "tmf", "mcp", "--repo", "/absolute/path/to/task-worktree"],
       "env": {"TMF_MODEL_COMMAND": ""}
     }
   }
@@ -86,7 +91,7 @@ current source directly. Do not silently trust cached TMF output. Reconnect and
 check `tmf_status.repo` before resuming TMF use. No credentials are needed for the
 offline path above.
 
-## Verified transport client
+## Historical transport verification (rc4)
 
 The published rc4 package was exercised through real stdio with the MCP Python
 SDK 2.2.0: initialize, tool discovery, worktree binding, fresh-to-stale,

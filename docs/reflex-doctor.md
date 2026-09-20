@@ -5,9 +5,9 @@ not register a reflex hook.** Without a host hook, TMF remains opt-in memory:
 the agent must remember to query it. Engine installation and reflex arming are
 separate deployment states.
 
-`tmf doctor` is available in source checkouts containing this change. It is not
-part of the already published rc3/rc4 wheels; install the updated source in your
-chosen environment before using these commands.
+`tmf doctor` is included in **0.1.0rc5** and source checkouts containing this
+change. Older rc3/rc4 wheels do not include it; upgrade the engine in your chosen
+environment before using these commands. See the [installation guide](early-preview.md).
 
 ## Post-install check
 
@@ -57,8 +57,9 @@ This command diagnoses Claude settings, not an OpenClaw plugin installation.
 
 ## Arm the hook explicitly
 
-1. Obtain the integration from a TMF source checkout; the engine-only wheel
-   does not install the `integrations/` directory into a target repository.
+1. Obtain the integration from a TMF source checkout or the rc5 source
+   distribution. The engine-only wheel does not install the `integrations/`
+   directory into a target repository.
 2. Merge the [example configuration](../integrations/reflex/examples/claude-settings.example.json)
    into an appropriate Claude settings file. Preserve existing hooks. The
    example assumes the **whole** `integrations/reflex` directory is available
