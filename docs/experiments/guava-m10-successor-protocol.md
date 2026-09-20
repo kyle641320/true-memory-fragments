@@ -101,6 +101,10 @@ accounting, pin model/provider/version and runtime, and receive separate explici
 authorization before any model call. A placeholder or mock transport is not that
 evidence. Offline readiness never implies live-model admission.
 
+The separate [candidate broker contract](guava-m10-successor-adapter-contract.md)
+adds offline request/receipt conformance and durable token-reservation tests.
+It provides no transport and does not relax this runner's live-execution gate.
+
 ## Sealing and randomization
 
 The stable seal covers all T0/T1 source files, full claims and memory, mutation,
