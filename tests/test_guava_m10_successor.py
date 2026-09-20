@@ -92,6 +92,41 @@ class SuccessorIntegrationTests(unittest.TestCase):
         self.assertEqual(source, warning)
         self.assertEqual(self.preflight.bound_memory.payload['source_snapshot'], trusted['source_snapshot'])
 
+    def test_candidate_wire_preserves_validated_condition_differences(self) -> None:
+        from bench.agent_ab.same_version_chain_v1.m10_successor_adapter_contract import (
+            BrokerContract, canonical, prepare_turn,
+        )
+        from bench.agent_ab.same_version_chain_v1.m10_successor_protocol import AdapterRequest
+        from bench.agent_ab.same_version_chain_v1.m10_successor_token_budget import TokenLimits
+        import json
+
+        contract = BrokerContract(
+            experiment_seal_sha256=self.manifest()['seal_sha256'], provider_id='offline-example',
+            endpoint='https://example.invalid/v1/chat/completions', request_model='example',
+            response_model='example-snapshot', deployment_revision='offline-1',
+            broker_build_sha256='1' * 64, broker_runtime_sha256='2' * 64,
+            tokenizer_id='example-tokenizer', tokenizer_sha256='3' * 64,
+            inference_json=canonical({'temperature': None, 'top_p': None, 'seed': None,
+                                      'reasoning_effort': 'low'}),
+            limits=TokenLimits(32000, 4096, 40000, 200000, 32000, 24),
+            max_request_bytes=120000, max_response_bytes=64000, timeout_seconds=90,
+        )
+        prepared = {}
+        bodies = {}
+        for arm in runner.ARMS:
+            messages = runner.build_arm_input(arm, preflight=self.preflight).model_messages()
+            request = AdapterRequest(tuple(messages), runner.ACTION_SCHEMAS, 4096, 16000, 90)
+            prepared[arm] = prepare_turn(contract, request)
+            bodies[arm] = json.loads(prepared[arm].payload_json)
+            self.assertEqual(messages[1], bodies[arm]['messages'][1])
+            for name in runner.ARMS:
+                self.assertNotIn(name, prepared[arm].payload_json)
+        self.assertEqual(prepared[runner.SOURCE_ONLY], prepared[runner.STALE_WITHHELD_SILENT])
+        for body in bodies.values():
+            self.assertEqual(bodies[runner.SOURCE_ONLY]['messages'][0], body['messages'][0])
+            self.assertEqual({k: v for k, v in bodies[runner.SOURCE_ONLY].items() if k != 'messages'},
+                             {k: v for k, v in body.items() if k != 'messages'})
+
     def test_visible_receipt_is_actual_gate_and_document_is_declarative(self) -> None:
         visible = runner.build_arm_input(runner.STALE_WITHHELD_VISIBLE_RECEIPT, preflight=self.preflight)
         self.assertEqual(self.preflight.gate_t1['receipt'], visible.evidence)
