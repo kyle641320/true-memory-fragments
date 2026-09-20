@@ -173,6 +173,19 @@ python -m pip install -e ".[java]"   # optional Java support
 
 Runtime dependencies are intentionally small. Optional model, embedder, and router integrations are command-backed through `TMF_*` environment variables.
 
+**Engine installed does not mean reflex armed.** MCP registration, a warmed
+index, and agent usage rules do not register Claude Code's `PreToolUse` hook.
+After installing the updated development checkout, run:
+
+```sh
+tmf doctor --repo /absolute/path/to/task-repo
+```
+
+Absent or ineffective registration returns nonzero with
+`reflex NOT armed — operating as opt-in memory`. This checks configuration,
+not runtime firing. See [reflex setup and diagnostics](docs/reflex-doctor.md).
+The doctor command is not in the already published rc3/rc4 wheels.
+
 ## Quick Start
 
 Start with the [30-second stale-gate demo](#demo) above. Share installation or reproduction feedback in [Discussion #1](https://github.com/kyle641320/true-memory-fragments/discussions/1).

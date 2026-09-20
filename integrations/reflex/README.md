@@ -27,6 +27,24 @@ The scripts default to the TMF checkout containing this directory. An installed 
 
 Copy and adapt `examples/claude-settings.example.json`. Its command assumes the target repository vendors or links this integration at `integrations/reflex`.
 
+**Installation is incomplete for automatic reflex protection until the host
+hook is registered.** Installing the engine, warming an index, and loading TMF
+usage rules alone leave it operating as opt-in memory.
+
+After installing the updated source and configuring the hook, run:
+
+```sh
+tmf doctor --repo /absolute/path/to/task-repo
+```
+
+It reads user, project, and project-local Claude settings without modifying
+them. Missing/disabled/invalid registration exits 1 with
+`reflex NOT armed — operating as opt-in memory`; exit 0 confirms static
+registration only, not host execution. `--json` provides a machine-readable
+report. Doctor is not included in the previously published rc3/rc4 wheels.
+See [the diagnostic guide](../../docs/reflex-doctor.md) for scope, setup, and
+the separate runtime verification step.
+
 ### OpenClaw
 
 ```sh
@@ -70,6 +88,7 @@ Existing hooks must be merged rather than overwritten.
 
 ```sh
 python -m unittest discover -s integrations/reflex/tests -v
+python tools/verify_reflex_arming.py
 cd integrations/reflex/openclaw-plugin && npm test && npm run typecheck
 ```
 

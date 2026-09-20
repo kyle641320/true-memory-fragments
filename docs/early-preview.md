@@ -21,6 +21,12 @@ The directory version is `0.1.0-rc4`; the Python package version is `0.1.0rc4`.
 The released source is `4c45806d1ecffd333959fb51f4c1a9506472fa66`.
 The older rc3 source-pinned instructions are superseded by this release.
 
+**This installs the engine, not the Claude Code reflex.** A warmed index and MCP
+connection do not register `PreToolUse`; without that separate hook the agent
+must opt in to TMF queries. Follow the [reflex diagnostic and setup guide](reflex-doctor.md).
+Its new `tmf doctor` command requires updated source and is not part of the
+published rc4 package above.
+
 ## Bind the server to the task worktree
 
 With [uv](https://docs.astral.sh/uv/) installed, start the server directly:

@@ -180,6 +180,15 @@ def cmd_stats(args: argparse.Namespace) -> int:
     print(json.dumps(metrics_stats(args.repo, since=args.since), ensure_ascii=False, indent=2))
     return 0
 
+
+def cmd_doctor(args: argparse.Namespace) -> int:
+    from .doctor import inspect_reflex, render_doctor_text
+
+    result = inspect_reflex(args.repo)
+    print(json.dumps(result, ensure_ascii=False, indent=2) if args.json else render_doctor_text(result))
+    return 0 if result["armed"] else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tmf", description="True Memory Fragments: explicit-refresh, source-bound code memory")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -247,6 +256,11 @@ def build_parser() -> argparse.ArgumentParser:
     stats.add_argument("--repo", default=".")
     stats.add_argument("--since", help="ISO timestamp lower bound")
     stats.set_defaults(func=cmd_stats)
+
+    doctor = sub.add_parser("doctor", help="check Claude reflex registration without changing settings or running hooks")
+    doctor.add_argument("--repo", default=".", help="Claude project root (default: current directory)")
+    doctor.add_argument("--json", action="store_true", help="emit the machine-readable arming report")
+    doctor.set_defaults(func=cmd_doctor)
 
     return parser
 
