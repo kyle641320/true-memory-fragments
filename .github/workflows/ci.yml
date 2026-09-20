@@ -21,6 +21,8 @@ jobs:
         run: python -c "from tmf.java_extract import java_status; status = java_status(); assert status.available, status.hint"
       - name: Unit tests
         run: python -m unittest discover -s tests -q
+      - name: Reflex arming regression (offline)
+        run: python tools/verify_reflex_arming.py
       - name: Held-out validation
         run: tmf validate --repo . --heldout
       - name: Self-dogfood validation

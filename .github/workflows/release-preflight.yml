@@ -230,5 +230,8 @@ jobs:
           assert any(method.qualname == "App.run" for method in methods), methods
           PY
 
+      - name: Installed wheel reflex arming smoke (offline)
+        run: python tools/verify_reflex_arming.py --python "$PREFLIGHT_ROOT/core-venv/bin/python"
+
       - name: Installed wheel legacy upgrade contract (offline)
         run: python tools/verify_installed_upgrade.py --python "$PREFLIGHT_ROOT/java-venv/bin/python"
