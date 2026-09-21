@@ -2456,7 +2456,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
     tree = parser.parse(source_bytes)
     root = tree.root_node
     java_classes = extract_java_classes(path, source)
-    explicit_imports, _wildcards, static_imports = _java_imports(source_bytes, root)
+    explicit_imports, wildcard_imports, static_imports = _java_imports(source_bytes, root)
     project_index = None
     package = ""
     if repo is not None:
@@ -2692,43 +2692,86 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         methods = [m for m in methods if m.qualname.startswith(type_name + ".")]
         return methods, None
 
-    def receiver_types(method_node: Any) -> dict[str, str]:
-        types: dict[str, str] = {}
+    def receiver_bindings(method_node: Any) -> list[tuple[str, str, int, int, Any]]:
+        """Collect lexical lifetimes once; choose visible locals at each call."""
+        bindings: list[tuple[str, str, int, int, Any]] = []
+
+        def add(name: Any, typ: Any, scope: Any, *, start: int | None = None, suffix: str = "") -> None:
+            if name is not None and typ is not None and scope is not None:
+                dimensions = _child_by_field(name.parent, "dimensions")
+                type_text = _node_text(source_bytes, typ).strip() + suffix
+                if dimensions is not None:
+                    type_text += _node_text(source_bytes, dimensions)
+                bindings.append((_node_text(source_bytes, name), type_text,
+                                 name.end_byte if start is None else start, scope.end_byte, typ))
+
         params = _child_by_field(method_node, "parameters")
         if params is not None:
             for child in _named_children(params):
                 if child.type in {"formal_parameter", "spread_parameter"}:
                     name = _child_by_field(child, "name")
                     typ = _child_by_field(child, "type")
-                    if name is not None and typ is not None:
-                        types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+                    if child.type == "spread_parameter":
+                        declarator = next((c for c in _named_children(child) if c.type == "variable_declarator"), None)
+                        name = _child_by_field(declarator, "name") if declarator is not None else None
+                        typ = next((c for c in _named_children(child) if c.type not in {"modifiers", "variable_declarator"}), None)
+                        add(name, typ, method_node, suffix="[]")
+                        continue
+                    add(name, typ, method_node)
         def walk(cur: Any) -> None:
+            if cur.type in _CLASS_TYPES or cur.type in _METHOD_TYPES or cur.type in {"class_body", "lambda_expression"}:
+                return
             if cur.type == "local_variable_declaration":
                 typ = _child_by_field(cur, "type")
+                scope = cur.parent
+                while scope is not None and scope.type not in {
+                    "block", "constructor_body", "switch_block", "for_statement", "try_with_resources_statement",
+                }:
+                    scope = scope.parent
                 if typ is not None:
                     for child in _named_children(cur):
                         if child.type == "variable_declarator":
                             name = _child_by_field(child, "name")
-                            if name is not None:
-                                types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+                            add(name, typ, scope)
             # The loop variable is a statically typed local just like a method
             # parameter.  Missing it made ordinary domain traversals such as
             # `for (Pet pet : pets) pet.getName()` look like unknown receivers.
             elif cur.type == "enhanced_for_statement":
                 name = _child_by_field(cur, "name")
                 typ = _child_by_field(cur, "type")
-                if name is not None and typ is not None:
-                    types[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+                body = _child_by_field(cur, "body")
+                if body is not None:
+                    add(name, typ, body, start=body.start_byte)
+            elif cur.type == "catch_formal_parameter":
+                typ = next((c for c in _named_children(cur) if c.type == "catch_type"), None)
+                name = _child_by_field(cur, "name")
+                if typ is not None and "|" in _node_text(source_bytes, typ) and name is not None:
+                    bindings.append((_node_text(source_bytes, name), "var", name.end_byte, cur.parent.end_byte, typ))
+                else:
+                    add(name, typ, cur.parent)
+            elif cur.type == "resource":
+                owner = cur.parent.parent
+                body = _child_by_field(owner, "body")
+                if body is not None:
+                    add(_child_by_field(cur, "name"), _child_by_field(cur, "type"), body)
+            elif cur.type == "instanceof_expression":
+                name = _child_by_field(cur, "name")
+                if name is not None:
+                    # Pattern variables have flow-sensitive scopes. Until
+                    # modeled, never fall back to a same-named field.
+                    bindings.append((_node_text(source_bytes, name), "var", name.end_byte, method_node.end_byte, cur))
             for child in _named_children(cur):
                 walk(child)
         body = _child_by_field(method_node, "body")
         if body is not None:
             walk(body)
-        return types
+        return bindings
 
-    def field_receiver_types() -> dict[str, dict[str, str]]:
-        found: dict[str, dict[str, str]] = {}
+    def field_receiver_types() -> dict[str, dict[str, tuple[str, Any]]]:
+        found: dict[str, dict[str, tuple[str, Any]]] = {}
         def walk(cur: Any, stack: list[str]) -> None:
+            if cur.type in _METHOD_TYPES or cur.type == "object_creation_expression":
+                return
             next_stack = stack
             if cur.type in _CLASS_TYPES:
                 name = _identifier_from_node(source_bytes, cur)
@@ -2742,7 +2785,9 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                         if child.type == "variable_declarator":
                             name = _child_by_field(child, "name")
                             if name is not None:
-                                bucket[_node_text(source_bytes, name)] = _node_text(source_bytes, typ).strip()
+                                dimensions = _child_by_field(child, "dimensions")
+                                bucket[_node_text(source_bytes, name)] = ((_node_text(source_bytes, typ).strip()
+                                    + (_node_text(source_bytes, dimensions) if dimensions is not None else "")), typ)
             for child in _named_children(cur):
                 walk(child, next_stack)
         walk(root, [])
@@ -2801,17 +2846,75 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         walk(path, source, class_qual)
         return found
 
-    def typed_receiver_methods(type_expr: str, name: str) -> tuple[list[ClassNode], str]:
+    def typed_receiver_methods(type_expr: str, name: str, context_node: Any | None = None) -> tuple[list[ClassNode], str]:
+        from .java_types import parse_java_type
         if repo is None or project_index is None:
             return [], "java_variable_or_unknown_receiver"
-        symbol, resolution = project_index.resolve(type_expr, package=package, imports=explicit_imports)
+        # Only erase arguments of a top-level receiver. The general type
+        # parser does not normalize Outer<A>.Inner<B> into a source symbol.
+        clean_type = re.sub(r"/\*.*?\*/|//[^\n]*", " ", type_expr, flags=re.S)
+        clean_type = re.sub(r"@(?:[A-Za-z_$][\w$]*\.)*[A-Za-z_$][\w$]*(?:\([^)]*\))?\s*", "", clean_type).strip()
+        clean_type = re.sub(r"\s*\.\s*", ".", clean_type)
+        angle = clean_type.find("<")
+        if angle >= 0:
+            depth = 0
+            end = None
+            for index in range(angle, len(clean_type)):
+                depth += (clean_type[index] == "<") - (clean_type[index] == ">")
+                if depth == 0:
+                    end = index
+                    break
+            if end != len(clean_type) - 1:
+                return [], "java_receiver_type_not_supported"
+        receiver_type = parse_java_type(clean_type)
+        if (receiver_type.array_dims or receiver_type.varargs or receiver_type.primitive
+                or receiver_type.wildcard or receiver_type.erased == "var"):
+            return [], "java_receiver_type_not_supported"
+        outer_type = (clean_type[:angle] if angle >= 0 else clean_type).strip()
+        if not re.fullmatch(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", outer_type):
+            return [], "java_receiver_type_not_supported"
+        if "." in receiver_type.erased:
+            prefixes = receiver_type.erased.split(".")
+            enclosing_type, enclosing_reason = project_index.resolve(prefixes[0], package=package, imports=explicit_imports,
+                                                                      wildcard_imports=wildcard_imports)
+            if prefixes[0] in explicit_imports or enclosing_type is not None or "ambiguous" in enclosing_reason:
+                return [], "java_receiver_type_not_supported"
+            for length in range(2, len(prefixes)):
+                enclosing_type, enclosing_reason = project_index.resolve(".".join(prefixes[:length]))
+                if enclosing_type is not None or "ambiguous" in enclosing_reason:
+                    return [], "java_receiver_type_not_supported"
+        if context_node is not None:
+            # Type variables and lexical member types are not project top-level
+            # symbols, even when an import has the same spelling.
+            ancestor = context_node
+            leading_name = receiver_type.erased.split(".")[0]
+            while ancestor is not None:
+                parameters = _child_by_field(ancestor, "type_parameters")
+                if parameters is not None:
+                    for param in _named_children(parameters):
+                        ident = next((c for c in _named_children(param) if c.type == "type_identifier"), None)
+                        if ident is not None and _node_text(source_bytes, ident) == leading_name:
+                            return [], "java_receiver_lexical_type_not_supported"
+                if ancestor.type in _CLASS_TYPES or ancestor.type in {"block", "constructor_body"}:
+                    body = _child_by_field(ancestor, "body") if ancestor.type in _CLASS_TYPES else ancestor
+                    if body is not None:
+                        for member in _named_children(body):
+                            if (member.type in _CLASS_TYPES and _identifier_from_node(source_bytes, member) == leading_name
+                                    and (ancestor.type in _CLASS_TYPES or member.start_byte < context_node.start_byte)):
+                                return [], "java_receiver_lexical_type_not_supported"
+                ancestor = ancestor.parent
+        symbol, resolution = project_index.resolve(receiver_type.erased, package=package, imports=explicit_imports,
+                                                    wildcard_imports=wildcard_imports)
         if symbol is None:
-            return [], "java_ambiguous_or_unknown_receiver"
+            return [], "java_receiver_" + resolution
         try:
             target_source = repo.read_file(symbol.path)
         except Exception:
             return [], "java_external_or_jdk_receiver"
-        methods = [m for m in methods_for(symbol.path, target_source) if m.qualname.startswith(symbol.simple_name + ".")]
+        methods = [m for m in methods_for(symbol.path, target_source)
+                   if m.node_kind == "method" and m.qualname.rsplit(".", 1)[0] == symbol.simple_name]
+        if not any(m.qualname.rsplit(".", 1)[-1] == name for m in methods):
+            return [], "java_receiver_method_not_declared_or_inherited"
         return methods, f"java_project_typed_receiver_{resolution}"
 
     def declared_return_type(method: ClassNode) -> str | None:
@@ -2842,6 +2945,10 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         if len(matches) != 1 or matches[0] in {"void", "var"}:
             return None
         declared = matches[0]
+        if "<" in declared:
+            # Direct receiver erasure must not promote a generic return type
+            # using the caller's imports instead of its declaring context.
+            return None
         # Preserve the declaring source's exact import context before resolving
         # the return type from the caller's file.
         imported = _java_explicit_imports(target_source).get(declared)
@@ -2864,8 +2971,10 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             class_qual = current_method.qualname.rsplit(".", 1)[0]
             local_methods = by_class.get(class_qual, [])
             local_names = {m.qualname.rsplit(".", 1)[-1] for m in local_methods}
-            types_by_name = receiver_types(node)
-            types_by_name.update(fields_by_class.get(class_qual, {}))
+            fields = fields_by_class.get(class_qual, {})
+            field_types = {name: item[0] for name, item in fields.items()}
+            field_contexts = {name: item[1] for name, item in fields.items()}
+            local_bindings = receiver_bindings(node)
             def walk_calls(cur: Any) -> None:
                 if cur is not node and cur.type in _METHOD_TYPES:
                     return
@@ -2885,6 +2994,15 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                 if cur.type == "method_reference":
                     add_unresolved(current_method, _node_text(source_bytes, cur).strip(), "java_method_reference_relationship_not_modeled")
                     return
+                types_by_name: dict[str, str] = {}
+                type_contexts: dict[str, Any] = {}
+                if cur.type in {"method_invocation", "object_creation_expression", "explicit_constructor_invocation"}:
+                    types_by_name = dict(field_types)
+                    type_contexts = dict(field_contexts)
+                    for variable, typ, start, end, context in local_bindings:
+                        if start <= cur.start_byte < end:
+                            types_by_name[variable] = typ
+                            type_contexts[variable] = context
                 if cur.type == "method_invocation":
                     parsed = _call_expr_name(source_bytes, cur)
                     if parsed is not None:
@@ -2932,21 +3050,23 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                                 add_edge(current_method, callee, "java_super_method")
                             else:
                                 add_unresolved(current_method, f"super.{name}", reason or "java_parent_method_not_found")
-                        elif receiver in explicit_imports:
+                        elif receiver in explicit_imports and receiver not in types_by_name:
                             methods, reason = imported_methods(receiver)
                             callee, why = unique_method(methods, name, argc, argument_types)
                             if callee is not None:
                                 add_edge(current_method, callee, "java_explicit_import_static_method")
                             else:
                                 add_unresolved(current_method, f"{receiver}.{name}", why or reason or "java_method_not_found")
-                        elif receiver in types_by_name or receiver.startswith("this.") and receiver[5:] in types_by_name:
+                        elif receiver in types_by_name or receiver.startswith("this.") and receiver[5:] in field_types:
                             receiver_name = receiver[5:] if receiver.startswith("this.") else receiver
-                            methods, resolution = typed_receiver_methods(types_by_name[receiver_name], name)
+                            receiver_type = field_types[receiver_name] if receiver.startswith("this.") else types_by_name[receiver_name]
+                            context = field_contexts[receiver_name] if receiver.startswith("this.") else type_contexts[receiver_name]
+                            methods, resolution = typed_receiver_methods(receiver_type, name, context)
                             callee, why = unique_method(methods, name, argc, argument_types)
                             if callee is not None:
                                 add_edge(current_method, callee, resolution)
                             else:
-                                add_unresolved(current_method, f"{receiver}.{name}", why or resolution)
+                                add_unresolved(current_method, f"{receiver}.{name}", (why or resolution) if methods else resolution)
                         elif (obj := _child_by_field(cur, "object")) is not None and obj.type == "method_invocation":
                             # Conservative one-step chain propagation: resolve the
                             # inner project call exactly, then use only its explicit
@@ -2960,7 +3080,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                                 if inner_receiver is None:
                                     inner_callee, _ = unique_method(local_methods, inner_name, _call_arg_count(obj), inner_args)
                                 elif inner_receiver in types_by_name:
-                                    pool, _ = typed_receiver_methods(types_by_name[inner_receiver], inner_name)
+                                    pool, _ = typed_receiver_methods(types_by_name[inner_receiver], inner_name, type_contexts[inner_receiver])
                                     inner_callee, _ = unique_method(pool, inner_name, _call_arg_count(obj), inner_args)
                             return_type = declared_return_type(inner_callee) if inner_callee is not None else None
                             if return_type is not None:
@@ -3753,7 +3873,8 @@ def _java_imports(source_bytes: bytes, root: Any) -> tuple[dict[str, str], set[s
             body = body[len("static "):].strip()
         
         if body.endswith(".*"):
-            wildcard_packages.add(body[:-2])
+            if not is_static:
+                wildcard_packages.add(body[:-2])
             continue
         
         if not body:

@@ -129,6 +129,41 @@ class FrozenFixtureTests(unittest.TestCase):
             self.assertEqual(expected, observed.fresh)
         self.assertEqual(fixture.canonical_json(claim.to_dict()), memory.claim_json)
 
+    def test_java_v9_snapshot_preserves_experiment_inputs_and_rejects_v8_claim(self) -> None:
+        historical_path = fixture.SPEC_PATH.with_name("m10_successor_fixture_spec_java_v8.json")
+        self.assertEqual(fixture.sha256_bytes(historical_path.read_bytes()),
+                         "b01b2e9314e4294d943f003644e4dbd9cbbe20fc60a01d7537e1688b99f04a14")
+        historical = json.loads(historical_path.read_text())
+        current = fixture.load_fixture_spec()
+        # Whole-spec comparison: sources, mutation, semantic payload/proof,
+        # compiler pins and fixed acquisition identity are unchanged.
+        old_target = json.loads(historical["bound_memory"]["claim_json"])
+        old_control = json.loads(historical["control_claim_json"])
+        new_target = json.loads(current["bound_memory"]["claim_json"])
+        new_control = json.loads(current["control_claim_json"])
+        current["bound_memory"]["claim_json"] = historical["bound_memory"]["claim_json"]
+        current["control_claim_json"] = historical["control_claim_json"]
+        self.assertEqual(current, historical)
+        # Only derivation metadata and nine unresolved-diagnostic strings
+        # changed in the full production structural claims.
+        for old, new, changed in (
+            (old_target, new_target, {3, 4, 6, 7, 8, 12, 13}),
+            (old_control, new_control, {1, 3}),
+        ):
+            self.assertEqual(new["body"]["derivation_versions"], {"java": "java.derive.v9"})
+            new["body"]["derivation_versions"] = old["body"]["derivation_versions"]
+            for index in changed:
+                prior = old["body"]["graph"]["unresolved_calls"][index]
+                updated = new["body"]["graph"]["unresolved_calls"][index]
+                self.assertEqual(prior["reason"], "java_method_not_found")
+                self.assertIn(updated["reason"], {"java_receiver_project_type_not_found", "java_receiver_external_or_missing_import"})
+                updated["reason"] = prior["reason"]
+            self.assertEqual(new, old)
+        fixture.prepare_fixture(self.root, "t0")
+        observed = check_freshness(GitRepo(self.root), Claim.from_dict(old_target))
+        self.assertFalse(observed.fresh)
+        self.assertTrue(any("derivation version mismatch" in reason for reason in observed.stale_bindings))
+
     def test_fresh_gate_admits_and_cannot_emit_a_stale_receipt(self) -> None:
         fixture.prepare_fixture(self.root, "t0")
         memory = fixture.frozen_bound_memory()
