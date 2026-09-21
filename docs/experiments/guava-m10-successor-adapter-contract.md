@@ -132,3 +132,8 @@ Before a live protocol pilot, still required:
    pilot. Keep exploratory results out of confirmatory arm-effect claims.
 
 Passing these offline tests does not remove any of those live blockers.
+
+The separate [process rehearsal](guava-m10-successor-process-rehearsal.md) now
+tests this codec and ledger across actual child-process I/O with a fixed,
+fictional peer. It does not connect this codec to a live provider or relax the
+experiment runner's execution gate.
