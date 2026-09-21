@@ -1,8 +1,9 @@
 """Offline-only action protocol for the M10 successor.
 
-This is protocol rehearsal infrastructure, not a model experiment runner.  The
-only admitted adapter is the in-process, scripted adapter below.  In particular,
-accepting a future provider request shape does not establish that any provider
+This is protocol rehearsal infrastructure, not a model experiment runner. The
+public run_one entry admits only the in-process scripted adapter below. A private
+shared executor also serves the separately sealed, fixed offline broker bridge.
+Accepting a provider-shaped request does not establish that any real provider
 honours its token limits: live execution is unconditionally disabled here.
 """
 
@@ -216,6 +217,9 @@ class RunRecord:
     durable_ledger: bool = False
     initial_source_sha256: dict[str, str] = field(default_factory=dict)
     final_source_sha256: dict[str, str] = field(default_factory=dict)
+    # Captured only after execution/cleanup. Never part of AdapterRequest or a
+    # tool result, even when it contains evaluator-only journal attribution.
+    adapter_evidence: dict[str, Any] = field(default_factory=dict)
 
     @property
     def joint_success(self) -> bool:
@@ -451,6 +455,43 @@ def run_one(
         raise LiveExecutionDisabled("only offline ScriptedAdapter is enabled")
     if adapter.calls:
         raise ProtocolAdmissionError("adapter must be fresh for each run")
+    return _run_one_with_factory(
+        root, model_messages, adapter_factory=lambda: adapter,
+        compile_fn=compile_fn, score_fn=score_fn, verify=verify,
+        budgets=budgets, source_files=source_files, allowed_edit_paths=allowed_edit_paths,
+        ledger_path=ledger_path, run_id=run_id,
+    )
+
+
+def _run_one_with_factory(
+    root: Path,
+    model_messages: Sequence[Mapping[str, str]],
+    *,
+    adapter_factory: Callable[[], Any],
+    compile_fn: Callable[[Path], Mapping[str, Any]],
+    score_fn: Callable[[Path], Any],
+    verify: Callable[[], Mapping[str, Any]],
+    budgets: BudgetCaps = BudgetCaps(),
+    source_files: Sequence[str] = DEFAULT_SOURCE_FILES,
+    allowed_edit_paths: Sequence[str] = ("Dispatcher.java",),
+    ledger_path: Path | None = None,
+    run_id: str | None = None,
+    evidence_kind: str = EVIDENCE_KIND,
+    on_admit: Callable[[], None] | None = None,
+    adapter_evidence: Callable[[Any], Mapping[str, Any]] | None = None,
+) -> RunRecord:
+    """Private shared action loop, not a public adapter/live admission API.
+
+    The fixed offline bridge owns its factory, joint verifier and durable batch
+    ledger. Its on_admit callback must fsync the scheduled start before return;
+    only then may the factory run. The public scripted path keeps its exact-type
+    and freshness gate above this seam. Neither path enables model execution.
+    """
+    if evidence_kind not in (EVIDENCE_KIND, "offline_broker_protocol_rehearsal"):
+        raise ProtocolAdmissionError("only known offline rehearsal evidence is allowed")
+    if (not callable(adapter_factory) or (on_admit is not None and not callable(on_admit))
+            or (adapter_evidence is not None and not callable(adapter_evidence))):
+        raise ProtocolAdmissionError("invalid private executor callback")
     budgets.validate()
     sources = _relative_paths(source_files)
     edits = _relative_paths(allowed_edit_paths)
@@ -485,15 +526,19 @@ def run_one(
     if not isinstance(opaque_id, str) or re.fullmatch(r"[A-Za-z0-9_-]{1,128}", opaque_id) is None:
         raise ProtocolAdmissionError("invalid evaluator run ID")
     schemas = build_action_schemas(sources, edits)
-    record = RunRecord(run_id=opaque_id, seal_sha256=receipt["seal_sha256"],
+    record = RunRecord(run_id=opaque_id, seal_sha256=receipt["seal_sha256"], evidence_kind=evidence_kind,
                        budgets=asdict(budgets), durable_ledger=ledger_path is not None)
-    admission = {"event": "admitted", "run_id": opaque_id, "evidence_kind": EVIDENCE_KIND,
+    admission = {"event": "admitted", "run_id": opaque_id, "evidence_kind": evidence_kind,
                  "seal_sha256": receipt["seal_sha256"], "itt_included": True}
     # A failed durable write is a pre-admission failure, never an untracked run.
     _append_ledger(ledger_path, admission)
+    if on_admit is not None:
+        on_admit()
+        record.durable_ledger = True
     record.admission_events.append(admission)
     deadline = time.monotonic() + budgets.run_timeout_seconds
     private_root: Path | None = None
+    adapter: Any = None
     try:
         with tempfile.TemporaryDirectory(prefix="m10-") as directory:
             private_root = Path(directory)
@@ -512,6 +557,10 @@ def run_one(
                     target.write_bytes(data)
                 workspace = _Workspace(private_root, sources, edits, budgets)
                 record.initial_source_sha256 = _hashes(private_root, sources)
+                try:
+                    adapter = adapter_factory()
+                except Exception as error:
+                    raise _ProtocolFailure("adapter_factory_error:" + type(error).__name__) from None
                 last_compile_hashes: dict[str, str] | None = None
                 for turn in range(1, budgets.max_turns + 1):
                     remaining = deadline - time.monotonic()
@@ -623,6 +672,30 @@ def run_one(
         record.protocol_status = "failed"
         record.protocol_ok = False
         record.failure_reason = "workspace_error:" + type(error).__name__
+    finally:
+        if adapter is not None:
+            lifecycle_errors: dict[str, str] = {}
+            try:
+                close = getattr(adapter, "close", None)
+                if close is not None:
+                    close()
+            except Exception as error:
+                lifecycle_errors["close_error"] = type(error).__name__
+            if adapter_evidence is not None:
+                try:
+                    snapshot = adapter_evidence(adapter)
+                    if not isinstance(snapshot, Mapping):
+                        raise TypeError("adapter evidence must be a mapping")
+                    # Detach mutable transport state and reject non-JSON/NaN.
+                    record.adapter_evidence = json.loads(_json(dict(snapshot)))
+                except Exception as error:
+                    lifecycle_errors["snapshot_error"] = type(error).__name__
+            if lifecycle_errors:
+                record.adapter_evidence["executor_lifecycle_errors"] = lifecycle_errors
+                record.protocol_status = "failed"
+                record.protocol_ok = False
+                if record.failure_reason is None:
+                    record.failure_reason = "adapter_evidence_or_cleanup_failed"
     completion = {"event": "completed", "run_id": opaque_id, "record": asdict(record)}
     _append_ledger(ledger_path, completion)
     return record
