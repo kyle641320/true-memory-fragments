@@ -20,7 +20,8 @@ from .derivation_versions import versions_for_path
 
 WARM_MANIFEST = "warm_manifest.json"
 REVERSE_INDEX = "reverse_callers.json"
-COMPLETE_NOTE = "Known callers from fully warmed files; complete for the current warm manifest."
+COMPLETE_NOTE = ("Known callers from fully warmed files; complete for the current warm manifest, "
+                 "not complete semantic call resolution. Inspect graph.unresolved_calls and calls_coverage for extraction limits.")
 PARTIAL_NOTE = "Known callers from already-derived files only; not a complete blast radius."
 WARM_FILE_TIMEOUT_SECONDS = int(os.environ.get("TMF_WARM_FILE_TIMEOUT_SECONDS", "30"))
 

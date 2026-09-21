@@ -134,27 +134,46 @@ class JavaProjectIndex:
             return list(self._by_package_simple.get((package, simple_name), []))
         return list(self._by_simple.get(simple_name, []))
 
-    def resolve(self, type_expr: str, *, package: str = "", imports: dict[str, str] | None = None) -> tuple[JavaSymbol | None, str]:
+    def resolve(self, type_expr: str, *, package: str = "", imports: dict[str, str] | None = None,
+                wildcard_imports: set[str] | None = None) -> tuple[JavaSymbol | None, str]:
         self.build()
         bare = type_expr.rsplit(".", 1)[-1]
         imports = imports or {}
+
+        def exact(fqn: str) -> list[JavaSymbol]:
+            # Duplicate FQNs across modules/source sets require a compiler
+            # classpath to disambiguate; never silently select the first.
+            return [item for item in self._by_simple.get(bare, []) if item.fqn == fqn]
+
+        if "." in type_expr:
+            matches = exact(type_expr)
+            if len(matches) == 1:
+                return matches[0], "project_fqn"
+            return None, "project_ambiguous_simple_name" if matches else "project_type_not_found"
         imported_target = imports.get(bare)
         if imported_target:
             imported_fqn = imported_target[:-5].replace("/", ".") if imported_target.endswith(".java") else imported_target
-            symbol = self._by_fqn.get(imported_fqn) or self._by_fqn.get(type_expr)
-            if symbol is None:
+            matches = exact(imported_fqn)
+            if not matches:
                 matches = self._by_path_simple.get((imported_target, bare), [])
                 if not matches:
                     matches = [item for item in self._by_simple.get(bare, []) if item.path.endswith("/" + imported_target) or item.path == imported_target]
-                symbol = matches[0] if len(matches) == 1 else None
+            if len(matches) > 1:
+                return None, "project_ambiguous_simple_name"
+            symbol = matches[0] if matches else None
             return (symbol, "project_explicit_import") if symbol else (None, "external_or_missing_import")
-        if "." in type_expr and type_expr in self._by_fqn:
-            return self._by_fqn[type_expr], "project_fqn"
         scoped = self.candidates(bare, package=package)
         if len(scoped) == 1:
             return scoped[0], "project_same_package"
         if len(scoped) > 1:
             return None, "project_ambiguous_simple_name"
+        if wildcard_imports:
+            matches = [item for item in self._by_simple.get(bare, []) if item.package in wildcard_imports]
+            if len(matches) == 1:
+                return matches[0], "project_wildcard_import"
+            if len(matches) > 1:
+                return None, "project_ambiguous_wildcard_import"
+            return None, "project_wildcard_type_not_found"
         global_matches = self.candidates(bare)
         if len(global_matches) > 1:
             return None, "project_ambiguous_simple_name"
