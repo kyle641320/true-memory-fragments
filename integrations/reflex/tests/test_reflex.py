@@ -497,6 +497,32 @@ class ReflexHealthTests(unittest.TestCase):
     "Java extraction dependencies are not installed",
 )
 class JavaReflexHealthTests(unittest.TestCase):
+    def test_graph_symbol_context_does_not_escape_file_local_projection(self):
+        from tmf.freshness import check_freshness
+        from tmf.git import GitRepo
+        from tmf.store import Store
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "Base.java": "public class Base { public void run() {} }\n",
+                "Child.java": "public class Child extends Base {}\n",
+                "Service.java": "class Service { Child target; void execute() { target.run(); } }\n",
+            })
+            warm_repo(repo)
+            store = Store(repo)
+            self.addCleanup(store.index.close)
+            declaration = next(c for c in store.iter_claims()
+                               if c.body.get("qualname") == "Service.execute"
+                               and c.body.get("node_kind") == "method")
+            original = declaration.to_dict()
+            self.assertIn("java_resolution_context", declaration.body)
+            (repo / "NewType.java").write_text("class NewType {}\n")
+            _git(repo, "add", "NewType.java")
+            self.assertFalse(check_freshness(GitRepo(repo), declaration).fresh)
+            result = run_hook(repo, "Service.java")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["reason_code"], "fresh")
+            self.assertEqual(store.get_claim(declaration.id).to_dict(), original)
+
     SOURCE = (
         "class Service {\n"
         "    int count = 1;\n"

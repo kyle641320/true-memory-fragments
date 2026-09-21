@@ -41,7 +41,12 @@ def select_file_claims(claims, rel_path: str) -> list:
                       and binding.hash_kind == "java-treesitter-token-stream"
                       and binding.fn_hash]
             if len(direct) == 1:
-                selected[claim.id] = replace(claim, bindings=direct)
+                # The file-local gate checks the declaration, not enriched
+                # relationship resolution. Drop that matching metadata from
+                # this projection too; normal graph reads retain both parts.
+                direct_body = {key: value for key, value in body.items()
+                               if key != "java_resolution_context"}
+                selected[claim.id] = replace(claim, bindings=direct, body=direct_body)
     return [selected[claim_id] for claim_id in sorted(selected)]
 
 

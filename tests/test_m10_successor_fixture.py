@@ -134,7 +134,7 @@ class FrozenFixtureTests(unittest.TestCase):
         self.assertEqual(fixture.sha256_bytes(historical_path.read_bytes()),
                          "b01b2e9314e4294d943f003644e4dbd9cbbe20fc60a01d7537e1688b99f04a14")
         historical = json.loads(historical_path.read_text())
-        current = fixture.load_fixture_spec()
+        current = json.loads(fixture.SPEC_PATH.with_name("m10_successor_fixture_spec_java_v9.json").read_text())
         # Whole-spec comparison: sources, mutation, semantic payload/proof,
         # compiler pins and fixed acquisition identity are unchanged.
         old_target = json.loads(historical["bound_memory"]["claim_json"])
@@ -163,6 +163,28 @@ class FrozenFixtureTests(unittest.TestCase):
         observed = check_freshness(GitRepo(self.root), Claim.from_dict(old_target))
         self.assertFalse(observed.fresh)
         self.assertTrue(any("derivation version mismatch" in reason for reason in observed.stale_bindings))
+
+    def test_java_v10_snapshot_changes_only_production_derivation_version(self) -> None:
+        prior_path = fixture.SPEC_PATH.with_name("m10_successor_fixture_spec_java_v9.json")
+        self.assertEqual(fixture.sha256_bytes(prior_path.read_bytes()),
+                         "ffec9e204dab47fcc990f604ba47bde678fb1442ba470aaf8ca667d5a67c6b0c")
+        prior = json.loads(prior_path.read_text())
+        current = fixture.load_fixture_spec()
+        pairs = [(prior["bound_memory"], current["bound_memory"], "claim_json"),
+                 (prior, current, "control_claim_json")]
+        for old_container, new_container, key in pairs:
+            old = json.loads(old_container[key])
+            new = json.loads(new_container[key])
+            self.assertEqual(new["body"]["derivation_versions"], {"java": "java.derive.v10"})
+            new["body"]["derivation_versions"] = old["body"]["derivation_versions"]
+            self.assertEqual(new, old)
+            new_container[key] = old_container[key]
+        self.assertEqual(current, prior)
+        fixture.prepare_fixture(self.root, "t0")
+        old_claim = Claim.from_dict(json.loads(prior["bound_memory"]["claim_json"]))
+        result = check_freshness(GitRepo(self.root), old_claim)
+        self.assertFalse(result.fresh)
+        self.assertTrue(any("derivation version mismatch" in reason for reason in result.stale_bindings))
 
     def test_fresh_gate_admits_and_cannot_emit_a_stale_receipt(self) -> None:
         fixture.prepare_fixture(self.root, "t0")
