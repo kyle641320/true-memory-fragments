@@ -20,6 +20,31 @@ from tmf.warm import warm_repo
 
 ROOT = Path(__file__).resolve().parents[1]
 HOOK = ROOT / "integrations/reflex/hooks/pre_tool_use.py"
+SELECTOR = ROOT / "integrations/reflex/scripts/claim_selection.py"
+# Preserve the pre-fix file-selection path; this fixture is inspected, never run.
+LEGACY_FUNCTION_ONLY_HOOK = '''
+def check_file_freshness(repo_root, rel_path, state_root):
+    from tmf.git import GitRepo
+    from tmf.store import Store
+    from tmf.freshness import check_freshness
+    repo = GitRepo(repo_root)
+    store = Store(state_root)
+    claim_ids = set()
+    for claim in store.iter_claims():
+        if claim.scope != "function":
+            continue
+        for binding in claim.bindings:
+            if binding.path == rel_path:
+                claim_ids.add(claim.id)
+                break
+    if not claim_ids:
+        return {"fresh": True, "stale_functions": [], "error": None}
+    return [check_freshness(repo, store.get_claim(claim_id)) for claim_id in claim_ids]
+
+def main():
+    return check_file_freshness(".", "Sample.java", ".tmf")
+'''
+CAPABILITIES = "REFLEX_CAPABILITIES = {'schema_version': 'tmf.reflex.capabilities.v1', 'file_languages': ['python', 'java']}\n"
 
 
 class ReflexDoctorTests(unittest.TestCase):
@@ -45,6 +70,9 @@ class ReflexDoctorTests(unittest.TestCase):
         self.target = self.repo / "integrations/reflex/hooks/pre_tool_use.py"
         self.target.parent.mkdir(parents=True)
         shutil.copyfile(HOOK, self.target)
+        self.selector = self.repo / "integrations/reflex/scripts/claim_selection.py"
+        self.selector.parent.mkdir(parents=True)
+        shutil.copyfile(SELECTOR, self.selector)
         self.paths = {
             "global": self.config / "settings.json",
             "project": self.repo / ".claude/settings.json",
@@ -316,6 +344,198 @@ class ReflexDoctorTests(unittest.TestCase):
         result = inspect_reflex(missing)
         self.assertEqual(result["status"], "invalid")
         self.assertFalse(missing.exists())
+
+    def add_java_source(self, path="nested/project/src/Sample.java"):
+        target = self.repo / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text("class Sample { int value() { return 1; } }\n")
+        return target
+
+    def test_missing_external_helper_fails_even_without_checked_source_languages(self):
+        external = self.base / "external-integration"
+        shutil.move(str(self.repo / "integrations"), str(external))
+        self.target = external / "reflex/hooks/pre_tool_use.py"
+        self.handler()["command"] = f'"{sys.executable}" "{self.target}"'
+        selector = external / "reflex/scripts/claim_selection.py"
+        valid = self.base / "valid-integration"
+        shutil.copytree(external, valid)
+        self.write_settings()
+        for other_source in (False, True):
+            with self.subTest(other_source=other_source):
+                if other_source:
+                    (self.repo / "app.ts").write_text("export const value = 1;\n")
+                self.assertTrue(self.result()["armed"])
+                selector.unlink()
+                result = self.assert_not_armed("unrecognized_java_selector", "unarmed")
+                self.assertEqual(result["language_capability"]["source_scan"]["required_languages"], [])
+                self.assertEqual(result["registered_tools"], ["Read", "Edit", "Write"])
+                self.assertEqual(result["matched_tools"], [])
+                # One broken registration must not mask another complete one.
+                settings = deepcopy(self.settings)
+                handler = deepcopy(self.handler())
+                handler["command"] = f'"{sys.executable}" "{valid / "reflex/hooks/pre_tool_use.py"}"'
+                settings["hooks"]["PreToolUse"][0]["hooks"].append(handler)
+                self.write_settings(settings=settings)
+                self.assertTrue(self.result()["armed"])
+                self.write_settings()
+                shutil.copyfile(valid / "reflex/scripts/claim_selection.py", selector)
+
+    def test_registered_legacy_hook_is_not_armed_for_nested_java_repo(self):
+        self.add_java_source()
+        self.target.write_text(LEGACY_FUNCTION_ONLY_HOOK)
+        self.write_settings()
+        result = self.assert_not_armed("java_function_only_filter", "unarmed")
+        self.assertIn("registration_found", self.codes(result))
+        self.assertEqual(result["registered_tools"], ["Read", "Edit", "Write"])
+        self.assertEqual(result["matched_tools"], [])
+        self.assertEqual(result["language_capability"]["source_scan"]["required_languages"], ["java", "python"])
+        output = io.StringIO()
+        with redirect_stdout(output):
+            code = main(["doctor", "--repo", str(self.repo), "--json"])
+        self.assertEqual(code, 1)
+        self.assertFalse(json.loads(output.getvalue())["armed"])
+
+    def test_legacy_python_only_hook_retains_its_narrow_registration(self):
+        self.target.write_text(LEGACY_FUNCTION_ONLY_HOOK)
+        self.write_settings()
+        result = self.result()
+        self.assertTrue(result["armed"])
+        self.assertFalse(result["behavior_verified"])
+        self.assertEqual(result["language_capability"]["registrations"][0]["effective_languages"], ["python"])
+        self.assertEqual(result["language_capability"]["source_scan"]["required_languages"], ["python"])
+
+    def test_capability_marker_does_not_override_known_inert_java_filter(self):
+        self.add_java_source()
+        self.target.write_text(CAPABILITIES + LEGACY_FUNCTION_ONLY_HOOK)
+        self.write_settings()
+        result = self.assert_not_armed("java_function_only_filter")
+        capability = result["language_capability"]["registrations"][0]
+        self.assertEqual(capability["declared_languages"], ["java", "python"])
+        self.assertEqual(capability["effective_languages"], ["python"])
+
+    def test_marker_only_or_dead_entrypoints_do_not_establish_java_registration(self):
+        self.add_java_source()
+        self.write_settings()
+        for source in (CAPABILITIES, CAPABILITIES + '''
+from tmf.freshness import check_freshness
+def main():
+    return None
+def check_file_freshness(*args):
+    return {"fresh": True}
+'''):
+            with self.subTest(source=source):
+                self.target.write_text(source)
+                self.assert_not_armed("unrecognized_script")
+
+    def test_current_java_hook_declares_coverage_without_claiming_runtime_proof(self):
+        self.add_java_source()
+        self.write_settings()
+        before = {path: (path.read_bytes(), path.stat().st_mtime_ns)
+                  for path in self.base.rglob("*") if path.is_file()}
+        with mock.patch("subprocess.run", side_effect=AssertionError("doctor executed a process")):
+            result = self.result()
+        self.assertTrue(result["armed"])
+        self.assertFalse(result["runtime_verified"])
+        self.assertFalse(result["behavior_verified"])
+        self.assertEqual(result["language_capability"]["matched_tools_by_language"], {
+            "java": ["Read", "Edit", "Write"], "python": ["Read", "Edit", "Write"],
+        })
+        after = {path: (path.read_bytes(), path.stat().st_mtime_ns)
+                 for path in self.base.rglob("*") if path.is_file()}
+        self.assertEqual(before, after)
+
+    def test_missing_or_malformed_shared_selector_prevents_java_arming(self):
+        self.add_java_source()
+        self.write_settings()
+        self.selector.unlink()
+        self.assert_not_armed("unrecognized_java_selector")
+        for text in ("def :\n", "# capability header without selection logic\n"):
+            with self.subTest(text=text):
+                self.selector.write_text(text)
+                self.assert_not_armed("unrecognized_java_selector")
+
+    def test_missing_imported_shared_selector_also_prevents_python_arming(self):
+        self.write_settings()
+        self.selector.unlink()
+        result = self.assert_not_armed("unrecognized_java_selector")
+        self.assertEqual(result["language_capability"]["source_scan"]["required_languages"], ["python"])
+        self.assertEqual(result["matched_tools"], [])
+
+    def test_malformed_and_nonliteral_capabilities_are_not_executed_or_trusted(self):
+        self.add_java_source()
+        self.write_settings()
+        marker = self.base / "never-created"
+        for declaration in (
+            "REFLEX_CAPABILITIES = {'schema_version': 'unknown', 'file_languages': ['java']}\n",
+            "REFLEX_CAPABILITIES = {'schema_version': 'tmf.reflex.capabilities.v1', 'file_languages': 'java'}\n",
+            "REFLEX_CAPABILITIES = {'schema_version': 'tmf.reflex.capabilities.v1', 'file_languages': ['java', 'java']}\n",
+            CAPABILITIES + CAPABILITIES,
+            f"REFLEX_CAPABILITIES = __import__('pathlib').Path({str(marker)!r}).write_text('not allowed')\n",
+        ):
+            with self.subTest(declaration=declaration):
+                self.target.write_text(declaration + LEGACY_FUNCTION_ONLY_HOOK)
+                self.assert_not_armed("invalid_capabilities")
+        self.assertFalse(marker.exists())
+
+    def test_java_coverage_is_per_tool_not_the_union_of_incompatible_handlers(self):
+        self.add_java_source()
+        legacy = self.repo / "legacy/hooks/pre_tool_use.py"
+        legacy.parent.mkdir(parents=True)
+        legacy.write_text(LEGACY_FUNCTION_ONLY_HOOK)
+        self.settings["hooks"]["PreToolUse"][0]["matcher"] = "Edit|Write"
+        self.write_settings()
+        legacy_settings = deepcopy(self.settings)
+        legacy_settings["hooks"]["PreToolUse"][0]["matcher"] = "Read"
+        self.handler(legacy_settings)["command"] = f'"{sys.executable}" "{legacy}"'
+        self.write_settings("global", legacy_settings)
+        result = self.assert_not_armed("missing_language_coverage")
+        self.assertEqual(result["registered_tools"], ["Read", "Edit", "Write"])
+        self.assertEqual(result["matched_tools"], ["Edit", "Write"])
+        self.assertEqual(result["language_capability"]["matched_tools_by_language"]["java"], ["Edit", "Write"])
+        self.settings["hooks"]["PreToolUse"][0]["matcher"] = "Read|Edit|Write"
+        self.write_settings()
+        self.assertTrue(self.result()["armed"])
+
+    def test_other_source_languages_are_visible_but_not_claimed_as_supported(self):
+        self.add_java_source()
+        (self.repo / "integration.ts").write_text("export const value = 1;\n")
+        self.write_settings()
+        result = self.result()
+        self.assertTrue(result["armed"])
+        self.assertIn("other_languages_unverified", self.codes(result))
+        self.assertEqual(result["language_capability"]["source_scan"]["other_source_languages"], ["typescript"])
+        self.assertNotIn("typescript", result["language_capability"]["matched_tools_by_language"])
+
+    def test_source_discovery_skips_declared_metadata_but_includes_nested_projects(self):
+        self.add_java_source(".git/objects/NotSource.java")
+        self.add_java_source(".venv/NotSource.java")
+        self.write_settings()
+        self.target.write_text(LEGACY_FUNCTION_ONLY_HOOK)
+        self.assertTrue(self.result()["armed"])
+        self.add_java_source(".nested/repository/src/RealSource.java")
+        self.assert_not_armed("java_function_only_filter")
+
+    def test_incomplete_source_discovery_never_arms(self):
+        self.write_settings()
+        with mock.patch("tmf.doctor.os.scandir", side_effect=PermissionError("DO_NOT_PRINT")):
+            result = self.assert_not_armed("source_scan_unreadable", "unknown")
+        self.assertNotIn("DO_NOT_PRINT", json.dumps(result))
+        with mock.patch("tmf.doctor._MAX_SOURCE_ENTRIES", 1):
+            self.assert_not_armed("source_scan_limit", "unknown")
+        with mock.patch("tmf.doctor._MAX_SOURCE_DEPTH", 0):
+            self.assert_not_armed("source_scan_limit", "unknown")
+
+    def test_source_directory_symlinks_and_broken_links_are_inconclusive(self):
+        self.write_settings()
+        outside = self.base / "outside"
+        outside.mkdir()
+        (outside / "Hidden.java").write_text("class Hidden {}\n")
+        link = self.repo / "linked-source"
+        link.symlink_to(outside, target_is_directory=True)
+        self.assert_not_armed("source_scan_symlink", "unknown")
+        link.unlink()
+        link.symlink_to(self.base / "missing")
+        self.assert_not_armed("source_scan_unreadable", "unknown")
 
 
 if __name__ == "__main__":

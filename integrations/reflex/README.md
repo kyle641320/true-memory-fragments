@@ -4,7 +4,7 @@ This directory turns TMF freshness facts into an execution-time safety reflex fo
 
 ## Architecture
 
-- **TMF engine = sensory organ and freshness authority.** Function claims and `fn_hash` comparisons say whether cached cognition still matches source.
+- **TMF engine = sensory organ and freshness authority.** Python function and Java declaration bindings check whether the tracked source basis changed; freshness does not establish semantic truth.
 - **This integration = reflex arc and actuator.** It intercepts a concrete code action, blocks when the relevant fact is stale, and gives a localized re-warm path.
 - **Locator != reflex.** Retrieval/locator answers a question by finding claims. Reflex runs on the tool execution path even when retrieval had no hit. Earlier Guava A/B experiments measured locator behavior only; their zero-hit result did **not** exercise and cannot disprove this reflex.
 
@@ -40,12 +40,19 @@ tmf doctor --repo /absolute/path/to/task-repo
 It reads user, project, and project-local Claude settings without modifying
 them. Missing/disabled/invalid registration exits 1 with
 `reflex NOT armed — operating as opt-in memory`; exit 0 confirms static
-registration only, not host execution. `--json` provides a machine-readable
+registration and declared Python/Java file-gate compatibility only, not host execution. `--json` provides a machine-readable
 report. Doctor is included in rc5; older rc3/rc4 wheels do not include it. The
 rc5 source distribution includes this integration directory, but the engine-only
 wheel does not install or register these hooks in a target repository.
 See [the diagnostic guide](../../docs/reflex-doctor.md) for scope, setup, and
 the separate runtime verification step.
+
+**Java fix after rc5:** update the whole integration and engine, not just the
+package. The old function-only hook missed Java methods (`scope="class"`,
+`role="declaration"`). Updated doctor rejects that legacy hook on Java projects;
+updated file checks and local re-warm share `scripts/claim_selection.py`. Install
+the engine's `[java]` parser extra in the hook interpreter and run the mandatory
+Java smoke below. Static capability declarations are not behavioral proof.
 
 ### OpenClaw
 
@@ -86,11 +93,18 @@ Existing hooks must be merged rather than overwritten.
 
 `exec`/shell is not intercepted by the Python reflex, so the recovery action cannot recursively block itself. Failures, unknown symbols, unsupported languages, missing state, and path-ambiguous patches degrade conservatively to allow rather than deadlock the agent.
 
+Missing state or zero eligible file claims now produces an explicit coverage
+warning, never a `fresh` result; zero-claim local re-warm cannot claim success.
+Java file checks cover direct type/method/constructor/field nodes. A type hash
+includes member bodies, so the enclosing type may also be stale. Java cross-file
+new-call discovery is not supported; that additional check is Python-only.
+
 ## Test
 
 ```sh
 python -m unittest discover -s integrations/reflex/tests -v
 python tools/verify_reflex_arming.py
+python tools/verify_reflex_arming.py --require-java
 cd integrations/reflex/openclaw-plugin && npm test && npm run typecheck
 ```
 

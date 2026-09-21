@@ -9,6 +9,12 @@ separate deployment states.
 change. Older rc3/rc4 wheels do not include it; upgrade the engine in your chosen
 environment before using these commands. See the [installation guide](early-preview.md).
 
+**Java coverage fix (source change after rc5):** the published rc5 hook selected
+only Python `scope="function"` claims. Java methods use `scope="class"` with a
+`role="declaration"` binding, so registration could pass while the hook checked
+zero methods. The updated hook and doctor below require updated source; merely
+installing the rc5 wheel does not fix an existing integration copy.
+
 ## Post-install check
 
 After installing TMF and setting up the intended task repository, run:
@@ -29,8 +35,10 @@ reflex NOT armed — operating as opt-in memory
 ```
 
 Exit **0** means a supported, statically recognized registration covers Claude's
-`Read`, `Edit`, and `Write` tools. It does **not** prove that the host loaded or
-fired the hook. JSON always includes `runtime_verified: false`.
+`Read`, `Edit`, and `Write` tools and passes the static Python/Java capability
+checks for the inspected repository. It does **not** prove that the host loaded
+or fired the hook, that its interpreter has the parser installed, or that its
+cache covers every source node. JSON always includes `runtime_verified: false`.
 Disabled, malformed, incomplete, or unverifiable configurations return 1;
 the report lists checked locations, findings and setup guidance.
 
@@ -45,6 +53,19 @@ the report lists checked locations, findings and setup guidance.
   of the filename is not sufficient.
 - `disableAllHooks`, with local settings taking precedence over project
   settings, which take precedence over user settings.
+- Bounded source-filename inspection for Python/Java file coverage. Nested
+  projects are included; reported metadata/dependency exclusions are not
+  inspected. An incomplete scan cannot establish an armed result. Other known
+  source languages are explicitly reported as unverified, not protected.
+- On Java repositories, each required tool needs a hook with the supported
+  Java capability declaration and selector linkage. A recognized legacy
+  function-only file filter fails this check even if someone appends a Java
+  capability marker. Registration remains separately visible in the report.
+
+These are **static compatibility checks, not execution proofs**. A capability
+literal and recognizable selector shape cannot prove arbitrary configured code
+is correct. Doctor never imports or executes that code. Use the behavioral
+smoke below, then verify actual dispatch in the host.
 
 The check recognizes direct Python launches of the shipped
 `integrations/reflex/hooks/pre_tool_use.py` layout. It deliberately does not
@@ -57,7 +78,7 @@ This command diagnoses Claude settings, not an OpenClaw plugin installation.
 
 ## Arm the hook explicitly
 
-1. Obtain the integration from a TMF source checkout or the rc5 source
+1. Obtain the integration from an updated TMF source checkout or source
    distribution. The engine-only wheel does not install the `integrations/`
    directory into a target repository.
 2. Merge the [example configuration](../integrations/reflex/examples/claude-settings.example.json)
@@ -71,6 +92,28 @@ This command diagnoses Claude settings, not an OpenClaw plugin installation.
    then change a tracked function and confirm the stale action is blocked.
    A static doctor result alone is not runtime enforcement evidence.
 
+For Java, install the matching engine's `[java]` extra in the hook interpreter,
+update the **whole** integration (including `scripts/claim_selection.py` and
+`local_warm.py`), and warm the target repository. Upgrading only the engine or
+copying only the hook file can leave the integration incomplete.
+
+The file gate checks Python function nodes and Java direct syntactic declaration
+nodes (including methods, constructors, types and fields), using production
+freshness checks. Java type spans include their member bodies: a method edit
+can correctly stale both that method and its enclosing type, but an unchanged
+sibling method is not reported stale. A direct Java declaration enriched with
+entity dependencies is checked through a non-mutating projection of its own
+declaration binding, not dropped because it has multiple bindings. A local
+`fresh` result does not assert that those external dependencies are fresh.
+Multi-file relationship claims are not part of this local-file gate.
+Python new-call detection is separate; Java
+cross-file discovery of newly written calls is **not implemented**.
+
+No eligible claims, unsupported source languages and missing state are not
+freshness measurements. The hook retains its nonblocking fallback but emits an
+explicit warning/reason rather than `fresh`. Local re-warm uses the same node
+selector and cannot report `all_fresh_now=true` after verifying zero claims.
+
 TMF does not edit Claude settings, install hooks, restart a host, or change
 gateway configuration on your behalf.
 
@@ -79,6 +122,8 @@ gateway configuration on your behalf.
 ```sh
 python tools/verify_reflex_arming.py
 python tools/verify_reflex_arming.py --python /path/to/installed-venv/bin/python
+python tools/verify_reflex_arming.py --require-java
+python tools/verify_reflex_arming.py --python /path/to/installed-java-venv/bin/python --require-java
 ```
 
 The offline smoke constructs its own temporary Git repository and Claude
@@ -88,6 +133,14 @@ block by direct hook invocation, then disables/removes the registration and
 checks the warning again. It also checks that doctor leaves the fixture
 unchanged. The `--python` form verifies imports come from the installed wheel,
 not the source checkout. CI covers source and installed-package paths.
+
+With the Java parser available, the smoke also derives real Java method claims,
+asserts FRESH at T0, mutates one method, asserts STALE with an unchanged control,
+and verifies Read/Edit/Write block with the correct binding identities. It then
+checks local re-warm restores coverage and a legacy Java-blind hook is rejected
+by doctor. Core-only installations report the Java behavioral checks as skipped;
+`--require-java` turns parser absence into failure. CI requires Java checks for
+source, installed Java wheel, and extracted source-distribution integration.
 
 Historical `fresh_revisit` / `mutation_revisit` results describe behavior with
 evidence supplied by their harness. They do not measure whether Claude settings

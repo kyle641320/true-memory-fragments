@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-TMF 函数级一致性反射钩子
-TMF Function-Level Consistency Reflex Hook
+TMF 源码节点一致性反射钩子
+TMF Source-Node Consistency Reflex Hook
 
-在 agent 即将触碰代码文件时，检查 TMF 缓存中该文件的函数是否 stale。
-若 stale → 硬阻断（exit 2），精确报出变化函数名。
-若 fresh → 放行（exit 0）。
+在 agent 即将触碰代码文件时，检查该文件的 Python 函数 / Java 声明是否 stale。
+若 stale → 硬阻断（exit 2），报出变化的源码节点。
+若 fresh → 放行（exit 0）。没有覆盖时明确告警放行，不宣称 fresh。
 
 仿生学三组件：
-  感觉器官  Sensory organ    TMF per-function fn_hash freshness (2ms-level)
+  感觉器官  Sensory organ    TMF source-node token hash freshness
   反射弧    Reflex arc        Claude Code / Codex PreToolUse hook
   反射动作  Reflex action     exit 2 hard block + localized single-file re-warm
 
@@ -16,8 +16,9 @@ TMF Function-Level Consistency Reflex Hook
   1. 函数级精度 — 报出具体哪个函数变了，不是"该文件有变化"
   2. 硬阻断 exit 2 — 不在内容里塞警告然后放行
   3. 一视同仁 — 不预判文件"重要性"；agent 正要碰的就是当下重要的
-  4. 严格局部 — 只查目标文件的函数，不触发全量 re-warm
-  5. 只用 TMF fn_hash — 不做语义检索、不猜意图
+  4. 严格局部 — 只查目标文件的直接节点，不触发全量 re-warm
+  5. 只用 TMF source hashes — 不做语义检索、不猜意图
+  6. 新写调用的跨文件检查仅支持 Python；Java 支持目标文件声明检查
 
 恢复闭环：
   阻断 → agent 收到"函数 X 已变化" → 运行 tmf-local-warm <该文件> →
@@ -35,6 +36,14 @@ import shlex
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from state_root import canonical_state_root
+from claim_selection import empty_coverage, select_file_claims
+
+# A statically inspectable capability declaration, not proof that a host runs
+# this hook or that every source file has been warmed successfully.
+REFLEX_CAPABILITIES = {
+    "schema_version": "tmf.reflex.capabilities.v1",
+    "file_languages": ["python", "java"],
+}
 
 # ── 配置 ──────────────────────────────────────────────────────────
 # 代码文件后缀（我们追踪的文件类型）
@@ -94,10 +103,11 @@ def resolve_state_root(repo_root: str) -> Path:
 
 def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dict:
     """
-    检查指定文件中所有 function-scope claims 的 freshness。
+    检查指定文件中所有受支持的直接源码节点的 freshness。
 
     返回:
-        {"fresh": bool, "stale_functions": [str], "error": str | None}
+        Empty coverage has fresh=False and no stale functions; it is unknown,
+        not a collision. The caller may allow it with an explicit warning.
     """
     _ensure_tmf_importable()
 
@@ -108,34 +118,26 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
     repo = GitRepo(repo_root)
     store = Store(canonical_state_root(repo_root, state_root).parent)
 
-    # 收集该文件的所有 function-scope claim IDs
-    claim_ids: set[str] = set()
-    for claim in store.iter_claims():
-        if claim.scope != "function":
-            continue
-        for binding in claim.bindings:
-            if binding.path == rel_path:
-                claim_ids.add(claim.id)
-                break
-
-    if not claim_ids:
-        return {"fresh": True, "stale_functions": [], "error": None}
+    claims = select_file_claims(store.iter_claims(), rel_path)
+    if not claims:
+        reason, warning = empty_coverage(rel_path)
+        return {"fresh": False, "stale_functions": [], "stale_items": [],
+                "checked_claims": 0, "reason_code": reason, "warning": warning,
+                "error": None}
 
     stale_functions: list[str] = []
     stale_items: list[dict] = []
-    for claim_id in sorted(claim_ids):
-        claim = store.get_claim(claim_id)
-        if claim is None:
-            continue
+    for claim in claims:
+        binding = claim.bindings[0]
         freshness = check_freshness(repo, claim)
         if not freshness.fresh:
             for stale_binding in freshness.stale_bindings:
                 # 解析 stale binding: "path:qualname: reason"
                 parts = stale_binding.split(":", 2)
-                func_name = parts[1] if len(parts) > 1 else stale_binding
-                detail = parts[2].strip() if len(parts) > 2 else "changed"
+                func_name = binding.qualname or claim.body.get("qualname") or claim.id
+                detail = (parts[2].strip() if len(parts) > 2 and parts[0] == rel_path
+                          else stale_binding)
                 stale_functions.append(f"{func_name} — {detail}")
-                binding = next((b for b in claim.bindings if b.path == rel_path), None)
                 stale_items.append({
                     "path": rel_path,
                     "symbol": func_name,
@@ -150,6 +152,9 @@ def check_file_freshness(repo_root: str, rel_path: str, state_root: Path) -> dic
         "fresh": len(stale_functions) == 0,
         "stale_functions": stale_functions,
         "stale_items": stale_items,
+        "checked_claims": len(claims),
+        "reason_code": "fresh" if not stale_functions else "stale_collision",
+        "warning": None,
         "error": None,
     }
 
@@ -364,8 +369,13 @@ def emit_block(payload: dict, human_reason: str) -> None:
 
 
 def emit_allow(repo_root: str | None = None, state_root: Path | None = None,
-               rel_path: str | None = None, reason_code: str = "fresh") -> None:
+               rel_path: str | None = None, reason_code: str = "fresh",
+               warning: str | None = None, checked_claims: int | None = None) -> None:
     payload = {"schema_version": "tmf.reflex.decision.v1", "decision": "allow", "reason_code": reason_code}
+    if warning:
+        payload["warning"] = warning
+    if checked_claims is not None:
+        payload["checked_claims"] = checked_claims
     if repo_root and state_root and rel_path:
         payload.update({"canonical_repo_root": str(Path(repo_root).resolve()),
                         "canonical_state_root": str(state_root.resolve()),
@@ -413,16 +423,16 @@ def main() -> None:
     except ValueError as exc:
         sys.stderr.write(json.dumps({"decision": "block", "code": "state_root_error", "error": str(exc)}) + "\n")
         sys.exit(EXIT_BLOCK)
-    tmf_dir = state_root / "claims"
-    if not tmf_dir.exists():
-        # TMF 未 warm — 放行（这是初始状态，无可比对）
-        sys.exit(EXIT_ALLOW)
-
     # 6. 计算相对路径
     try:
         rel_path = str(Path(file_path).resolve().relative_to(Path(repo_root).resolve()))
     except ValueError:
         sys.exit(EXIT_ALLOW)
+
+    tmf_dir = state_root / "claims"
+    if not tmf_dir.exists():
+        emit_allow(repo_root, state_root, rel_path, "not_warmed",
+                   "TMF reflex state is not warmed; allowing without a freshness determination.", 0)
 
     # 7. 检查目标文件自身 freshness
     try:
@@ -448,9 +458,10 @@ def main() -> None:
         )
         sys.exit(EXIT_ALLOW)
 
-    if result["fresh"]:
-        # 目标文件 fresh；Edit/Write 还要检查这次新写下的调用符号。
-        if tool_name in {"edit", "write", "apply_patch"}:
+    if not result["stale_functions"]:
+        # Even a new/uncovered Python file can introduce a stale callee.
+        # This parser is Python-specific: Java new-call analysis is not claimed.
+        if suffix == ".py" and tool_name in {"edit", "write", "apply_patch"}:
             new_text = extract_new_written_text(tool_name, tool_input)
             try:
                 call_result = check_called_symbol_freshness(repo_root, new_text, state_root)
@@ -493,10 +504,10 @@ def main() -> None:
                 emit_block(collision_payload(repo_root, state_root, rel_path, tool_name, tool_input,
                                              items, "stale_collision"), message)
 
-        # 文件 fresh 且本次新写调用的符号 fresh/未知/多义 — 放行
-        emit_allow(repo_root, state_root, rel_path)
+        emit_allow(repo_root, state_root, rel_path, result["reason_code"],
+                   result["warning"], result["checked_claims"])
 
-    # 8. 有 stale 函数 — 硬阻断
+    # 8. 有 stale 源码节点 — 硬阻断
     stale_list = "\n".join(f"  • {fn}" for fn in result["stale_functions"])
     # 推测 tmf-local-warm 脚本的位置
     script_dir = Path(__file__).resolve().parent.parent
@@ -506,7 +517,7 @@ def main() -> None:
         f"═══ TMF 一致性反射阻断 ═══\n\n"
         f"你正要触碰的代码相对于 TMF 缓存已发生变化：\n\n"
         f"{stale_list}\n\n"
-        f"这些函数的旧认知已不可靠。请先重新认知这一部分代码：\n\n"
+        f"这些源码节点的旧认知已不可靠。请先重新认知这一部分代码：\n\n"
         f"  python3 {warm_script} {repo_root} {rel_path} --state-root {state_root}\n\n"
         f"执行上条命令后 TMF 缓存即更新到当前版本，再次操作时会自动放行。\n\n"
         f"正在执行的操作：{tool_name} → {rel_path}"

@@ -31,6 +31,8 @@ def snapshot(root: Path) -> dict[str, str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--python", help="Python in a wheel installation venv")
+    parser.add_argument("--require-java", action="store_true",
+                        help="Fail rather than skip Java coverage when the parser extra is absent")
     args = parser.parse_args()
     source = Path(__file__).resolve().parents[1]
     # Resolving a venv's Python symlink would select the system interpreter.
@@ -61,6 +63,12 @@ def main() -> int:
             return result
 
         module = run(python_args + ["-c", "import tmf; print(tmf.__file__)"]).stdout.strip()
+        java_available = json.loads(run(python_args + ["-c", (
+            "import json; from tmf.java_extract import java_status; "
+            "print(json.dumps(java_status().available))"
+        )]).stdout)
+        if args.require_java and not java_available:
+            raise AssertionError("Java reflex acceptance requires the [java] parser extra; cannot skip")
         if args.python:
             run(python_args + ["-c", (
                 "import pathlib, sys, tmf; "
@@ -121,18 +129,107 @@ def main() -> int:
         target.write_text("def calculate(value, offset):\n    return value + offset\n", encoding="utf-8")
         blocked = run(python_args + [str(hook)], code=2, stdin=payload)
         assert "calculate" in blocked.stderr, blocked.stderr
+        checks = ["warmed_unarmed", "mutated_unarmed", "configured_registration",
+                  "fresh_hook_allow", "stale_hook_block"]
+
+        # A matched tool with no eligible claims is not a freshness measurement.
+        uncovered = repo / "Unindexed.java"
+        uncovered.write_text("class Unindexed { int value() { return 1; } }\n", encoding="utf-8")
+        uncovered_payload = json.dumps({"tool_name": "Read", "cwd": str(repo),
+                                        "tool_input": {"file_path": str(uncovered)}})
+        uncovered_result = run(python_args + [str(hook)], stdin=uncovered_payload)
+        uncovered_report = json.loads(uncovered_result.stdout)
+        assert uncovered_report["reason_code"] == "no_eligible_claims", uncovered_report
+        assert uncovered_report.get("warning"), uncovered_report
+        checks.append("uncovered_java_not_reported_fresh")
+
+        if java_available:
+            java_target = repo / "Service.java"
+            java_original = ("class Service { int value() { return 1; } "
+                             "int control() { return 3; } }\n")
+            java_target.write_text(java_original, encoding="utf-8")
+            run(["git", "add", "Service.java"])
+            run(["git", "commit", "-m", "Java fixture baseline"])
+            run(cli + ["warm", "--repo", str(repo)])
+            # Assert actual production representation and T0 freshness, not
+            # hand-built claims or a hook's self-declared capabilities.
+            probe = (
+                "import json; from tmf.store import Store; from tmf.git import GitRepo; "
+                "from tmf.freshness import check_freshness; "
+                "cs=[c for c in Store('.').iter_claims() if c.body.get('language')=='java' "
+                "and c.body.get('node_kind')=='method' and c.bindings[0].path=='Service.java']; "
+                "assert len(cs)==2; "
+                "assert all(c.scope=='class' and c.bindings[0].role=='declaration' for c in cs); "
+                "print(json.dumps({c.body['qualname']:check_freshness(GitRepo('.'),c).fresh for c in cs}))"
+            )
+            assert json.loads(run(python_args + ["-c", probe]).stdout) == {
+                "Service.value": True, "Service.control": True}
+            doctor(True)
+            for tool_name in ("Read", "Edit", "Write"):
+                event = json.dumps({"tool_name": tool_name, "cwd": str(repo),
+                                    "tool_input": {"file_path": str(java_target)}})
+                result = json.loads(run(python_args + [str(hook)], stdin=event).stdout)
+                assert result["reason_code"] == "fresh", result
+            java_target.write_text(java_original.replace("return 1", "return 2"), encoding="utf-8")
+            assert json.loads(run(python_args + ["-c", probe]).stdout) == {
+                "Service.value": False, "Service.control": True}
+            for tool_name in ("Read", "Edit", "Write"):
+                event = json.dumps({"tool_name": tool_name, "cwd": str(repo),
+                                    "tool_input": {"file_path": str(java_target)}})
+                blocked = run(python_args + [str(hook)], code=2, stdin=event)
+                report = json.loads(blocked.stderr)
+                assert report["decision"] == "block", report
+                names = {item["qualname"] for item in report["stale_paths"]}
+                assert "Service.value" in names and "Service.control" not in names, report
+                assert all(item["path"] == "Service.java" for item in report["stale_paths"]), report
+            warmed = json.loads(run(python_args + [str(integration / "scripts/local_warm.py"),
+                                  str(repo), "Service.java"]).stdout)
+            assert warmed["all_fresh_now"] is True and warmed["stale_check"], warmed
+            assert any(item["qualname"] == "Service.value" for item in warmed["stale_check"]), warmed
+            result = json.loads(run(python_args + [str(hook)], stdin=event).stdout)
+            assert result["reason_code"] == "fresh", result
+
+            # Model the historical function-only integration separately from
+            # the installed engine; an engine upgrade cannot update this copy.
+            current_script = hook.read_text(encoding="utf-8")
+            legacy_script = '''from tmf.freshness import check_freshness
+def check_file_freshness(repo_root, rel_path, state_root):
+    from tmf.store import Store
+    claim_ids = set()
+    for claim in Store(repo_root).iter_claims():
+        if claim.scope != "function":
+            continue
+        for binding in claim.bindings:
+            if binding.path == rel_path:
+                claim_ids.add(claim.id)
+    if not claim_ids:
+        return {"fresh": True, "stale_functions": [], "error": None}
+    return all(check_freshness(repo_root, claim).fresh
+               for claim in Store(repo_root).iter_claims() if claim.id in claim_ids)
+def main():
+    check_file_freshness(".", "Service.java", ".tmf")
+'''
+            hook.write_text(legacy_script, encoding="utf-8")
+            legacy_report = doctor(False)
+            assert "registration_found" in {item["code"] for item in legacy_report["findings"]}, legacy_report
+            assert "java_function_only_filter" in {item["code"] for item in legacy_report["findings"]}, legacy_report
+            hook.write_text(current_script, encoding="utf-8")
+            doctor(True)
+            checks.extend(["java_production_claims_fresh", "java_read_edit_write_fresh_allow",
+                           "java_mutation_and_unchanged_control", "java_read_edit_write_stale_block",
+                           "java_local_rewarm_restores_coverage", "legacy_java_blind_hook_not_armed"])
         settings["disableAllHooks"] = True
         settings_path.write_text(json.dumps(settings), encoding="utf-8")
         doctor(False)
+        checks.extend(["disabled_registration", "removed_registration", "doctor_read_only"])
         settings_path.write_text("{}", encoding="utf-8")
         doctor(False)
 
         print(json.dumps({
             "status": "pass", "package": module,
             "installed_wheel": bool(args.python),
-            "checks": ["warmed_unarmed", "mutated_unarmed", "configured_registration",
-                       "fresh_hook_allow", "stale_hook_block", "disabled_registration",
-                       "removed_registration", "doctor_read_only"],
+            "checks": checks,
+            "java_behavioral_checks": "passed" if java_available else "skipped: parser extra absent",
             "claude_host_dispatch_verified": False,
             "autonomous_agent_experiment": False,
         }, indent=2))

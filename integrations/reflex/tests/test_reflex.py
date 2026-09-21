@@ -75,14 +75,14 @@ def calibrate_repo(repo: Path, old_rev: str, new_rev: str = "HEAD", update_cache
     )
 
 
-def call_hook(
+def run_hook(
     repo: Path,
     rel_path: str,
     tool_name: str = "Edit",
     new_text: str | None = None,
     tool_input_extra: dict | None = None,
-) -> tuple[int, str]:
-    """模拟 PreToolUse 钩子调用，返回 (exit_code, stderr)。"""
+) -> subprocess.CompletedProcess:
+    """Run the real hook so both allow receipts and collisions are observable."""
     tool_input = {"file_path": str(repo / rel_path)}
     if new_text is not None:
         if tool_name == "Write":
@@ -99,8 +99,13 @@ def call_hook(
     env = dict(os.environ)
     env["TMF_WORKTREE"] = str(TMF_WORKTREE)
     env["TMF_STATE_ROOT"] = str(repo / ".tmf")
-    proc = subprocess.run([sys.executable, str(HOOK_SCRIPT)],
+    return subprocess.run([sys.executable, str(HOOK_SCRIPT)],
                           input=hook_input, capture_output=True, text=True, env=env)
+
+
+def call_hook(*args, **kwargs) -> tuple[int, str]:
+    """Compatibility helper for the Python collision tests."""
+    proc = run_hook(*args, **kwargs)
     return proc.returncode, proc.stderr
 
 
@@ -121,6 +126,65 @@ def local_warm(repo: Path, rel_path: str) -> dict:
 
 
 class ReflexHealthTests(unittest.TestCase):
+
+    def test_unwarmed_file_is_allowed_without_freshness_claim(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"mod.py": "def f():\n    return 1\n"})
+            proc = run_hook(repo, "mod.py")
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            receipt = json.loads(proc.stdout)
+            self.assertEqual(receipt["reason_code"], "not_warmed")
+            self.assertEqual(receipt["checked_claims"], 0)
+            self.assertIn("without a freshness determination", receipt["warning"])
+
+    def test_no_eligible_nodes_do_not_report_fresh_after_warm(self):
+        for path, source, expected_reason in [
+            ("empty.py", "# nothing to bind\n", "no_eligible_claims"),
+            ("mod.js", "function f() { return 1; }\n", "unsupported_language"),
+        ]:
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as td:
+                repo = make_repo(Path(td), {path: source})
+                warm_repo(repo)
+                proc = run_hook(repo, path)
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                receipt = json.loads(proc.stdout)
+                self.assertEqual(receipt["reason_code"], expected_reason)
+                self.assertEqual(receipt["checked_claims"], 0)
+                self.assertTrue(receipt["warning"])
+                result = local_warm(repo, path)
+                self.assertFalse(result["all_fresh_now"], result)
+                self.assertEqual(result["checked_claims"], 0)
+                self.assertEqual(result["reason_code"], expected_reason)
+                self.assertTrue(result["warning"])
+
+    def test_java_without_parser_is_allowed_with_coverage_warning(self):
+        # -S excludes optional site packages even on the mandatory Java CI job.
+        # Exercise degraded production warm and the actual hook/local recovery,
+        # not fabricated Java claim dictionaries.
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"Service.java": "class Service { int f() { return 1; } }\n"})
+            env = dict(os.environ, PYTHONPATH=str(TMF_WORKTREE),
+                       TMF_WORKTREE=str(TMF_WORKTREE), TMF_STATE_ROOT=str(repo / ".tmf"))
+            subprocess.run([sys.executable, "-S", "-c",
+                            "from tmf.java_extract import java_status; assert not java_status().available"],
+                           cwd=TMF_WORKTREE, env=env, capture_output=True, text=True, check=True)
+            subprocess.run([sys.executable, "-S", "-m", "tmf.cli", "warm", "--repo", str(repo)],
+                           cwd=TMF_WORKTREE, env=env, capture_output=True, text=True, check=True)
+            proc = subprocess.run([sys.executable, "-S", str(HOOK_SCRIPT)],
+                                  input=json.dumps({"tool_name": "Read", "cwd": str(repo),
+                                                    "tool_input": {"file_path": str(repo / "Service.java")}}),
+                                  env=env, capture_output=True, text=True)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            receipt = json.loads(proc.stdout)
+            self.assertEqual(receipt["reason_code"], "no_eligible_claims")
+            self.assertEqual(receipt["checked_claims"], 0)
+            self.assertIn("dependencies", receipt["warning"])
+            warmed = subprocess.run([sys.executable, "-S", str(WARM_SCRIPT), str(repo), "Service.java"],
+                                    env=env, capture_output=True, text=True, check=True)
+            result = json.loads(warmed.stdout)
+            self.assertFalse(result["all_fresh_now"], result)
+            self.assertEqual(result["checked_claims"], 0)
+            self.assertTrue(result["warning"])
 
     def test_git_calibration_emits_manifest_and_refreshes_changed_file(self):
         with tempfile.TemporaryDirectory() as td:
@@ -428,6 +492,219 @@ class ReflexHealthTests(unittest.TestCase):
             code, _ = call_hook(repo, "mod.py", tool_name="Bash")
             self.assertEqual(code, 0, "Bash 工具应放行，否则恢复动作会死循环")
 
+@unittest.skipUnless(
+    importlib.util.find_spec("tree_sitter") and importlib.util.find_spec("tree_sitter_java"),
+    "Java extraction dependencies are not installed",
+)
+class JavaReflexHealthTests(unittest.TestCase):
+    SOURCE = (
+        "class Service {\n"
+        "    int count = 1;\n"
+        "    Service() { count = 2; }\n"
+        "    int changed() { return count; }\n"
+        "    int stable() { return 7; }\n"
+        "}\n"
+    )
+
+    def test_java_production_method_claim_blocks_read_edit_and_write(self):
+        from tmf.freshness import check_freshness
+        from tmf.git import GitRepo
+        from tmf.store import Store
+
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"Service.java": self.SOURCE})
+            warm_repo(repo)
+            method = next(c for c in Store(repo).iter_claims()
+                          if c.body.get("qualname") == "Service.changed"
+                          and c.body.get("extraction_tier") == "java-treesitter-syntactic")
+            self.assertEqual(method.scope, "class")
+            self.assertEqual(method.bindings[0].role, "declaration")
+            self.assertTrue(check_freshness(GitRepo(repo), method).fresh)
+            before = run_hook(repo, "Service.java", tool_name="Read")
+            self.assertEqual(before.returncode, 0, before.stderr)
+            self.assertEqual(json.loads(before.stdout)["reason_code"], "fresh")
+            (repo / "Service.java").write_text(
+                self.SOURCE.replace("return count;", "return count + 1;"), encoding="utf-8")
+            freshness = check_freshness(GitRepo(repo), method)
+            self.assertFalse(freshness.fresh)
+            self.assertEqual(freshness.stale_bindings,
+                             ["Service.java:Service.changed: java_hash mismatch"])
+            for tool in ("Read", "Edit", "Write"):
+                with self.subTest(tool=tool):
+                    proc = run_hook(repo, "Service.java", tool_name=tool)
+                    self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+                    receipt = json.loads(proc.stderr)
+                    self.assertEqual(receipt["reason_code"], "stale_collision")
+                    names = {item["qualname"] for item in receipt["stale_paths"]}
+                    self.assertIn("Service.changed", names)
+                    self.assertNotIn("Service.stable", names)
+                    self.assertNotIn("Service.Service", names)
+                    for item in receipt["stale_paths"]:
+                        self.assertEqual(item["path"], "Service.java")
+                        self.assertTrue(item["anchor"]["reliable"])
+
+    def test_java_constructor_field_and_type_changes_block(self):
+        cases = [
+            ("count = 2;", "count = 3;", "Service.Service"),
+            ("count = 1;", "count = 9;", "Service.count"),
+            ("class Service", "final class Service", "Service"),
+        ]
+        for old, new, name in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as td:
+                repo = make_repo(Path(td), {"Service.java": self.SOURCE})
+                warm_repo(repo)
+                (repo / "Service.java").write_text(self.SOURCE.replace(old, new), encoding="utf-8")
+                proc = run_hook(repo, "Service.java")
+                self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+                names = {item["qualname"] for item in json.loads(proc.stderr)["stale_paths"]}
+                self.assertIn(name, names)
+                self.assertNotIn("Service.stable", names)
+
+    def test_java_renamed_and_deleted_methods_block(self):
+        for replacement in ("    int renamed() { return count; }\n", ""):
+            with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as td:
+                repo = make_repo(Path(td), {"Service.java": self.SOURCE})
+                warm_repo(repo)
+                (repo / "Service.java").write_text(
+                    self.SOURCE.replace("    int changed() { return count; }\n", replacement),
+                    encoding="utf-8")
+                proc = run_hook(repo, "Service.java")
+                self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+                missing = [item for item in json.loads(proc.stderr)["stale_paths"]
+                           if item["qualname"] == "Service.changed"]
+                self.assertEqual(len(missing), 1)
+                self.assertEqual(missing[0]["detail"], "java node missing")
+
+    def test_java_overload_mutation_keeps_changed_declaration_anchor(self):
+        source = (
+            "class Service {\n"
+            "    int size(int value) { return value; }\n"
+            "    int size(String value) { return value.length(); }\n"
+            "}\n"
+        )
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"Service.java": source})
+            warm_repo(repo)
+            (repo / "Service.java").write_text(
+                source.replace("return value;", "return value + 1;"), encoding="utf-8")
+            proc = run_hook(repo, "Service.java")
+            self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+            overloads = [item for item in json.loads(proc.stderr)["stale_paths"]
+                         if item["qualname"] == "Service.size"]
+            self.assertEqual(len(overloads), 1)
+            self.assertEqual(overloads[0]["anchor"]["line_start"], 2)
+
+    def test_java_unchanged_target_does_not_check_relationship_endpoint(self):
+        from tmf.freshness import check_freshness
+        from tmf.git import GitRepo
+        from tmf.store import Store
+
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "Child.java": "class Child extends Parent { int own() { return 2; } }\n",
+                "Parent.java": "class Parent { int base() { return 1; } }\n",
+            })
+            warm_repo(repo)
+            edges = [c for c in Store(repo).iter_claims() if c.body.get("edge_kind") == "inherits"]
+            self.assertTrue(edges, "fixture must contain a production relationship")
+            (repo / "Parent.java").write_text(
+                "class Parent { int base() { return 9; } }\n", encoding="utf-8")
+            self.assertTrue(any(not check_freshness(GitRepo(repo), c).fresh for c in edges))
+            proc = run_hook(repo, "Child.java")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(json.loads(proc.stdout)["reason_code"], "fresh")
+            self.assertEqual(run_hook(repo, "Parent.java").returncode, 2)
+
+    def test_java_local_warm_verifies_same_nodes_and_is_file_local(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {
+                "Service.java": self.SOURCE,
+                "Other.java": "class Other { int value() { return 1; } }\n",
+            })
+            warm_repo(repo)
+            (repo / "Service.java").write_text(
+                self.SOURCE.replace("return count;", "return count + 1;"), encoding="utf-8")
+            (repo / "Other.java").write_text(
+                "class Other { int value() { return 2; } }\n", encoding="utf-8")
+            self.assertEqual(run_hook(repo, "Service.java").returncode, 2)
+            result = local_warm(repo, "Service.java")
+            self.assertEqual(result["function_claims"], 0)
+            self.assertGreater(result["checked_claims"], 0)
+            self.assertEqual(result["checked_claims"], len(result["stale_check"]))
+            self.assertTrue(result["all_fresh_now"], result)
+            self.assertIn("Service.changed", result["functions"])
+            self.assertIn("Service.Service", result["functions"])
+            self.assertIn("Service.count", result["functions"])
+            after = run_hook(repo, "Service.java")
+            self.assertEqual(after.returncode, 0, after.stderr)
+            self.assertEqual(json.loads(after.stdout)["checked_claims"], result["checked_claims"])
+            self.assertEqual(run_hook(repo, "Other.java").returncode, 2)
+
+    def test_enriched_java_declaration_checks_own_binding_without_mutating_store(self):
+        from tmf.freshness import check_freshness
+        from tmf.git import GitRepo
+        from tmf.store import Store
+
+        owner = ("package app;\nimport jakarta.persistence.Entity;\n"
+                 "@Entity class Owner { Long id; }\n")
+        repository = (
+            "package app;\n"
+            "import org.springframework.data.jpa.repository.JpaRepository;\n"
+            "public interface OwnerRepo extends JpaRepository<Owner, Long> {\n"
+            "    int VERSION = 1;\n"
+            "    Owner findById(Long id);\n"
+            "}\n"
+        )
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"Owner.java": owner, "OwnerRepo.java": repository})
+            warm_repo(repo)
+            store = Store(repo)
+            declaration = next(c for c in store.iter_claims()
+                               if c.body.get("extraction_tier") == "java-treesitter-syntactic"
+                               and c.body.get("node_kind") == "interface"
+                               and any(b.path == "OwnerRepo.java" for b in c.bindings))
+            self.assertTrue(any(b.role == "repository_domain_entity" for b in declaration.bindings),
+                            declaration.to_dict())
+            original = declaration.to_dict()
+            self.assertTrue(check_freshness(GitRepo(repo), declaration).fresh)
+
+            # An external entity change stales the enriched claim, not this
+            # unchanged local declaration. The file gate must remain local.
+            (repo / "Owner.java").write_text(owner.replace("Long id", "Integer id"), encoding="utf-8")
+            self.assertFalse(check_freshness(GitRepo(repo), declaration).fresh)
+            result = run_hook(repo, "OwnerRepo.java")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["reason_code"], "fresh")
+            self.assertEqual(store.get_claim(declaration.id).to_dict(), original)
+
+            (repo / "Owner.java").write_text(owner, encoding="utf-8")
+            (repo / "OwnerRepo.java").write_text(
+                repository.replace("JpaRepository<Owner, Long>", "JpaRepository<Owner, Integer>"),
+                encoding="utf-8")
+            self.assertFalse(check_freshness(GitRepo(repo), declaration).fresh)
+            result = run_hook(repo, "OwnerRepo.java")
+            self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+            receipt = json.loads(result.stderr)
+            names = {item["qualname"] for item in receipt["stale_paths"]}
+            self.assertIn(declaration.body["qualname"], names)
+            self.assertFalse(any(name.endswith("findById") for name in names), names)
+            self.assertTrue(all(item["path"] == "OwnerRepo.java" for item in receipt["stale_paths"]))
+            self.assertEqual(store.get_claim(declaration.id).to_dict(), original)
+            recovered = local_warm(repo, "OwnerRepo.java")
+            self.assertTrue(recovered["all_fresh_now"], recovered)
+            self.assertIn(declaration.body["qualname"], recovered["functions"])
+            self.assertEqual(run_hook(repo, "OwnerRepo.java").returncode, 0)
+
+    def test_java_empty_file_is_not_fresh(self):
+        with tempfile.TemporaryDirectory() as td:
+            repo = make_repo(Path(td), {"Empty.java": "// no declarations\n"})
+            warm_repo(repo)
+            proc = run_hook(repo, "Empty.java")
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertEqual(json.loads(proc.stdout)["reason_code"], "no_eligible_claims")
+            result = local_warm(repo, "Empty.java")
+            self.assertFalse(result["all_fresh_now"], result)
+            self.assertEqual(result["checked_claims"], 0)
 
 
 if __name__ == "__main__":
