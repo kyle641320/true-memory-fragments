@@ -174,6 +174,7 @@ jobs:
           for suffix in (
               "/integrations/reflex/hooks/pre_tool_use.py",
               "/integrations/reflex/scripts/state_root.py",
+              "/integrations/reflex/scripts/claim_selection.py",
               "/integrations/reflex/examples/claude-settings.example.json",
               "/tools/verify_reflex_arming.py",
           ):
@@ -240,6 +241,9 @@ jobs:
       - name: Installed wheel reflex arming smoke (offline)
         run: python tools/verify_reflex_arming.py --python "$PREFLIGHT_ROOT/core-venv/bin/python"
 
+      - name: Installed Java wheel reflex behavior (offline, cannot skip)
+        run: python tools/verify_reflex_arming.py --python "$PREFLIGHT_ROOT/java-venv/bin/python" --require-java
+
       - name: Sdist reflex assets and installed-wheel smoke (offline)
         run: |
           python - "$PREFLIGHT_ROOT" <<'PY'
@@ -258,6 +262,9 @@ jobs:
                           "-p", "test_doctor.py", "-q"], cwd=source, check=True, timeout=60)
           subprocess.run([sys.executable, "tools/verify_reflex_arming.py", "--python",
                           str(root / "core-venv" / "bin" / "python")],
+                         cwd=source, check=True, timeout=90)
+          subprocess.run([sys.executable, "tools/verify_reflex_arming.py", "--python",
+                          str(root / "java-venv" / "bin" / "python"), "--require-java"],
                          cwd=source, check=True, timeout=90)
           PY
 
