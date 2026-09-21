@@ -137,3 +137,8 @@ The separate [process rehearsal](guava-m10-successor-process-rehearsal.md) now
 tests this codec and ledger across actual child-process I/O with a fixed,
 fictional peer. It does not connect this codec to a live provider or relax the
 experiment runner's execution gate.
+
+The subsequent [broker execution core](guava-m10-successor-broker-core.md)
+independently validates requests and accounts for an original backend response.
+Its exercised backend is still fictional; the client codec above remains pure,
+and this addition does not attest or deploy a compatible live provider.

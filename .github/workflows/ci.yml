@@ -56,6 +56,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_*m10_successor*.py' -q
       - name: Real process I/O conformance (fixed offline peer, zero model calls)
         run: python -m bench.agent_ab.same_version_chain_v1.m10_successor_process_rehearsal --output "$RUNNER_TEMP/m10-successor-process"
+      - name: Broker execution core conformance (fixed local backend, zero model calls)
+        run: python -m bench.agent_ab.same_version_chain_v1.m10_successor_broker_rehearsal --output "$RUNNER_TEMP/m10-successor-broker"
       - name: Mandatory production preflight and complete seal (cannot skip)
         run: python -m bench.agent_ab.same_version_chain_v1.guava_m10_successor_runner prepare-seal --output "$RUNNER_TEMP/m10-successor-seal.json"
       - name: Six-condition protocol rehearsal (scripted, zero model calls)
@@ -68,3 +70,4 @@ jobs:
             ${{ runner.temp }}/m10-successor-seal.json
             ${{ runner.temp }}/m10-successor-rehearsal
             ${{ runner.temp }}/m10-successor-process
+            ${{ runner.temp }}/m10-successor-broker
