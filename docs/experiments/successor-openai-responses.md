@@ -193,6 +193,13 @@ callback is consulted only after admission; the experiment module itself does
 not read environment/config credentials. Ordinary preparation/verification CLI
 commands expose no live flag. Fake tests replace the transport, not the guards.
 
+Generic unit-test jobs without the frozen offline Guava JARs explicitly skip
+the two production-seal tests and real-javac mediation test, following the
+existing repository integration-test boundary. The dedicated successor job
+fetches these dependencies before testing and has a mandatory non-skippable
+full production seal/reconstruction command. Missing dependencies cannot make
+that acceptance path green.
+
 ## I–J. Ordered conformance and maximum tokens
 
 1. Count the six sealed initial requests (no six-arm generation).

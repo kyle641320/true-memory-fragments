@@ -14,6 +14,7 @@ from bench.agent_ab.same_version_chain_v1 import successor_openai_responses as c
 from bench.agent_ab.same_version_chain_v1 import successor_openai_transport as transport
 from bench.agent_ab.same_version_chain_v1.m10_successor_protocol import ACTION_SCHEMAS
 from tests.test_m10_successor_openai_responses import encoded, response
+from tests.test_guava_m10_successor import compiler_available
 
 
 class NativeFake:
@@ -214,6 +215,7 @@ class SequenceTests(unittest.TestCase):
         self.assertEqual(expected, Decimal(report["cost"]["known_generation_at_frozen_rates"]))
 
 
+@unittest.skipUnless(compiler_available(), "frozen offline JARs/javac unavailable; dedicated CI requires full seal")
 class ProductionSealTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

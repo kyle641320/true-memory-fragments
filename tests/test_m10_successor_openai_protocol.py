@@ -13,6 +13,7 @@ from bench.agent_ab.same_version_chain_v1.m10_successor_fixture import prepare_f
 from bench.agent_ab.same_version_chain_v1.guava_m10_successor_runner import score_placement_ast
 from bench.agent_ab.same_version_chain_v1.m10_successor_protocol import BudgetCaps
 from tests.test_m10_successor_openai_responses import prepared, response, encoded
+from tests.test_guava_m10_successor import compiler_available
 
 
 class MediationTests(unittest.TestCase):
@@ -73,6 +74,7 @@ class MediationTests(unittest.TestCase):
         self.assertEqual(before, (self.template / "Dispatcher.java").read_bytes())
         self.assertEqual(2, self.compile.call_count)
 
+    @unittest.skipUnless(compiler_available(), "frozen offline JARs/javac unavailable; dedicated CI requires compilation")
     def test_real_javac_native_compile_is_not_mock_evidence(self):
         session = self.session(compile_fn=compile_check)
         result = self.step(session, "compile")
