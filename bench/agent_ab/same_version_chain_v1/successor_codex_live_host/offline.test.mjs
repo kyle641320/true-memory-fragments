@@ -57,14 +57,31 @@ test('anomaly detection reads structural metadata, not arbitrary scientific or a
   assert.equal(anomalyIn('onAgentEvent', {stream: 'tool', data: {name: 'exec'}}), 'tool_bypass');
 });
 
-test('observable output uses actual snapshots once, including commentary and reasoning', () => {
+test('observable output counts incremental snapshots only within the same projection identity', () => {
   const o = new ObservableOutputTracker();
   assert.equal(o.observe('onAgentEvent', {stream: 'assistant', data: {itemId: 'a', text: 'abc', delta: 'abc'}}), 'abc');
   assert.equal(o.observe('onAgentEvent', {stream: 'assistant', data: {itemId: 'a', text: 'abcd', delta: 'd'}}), 'd');
-  assert.equal(o.observe('onAgentEvent', {stream: 'assistant', data: {text: 'abcd'}}), '');
+  assert.equal(o.observe('onAgentEvent', {stream: 'assistant', data: {text: 'abcd'}}), 'abcd');
   assert.equal(o.observe('onAgentEvent', {stream: 'item', data: {kind: 'preamble', itemId: 'p', progressText: 'hello'}}), 'hello');
   assert.equal(o.observe('onReasoningStream', {text: 'reason', isReasoningSnapshot: true}), 'reason');
   assert.equal(o.observe('onReasoningStream', {text: 'reason more', isReasoningSnapshot: true}), ' more');
+});
+
+test('identical text on distinct reasoning and assistant channels cannot evade output cap', async t => {
+  let aborted;
+  const text = 'x'.repeat(70000);
+  const f = fakeHarness(t, async params => {
+    params.onReasoningStream({text, isReasoningSnapshot: true});
+    assert.equal(params.abortSignal.aborted, false);
+    params.onAgentEvent({stream: 'assistant', data: {text}});
+    aborted = params.abortSignal.aborted;
+    return {meta: {}};
+  });
+  createBridge(f.api, f.options, f.channel);
+  const finished = new Promise(resolve => f.channel.once('finished', resolve));
+  f.channel.emit('frame', start); await finished;
+  assert.equal(aborted, true);
+  assert.equal(f.channel.frames.at(-1).reason, 'runtime_output_budget_exceeded');
 });
 
 test('projection reports missing usage/count/cost as unknown rather than fabricated zero', () => {

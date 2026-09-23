@@ -95,6 +95,12 @@ verified provider token cap to `null`. Hidden native prompt assembly/state and
 usage projection are common runtime behavior, not silently counted as measured
 scientific bytes. Immutable deployment and tokenizer revisions are unavailable.
 
+Observable output accounting uses incremental public snapshots within the same
+projection identity. Equal text on distinct assistant/reasoning/preamble
+projections is not deduplicated: text equality alone does not prove common
+provenance. This conservative external byte ledger is not a provider token or
+unique-native-output measurement.
+
 The reporting boundary is explicit:
 
 | Evidence class | Meaning |

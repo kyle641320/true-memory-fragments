@@ -193,7 +193,6 @@ export class ObservableOutputTracker {
       key = 'reasoning'; text = raw.text;
     } else if (source === 'onAgentEvent' && raw.stream === 'assistant' && typeof raw.data?.text === 'string') {
       key = 'assistant:' + (raw.data.itemId ?? 'terminal'); text = raw.data.text;
-      if (raw.data.itemId === undefined && [...this.snapshots.values()].includes(text)) return '';
     } else if (source === 'onAgentEvent' && raw.stream === 'item' && raw.data?.kind === 'preamble' && typeof raw.data.progressText === 'string') {
       key = 'preamble:' + raw.data.itemId; text = raw.data.progressText;
     } else return '';
