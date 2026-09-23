@@ -128,6 +128,18 @@ def check_freshness(repo: GitRepo, claim: Claim) -> Freshness:
         result = check_legacy(repo, claim)
         return Freshness(result.fresh, result.stale_bindings)
     stale: list[str] = []
+    context = claim.body.get("java_resolution_context") if isinstance(claim.body, dict) else None
+    if context is not None:
+        from .java_index import java_symbol_manifest_digest
+        if (not isinstance(context, dict) or context.get("version") != "source-symbols-v1"
+                or not isinstance(context.get("symbol_manifest_sha256"), str)):
+            stale.append("java resolution context missing or unsupported")
+        else:
+            try:
+                if context["symbol_manifest_sha256"] != java_symbol_manifest_digest(repo):
+                    stale.append("java resolution symbol manifest mismatch")
+            except Exception:
+                stale.append("java resolution symbol manifest unavailable")
     expected_versions: dict[str, str] = {}
     for binding in claim.bindings:
         expected_versions.update(versions_for_path(binding.path))

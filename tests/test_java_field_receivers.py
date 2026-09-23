@@ -190,16 +190,15 @@ class JavaFieldReceiverTests(unittest.TestCase):
                 self.assertEqual(self.targets(graph), [])
                 self.assertEqual(graph["unresolved_calls"][0]["reason"], "java_receiver_lexical_type_not_supported")
 
-    def test_inherited_members_remain_explicit_boundaries_and_warm_is_not_recall(self):
+    def test_bounded_inherited_members_resolve_but_warm_is_not_recall(self):
         root, graph = self.derive({
             "api/Base.java": "package api; public interface Base { void run(); }\n",
             "api/Delegate.java": "package api; public interface Delegate extends Base {}\n",
             "app/Parent.java": "package app;\nimport api.Delegate;\nclass Parent { protected Delegate inherited; }\n",
             "app/Service.java": "package app;\nimport api.Delegate;\nclass Service extends Parent { Delegate target; void execute() { target.run(); inherited.run(); } }\n",
         })
-        self.assertEqual(self.targets(graph), [])
-        self.assertEqual({item["reason"] for item in graph["unresolved_calls"]},
-                         {"java_receiver_method_not_declared_or_inherited", "java_variable_or_unknown_receiver"})
+        self.assertEqual(self.targets(graph), [("api/Base.java", "Base.run")] * 2)
+        self.assertEqual(graph["unresolved_calls"], [])
         result = reverse_callers(root, stable_java_node_claim_id("api/Base.java", "Base.run", "method"))
         self.assertEqual(result["coverage"], "complete")
         self.assertIn("not complete semantic call resolution", result["note"])
@@ -230,7 +229,13 @@ class JavaFieldReceiverTests(unittest.TestCase):
                     "app/Service.java": "package app;\nimport api.*;\nclass Service { Delegate target; void execute() { " + body + " } }\n",
                 })
                 methods = [t for t in self.targets(graph) if t[1].endswith(".run")]
-                self.assertEqual(methods, [("api/Other.java", "Other.run"), ("api/Delegate.java", "Delegate.run")])
+                # The source-only hierarchy now refuses missing JDK parents.
+                # The catch/resource local must still NOT fall through to the
+                # field; only the use after that scope resolves to Delegate.
+                self.assertEqual(methods, [("api/Delegate.java", "Delegate.run")])
+                missing = [item for item in graph["unresolved_calls"] if item["expr"] == "target.run"]
+                self.assertEqual(len(missing), 1)
+                self.assertTrue(missing[0]["reason"].startswith("java_inherited_"))
 
     def test_varargs_and_flow_pattern_never_fall_back_to_shadowed_field(self):
         for method in (

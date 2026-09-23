@@ -6,7 +6,7 @@ JSON shape.  Bump only the affected language pipeline so warm can invalidate a
 precise source slice rather than rebuilding an unrelated repository.
 """
 
-JAVA_DERIVATION_VERSION = "java.derive.v9"
+JAVA_DERIVATION_VERSION = "java.derive.v10"
 
 
 def versions_for_path(path: str) -> dict[str, str]:

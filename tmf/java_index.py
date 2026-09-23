@@ -79,13 +79,16 @@ class JavaProjectIndex:
             locations = {item.path: item for item in project.sources}
             for item in snapshot.symbol_manifest():
                 location = locations.get(item["path"])
-                source_set = item.get("source_set", location.source_set if location else "unclassified")
-                generated = bool(item.get("generated", location.generated if location else False))
+                # Syntax shards may survive build-file-only changes. Layout
+                # metadata must come from the current project model, not the
+                # old symbol shard whose Java source bytes still match.
+                source_set = location.source_set if location else item.get("source_set", "unclassified")
+                generated = location.generated if location else bool(item.get("generated", False))
                 if not self.policy.includes(source_set=source_set, generated=generated):
                     continue
                 symbol = JavaSymbol(
                     fqn=item["fqn"], simple_name=item["simple_name"], path=item["path"],
-                    package=item.get("package", ""), module=item.get("module", location.module if location else "root"),
+                    package=item.get("package", ""), module=location.module if location else item.get("module", "root"),
                     source_set=source_set, generated=generated,
                 )
                 self._by_fqn.setdefault(symbol.fqn, symbol)
@@ -106,7 +109,7 @@ class JavaProjectIndex:
                 package = package_match.group(1) if package_match else ""
                 class_nodes = extract_java_classes(path, source)
                 for node in class_nodes:
-                    if node.node_kind not in {"class", "interface", "enum"} or "." in node.qualname:
+                    if node.node_kind not in {"class", "interface", "enum", "record"} or "." in node.qualname:
                         continue
                     simple = node.qualname
                     fqn = f"{package}.{simple}" if package else simple
@@ -216,6 +219,48 @@ def java_project_index(repo: Any, policy: JavaIndexPolicy | None = None) -> Java
     else:
         cached = cached_entry[1]
     return cached
+
+
+def java_symbol_manifest_digest(repo: Any) -> str:
+    """Fingerprint the source lookup universe, retaining duplicate declarations.
+
+    Consulted-file bindings cannot detect a newly competing type in another
+    file. This digest deliberately records symbol identity, not method bodies:
+    unrelated body edits must not invalidate every hierarchy-backed claim.
+    Outside a pinned derivation snapshot, build the index from a fresh repo
+    view when any tracked source/build input changes (including ctime).
+    """
+    import hashlib
+    import json
+    from dataclasses import asdict
+    from .git import GitRepo
+    from .java_project import JavaProjectModel, _BUILD_FILES, _SETTINGS_FILES
+    from pathlib import PurePosixPath
+
+    pinned = getattr(repo, "_tmf_java_snapshot_pinned", False)
+    cache = getattr(repo, "_tmf_java_resolution_manifest", None)
+    if pinned:
+        fingerprint = ("pinned", id(getattr(repo, "_tmf_java_repository_snapshot", None)))
+    else:
+        inputs = sorted(path for path in JavaProjectModel(repo)._tracked_paths()
+                        if path.endswith(".java") or PurePosixPath(path).name in _BUILD_FILES | _SETTINGS_FILES)
+        entries = []
+        for path in inputs:
+            try:
+                stat = (repo.root / path).stat()
+                entries.append((path, stat.st_mtime_ns, stat.st_ctime_ns, stat.st_size))
+            except FileNotFoundError:
+                entries.append((path, None, None, None))
+        fingerprint = tuple(entries)
+    if cache is not None and cache[0] == fingerprint:
+        return cache[1]
+    index = java_project_index(repo) if pinned else JavaProjectIndex(GitRepo(repo.root)).build()
+    symbols = [asdict(symbol) for name in sorted(index._by_simple)
+               for symbol in index._by_simple[name]]
+    symbols.sort(key=lambda item: json.dumps(item, sort_keys=True))
+    digest = hashlib.sha256(json.dumps(symbols, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    setattr(repo, "_tmf_java_resolution_manifest", (fingerprint, digest))
+    return digest
 
 
 def java_package(source: str) -> str:

@@ -693,6 +693,22 @@ def derive_api_claim(repo: GitRepo, api: ApiNode) -> Claim:
         return claim
     return verify_observed_claim(claim, text)
 
+def _bind_java_resolution_context(repo: GitRepo, claim: Claim, paths) -> None:
+    paths = sorted(set(paths))
+    if not paths:
+        return
+    from .java_index import java_symbol_manifest_digest
+    claim.body["java_resolution_context"] = {
+        "version": "source-symbols-v1",
+        "symbol_manifest_sha256": java_symbol_manifest_digest(repo),
+        "dependency_paths": paths,
+    }
+    for path in paths:
+        claim.bindings.append(Binding(path=path, file_blob=repo.blob_sha(path), fn_hash=None,
+                                      commit=repo.head(), role="java_resolution_context",
+                                      hash_kind="git-blob"))
+
+
 def derive_call_edge_claim(repo: GitRepo, edge, anchor_by_id: dict[str, dict] | None = None) -> Claim | None:
     if not edge.caller_path or not edge.callee_path or not edge.caller_fn_hash or not edge.callee_fn_hash:
         return None
@@ -707,7 +723,7 @@ def derive_call_edge_claim(repo: GitRepo, edge, anchor_by_id: dict[str, dict] | 
     callee_anchor = anchor_by_id.get(edge.callee_id)
     if callee_anchor is None:
         callee_anchor = _java_node_anchor_for(repo, edge.callee_path, edge.callee_qualname, getattr(edge, "callee_node_kind", "method")) if language == "java" else _function_anchor_for(repo, edge.callee_path, edge.callee_qualname)
-    return Claim(
+    claim = Claim(
         id=stable_call_edge_claim_id(edge.caller_id, edge.callee_id),
         claim=f"{edge.caller_id} calls {edge.callee_qualname}.",
         kind="structure",
@@ -739,6 +755,8 @@ def derive_call_edge_claim(repo: GitRepo, edge, anchor_by_id: dict[str, dict] | 
             "notes": ["Call edge is observed only when statically resolved without ambiguity; source remains authority."],
         },
     )
+    _bind_java_resolution_context(repo, claim, getattr(edge, "resolution_dependency_paths", ()))
+    return claim
 
 
 
@@ -1288,17 +1306,25 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
             })())
     callees_by_caller: dict[str, list[dict]] = {}
     callers_by_callee: dict[str, list[dict]] = {}
+    resolution_dependencies_by_node: dict[str, set[str]] = {}
     fn_anchor_by_id = {stable_function_claim_id(fn.path, fn.qualname): _anchor(fn.path, fn.line_start, fn.line_end, fn.qualname) for fn in functions}
     fn_anchor_by_id.update({java_node_id(m): _anchor(m.path, m.line_start, m.line_end, m.qualname) for m in java_methods})
     decl_anchor_by_id = {stable_declaration_claim_id(decl.path, decl.qualname): _anchor(decl.path, decl.line_start, decl.line_end, decl.qualname) for decl in declarations}
     decl_anchor_by_id.update({stable_java_node_claim_id(decl.path, decl.qualname, decl.declaration_kind): _anchor(decl.path, decl.line_start, decl.line_end, decl.qualname) for decl in java_fields})
     for edge in edges:
+        dependencies = getattr(edge, "resolution_dependency_paths", ())
+        if dependencies:
+            resolution_dependencies_by_node.setdefault(edge.caller_id, set()).update(dependencies)
+            # Same-file incoming graph annotations also contain this lookup.
+            resolution_dependencies_by_node.setdefault(edge.callee_id, set()).update(dependencies)
         edge_dict = {"target_id": edge.callee_id, "target_qualname": edge.callee_qualname, "target_path": edge.callee_path, "anchor": fn_anchor_by_id.get(edge.callee_id, _anchor(edge.callee_path, None, None, edge.callee_qualname)), "evidence": edge.evidence, "resolution": edge.resolution}
         callees_by_caller.setdefault(edge.caller_id, []).append(edge_dict)
         callers_by_callee.setdefault(edge.callee_id, []).append({"source_id": edge.caller_id, "source_path": edge.caller_path, "anchor": fn_anchor_by_id.get(edge.caller_id, _anchor(edge.caller_path, None, None, edge.caller_qualname)), "evidence": edge.evidence, "resolution": edge.resolution})
     unresolved_by_caller = {caller: [{"expr": item.expr, "reason": item.reason} for item in items] for caller, items in unresolved.items()}
     for caller, items in unresolved_java_calls.items():
         unresolved_by_caller.setdefault(caller, []).extend({"expr": item.expr, "reason": item.reason} for item in items)
+        for item in items:
+            resolution_dependencies_by_node.setdefault(caller, set()).update(item.resolution_dependency_paths)
     reads_by_reader: dict[str, list[dict]] = {}
     readers_by_decl: dict[str, list[dict]] = {}
     writes_by_writer: dict[str, list[dict]] = {}
@@ -1470,6 +1496,7 @@ def derive_claims_for_path(repo: GitRepo, path: str, *, use_model: bool = False,
                 graph["saga_definition_unresolved"] = unresolved_java_sagas[claim.id]
                 graph["saga_coverage"] = "partial"
         if claim.body.get("language") == "java" and claim.body.get("node_kind") in {"method", "constructor"}:
+            _bind_java_resolution_context(repo, claim, resolution_dependencies_by_node.get(claim.id, ()))
             graph = claim.body.setdefault("graph", {})
             graph["callees"] = callees_by_caller.get(claim.id, [])
             graph["callers"] = callers_by_callee.get(claim.id, [])

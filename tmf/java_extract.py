@@ -2314,6 +2314,7 @@ class JavaCallEdge:
     caller_node_kind: str | None = "method"
     callee_node_kind: str | None = "method"
     language: str = "java"
+    resolution_dependency_paths: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -2321,6 +2322,7 @@ class JavaUnresolvedCall:
     caller_id: str
     expr: str
     reason: str
+    resolution_dependency_paths: tuple[str, ...] = ()
 
 
 def _method_signature_parts(source_bytes: bytes, node: Any) -> tuple[str | None, int, tuple[str, ...]]:
@@ -2448,6 +2450,42 @@ def _call_argument_types(source_bytes: bytes, node: Any, declared: dict[str, str
     return tuple(out)
 
 
+def _inherited_call_argument_types(source_bytes: bytes, node: Any, declared: dict[str, str]) -> tuple[str | None, ...]:
+    """Known argument types for the stricter inherited-member path only.
+
+    Keep literal provenance: a long/float suffix changes overload selection,
+    and a string literal is java.lang.String even under a conflicting import.
+    Do not erase generic/array receiver declarations into apparently exact args.
+    """
+    args = _child_by_field(node, "arguments")
+    if args is None:
+        return ()
+    types: list[str | None] = []
+    for arg in _named_children(args):
+        if arg.type in {"line_comment", "block_comment"}:
+            continue
+        text = _node_text(source_bytes, arg).strip()
+        if arg.type in {"decimal_integer_literal", "hex_integer_literal", "octal_integer_literal", "binary_integer_literal"}:
+            typ = "long" if text[-1:].lower() == "l" else "int"
+        elif arg.type in {"decimal_floating_point_literal", "hex_floating_point_literal"}:
+            typ = "float" if text[-1:].lower() == "f" else "double"
+        elif arg.type == "string_literal":
+            typ = "java.lang.String"
+        elif arg.type == "character_literal":
+            typ = "char"
+        elif arg.type in {"true", "false"}:
+            typ = "boolean"
+        elif arg.type == "identifier":
+            typ = declared.get(text)
+        elif arg.type == "object_creation_expression":
+            node_type = _child_by_field(arg, "type")
+            typ = _node_text(source_bytes, node_type) if node_type is not None else None
+        else:
+            typ = None
+        types.append(typ)
+    return tuple(types)
+
+
 def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode], repo: Any | None = None, inherit_edges: list[JavaInheritEdge] | None = None) -> tuple[list[JavaCallEdge], dict[str, list[JavaUnresolvedCall]]]:
     if not path.endswith(".java"):
         return [], {}
@@ -2492,11 +2530,11 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
     edges: list[JavaCallEdge] = []
     unresolved: dict[str, list[JavaUnresolvedCall]] = {}
 
-    def add_unresolved(caller: ClassNode, expr: str, reason: str) -> None:
+    def add_unresolved(caller: ClassNode, expr: str, reason: str, dependencies: tuple[str, ...] = ()) -> None:
         caller_id = java_node_id(caller)
-        unresolved.setdefault(caller_id, []).append(JavaUnresolvedCall(caller_id=caller_id, expr=expr, reason=reason))
+        unresolved.setdefault(caller_id, []).append(JavaUnresolvedCall(caller_id=caller_id, expr=expr, reason=reason, resolution_dependency_paths=dependencies))
 
-    def add_edge(caller: ClassNode, callee: ClassNode, resolution: str) -> None:
+    def add_edge(caller: ClassNode, callee: ClassNode, resolution: str, dependencies: tuple[str, ...] = ()) -> None:
         ids = __import__("tmf.ids", fromlist=["stable_java_node_claim_id"])
         edges.append(JavaCallEdge(
             caller_id=java_node_id(caller),
@@ -2509,6 +2547,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             callee_fn_hash=callee.class_hash,
             caller_qualname=caller.qualname,
             callee_node_kind=callee.node_kind,
+            resolution_dependency_paths=dependencies,
         ))
 
     signature_cache: dict[tuple[str, int, int, str], tuple[str, ...] | None] = {}
@@ -2846,10 +2885,10 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         walk(path, source, class_qual)
         return found
 
-    def typed_receiver_methods(type_expr: str, name: str, context_node: Any | None = None) -> tuple[list[ClassNode], str]:
+    def typed_receiver_symbol(type_expr: str, context_node: Any | None = None):
         from .java_types import parse_java_type
         if repo is None or project_index is None:
-            return [], "java_variable_or_unknown_receiver"
+            return None, "java_variable_or_unknown_receiver"
         # Only erase arguments of a top-level receiver. The general type
         # parser does not normalize Outer<A>.Inner<B> into a source symbol.
         clean_type = re.sub(r"/\*.*?\*/|//[^\n]*", " ", type_expr, flags=re.S)
@@ -2865,24 +2904,24 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                     end = index
                     break
             if end != len(clean_type) - 1:
-                return [], "java_receiver_type_not_supported"
+                return None, "java_receiver_type_not_supported"
         receiver_type = parse_java_type(clean_type)
         if (receiver_type.array_dims or receiver_type.varargs or receiver_type.primitive
                 or receiver_type.wildcard or receiver_type.erased == "var"):
-            return [], "java_receiver_type_not_supported"
+            return None, "java_receiver_type_not_supported"
         outer_type = (clean_type[:angle] if angle >= 0 else clean_type).strip()
         if not re.fullmatch(r"[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*", outer_type):
-            return [], "java_receiver_type_not_supported"
+            return None, "java_receiver_type_not_supported"
         if "." in receiver_type.erased:
             prefixes = receiver_type.erased.split(".")
             enclosing_type, enclosing_reason = project_index.resolve(prefixes[0], package=package, imports=explicit_imports,
                                                                       wildcard_imports=wildcard_imports)
             if prefixes[0] in explicit_imports or enclosing_type is not None or "ambiguous" in enclosing_reason:
-                return [], "java_receiver_type_not_supported"
+                return None, "java_receiver_type_not_supported"
             for length in range(2, len(prefixes)):
                 enclosing_type, enclosing_reason = project_index.resolve(".".join(prefixes[:length]))
                 if enclosing_type is not None or "ambiguous" in enclosing_reason:
-                    return [], "java_receiver_type_not_supported"
+                    return None, "java_receiver_type_not_supported"
         if context_node is not None:
             # Type variables and lexical member types are not project top-level
             # symbols, even when an import has the same spelling.
@@ -2894,19 +2933,25 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                     for param in _named_children(parameters):
                         ident = next((c for c in _named_children(param) if c.type == "type_identifier"), None)
                         if ident is not None and _node_text(source_bytes, ident) == leading_name:
-                            return [], "java_receiver_lexical_type_not_supported"
+                            return None, "java_receiver_lexical_type_not_supported"
                 if ancestor.type in _CLASS_TYPES or ancestor.type in {"block", "constructor_body"}:
                     body = _child_by_field(ancestor, "body") if ancestor.type in _CLASS_TYPES else ancestor
                     if body is not None:
                         for member in _named_children(body):
                             if (member.type in _CLASS_TYPES and _identifier_from_node(source_bytes, member) == leading_name
                                     and (ancestor.type in _CLASS_TYPES or member.start_byte < context_node.start_byte)):
-                                return [], "java_receiver_lexical_type_not_supported"
+                                return None, "java_receiver_lexical_type_not_supported"
                 ancestor = ancestor.parent
         symbol, resolution = project_index.resolve(receiver_type.erased, package=package, imports=explicit_imports,
                                                     wildcard_imports=wildcard_imports)
         if symbol is None:
-            return [], "java_receiver_" + resolution
+            return None, "java_receiver_" + resolution
+        return symbol, resolution
+
+    def typed_receiver_methods(type_expr: str, name: str, context_node: Any | None = None) -> tuple[list[ClassNode], str]:
+        symbol, resolution = typed_receiver_symbol(type_expr, context_node)
+        if symbol is None:
+            return [], resolution
         try:
             target_source = repo.read_file(symbol.path)
         except Exception:
@@ -2916,6 +2961,42 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
         if not any(m.qualname.rsplit(".", 1)[-1] == name for m in methods):
             return [], "java_receiver_method_not_declared_or_inherited"
         return methods, f"java_project_typed_receiver_{resolution}"
+
+    member_resolver = None
+    if repo is not None:
+        from .java_members import JavaMemberResolver
+        member_resolver = JavaMemberResolver(repo)
+
+    def select_typed_receiver(type_expr, name, argc, argument_types, context, caller,
+                              static_context=False, inherited_argument_types=()):
+        symbol, resolution = typed_receiver_symbol(type_expr, context)
+        if symbol is None:
+            return None, resolution, ()
+        if member_resolver is not None and member_resolver.has_parents(symbol.path, symbol.simple_name):
+            enclosing = []
+            ancestor = context
+            while ancestor is not None:
+                if ancestor.type in _CLASS_TYPES:
+                    enclosing.append(_identifier_from_node(source_bytes, ancestor))
+                ancestor = ancestor.parent
+            owner = ".".join(reversed(enclosing)) if enclosing else caller.qualname.rsplit(".", 1)[0]
+            context_paths, context_reason = member_resolver.check_receiver_type_context(path, owner, type_expr)
+            if context_reason:
+                return None, context_reason, tuple(sorted({path, symbol.path, *context_paths}))
+            declaration = context
+            while declaration is not None and declaration.type not in {"field_declaration", "constant_declaration", *_METHOD_TYPES}:
+                declaration = declaration.parent
+            if static_context and declaration is not None and declaration.type == "field_declaration":
+                modifiers = next((child for child in declaration.named_children if child.type == "modifiers"), None)
+                if modifiers is None or not any(child.type == "static" for child in modifiers.children):
+                    return None, "java_inherited_field_static_context_not_supported", tuple(sorted({path, symbol.path}))
+            result = member_resolver.lookup_method(symbol.path, symbol.simple_name, name, inherited_argument_types,
+                                                  caller_path=path, caller_qualname=caller.qualname)
+            dependencies = tuple(sorted({path, *result.dependency_paths, *context_paths}))
+            return result.method, (result.reason or "java_source_inherited_typed_receiver"), dependencies
+        methods, resolution = typed_receiver_methods(type_expr, name, context)
+        callee, reason = unique_method(methods, name, argc, argument_types)
+        return callee, resolution if callee is not None or not methods else reason, ()
 
     def declared_return_type(method: ClassNode) -> str | None:
         """Read only an explicit source return type; constructors/var/inference stay unknown."""
@@ -2975,6 +3056,7 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
             field_types = {name: item[0] for name, item in fields.items()}
             field_contexts = {name: item[1] for name, item in fields.items()}
             local_bindings = receiver_bindings(node)
+            static_context = "static" in _java_method_interface_from_node(source_bytes, node)["modifiers"]
             def walk_calls(cur: Any) -> None:
                 if cur is not node and cur.type in _METHOD_TYPES:
                     return
@@ -3009,6 +3091,14 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                         name, receiver = parsed
                         argc = _call_arg_count(cur)
                         argument_types = _call_argument_types(source_bytes, cur, types_by_name)
+                        inherited_argument_types = _inherited_call_argument_types(source_bytes, cur, types_by_name)
+                        inherited_field = None
+                        if (member_resolver is not None and receiver is not None
+                                and member_resolver.has_parents(path, class_qual)):
+                            field_name = receiver[5:] if receiver.startswith("this.") else receiver
+                            own_receiver = field_name in field_types if receiver.startswith("this.") else receiver in types_by_name
+                            if not own_receiver and re.fullmatch(r"[A-Za-z_$][\w$]*", field_name):
+                                inherited_field = member_resolver.lookup_field(path, class_qual, field_name)
                         if receiver is None:
                             callee, reason = unique_method(local_methods, name, argc, argument_types)
                             if callee is not None:
@@ -3050,23 +3140,43 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                                 add_edge(current_method, callee, "java_super_method")
                             else:
                                 add_unresolved(current_method, f"super.{name}", reason or "java_parent_method_not_found")
+                        elif inherited_field is not None and (inherited_field.target_path is not None
+                                or inherited_field.reason != "java_inherited_field_not_found"):
+                            dependencies = tuple(sorted({path, *inherited_field.dependency_paths}))
+                            if static_context:
+                                add_unresolved(current_method, f"{receiver}.{name}", "java_inherited_field_static_context_not_supported", dependencies)
+                            elif inherited_field.target_path is None:
+                                add_unresolved(current_method, f"{receiver}.{name}", inherited_field.reason, dependencies)
+                            else:
+                                result = member_resolver.lookup_method(
+                                    inherited_field.target_path, inherited_field.target_qualname, name, inherited_argument_types,
+                                    caller_path=path, caller_qualname=current_method.qualname)
+                                dependencies = tuple(sorted({*dependencies, *result.dependency_paths}))
+                                if result.method is None:
+                                    add_unresolved(current_method, f"{receiver}.{name}", result.reason, dependencies)
+                                else:
+                                    add_edge(current_method, result.method, "java_source_inherited_field_receiver", dependencies)
                         elif receiver in explicit_imports and receiver not in types_by_name:
+                            # Absence of a same-named inherited field is part of
+                            # the static type-name decision. Preserve that
+                            # negative evidence even when the fallback succeeds.
+                            dependencies = tuple(sorted({path, *inherited_field.dependency_paths})) if inherited_field else ()
                             methods, reason = imported_methods(receiver)
                             callee, why = unique_method(methods, name, argc, argument_types)
                             if callee is not None:
-                                add_edge(current_method, callee, "java_explicit_import_static_method")
+                                add_edge(current_method, callee, "java_explicit_import_static_method", dependencies)
                             else:
-                                add_unresolved(current_method, f"{receiver}.{name}", why or reason or "java_method_not_found")
+                                add_unresolved(current_method, f"{receiver}.{name}", why or reason or "java_method_not_found", dependencies)
                         elif receiver in types_by_name or receiver.startswith("this.") and receiver[5:] in field_types:
                             receiver_name = receiver[5:] if receiver.startswith("this.") else receiver
                             receiver_type = field_types[receiver_name] if receiver.startswith("this.") else types_by_name[receiver_name]
                             context = field_contexts[receiver_name] if receiver.startswith("this.") else type_contexts[receiver_name]
-                            methods, resolution = typed_receiver_methods(receiver_type, name, context)
-                            callee, why = unique_method(methods, name, argc, argument_types)
+                            callee, resolution, dependencies = select_typed_receiver(
+                                receiver_type, name, argc, argument_types, context, current_method, static_context, inherited_argument_types)
                             if callee is not None:
-                                add_edge(current_method, callee, resolution)
+                                add_edge(current_method, callee, resolution, dependencies)
                             else:
-                                add_unresolved(current_method, f"{receiver}.{name}", (why or resolution) if methods else resolution)
+                                add_unresolved(current_method, f"{receiver}.{name}", resolution, dependencies)
                         elif (obj := _child_by_field(cur, "object")) is not None and obj.type == "method_invocation":
                             # Conservative one-step chain propagation: resolve the
                             # inner project call exactly, then use only its explicit
@@ -3093,7 +3203,9 @@ def resolve_java_call_edges(path: str, source: str, java_methods: list[ClassNode
                             else:
                                 add_unresolved(current_method, f"{receiver}.{name}", "java_chained_return_type_unresolved")
                         else:
-                            add_unresolved(current_method, f"{receiver}.{name}", "java_variable_or_unknown_receiver")
+                            dependencies = tuple(sorted({path, *inherited_field.dependency_paths})) if inherited_field else ()
+                            reason = inherited_field.reason if inherited_field else "java_variable_or_unknown_receiver"
+                            add_unresolved(current_method, f"{receiver}.{name}", reason, dependencies)
                 elif cur.type == "object_creation_expression":
                     type_node = _child_by_field(cur, "type")
                     type_expr = _node_text(source_bytes, type_node).strip() if type_node is not None else "<unknown>"

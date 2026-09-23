@@ -6,7 +6,7 @@ interface declaration, not to a guessed implementation bean.
 
 ## Direct receiver support
 
-Java derivation `java.derive.v9` resolves directly declared methods on a
+Java derivation `java.derive.v10` retains v9's direct lookup on a
 source-defined top-level receiver type using:
 
 - an exact fully qualified type name;
@@ -49,10 +49,38 @@ separate. Qualified names tolerate Java whitespace/comments around the dots.
    warm manifest were indexed. It does **not** mean all semantic calls were
    resolved. Java declaration `calls_coverage` remains `partial`.
 
-Inherited injected fields and methods inherited by a typed receiver are still
-separate unresolved boundaries. No claim of fixing a private repository's
-particular missing chain follows from these synthetic fixtures. The historical
-Guava 0/7 field-receiver sample has not been re-scored by this change.
+## Bounded inherited receivers
+
+For source-defined top-level nongeneric hierarchies, bare/`this` inherited
+instance fields and inherited methods on statically typed receivers can now
+resolve. Parent clauses, field types and method signature types use their own
+declaring file's imports. Nearer fields hide farther ones; inherited overloads
+are preserved; overrides mask only the same canonical signature. A diamond
+with the same original method declaration is deduplicated, not chosen by DFS
+order. Method applicability requires supported known argument types.
+
+Unknown/ambiguous parents, generic substitutions, unsupported access, cycles,
+nested types, static members, and unrelated competing interface signatures
+remain explicit refusals. This conservative hierarchy check also applies when
+the receiver declares a method itself but has an incomplete explicit ancestry
+(for example an external/JDK superclass): some v9 direct edges therefore become
+unresolved. A partially inspected overload set is not presented as complete.
+
+New hierarchy-backed edges and their caller graph declarations bind all
+consulted files plus a duplicate-preserving source-symbol digest. Import-only,
+field-type, intermediate-parent and overload changes invalidate that context;
+new competing source symbols do too. Failed hierarchy lookups carry the same
+negative-evidence dependencies so normal warm can repair them. File-level
+dependencies deliberately over-invalidate unrelated changes in consulted files;
+unrelated method-body changes elsewhere do not change the symbol digest.
+
+This extension does **not** repair all earlier no-parent direct-field or
+unqualified/`super` lookup/freshness limitations. The reflex's file-local
+declaration projection remains separate from graph-context freshness; it does
+not become a cross-file Java proposed-call gate. No claim of fixing a private
+repository's particular missing chain follows from these fixtures. The historical
+Guava 0/7 sample has not been re-scored by this change. Classpath/module
+accessibility, runtime dispatch and DI bean choice are still outside scope.
 
 ## Validation and cache migration
 
@@ -60,6 +88,9 @@ Guava 0/7 field-receiver sample has not been re-scored by this change.
 call-edge index → read-only retrieval. It contrasts repository/delegate names,
 explicit/on-demand imports, and same/cross-module source layout, and includes
 negative cases for ambiguity, lexical shadowing and unsupported shapes.
+`tests.test_java_members` covers the bounded member lookup contract;
+`tests.test_java_inherited_receivers` adds compiled production-path fixtures and
+mutation/normal-warm repair checks for both positive and negative graph context.
 
 The Java derivation version change makes older Java claims stale and causes
 the next normal `tmf warm` to rederive the affected Java slice. It does not
