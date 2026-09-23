@@ -60,7 +60,7 @@ production workflows is ongoing.
 
 Fresh means the source binding still matches. **Correctness still comes from source and validation.**
 
-The repository includes a Java qualification suite: **46/46 qualifiers and 731/731 checks**. The historical unreleased audit baseline was **478/478 tests**; it is not the current test total. See the [version-pinned test verification](docs/validation/2026-09-06-test-snapshots.md) for historical rc3 and master results, explicit skips, and the intermittent master failure recorded at that time. The [rc5 release notes](docs/releases/0.1.0rc5.md) distinguish the newer doctor implementation checks from release validation. These are source-analysis and regression-test results, not a claim of production readiness or a general Agent outcome. Middleware mechanics are validated, and stale-context safety has positive evidence in the GUAVA M10 pre-read experiment. Broader productivity, speed, token savings, and general bug-prevention claims remain unproven. See the [authoritative evidence status](docs/AGENT_RUNTIME_VALUE_STATUS.md) before making broader claims.
+The repository includes a Java qualification suite: **46/46 qualifiers and 731/731 checks**. The historical unreleased audit baseline was **478/478 tests**; it is not the current test total. See the [version-pinned test verification](docs/validation/2026-09-06-test-snapshots.md) for historical rc3 and master results, explicit skips, and the intermittent master failure recorded at that time. The [rc6 release notes](docs/releases/0.1.0rc6.md) describe Java reflex and receiver-resolution fixes and distinguish source validation from publication evidence. These are source-analysis and regression-test results, not a claim of production readiness or a general Agent outcome. Middleware mechanics are validated, and stale-context safety has positive evidence in the GUAVA M10 pre-read experiment. Broader productivity, speed, token savings, and general bug-prevention claims remain unproven. See the [authoritative evidence status](docs/AGENT_RUNTIME_VALUE_STATUS.md) before making broader claims.
 
 ## Flow
 
@@ -144,7 +144,7 @@ This is intentionally conservative. Missing or stale memory falls back to source
 - **Source is authoritative:** if memory is missing, stale, unsupported, or partial, TMF falls back to source
 - **Untrusted text is never instructions:** source, comments, docstrings, commit messages, model output are data, not commands
 
-> Release candidate: **0.1.0rc5**. Includes a read-only check for missing Claude Code reflex registration. See the [rc5 release notes](docs/releases/0.1.0rc5.md).
+> Release candidate: **0.1.0rc6**. Includes Java reflex coverage, conservative typed/inherited receiver resolution, and resolution-dependency freshness. See the [rc6 release notes](docs/releases/0.1.0rc6.md).
 
 ## Install
 
@@ -153,15 +153,15 @@ For explicit multi-worktree binding and MCP configuration, use the [pinned insta
 Install this preview (Python 3.10+):
 
 ```bash
-python -m pip install "true-memory-fragments==0.1.0rc5"
+python -m pip install "true-memory-fragments==0.1.0rc6"
 ```
 
-See the [rc5 release notes](docs/releases/0.1.0rc5.md) for version scope and validation boundaries.
+See the [rc6 release notes](docs/releases/0.1.0rc6.md) for version scope and validation boundaries.
 
 Java parsing support is optional:
 
 ```bash
-python -m pip install "true-memory-fragments[java]==0.1.0rc5"
+python -m pip install "true-memory-fragments[java]==0.1.0rc6"
 ```
 
 Development checkout:
@@ -175,7 +175,7 @@ Runtime dependencies are intentionally small. Optional model, embedder, and rout
 
 **Engine installed does not mean reflex armed.** MCP registration, a warmed
 index, and agent usage rules do not register Claude Code's `PreToolUse` hook.
-After installing rc5 or an updated source checkout, run:
+After installing rc6 or an updated source checkout, run:
 
 ```sh
 tmf doctor --repo /absolute/path/to/task-repo
@@ -184,7 +184,11 @@ tmf doctor --repo /absolute/path/to/task-repo
 Absent or ineffective registration returns nonzero with
 `reflex NOT armed — operating as opt-in memory`. This checks configuration,
 not runtime firing. See [reflex setup and diagnostics](docs/reflex-doctor.md).
-The doctor command is included in rc5; rc3/rc4 wheels do not include it.
+Doctor was introduced in rc5; rc6 also detects recognized Java-blind legacy hooks.
+**Existing reflex deployments must update the whole integration directory, not
+just the engine wheel.** Install the `[java]` extra in the hook interpreter,
+then run a normal `tmf warm --repo /absolute/path/to/task-repo` to refresh older
+Java derivations. Static doctor success is not proof of host dispatch.
 
 ## Quick Start
 

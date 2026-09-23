@@ -137,7 +137,7 @@ jobs:
           wheels = list(dist.glob("*.whl"))
           assert len(sdists) == len(wheels) == 1, (sdists, wheels)
           sdist, wheel = sdists[0], wheels[0]
-          expected = "0.1.0rc5"
+          expected = "0.1.0rc6"
           assert sdist.name == f"true_memory_fragments-{expected}.tar.gz", sdist
           assert wheel.name == f"true_memory_fragments-{expected}-py3-none-any.whl", wheel
 
@@ -206,7 +206,7 @@ jobs:
           import tmf.cli
           import tmf.java_extract
           assert "site-packages" in tmf.__file__, tmf.__file__
-          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc5"
+          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc6"
           status = tmf.java_extract.java_status()
           assert not status.available and status.degrade_hint, status
           subprocess.run([sys.executable, "-m", "tmf.cli", "--help"], check=True)
@@ -229,7 +229,7 @@ jobs:
           import tmf
           from tmf.java_extract import extract_java_methods, java_status
           assert "site-packages" in tmf.__file__, tmf.__file__
-          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc5"
+          assert tmf.__version__ == importlib.metadata.version("true-memory-fragments") == "0.1.0rc6"
           assert importlib.metadata.version("tree-sitter") == "0.25.2"
           assert importlib.metadata.version("tree-sitter-java") == "0.23.5"
           status = java_status()
