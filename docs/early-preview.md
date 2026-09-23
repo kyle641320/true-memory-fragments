@@ -18,11 +18,10 @@ python3 -m venv .venv
 - [rc6 release notes](releases/0.1.0rc6.md)
 - [rc6 MCP Registry record and live publication status](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc6)
 
-The Python package version for this preview is `0.1.0rc6`. Registry version
-`0.1.0-rc6` is published separately after public PyPI installation verification.
-During this package-release stage, `server.json` still pins the previously
-verified rc5 package; the subsequent Registry update pins rc6 and repeats a
-real public-package launch. The record linked above is authoritative for live
+The Python package version for this preview is `0.1.0rc6`. The `server.json`
+manifest maps Registry version `0.1.0-rc6` to that same package and pins its Java
+extra to `true-memory-fragments[java]==0.1.0rc6`. Registry publication is a separate
+step after public PyPI verification; the record linked above reports live
 publication status. The explicit rc6 commands below do not depend on Registry
 metadata. MCP uses the same Python package, not a separate binary. Older rc3–rc5
 installation commands are superseded by the rc6 commands here.
@@ -100,6 +99,21 @@ If transport fails or the server is unavailable, disclose that fact and inspect
 current source directly. Do not silently trust cached TMF output. Reconnect and
 check `tmf_status.repo` before resuming TMF use. No credentials are needed for the
 offline path above.
+
+## rc6 public-package verification
+
+The public PyPI `0.1.0rc6` wheel and sdist were downloaded and matched the SHA256
+checksums of the reviewed GitHub prerelease assets. A fresh, cache-disabled
+public-PyPI installation imported TMF from `site-packages`, used the pinned Java
+parser extra, and returned the expected unarmed doctor warning without changing
+live settings. All 15 required Java reflex checks, 43 direct/inherited receiver
+regressions (no skips), and real MCP SDK 2.2.0 stdio verification passed.
+
+The receiver checks cover synthetic production derivation/retrieval and
+resolution-freshness fixtures, not the unavailable private enterprise repository.
+The hook checks invoke the hook directly, not through a live Claude host.
+The Registry workflow separately validates the schema, public-package ownership
+marker and actual manifest-generated uvx launch before publishing metadata.
 
 ## Historical public-package transport verification (rc5)
 
