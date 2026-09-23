@@ -1,44 +1,53 @@
-# Early developer preview: rc5 and MCP stdio
+# Early developer preview: rc6 and MCP stdio
 
 TMF helps coding agents detect outdated source context and retain traceable
 code-chain understanding, so edits consider related callers and dependencies.
 
-## Install the rc5 preview
+## Install the rc6 preview
 
 Python 3.10+ and Git are required. Install the package in an isolated
 environment (POSIX shell):
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install 'true-memory-fragments[java]==0.1.0rc5'
+.venv/bin/python -m pip install 'true-memory-fragments[java]==0.1.0rc6'
 ```
 
-- [PyPI package](https://pypi.org/project/true-memory-fragments/0.1.0rc5/)
-- [Release assets and SHA256 checksums](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc5)
-- [rc5 release notes](releases/0.1.0rc5.md)
-- [rc5 MCP Registry record and live publication status](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc5)
+- [PyPI package](https://pypi.org/project/true-memory-fragments/0.1.0rc6/)
+- [Release assets and SHA256 checksums](https://github.com/kyle641320/true-memory-fragments/releases/tag/v0.1.0rc6)
+- [rc6 release notes](releases/0.1.0rc6.md)
+- [rc6 MCP Registry record and live publication status](https://registry.modelcontextprotocol.io/v0.1/servers/io.github.kyle641320%2Ftrue-memory-fragments/versions/0.1.0-rc6)
 
-The Python package version for this preview is `0.1.0rc5`. The `server.json`
-manifest maps Registry version `0.1.0-rc5` to that same package and pins its Java
-extra to `true-memory-fragments[java]==0.1.0rc5`. Registry publication is a separate
-step after public PyPI verification; the record linked above reports its live
-publication status. The explicit commands below do not depend on Registry
-metadata. MCP uses the same Python package, not a separate binary. Older rc3/rc4
-installation commands are superseded by the rc5 commands here.
+The Python package version for this preview is `0.1.0rc6`. Registry version
+`0.1.0-rc6` is published separately after public PyPI installation verification.
+During this package-release stage, `server.json` still pins the previously
+verified rc5 package; the subsequent Registry update pins rc6 and repeats a
+real public-package launch. The record linked above is authoritative for live
+publication status. The explicit rc6 commands below do not depend on Registry
+metadata. MCP uses the same Python package, not a separate binary. Older rc3–rc5
+installation commands are superseded by the rc6 commands here.
 
 **This installs the engine, not the Claude Code reflex.** A warmed index and MCP
 connection do not register `PreToolUse`; without that separate hook the agent
 must opt in to TMF queries. Follow the [reflex diagnostic and setup guide](reflex-doctor.md).
-The `tmf doctor` command is included in rc5. Run it after installation and after
-changing hook configuration; a successful static check is not proof that the
+Doctor was introduced in rc5; rc6 adds checks for recognized Java-inert hooks.
+Run it after installation and after changing hook configuration; a successful static check is not proof that the
 host fired the hook.
+
+For an existing reflex deployment, update the **whole** `integrations/reflex`
+directory from the rc6 source distribution or tag, including the hook, shared
+claim selector and local-warm scripts. The engine-only wheel cannot update an
+old hook copy. Install the `[java]` extra in that hook's interpreter. Run a normal
+`tmf warm --repo /absolute/path/to/task-worktree` after upgrading: Java derivation
+v10 invalidates older derived claims and rebuilds their resolution dependencies.
+Do not equate a complete file index with complete semantic call-graph recall.
 
 ## Bind the server to the task worktree
 
 With [uv](https://docs.astral.sh/uv/) installed, start the server directly:
 
 ```sh
-uvx --from 'true-memory-fragments[java]==0.1.0rc5' tmf mcp --repo /absolute/path/to/task-worktree
+uvx --from 'true-memory-fragments[java]==0.1.0rc6' tmf mcp --repo /absolute/path/to/task-worktree
 ```
 
 For clients using the common `mcpServers` JSON layout:
@@ -48,7 +57,7 @@ For clients using the common `mcpServers` JSON layout:
   "mcpServers": {
     "tmf-task": {
       "command": "uvx",
-      "args": ["--from", "true-memory-fragments[java]==0.1.0rc5", "tmf", "mcp", "--repo", "/absolute/path/to/task-worktree"],
+      "args": ["--from", "true-memory-fragments[java]==0.1.0rc6", "tmf", "mcp", "--repo", "/absolute/path/to/task-worktree"],
       "env": {"TMF_MODEL_COMMAND": ""}
     }
   }
@@ -92,7 +101,7 @@ current source directly. Do not silently trust cached TMF output. Reconnect and
 check `tmf_status.repo` before resuming TMF use. No credentials are needed for the
 offline path above.
 
-## rc5 public-package transport verification
+## Historical public-package transport verification (rc5)
 
 The `0.1.0rc5` wheel and sdist on public PyPI match the SHA256 checksums in the
 GitHub release. A fresh environment installed the version directly from
@@ -102,7 +111,7 @@ installed-package reflex smoke passed without changing live Claude settings.
 
 Real stdio verification with MCP Python SDK `2.2.0` passed initialize, tool
 discovery, worktree binding, fresh/stale transitions, required-read output,
-actual source reread, and refresh recovery. To check the manifest-generated
+actual source reread, and refresh recovery. To check the current manifest-generated
 launch, use `scripts/verify_registry_launch.py` and `server.json` from the same
 checkout, with `mcp==2.2.0` and `uv==0.8.22` installed, then run:
 

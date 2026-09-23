@@ -5,15 +5,16 @@ not register a reflex hook.** Without a host hook, TMF remains opt-in memory:
 the agent must remember to query it. Engine installation and reflex arming are
 separate deployment states.
 
-`tmf doctor` is included in **0.1.0rc5** and source checkouts containing this
-change. Older rc3/rc4 wheels do not include it; upgrade the engine in your chosen
+`tmf doctor` was introduced in **0.1.0rc5** and is included in **0.1.0rc6**.
+Older rc3/rc4 wheels do not include it; upgrade the engine in your chosen
 environment before using these commands. See the [installation guide](early-preview.md).
 
-**Java coverage fix (source change after rc5):** the published rc5 hook selected
+**Java coverage fix (rc6):** the published rc5 hook selected
 only Python `scope="function"` claims. Java methods use `scope="class"` with a
 `role="declaration"` binding, so registration could pass while the hook checked
-zero methods. The updated hook and doctor below require updated source; merely
-installing the rc5 wheel does not fix an existing integration copy.
+zero methods. The rc6 source distribution includes the updated hook and
+selector, and the rc6 engine includes the updated doctor. Merely upgrading the engine wheel
+does not update an existing integration copy.
 
 ## Post-install check
 
