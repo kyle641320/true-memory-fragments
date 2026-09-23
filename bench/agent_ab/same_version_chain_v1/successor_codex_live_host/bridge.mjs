@@ -144,6 +144,7 @@ export function buildRunParams(frame, context, callbacks) {
 /** Observe only public per-run callback facts, never infer hidden inference counts. */
 export function anomalyIn(source, raw) {
   // User/source/assistant/tool text is never an event name. Do not scan it.
+  if (source === 'onAgentEvent' && raw?.stream === 'fallback') return 'model_rerouted';
   const rows = [raw, raw?.data, raw?.meta?.agentMeta,
     raw?.runtimeModelSelection, raw?.data?.runtimeModelSelection,
     raw?.meta?.agentMeta?.runtimeModelSelection].filter(v => v && typeof v === 'object');

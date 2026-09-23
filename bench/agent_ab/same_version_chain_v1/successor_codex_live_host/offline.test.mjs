@@ -42,6 +42,7 @@ test('altered requested effort and timeout are rejected before any fake API call
 
 test('anomaly detection reads structural metadata, not arbitrary scientific or assistant text', () => {
   assert.equal(anomalyIn('onRunProgress', {reason: 'notification:model/rerouted'}), 'model_rerouted');
+  assert.equal(anomalyIn('onAgentEvent', {stream: 'fallback', data: {fromModel: 'gpt-5.6-sol', toModel: 'other', reason: 'capacity'}}), 'model_rerouted');
   assert.equal(anomalyIn('onAgentEvent', {stream: 'assistant', data: {text: 'model/rerouted tool_bypass effort_drift'}}), null);
   assert.equal(anomalyIn('after_tool_call', {toolName: TOOL_NAME, result: {text: 'configuration_drift'}}), null);
   assert.equal(anomalyIn('llm_input', {model: 'other'}), 'model_mismatch');
@@ -143,10 +144,10 @@ test('two tool actions and internal retry telemetry share one outer dispatch, no
   await bridge.done;
 });
 
-test('reroute immediately aborts upstream signal and rejects further tools', async t => {
+test('public fallback projection alone immediately aborts upstream and rejects further tools', async t => {
   let bridge, signalAborted = false;
   const f = fakeHarness(t, async params => {
-    params.onRunProgress({reason: 'notification:model/rerouted'});
+    params.onAgentEvent({stream: 'fallback', data: {fromModel: 'gpt-5.6-sol', toModel: 'other', reason: 'capacity'}});
     signalAborted = params.abortSignal.aborted;
     await assert.rejects(bridge.action('forbidden', {action: 'list'}));
     return {meta: {}};
