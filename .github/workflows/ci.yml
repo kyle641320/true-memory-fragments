@@ -56,6 +56,10 @@ jobs:
           done
       - name: Successor regression tests (offline)
         run: python -m unittest discover -s tests -p 'test_*m10_successor*.py' -q
+      - name: OpenAI Responses profile seal (offline, no credentials or provider calls)
+        run: |
+          python -m bench.agent_ab.same_version_chain_v1.successor_openai_conformance prepare-seal --seal "$RUNNER_TEMP/successor-openai-seal.json"
+          python -m bench.agent_ab.same_version_chain_v1.successor_openai_conformance verify-seal --seal "$RUNNER_TEMP/successor-openai-seal.json"
       - name: Real process I/O conformance (fixed offline peer, zero model calls)
         run: python -m bench.agent_ab.same_version_chain_v1.m10_successor_process_rehearsal --output "$RUNNER_TEMP/m10-successor-process"
       - name: Broker execution core conformance (fixed local backend, zero model calls)
@@ -72,6 +76,7 @@ jobs:
           name: m10-successor-offline-evidence
           path: |
             ${{ runner.temp }}/m10-successor-seal.json
+            ${{ runner.temp }}/successor-openai-seal.json
             ${{ runner.temp }}/m10-successor-rehearsal
             ${{ runner.temp }}/m10-successor-process
             ${{ runner.temp }}/m10-successor-broker
