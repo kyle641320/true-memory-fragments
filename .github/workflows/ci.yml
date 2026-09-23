@@ -66,6 +66,25 @@ jobs:
         run: python -m bench.agent_ab.same_version_chain_v1.guava_m10_successor_runner protocol-rehearsal --manifest "$RUNNER_TEMP/m10-successor-seal.json" --output "$RUNNER_TEMP/m10-successor-rehearsal"
       - name: Joint runner-broker rehearsal (six fixed batches, zero model calls)
         run: python -m bench.agent_ab.same_version_chain_v1.m10_successor_runner_bridge --manifest "$RUNNER_TEMP/m10-successor-seal.json" --output "$RUNNER_TEMP/m10-successor-bridge"
+      - name: Codex execution-layer seal and fault qualification (no native runtime or model)
+        run: |
+          python -m bench.agent_ab.same_version_chain_v1.successor_codex_runner prepare-seal --output "$RUNNER_TEMP/codex-execution-seal.json"
+          python -m bench.agent_ab.same_version_chain_v1.successor_codex_runner verify-seal --manifest "$RUNNER_TEMP/codex-execution-seal.json"
+          for scenario in ok wrong_model wrong_effort missing_identity reroute effort_drift config_drift tool_bypass workspace_escape action_budget runtime_failure
+          do
+            python -m bench.agent_ab.same_version_chain_v1.successor_codex_runner rehearse --manifest "$RUNNER_TEMP/codex-execution-seal.json" --scenario "$scenario" --output "$RUNNER_TEMP/codex-execution-$scenario"
+          done
+      - name: Codex live entry remains blocked before admission
+        run: |
+          python - <<'PY'
+          import json, os, pathlib, subprocess, sys
+          root = pathlib.Path(os.environ["RUNNER_TEMP"])
+          check = subprocess.run([sys.executable, "-m", "bench.agent_ab.same_version_chain_v1.successor_codex_runner", "check-live-readiness", "--manifest", str(root / "codex-execution-seal.json")], capture_output=True, text=True, check=False)
+          report = json.loads(check.stdout)
+          assert check.returncode == 2, check.stderr
+          assert report["ready"] is False and report["admitted_runs"] == report["model_calls"] == 0, report
+          (root / "codex-execution-readiness.json").write_text(check.stdout)
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -76,3 +95,4 @@ jobs:
             ${{ runner.temp }}/m10-successor-process
             ${{ runner.temp }}/m10-successor-broker
             ${{ runner.temp }}/m10-successor-bridge
+            ${{ runner.temp }}/codex-execution-*

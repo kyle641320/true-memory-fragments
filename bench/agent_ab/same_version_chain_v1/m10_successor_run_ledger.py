@@ -32,6 +32,9 @@ from .m10_successor_protocol import RunRecord
 
 
 EVIDENCE_KIND = "offline_broker_protocol_rehearsal"
+CODEX_OFFLINE_KIND = "codex_runtime_offline_rehearsal"
+CODEX_PILOT_KIND = "codex_runtime_protocol_pilot"
+_EVIDENCE_KINDS = (EVIDENCE_KIND, CODEX_OFFLINE_KIND, CODEX_PILOT_KIND)
 _SCHEMA = "m10_successor_run_admission.v1"
 _ZERO_HASH = "0" * 64
 _HASH = re.compile(r"[0-9a-f]{64}\Z")
@@ -44,10 +47,12 @@ _MAX_JSON_DEPTH = 64
 _MAX_INTEGER_BITS = 64
 
 
-def ledger_policy() -> dict[str, Any]:
+def ledger_policy(evidence_kind: str = EVIDENCE_KIND) -> dict[str, Any]:
     """Public seal material for this journal's fixed structural policy."""
+    if evidence_kind not in _EVIDENCE_KINDS:
+        raise ValueError("unknown run evidence kind")
     return {
-        "schema": _SCHEMA, "evidence_kind": EVIDENCE_KIND,
+        "schema": _SCHEMA, "evidence_kind": evidence_kind,
         "max_runs": _MAX_RUNS, "max_event_bytes": _MAX_LINE_BYTES,
         "max_journal_bytes": _MAX_JOURNAL_BYTES, "max_json_nodes": _MAX_JSON_NODES,
         "max_json_depth": _MAX_JSON_DEPTH,
@@ -146,13 +151,21 @@ class RunAdmissionLedger:
     """Single-owner fixed-denominator journal with no restart capability."""
 
     def __init__(self, path: str | Path, joint_seal_sha256: str,
-                 run_ids: Sequence[str]) -> None:
+                 run_ids: Sequence[str], *, evidence_kind: str = EVIDENCE_KIND) -> None:
+        # This is an accounting classification, NEVER execution authority.
+        # Existing callers retain byte-for-byte v1 offline admission events.
+        if evidence_kind not in _EVIDENCE_KINDS:
+            raise ValueError("unknown run evidence kind")
+        self._evidence_kind = evidence_kind
+        self._live = evidence_kind == CODEX_PILOT_KIND
         if type(joint_seal_sha256) is not str or _HASH.fullmatch(joint_seal_sha256) is None:
             raise ValueError("joint seal must be 64 lowercase hex characters")
         if (not isinstance(run_ids, Sequence) or isinstance(run_ids, (str, bytes))
                 or not 1 <= len(run_ids) <= _MAX_RUNS):
             raise ValueError("schedule must contain 1..6000 ordered run IDs")
         identifiers = tuple(run_ids)
+        if evidence_kind != EVIDENCE_KIND and len(identifiers) != 6:
+            raise ValueError("Codex qualification admits exactly one six-run block")
         if any(type(value) is not str or _RUN_ID.fullmatch(value) is None for value in identifiers):
             raise ValueError("run IDs must be opaque text of at most 128 characters")
         if len(set(identifiers)) != len(identifiers):
@@ -196,7 +209,7 @@ class RunAdmissionLedger:
             else:
                 self._append({
                     "event": "batch_admitted", "joint_seal_sha256": self._seal,
-                    "run_ids": list(self._run_ids), "evidence_kind": EVIDENCE_KIND,
+                    "run_ids": list(self._run_ids), "evidence_kind": self._evidence_kind,
                     "admitted": True, "itt_included": True,
                 })
                 # link is atomic and refuses to replace an existing path; the
@@ -304,6 +317,9 @@ class RunAdmissionLedger:
         self._file_digest = hashlib.sha256(data).hexdigest()
 
     def _validate_start(self, run_id: str) -> None:
+        if self._evidence_kind != EVIDENCE_KIND and any(
+                row.get("protocol_ok") is not True for row in self._completed.values()):
+            raise RunLedgerTransitionError("Codex block stopped on its first protocol failure")
         if (type(run_id) is not str or self._pending is not None
                 or self._started_count >= len(self._run_ids)
                 or run_id != self._run_ids[self._started_count]):
@@ -323,14 +339,16 @@ class RunAdmissionLedger:
         run_id = record.get("run_id")
         if type(run_id) is not str or run_id != self._pending:
             raise RunLedgerTransitionError("completion must match the unique pending run")
-        if record.get("seal_sha256") != self._seal or record.get("evidence_kind") != EVIDENCE_KIND:
+        if record.get("seal_sha256") != self._seal or record.get("evidence_kind") != self._evidence_kind:
             raise RunLedgerTransitionError("completion identity or evidence kind differs from admission")
         for key in ("admitted", "itt_included", "durable_ledger"):
             if record.get(key) is not True:
                 raise RunLedgerTransitionError("admitted run must remain durably included in ITT")
-        for key in ("model_execution_enabled", "model_pilot_admitted", "provider_token_limits_verified"):
-            if record.get(key) is not False:
-                raise RunLedgerTransitionError("offline evidence cannot certify live model execution")
+        for key in ("model_execution_enabled", "model_pilot_admitted"):
+            if record.get(key) is not self._live:
+                raise RunLedgerTransitionError("execution classification differs from admission")
+        if record.get("provider_token_limits_verified") is not False:
+            raise RunLedgerTransitionError("this journal cannot certify provider token limits")
         if type(record.get("protocol_ok")) is not bool or type(record.get("final_received")) is not bool:
             raise RunLedgerTransitionError("completion status must use strict booleans")
         if record["protocol_ok"]:
@@ -367,7 +385,8 @@ class RunAdmissionLedger:
             else:
                 state = "started" if run_id == self._pending else "not_started"
                 row = asdict(RunRecord(
-                    run_id=run_id, seal_sha256=self._seal, evidence_kind=EVIDENCE_KIND,
+                    run_id=run_id, seal_sha256=self._seal, evidence_kind=self._evidence_kind,
+                    model_execution_enabled=self._live, model_pilot_admitted=self._live,
                     durable_ledger=True, protocol_status="failed",
                     failure_reason=("missing_completion_record" if state == "started"
                                     else "not_started_after_batch_admission"),
@@ -393,7 +412,7 @@ class RunAdmissionLedger:
             except RunLedgerError:
                 verified = False
             return {
-                "evidence_kind": EVIDENCE_KIND, "joint_seal_sha256": self._seal,
+                "evidence_kind": self._evidence_kind, "joint_seal_sha256": self._seal,
                 "run_ids": list(self._run_ids), "admitted_runs": len(self._run_ids),
                 "denominator": len(self._run_ids), "started_runs": self._started_count,
                 "completed_runs": len(self._completed), "pending_run_id": self._pending,
@@ -440,7 +459,7 @@ class RunAdmissionLedger:
                 if self._seq == 0:
                     if (kind != "batch_admitted" or event["joint_seal_sha256"] != self._seal
                             or event["run_ids"] != list(self._run_ids)
-                            or event["evidence_kind"] != EVIDENCE_KIND
+                            or event["evidence_kind"] != self._evidence_kind
                             or event["admitted"] is not True or event["itt_included"] is not True):
                         raise ValueError("batch admission does not match the sealed schedule")
                 elif kind == "started":
