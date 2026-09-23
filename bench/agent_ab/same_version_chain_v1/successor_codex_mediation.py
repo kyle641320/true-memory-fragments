@@ -77,10 +77,13 @@ class MediatedWorkspace:
         self.source_acquisition: list[dict] = []
         self.usage = {"budget_unit": "scientific_utf8_bytes_and_mediated_actions_not_native_tokens",
                       "turns": 0, "input_bytes": 0, "output_bytes": 0,
+                      "turns_scope": "mediated_action_steps_not_native_inferences",
+                      "externally_admitted_agent_turns": 0,
                       "tool_calls": 0, "successful_edits": 0, "provider_tokens": None,
                       "source_read_actions": 0, "source_content_bytes_received": 0,
-                      "source_files_received": [], "input_reservations": 0}
-        self._input_reservation = None
+                      "source_files_received": [], "scientific_input_charges": 0}
+        self._precharged_action_material = None
+        self._expected_history = self._scientific_material()
         self._root_identity = None
         self._last_compile = None
         self._deadline = time.monotonic() + budgets.run_timeout_seconds
@@ -137,12 +140,32 @@ class MediatedWorkspace:
             self._fail("runtime_identity_unverified")
         self._check_workspace()
 
+    def _scientific_material(self):
+        return _json({"messages": self.messages, "action_schemas": ACTION_SCHEMAS})
+
+    def _check_scientific_history(self):
+        material = self._scientific_material()
+        if material != self._expected_history:
+            self._fail("scientific_input_drift_after_admission")
+        return material
+
+    def _charge_scientific_input(self, material: str, boundary: str):
+        """Enforce the same byte ledger at observable, controllable boundaries."""
+        incoming = len(material.encode("utf-8"))
+        if (incoming > self.caps.max_input_bytes_per_turn
+                or self.usage["input_bytes"] + incoming > self.caps.max_total_input_bytes):
+            self._fail("input_budget_exceeded")
+        self._emit({"event": "scientific_input_admitted", "input_bytes": incoming,
+                    "charge_index": self.usage["scientific_input_charges"], "boundary": boundary,
+                    "native_inference_reservation": False})
+        self.usage["input_bytes"] += incoming
+        self.usage["scientific_input_charges"] += 1
+
     def call(self, action: dict) -> dict:
         self._active()
-        if self._input_reservation is None:
-            self._fail("input_not_admitted_before_inference")
-        if self._input_reservation != _json({"messages": self.messages, "action_schemas": ACTION_SCHEMAS}):
-            self._fail("scientific_input_drift_after_admission")
+        if not self.usage["externally_admitted_agent_turns"]:
+            self._fail("input_not_admitted_before_agent_turn")
+        material = self._check_scientific_history()
         if self.usage["turns"] >= self.caps.max_turns:
             self._fail("action_budget_exceeded")
         try:
@@ -156,15 +179,22 @@ class MediatedWorkspace:
         if (size > self.caps.max_output_bytes_per_turn
                 or self.usage["output_bytes"] + size > self.caps.max_total_output_bytes):
             self._fail("output_budget_exceeded")
+        # A submitted external turn has already paid for its first unchanged
+        # history. Later actions in that turn pay for the current full history.
+        # This ledger is never presented as hidden native prompt consumption.
+        if self._precharged_action_material != material:
+            self._charge_scientific_input(material, "mediated_action")
         self.usage["turns"] += 1
         self.usage["output_bytes"] += size
-        self._input_reservation = None
+        self._precharged_action_material = None
         entry = {"turn": self.usage["turns"], "action": parsed, "response": raw}
         self.transcript.append(entry)
         self._emit({"event": "action_admitted", **entry})
         # Evidence delivery cannot leave a stale authority valid across awaits.
         self._active()
+        self._check_scientific_history()
         self.messages.append({"role": "assistant", "content": raw})
+        self._expected_history = self._scientific_material()
         try:
             kind = parsed["action"]
             if kind == "final":
@@ -213,6 +243,7 @@ class MediatedWorkspace:
                 self.source_acquisition.append({"turn": entry["turn"], "action": kind,
                                                 "paths": paths, "content_bytes": delivered})
             self.messages.append({"role": "tool", "content": _json(result)})
+            self._expected_history = self._scientific_material()
             if kind == "final":
                 self.final_answer, self.protocol_ok = deepcopy(parsed), True
             return deepcopy(result)
@@ -225,11 +256,11 @@ class MediatedWorkspace:
         except Exception:
             self._fail("runtime_tool_failure")
 
-    def prepare_inference(self):
-        """Charge exact scientific bytes before a native inference is admitted.
+    def prepare_agent_turn(self):
+        """Charge submitted scientific input once per external Agent turn.
 
-        This is not a count of hidden native prompt tokens. A retry must consume
-        a fresh reservation; it cannot reuse an earlier unconsumed reservation.
+        Internal native reasoning/retry/iterations require no reservation. A
+        further external dispatch is a fresh charge, even for unchanged input.
         """
         if self.failure_reason is not None:
             self._fail(self.failure_reason)
@@ -238,18 +269,17 @@ class MediatedWorkspace:
         if time.monotonic() >= self._deadline:
             self._fail("run_timeout")
         self._check_workspace()
-        material = _json({"messages": self.messages, "action_schemas": ACTION_SCHEMAS})
-        incoming = len(material.encode("utf-8"))
-        if (incoming > self.caps.max_input_bytes_per_turn
-                or self.usage["input_bytes"] + incoming > self.caps.max_total_input_bytes):
-            self._fail("input_budget_exceeded")
-        if self.usage["input_reservations"] >= self.caps.max_turns:
-            self._fail("inference_budget_exceeded")
-        self._emit({"event": "scientific_input_admitted", "input_bytes": incoming,
-                    "reservation": self.usage["input_reservations"]})
-        self.usage["input_bytes"] += incoming
-        self.usage["input_reservations"] += 1
-        self._input_reservation = material
+        material = self._check_scientific_history()
+        if self.usage["externally_admitted_agent_turns"] >= self.caps.max_turns:
+            self._fail("agent_turn_budget_exceeded")
+        self._charge_scientific_input(material, "external_agent_turn")
+        self._check_scientific_history()
+        self.usage["externally_admitted_agent_turns"] += 1
+        self._precharged_action_material = material
+
+    def prepare_inference(self):
+        """Legacy alias for external-turn input accounting, not native inference."""
+        self.prepare_agent_turn()
 
     def evaluate(self) -> dict:
         """Evaluator-only; failure is not permission to omit either outcome."""

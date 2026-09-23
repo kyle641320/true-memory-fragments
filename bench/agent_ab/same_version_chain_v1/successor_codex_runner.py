@@ -1,15 +1,15 @@
-"""Joint scientific/runtime sealing and offline qualification, never a live shim.
+"""Sealed successor execution with equal external limits and retained ITT.
 
 Requested model/effort are controls, not provider-attested actual identity.
-The installed public host still cannot implement the frozen per-inference
-budget/admission boundary. Live admission stops before a run is created;
-offline peers never substitute for live integration evidence.
+Native internal inference/retry consumption is runtime telemetry, not a
+successor pre-reservation boundary. Offline evidence remains explicitly separate.
 """
 from __future__ import annotations
 
 import argparse
 import json
 import os
+import subprocess
 import tempfile
 import time
 from copy import deepcopy
@@ -19,7 +19,7 @@ from pathlib import Path
 from . import guava_m10_successor_runner as science
 from .m10_successor_fixture import FILE, PKG_FILES, ROOT, compiler_environment, prepare_fixture, validate_fixture
 from .m10_successor_protocol import BudgetCaps, RunRecord, aggregate_itt, _json
-from .m10_successor_run_ledger import CODEX_OFFLINE_KIND, RunAdmissionLedger, ledger_policy
+from .m10_successor_run_ledger import CODEX_OFFLINE_KIND, CODEX_PILOT_KIND, RunAdmissionLedger, ledger_policy
 from .successor_codex_control import (
     EventJournal, RuntimeGuard, TOOL_NAME, digest, durable_directory,
     expected_identity, runtime_profile, verify_event_journal,
@@ -37,15 +37,18 @@ EXPECTED_FAILURES = {
     "reroute": "model_rerouted", "effort_drift": "effort_drift",
     "config_drift": "configuration_drift", "tool_bypass": "tool_bypass",
     "workspace_escape": "invalid_action_schema",
-    "action_budget": "inference_budget_exceeded", "runtime_failure": "runtime_failure",
+    "action_budget": "action_budget_exceeded", "runtime_failure": "runtime_failure",
 }
 MODULE_NAMES = ("successor_codex_control.py", "successor_codex_mediation.py",
-                "successor_codex_runner.py", "successor_codex_host.py", "m10_successor_run_ledger.py")
+                "successor_codex_runner.py", "successor_codex_host.py", "successor_codex_live.py",
+                "m10_successor_run_ledger.py")
 
 
 def inventory() -> dict:
     paths = [Path(__file__).parent / name for name in MODULE_NAMES]
     paths += [ROOT / "docs/experiments/successor-codex-runtime.md"]
+    paths += sorted((Path(__file__).parent / "successor_codex_live_host").glob("*.mjs"))
+    paths += sorted((Path(__file__).parent / "successor_codex_live_host").glob("*.json"))
     return {p.relative_to(ROOT).as_posix(): science.sha256_bytes(p.read_bytes()) for p in paths}
 
 
@@ -60,9 +63,12 @@ def _content(scientific: dict, host_report: dict) -> dict:
     return {"schema": SCHEMA, "scientific": deepcopy(scientific), "profile": profile,
             "control_implementation_sha256": inventory(), "host_qualification": deepcopy(host_report),
             "ledger_policy": ledger_policy(CODEX_OFFLINE_KIND),
+            "live_ledger_policy": ledger_policy(CODEX_PILOT_KIND),
             "scope": "execution_layer_only_scientific_materials_unchanged",
             "live_admission": "requested_controls_observable_drift_stop_and_qualified_budget_mediation_not_provider_attestation",
-            "live_execution_enabled": False, "model_calls": 0}
+            "live_admission_requires": ["qualified_public_host", "exact_independent_ready_receipt",
+                                        "single_use_original_schedule_latch"],
+            "model_calls_during_sealing": 0}
 
 
 def build_manifest(scientific: dict, host_report: dict | None = None) -> dict:
@@ -131,11 +137,11 @@ class OfflinePeer:
         actions = _fixed_actions()
         if self.scenario == "action_budget":
             actions = [{"action": "list"}] * (BudgetCaps().max_turns + 1)
+        workspace.prepare_agent_turn()
+        guard.before_agent_turn(requested)
         for index, action in enumerate(actions):
             if self.aborted:
                 raise RuntimeViolation("peer_after_abort")
-            workspace.prepare_inference()
-            guard.before_inference(requested)
             if index == 1:
                 events = {"reroute": "model/rerouted", "effort_drift": "effort_drift",
                           "config_drift": "configuration_drift", "runtime_failure": "runtime_failure"}
@@ -147,7 +153,9 @@ class OfflinePeer:
                     action = {"action": "read_range", "path": "../control.json", "start": 1, "end": 1}
             guard.tool(TOOL_NAME)
             workspace.call(action)
+            # Native response completion is telemetry, not a new external turn.
             guard.observe({"event": "inference_completed"})
+        guard.end_agent_turn()
         guard.observe({"event": "runtime_completed"})
 
 
@@ -196,6 +204,14 @@ def rehearse(manifest: dict, output: Path, *, scenario: str = "ok") -> dict:
     """One real-ledger, real-fixture block using a fixed zero-model peer."""
     if scenario not in SCENARIOS:
         raise RuntimeViolation("unknown_offline_scenario")
+    return _run_batch(manifest, output, evidence_kind=CODEX_OFFLINE_KIND, scenario=scenario,
+                      peer_factory=lambda runtime, diagnostic: OfflinePeer(scenario))
+
+
+def _run_batch(manifest: dict, output: Path, *, evidence_kind: str, scenario: str,
+               peer_factory) -> dict:
+    """Shared immutable schedule/accounting/evaluator path; no restart support."""
+    live = evidence_kind == CODEX_PILOT_KIND
     manifest = deepcopy(manifest)
     verify_manifest(manifest)
     pinned = manifest["seal_sha256"]
@@ -208,24 +224,33 @@ def rehearse(manifest: dict, output: Path, *, scenario: str = "ok") -> dict:
     rows = scientific["randomization"]["schedule"]
     ids = [row["run_id"] for row in rows]
     stopped = None
-    with RunAdmissionLedger(output / "runs.jsonl", pinned, ids, evidence_kind=CODEX_OFFLINE_KIND) as ledger:
+    with RunAdmissionLedger(output / "runs.jsonl", pinned, ids, evidence_kind=evidence_kind) as ledger:
         try:
             for row in rows:
                 verify_manifest(manifest, full_preflight=False, pinned=pinned)
+                if live:
+                    from .successor_codex_host import verify_live_materials, HostNotReadyError
+                    try:
+                        verify_live_materials(manifest["host_qualification"])
+                    except HostNotReadyError as exc:
+                        raise RuntimeViolation("configuration_drift:" + str(exc)) from None
                 ledger.start(row["run_id"])
-                record = asdict(RunRecord(run_id=row["run_id"], evidence_kind=CODEX_OFFLINE_KIND,
+                began = time.monotonic()
+                record = asdict(RunRecord(run_id=row["run_id"], evidence_kind=evidence_kind,
                                            seal_sha256=pinned, durable_ledger=True,
+                                           model_execution_enabled=live, model_pilot_admitted=live,
                                            budgets=asdict(BudgetCaps())))
-                peer = OfflinePeer(scenario)
+                peer = None
                 journal = None
                 workspace = None
                 guard = None
                 with tempfile.TemporaryDirectory(prefix="tmf-codex-private-") as directory:
-                    root = Path(directory)
+                    root = Path(directory) / "source"
                     try:
                         prepare_fixture(root, "t1")
                         validate_fixture(root, "t1")
                         journal = EventJournal(output / (row["run_id"] + ".events.jsonl"))
+                        peer = peer_factory(Path(directory) / "runtime", output / (row["run_id"] + ".host.log"))
                         guard = RuntimeGuard(manifest["profile"], emit=journal.emit, abort=peer.abort)
 
                         def active():
@@ -259,8 +284,12 @@ def rehearse(manifest: dict, output: Path, *, scenario: str = "ok") -> dict:
                             record.update(snapshot, **evaluated)
                             record["failure_reason"] = prior_failure or snapshot["failure_reason"]
                         if guard is not None:
-                            record["adapter_evidence"] = {"kind": "offline_peer_not_native_host_attestation",
-                                                          "model_calls": 0, "guard": guard.snapshot()}
+                            record["adapter_evidence"] = {
+                                **(peer.snapshot() if live and peer is not None else {
+                                    "kind": "offline_peer_not_native_host_attestation", "model_calls": 0}),
+                                "guard": guard.snapshot(),
+                            }
+                        record["elapsed_seconds"] = time.monotonic() - began
                         if journal is not None:
                             try:
                                 record["runtime_evidence_anchor"] = journal.verify_live()
@@ -290,32 +319,97 @@ def rehearse(manifest: dict, output: Path, *, scenario: str = "ok") -> dict:
             stopped = exc.category if isinstance(exc, RuntimeViolation) else "controller_failure:" + type(exc).__name__
         state = ledger.snapshot()
     summary = aggregate_itt(state["records"])
-    summary.update(evidence_kind=CODEX_OFFLINE_KIND, model_calls=0, live_model_runs=0,
+    summary.update(evidence_kind=evidence_kind, model_calls=None if live else 0,
+                   live_model_runs=None if live else 0, model_pilot_admitted=live,
                    scientific_seal_sha256=scientific["seal_sha256"], seal_sha256=pinned,
                    scenario=scenario, stopped_reason=stopped,
                    started_runs=state["started_runs"], not_started_runs=len(state["not_started_run_ids"]),
                    journal_integrity_verified=state["journal_integrity_verified"],
-                   readiness="NOT_READY_FOR_LIVE_HOST")
+                   readiness="PILOT_STOPPED" if live else "NOT_READY_FOR_LIVE_HOST")
     _write(output / "accounting.json", state)
     _write(output / "summary.json", summary)
     return summary
 
 
-def run_live_pilot(manifest: dict, output: Path):
-    """Fail before batch admission. No hidden CLI switch enables a stock host."""
+def frozen_checkout() -> dict:
+    """Bind the independent review to a clean, immutable execution checkout."""
+    def git(*args):
+        return subprocess.check_output(["git", *args], cwd=ROOT, text=True).strip()
+    if git("status", "--porcelain"):
+        raise RuntimeViolation("execution_checkout_not_clean")
+    return {"commit": git("rev-parse", "HEAD"),
+            "common_dir": str(Path(git("rev-parse", "--path-format=absolute", "--git-common-dir")))}
+
+
+def check_live_readiness(manifest: dict, readiness: dict | None = None) -> dict:
+    """Zero-inference qualification; an audit receipt is not host attestation."""
     from .successor_codex_host import require_live_host
     verify_manifest(manifest)
     require_live_host(manifest["host_qualification"])
-    raise RuntimeViolation("qualified_live_driver_unavailable")
+    if readiness is None:
+        raise RuntimeViolation("independent_readiness_receipt_required")
+    checkout = frozen_checkout()
+    expected = {"schema": "tmf.successor.independent-readiness.v1", "ready": True,
+                "scope": "changed_execution_budget_and_live_bridge_only",
+                "commit": checkout["commit"], "seal_sha256": manifest["seal_sha256"],
+                "profile_sha256": digest(manifest["profile"]),
+                "host_qualification_sha256": digest(manifest["host_qualification"]),
+                "blocking_issues": []}
+    if (type(readiness) is not dict or not isinstance(readiness.get("reviewer"), str)
+            or not readiness["reviewer"].strip()
+            or any(type(readiness.get(k)) is not type(v) or readiness.get(k) != v
+                   for k, v in expected.items())):
+        raise RuntimeViolation("independent_readiness_receipt_mismatch")
+    return {"ready": True, "model_calls": 0, "admitted_runs": 0, **expected}
+
+
+def _claim_original_block(manifest: dict, readiness: dict, output: Path) -> None:
+    # The shared Git directory is stable across worktrees and output paths.
+    # Claiming is exclusive + durable; it is never released, even on failure.
+    checkout = frozen_checkout()
+    schedule = manifest["scientific"]["randomization"]
+    directory = Path(checkout["common_dir"]) / "successor-pilot-admissions"
+    durable_directory(directory)
+    claim = directory / (digest(schedule) + ".json")
+    try:
+        _write(claim, {"schedule": schedule, "seal_sha256": manifest["seal_sha256"],
+                       "commit": checkout["commit"], "readiness_sha256": digest(readiness),
+                       "output": str(output.absolute()), "no_retry_resume_replacement": True})
+    except FileExistsError:
+        raise RuntimeViolation("original_pilot_block_already_claimed") from None
+
+
+def run_live_pilot(manifest: dict, output: Path, *, readiness: dict | None = None,
+                   auth_profile_id: str | None = None):
+    """Exactly one already-authorized block through the stock subscription host."""
+    from .successor_codex_host import create_live_launch, _auth_profile_reference
+    from .successor_codex_live import LivePeer
+    check_live_readiness(manifest, readiness)
+    if (type(auth_profile_id) is not str or _auth_profile_reference(auth_profile_id)
+            != manifest["host_qualification"]["auth_profile_ref"]):
+        raise RuntimeViolation("subscription_profile_reference_mismatch")
+    output = Path(output).absolute()
+    if output.exists():
+        raise RuntimeViolation("no_resume_or_replacement")
+    _claim_original_block(manifest, readiness, output)
+
+    def peer_factory(runtime, diagnostic):
+        launch = create_live_launch(runtime, auth_profile_id=auth_profile_id)
+        return LivePeer(launch, runtime, diagnostic)
+
+    return _run_batch(manifest, output, evidence_kind=CODEX_PILOT_KIND,
+                      scenario="authorized_single_protocol_pilot", peer_factory=peer_factory)
 
 
 def main(argv=None) -> int:
     from .successor_codex_host import HostNotReadyError
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("prepare-seal", "verify-seal", "rehearse", "check-live-readiness"))
+    parser.add_argument("command", choices=("prepare-seal", "verify-seal", "rehearse", "check-live-readiness", "run-pilot"))
     parser.add_argument("--manifest", type=Path)
     parser.add_argument("--host-report", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--readiness", type=Path)
+    parser.add_argument("--host-settings", type=Path)
     parser.add_argument("--scenario", choices=SCENARIOS, default="ok")
     args = parser.parse_args(argv)
     try:
@@ -337,8 +431,17 @@ def main(argv=None) -> int:
                 print(json.dumps(result, indent=2))
                 return 0 if scenario_passes(result) else 1
             else:
-                run_live_pilot(manifest, args.output or Path("unused"))
-                raise AssertionError("stock live path must never return")
+                readiness = json.loads(args.readiness.read_text()) if args.readiness else None
+                if args.command == "check-live-readiness":
+                    result = check_live_readiness(manifest, readiness)
+                else:
+                    if args.output is None or args.host_settings is None:
+                        parser.error("--output and --host-settings are required")
+                    settings = json.loads(args.host_settings.read_text())
+                    result = run_live_pilot(manifest, args.output, readiness=readiness,
+                                            auth_profile_id=settings.get("auth_profile_id"))
+                    print(json.dumps(result, indent=2))
+                    return 0 if result["protocol_complete"] == 6 else 1
         if args.output:
             durable_directory(args.output.parent)
             _write(args.output, result)

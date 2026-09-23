@@ -35,7 +35,7 @@ class ControlTests(unittest.TestCase):
         self.guard = RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
 
     def arm(self):
-        self.guard.before_inference(expected_identity(self.profile))
+        self.guard.before_agent_turn(expected_identity(self.profile))
 
     def test_frozen_request_admission_required_before_tools(self):
         with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_missing"):
@@ -49,17 +49,17 @@ class ControlTests(unittest.TestCase):
                 requested = expected_identity(self.profile)
                 requested[key] = "different"
                 with self.assertRaisesRegex(RuntimeViolation, "configuration_mismatch"):
-                    guard.before_inference(requested)
-                self.assertEqual(0, guard.inferences)
+                    guard.before_agent_turn(requested)
+                self.assertEqual(0, guard.agent_turns)
                 with self.assertRaises(RuntimeViolation):
-                    guard.before_inference(expected_identity(self.profile))
+                    guard.before_agent_turn(expected_identity(self.profile))
 
     def test_reroute_effort_config_failure_and_native_tool_abort(self):
         for kind in ("model/rerouted", "model_mismatch", "effort_drift", "configuration_drift",
                      "runtime_failure", "native_tool", "tool_bypass", "workspace_escape", "blocking_runtime_anomaly"):
             with self.subTest(kind=kind):
                 guard = RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
-                guard.before_inference(expected_identity(self.profile))
+                guard.before_agent_turn(expected_identity(self.profile))
                 with self.assertRaises(RuntimeViolation):
                     guard.observe({"event": kind})
                 with self.assertRaises(RuntimeViolation):
@@ -81,7 +81,7 @@ class ControlTests(unittest.TestCase):
         self.arm()
         self.guard.tool(control.TOOL_NAME)
         admitted = self.events[-1]
-        self.assertEqual("inference_admitted", admitted["event"])
+        self.assertEqual("agent_turn_admitted", admitted["event"])
         self.assertEqual({}, admitted["observed"])
         self.assertNotIn("actual", admitted)
         self.assertEqual(expected_identity(self.profile), admitted["requested_and_controlled"])
@@ -96,14 +96,14 @@ class ControlTests(unittest.TestCase):
     def test_matching_runtime_observation_never_becomes_provider_attestation(self):
         observation = {"model": control.NATIVE_MODEL, "effort": control.EFFORT,
                        "source": "test_thread_response_not_provider_attestation"}
-        self.guard.before_inference(expected_identity(self.profile), observation)
+        self.guard.before_agent_turn(expected_identity(self.profile), observation)
         self.assertEqual(observation, self.events[-1]["observed"])
         self.assertIs(self.guard.snapshot()["provider_actual_model_attested"], False)
         self.assertIs(self.guard.snapshot()["provider_effective_effort_attested"], False)
         self.guard.observe({"event": "model_observed",
                             "observed": {"model": control.MODEL, "source": "test_runtime_event"}})
 
-    def test_present_pre_inference_observation_mismatch_rejects_before_admission(self):
+    def test_present_pre_agent_turn_observation_mismatch_rejects_before_admission(self):
         for key, value, category in (("model", "other-model", "observed_model_mismatch"),
                                      ("effort", "high", "effort_drift"),
                                      ("runtime", "other-runtime", "observed_runtime_mismatch"),
@@ -114,13 +114,13 @@ class ControlTests(unittest.TestCase):
                 guard = RuntimeGuard(self.profile, emit=events.append, abort=self.abort)
                 observed = {key: value, "source": "test_runtime_event"}
                 with self.assertRaisesRegex(RuntimeViolation, category):
-                    guard.before_inference(expected_identity(self.profile), observed)
-                self.assertEqual(0, guard.inferences)
+                    guard.before_agent_turn(expected_identity(self.profile), observed)
+                self.assertEqual(0, guard.agent_turns)
                 self.assertEqual(observed, events[0]["observed"])
-                self.assertFalse(any(e["event"] == "inference_admitted" for e in events))
+                self.assertFalse(any(e["event"] == "agent_turn_admitted" for e in events))
 
     def test_null_observation_is_not_mismatch_and_request_cannot_fill_actual(self):
-        self.guard.before_inference(expected_identity(self.profile), {"model": None, "effort": None})
+        self.guard.before_agent_turn(expected_identity(self.profile), {"model": None, "effort": None})
         self.assertEqual({"model": None, "effort": None}, self.events[-1]["observed"])
         with self.assertRaisesRegex(RuntimeViolation, "unlabelled_actual_identity_evidence"):
             self.guard.observe({"event": "configuration_observed", "actual": expected_identity(self.profile)})
@@ -133,12 +133,12 @@ class ControlTests(unittest.TestCase):
             with self.subTest(observed=observed):
                 guard = RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
                 with self.assertRaisesRegex(RuntimeViolation, category):
-                    guard.before_inference(expected_identity(self.profile), observed)
-                self.assertEqual(0, guard.inferences)
+                    guard.before_agent_turn(expected_identity(self.profile), observed)
+                self.assertEqual(0, guard.agent_turns)
 
-    def test_drift_event_between_inferences_is_retained_and_stops_block(self):
+    def test_drift_event_between_agent_turns_is_retained_and_stops_block(self):
         self.arm()
-        self.guard.observe({"event": "inference_completed"})
+        self.guard.end_agent_turn()
         event = {"event": "model_observed", "observed": {"model": "other-model", "source": "test_runtime_event"}}
         with self.assertRaisesRegex(RuntimeViolation, "observed_model_mismatch"):
             self.guard.observe(event)
@@ -156,23 +156,57 @@ class ControlTests(unittest.TestCase):
         self.assertNotIn("effort", requested)
         requested["model_fallback_allowed"] = 0
         with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_mismatch"):
-            self.guard.before_inference(requested)
+            self.guard.before_agent_turn(requested)
 
-    def test_inference_cap_includes_retries_if_admitted(self):
+    def test_external_agent_turn_cap_is_independent_of_internal_retry_observations(self):
         for _ in range(BudgetCaps().max_turns):
             self.arm()
             self.guard.observe({"event": "retry_observed", "reason": "common_runtime_retry"})
-            self.guard.observe({"event": "inference_completed"})
-        with self.assertRaisesRegex(RuntimeViolation, "inference_budget_exceeded"):
+            self.guard.end_agent_turn()
+        with self.assertRaisesRegex(RuntimeViolation, "agent_turn_budget_exceeded"):
             self.arm()
-        self.assertEqual(BudgetCaps().max_turns, self.guard.inferences)
+        self.assertEqual(BudgetCaps().max_turns, self.guard.agent_turns)
+
+    def test_internal_iterations_and_retries_are_telemetry_not_external_admissions(self):
+        self.arm()
+        for index in range(BudgetCaps().max_turns + 1):
+            self.guard.observe({"event": "retry_observed", "source": "test", "index": index})
+            self.guard.observe({"event": "inference_completed", "source": "test"})
+            self.guard.tool(control.TOOL_NAME)
+        self.assertEqual(1, self.guard.agent_turns)
+        self.guard.end_agent_turn()
+        for kind in ("runtime_event", "usage_observed", "retry_observed", "iteration_observed"):
+            self.guard.observe({"event": kind, "source": "test", "value": None})
+        snapshot = self.guard.snapshot()
+        self.assertIsNone(snapshot["internal_inference_count"])
+        self.assertIsNone(snapshot["internal_retry_count"])
+        self.assertEqual(25, snapshot["telemetry_event_counts_not_internal_totals"]["inference_completed"])
+        self.assertEqual("idle", snapshot["phase"])
+        self.assertNotIn("inferences", snapshot)
+
+    def test_generic_runtime_observation_still_checks_present_drift_between_turns(self):
+        self.arm()
+        self.guard.end_agent_turn()
+        with self.assertRaisesRegex(RuntimeViolation, "effort_drift"):
+            self.guard.observe({"event": "runtime_event", "observed": {"effort": "high", "source": "test"}})
+        self.abort.assert_called_once()
+
+    def test_external_budget_profile_retains_caps_without_internal_inference_requirement(self):
+        caps = asdict(BudgetCaps())
+        self.assertEqual(caps, self.profile["budget"]["scientific_caps"])
+        self.assertEqual(24, self.profile["budget"]["max_external_agent_turns_per_run"])
+        self.assertEqual(24, self.profile["budget"]["max_mediated_actions_per_run"])
+        self.assertIs(self.profile["budget"]["native_inference_pre_reservation_required"], False)
+        self.assertIsNone(self.profile["budget"]["native_inference_retry_count_cap"])
+        self.assertNotIn("max_observed_runtime_inferences_per_run", self.profile["budget"])
+        self.assertNotIn("all_inference_admission_and_absolute_deadline", self.profile["required_host_capabilities"])
 
     def test_output_and_unknown_events_fail_closed(self):
         self.arm()
         with self.assertRaisesRegex(RuntimeViolation, "output_budget"):
             self.guard.observe({"event": "assistant_output", "text": "x" * 120001})
         guard = RuntimeGuard(self.profile, emit=lambda e: None, abort=self.abort)
-        guard.before_inference(expected_identity(self.profile))
+        guard.before_agent_turn(expected_identity(self.profile))
         with self.assertRaisesRegex(RuntimeViolation, "unknown_runtime_event"):
             guard.observe({"event": "unexpected"})
 
@@ -184,11 +218,11 @@ class ControlTests(unittest.TestCase):
             self.guard.check()
         self.assertIs(self.guard.abort_acknowledged, False)
 
-    def test_durable_admission_failure_prevents_inference(self):
+    def test_durable_admission_failure_prevents_external_turn(self):
         self.guard.emit = Mock(side_effect=OSError())
         with self.assertRaisesRegex(RuntimeViolation, "evidence_write_failed"):
             self.arm()
-        self.assertEqual(0, self.guard.inferences)
+        self.assertEqual(0, self.guard.agent_turns)
         self.abort.assert_called_once()
 
     def test_profile_cannot_silently_change_caps_or_model(self):
@@ -196,23 +230,23 @@ class ControlTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeViolation, "profile_drift"):
             RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
 
-    def test_inference_completion_revokes_tool_authority(self):
+    def test_external_agent_turn_completion_revokes_tool_authority(self):
         self.arm()
-        self.guard.observe({"event": "inference_completed"})
+        self.guard.end_agent_turn()
         with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_missing"):
             self.guard.tool(control.TOOL_NAME)
 
     def test_runtime_completion_is_terminal_and_nested_admission_is_rejected(self):
         self.arm()
-        self.guard.observe({"event": "inference_completed"})
+        self.guard.end_agent_turn()
         self.guard.observe({"event": "runtime_completed"})
         self.assertEqual("completed", self.guard.phase)
         with self.assertRaisesRegex(RuntimeViolation, "after_runtime_completed"):
             self.guard.observe({"event": "assistant_output", "text": "late"})
         guard = RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
-        guard.before_inference(expected_identity(self.profile))
-        with self.assertRaisesRegex(RuntimeViolation, "inference_transition"):
-            guard.before_inference(expected_identity(self.profile))
+        guard.before_agent_turn(expected_identity(self.profile))
+        with self.assertRaisesRegex(RuntimeViolation, "agent_turn_transition"):
+            guard.before_agent_turn(expected_identity(self.profile))
 
     def test_unresponsive_peer_is_bounded_without_waiting_for_callback(self):
         class Stalled:
@@ -254,7 +288,7 @@ class MediationTests(unittest.TestCase):
                                                    {"role": "user", "content": "common task"}])
 
     def call(self, workspace, action):
-        workspace.prepare_inference()
+        workspace.prepare_agent_turn()
         return workspace.call(action)
 
     def test_scientific_input_must_be_charged_before_runtime_request(self):
@@ -263,23 +297,68 @@ class MediationTests(unittest.TestCase):
             ws.call({"action": "list"})
         ws = self.workspace(replace(BudgetCaps(), max_input_bytes_per_turn=1))
         with self.assertRaisesRegex(RuntimeViolation, "input_budget"):
-            ws.prepare_inference()
-        self.assertEqual(0, ws.usage["input_reservations"])
+            ws.prepare_agent_turn()
+        self.assertEqual(0, ws.usage["scientific_input_charges"])
         ws = self.workspace()
-        ws.prepare_inference()
+        ws.prepare_agent_turn()
         self.assertGreater(ws.usage["input_bytes"], 0)
         ws.messages.append({"role": "user", "content": "changed after count"})
         with self.assertRaisesRegex(RuntimeViolation, "input_drift"):
             ws.call({"action": "list"})
 
-    def test_retry_charges_input_again_and_reservation_is_single_action(self):
+    def test_external_dispatch_charges_input_once_then_multiple_actions_charge_history(self):
         ws = self.workspace()
-        ws.prepare_inference()
+        ws.prepare_agent_turn()
         initial = ws.usage["input_bytes"]
-        ws.prepare_inference()
+        ws.prepare_agent_turn()
         self.assertEqual(2 * initial, ws.usage["input_bytes"])
         ws.call({"action": "list"})
-        with self.assertRaisesRegex(RuntimeViolation, "input_not_admitted"):
+        self.assertEqual(2 * initial, ws.usage["input_bytes"])
+        ws.call({"action": "list"})
+        self.assertGreater(ws.usage["input_bytes"], 3 * initial)
+        self.assertEqual(3, ws.usage["scientific_input_charges"])
+        self.assertEqual(2, ws.usage["externally_admitted_agent_turns"])
+        self.assertEqual(2, ws.usage["turns"])
+
+    def test_one_external_turn_cannot_bypass_action_cap(self):
+        ws = self.workspace(replace(BudgetCaps(), max_turns=1))
+        ws.prepare_agent_turn()
+        ws.call({"action": "list"})
+        with self.assertRaisesRegex(RuntimeViolation, "action_budget_exceeded"):
+            ws.call({"action": "compile"})
+        self.compile.assert_not_called()
+
+    def test_later_action_checks_growing_history_total_before_effects(self):
+        probe = self.workspace()
+        probe.prepare_agent_turn()
+        initial = probe.usage["input_bytes"]
+        ws = self.workspace(replace(BudgetCaps(), max_total_input_bytes=initial * 2))
+        ws.prepare_agent_turn()
+        ws.call({"action": "list"})
+        with self.assertRaisesRegex(RuntimeViolation, "input_budget_exceeded"):
+            ws.call({"action": "compile"})
+        self.compile.assert_not_called()
+        self.assertEqual(1, ws.usage["turns"])
+
+    def test_internal_telemetry_neither_charges_scientific_input_nor_revokes_tools(self):
+        ws = self.workspace()
+        guard = RuntimeGuard(runtime_profile(), emit=self.events.append, abort=lambda _: True)
+        ws.verify_active = guard.check
+        ws.prepare_agent_turn()
+        guard.before_agent_turn(expected_identity(runtime_profile()))
+        initial = ws.usage["input_bytes"]
+        for _ in range(25):
+            guard.observe({"event": "retry_observed", "source": "test"})
+            guard.observe({"event": "inference_completed", "source": "test"})
+        guard.tool(control.TOOL_NAME)
+        ws.call({"action": "list"})
+        self.assertEqual(initial, ws.usage["input_bytes"])
+        guard.tool(control.TOOL_NAME)
+        ws.call({"action": "compile"})
+        self.assertEqual(1, ws.usage["externally_admitted_agent_turns"])
+        self.assertEqual(2, ws.usage["turns"])
+        guard.end_agent_turn()
+        with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_missing"):
             ws.call({"action": "list"})
 
     def test_same_actions_preserve_tool_and_scoring_boundaries(self):
@@ -356,13 +435,13 @@ class MediationTests(unittest.TestCase):
             self.call(ws, {"action": "list"})
 
     def test_action_input_output_tool_and_file_caps(self):
-        cases = [(replace(BudgetCaps(), max_turns=1), "inference_budget_exceeded"),
+        cases = [(replace(BudgetCaps(), max_turns=1), "agent_turn_budget_exceeded"),
                  (replace(BudgetCaps(), max_input_bytes_per_turn=1), "input_budget_exceeded"),
                  (replace(BudgetCaps(), max_output_bytes_per_turn=1), "output_budget_exceeded"),
                  (replace(BudgetCaps(), max_tool_output_bytes=1), "tool_output_budget_exceeded")]
         for caps, category in cases:
             ws = self.workspace(caps)
-            if category == "inference_budget_exceeded":
+            if category == "agent_turn_budget_exceeded":
                 self.call(ws, {"action": "list"})
             with self.subTest(category=category), self.assertRaisesRegex(RuntimeViolation, category):
                 self.call(ws, {"action": "list"})

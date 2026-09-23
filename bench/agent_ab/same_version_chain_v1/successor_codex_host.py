@@ -1,14 +1,14 @@
-"""Source-only qualification of the observed OpenClaw/Codex host.
+"""Source inspection and separately qualified public OpenClaw/Codex driver.
 
-This is not an executable adapter, account probe, or live admission token.
+The source-only inspector is not an account probe or live admission token.
 Only the listed package/source/documentation files are read. No module from
 the inspected installation is imported, and no auth store, config, process,
 network, or model is accessed. Exact hashes identify an observed stock build;
 they do NOT attest provider behavior or make that build ready for a pilot.
 
-A future host needs a separately implemented and independently reviewed live
-control seam. Changing a report boolean, package version, or source pin must
-never unlock execution through this module.
+Source inspection alone never permits execution. The separate public-plugin
+qualifier below exercises registration without inference; independent readiness
+and the runner's exact joint seal remain required before a live launch.
 """
 
 from __future__ import annotations
@@ -18,6 +18,8 @@ import json
 import os
 import re
 import stat
+import shutil
+import subprocess
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, NoReturn
@@ -242,14 +244,14 @@ def inspect_host(openclaw_root: Path, codex_root: Path) -> dict:
         "host_recognition": "observed_stock" if recognized else "unknown_or_incomplete",
         "versions": versions, "sources": sources, "source_errors": errors,
         "evidence": evidence, "missing_capabilities": missing,
-        "admission_standard": "requested_controls_observed_drift_stop_preserved_budgets",
+        "admission_standard": "requested_controls_observed_drift_stop_equal_external_guardrails",
         "provider_attestation_required": False,
         "not_observable": ["provider_attested_pre_inference_actual_model",
                            "provider_attested_effective_reasoning_effort"],
         "accepted_observability_boundaries": [
             "Requested Sol/medium are frozen controls, not proof of provider actual model/effective effort. Missing provider pre-inference attestation is accepted, not a live blocker.",
             "A reroute notification may arrive after some output was generated. The user requires immediate block stop on detection and retained ITT, not proof of zero pre-notification output.",
-            "Common native prompt assembly, state management, retry and projected usage are permitted when conditions share them and limits remain enforceable.",
+            "Common native prompt assembly, state management, retry and projected usage are permitted when conditions share them and external limits remain enforceable; no per-internal-inference reservation is required.",
         ],
         "supported_surfaces": [
             {"surface": "agent exec --config: isolated public CLI with normal stored-auth ownership", "evidence": ["isolated_cli"]},
@@ -262,29 +264,261 @@ def inspect_host(openclaw_root: Path, codex_root: Path) -> dict:
                          "project-document/context isolation"],
         "inspection_activity": {"agent_launches": 0, "model_generations": 0,
                                 "platform_count_requests": 0, "auth_reads": 0, "config_reads": 0},
-        "live_guard": "require_live_host always rejects; neither this report nor a source digest is admission authority",
+        "live_guard": "source-only reports are rejected; require_live_host separately recomputes public-driver qualification and hashes, never trusting a READY flag",
     }
 
 
 def _stock_gaps() -> list[dict]:
     return [
         {
-            "id": "frozen_per_inference_budget_boundary_unavailable",
-            "detail": "The frozen controller reserves scientific input and admits every inference/retry before dispatch. Stock public llm_input and model diagnostics cover an outer native turn, not every internal response. Internal completion notifications are post-receipt observations; notification-name progress is not an awaited pre-dispatch gate. Tool-result middleware cannot cover no-tool continuation or internal retry. Substituting turn/action counts would change the frozen budget contract. This is not a provider identity-attestation requirement.",
+            "id": "source_inspection_not_external_guardrail_qualification",
+            "detail": "Source inspection cannot qualify the executable external-turn/action/byte/deadline/ITT bridge. Internal inference/retry pre-reservation is explicitly not required; unavailable granular telemetry must remain unknown.",
             "evidence": ["diagnostic_unit_is_turn", "input_hook_at_outer_turn",
                          "internal_response_postreceipt", "public_extension_tool_result_only",
                          "llm_input_best_effort", "codex_input_gate_absent"],
         },
         {
-            "id": "qualified_live_driver_not_implemented",
-            "detail": "Public requested-model/effort controls, finite tool policy, runtime observation and upstream cancellation are useful supported surfaces. This source-only inspector has no executable driver binding them to the preserved budget, mediator and ITT state machine. A source report or changed admission label cannot certify that integration.",
+            "id": "public_live_driver_requires_separate_qualification_and_audit",
+            "detail": "The separate public CLI driver must pass actual no-inference plugin loading, deterministic transport/guardrail tests, source/driver hashes and independent exact-seal readiness. This source-only result is not evidence that those steps completed.",
             "evidence": ["public_programmatic_run", "dynamic_tool_hooks", "upstream_abort_signal",
                          "turn_starting_requested_model", "reroute_projection"],
         },
     ]
 
 
-def require_live_host(report: dict) -> NoReturn:
-    """Reject even forged READY reports: there is no live adapter in this module."""
-    del report
-    raise HostNotReadyError("live_host_unavailable: source inspection is not live admission authority; frozen per-inference budget boundary has no qualified public driver")
+_OPENCLAW_ROOT = Path("/root/.local/share/pnpm/global/v11/13f326-18d39d7fb55ea4cc-0/node_modules/.pnpm/openclaw@2026.9.2/node_modules/openclaw")
+_CODEX_ROOT = Path("/root/.openclaw/npm/projects/openclaw-codex-8902d781d4__openclaw-generation__g-e2e0de3303206c53/node_modules/@openclaw/codex")
+_CODEX_BINARY = _CODEX_ROOT.parent.parent / "@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex"
+_DRIVER_ROOT = Path(__file__).parent / "successor_codex_live_host"
+_DRIVER_FILES = ("package.json", "openclaw.plugin.json", "index.mjs", "bridge.mjs")
+_PUBLIC_SOURCE_FILES = {
+    "openclaw": ("openclaw.mjs", "dist/entry.js", "dist/selection-CgLPGlZh.js",
+                 "dist/extensions/openai/openclaw.plugin.json", "docs/plugins/manifest.md",
+                 "docs/plugins/sdk-overview.md"),
+    "codex": ("openclaw.plugin.json", "dist/dynamic-tools-BwpvTxaX.js"),
+}
+
+
+def driver_inventory() -> dict:
+    with _root_directory(_DRIVER_ROOT.absolute()) as root:
+        return {name: hashlib.sha256(_read_source(root, name)).hexdigest()
+                for name in _DRIVER_FILES}
+
+
+def public_source_inventory() -> dict:
+    result = {}
+    for component, root in (("openclaw", _OPENCLAW_ROOT), ("codex", _CODEX_ROOT)):
+        with _root_directory(root) as descriptor:
+            for name in _PUBLIC_SOURCE_FILES[component]:
+                result[f"{component}/{name}"] = hashlib.sha256(_read_source(descriptor, name)).hexdigest()
+    return result
+
+
+def executable_inventory() -> dict:
+    """Hash explicit executable bytes; no binary invocation or credential access."""
+    result = {}
+    for name, path in (("node", Path(shutil.which("node")).resolve()), ("codex", _CODEX_BINARY)):
+        with _root_directory(path.parent) as parent:
+            metadata = os.stat(path.name, dir_fd=parent, follow_symlinks=False)
+            if not stat.S_ISREG(metadata.st_mode) or metadata.st_size > 512_000_000:
+                raise HostNotReadyError("runtime_binary_unqualified")
+            descriptor = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=parent)
+            try:
+                content = hashlib.sha256()
+                while chunk := os.read(descriptor, 65536):
+                    content.update(chunk)
+                after = os.fstat(descriptor)
+                if (metadata.st_size, metadata.st_mtime_ns, metadata.st_ctime_ns) != (after.st_size, after.st_mtime_ns, after.st_ctime_ns):
+                    raise HostNotReadyError("runtime_binary_changed_during_read")
+                result[name] = {"path": str(path), "sha256": content.hexdigest(), "size_bytes": metadata.st_size}
+            finally:
+                os.close(descriptor)
+    return result
+
+
+def _auth_profile_reference(profile_id: str) -> str:
+    return hashlib.sha256(json.dumps(profile_id, ensure_ascii=False, separators=(",", ":")).encode()).hexdigest()
+
+
+def _scoped_config(root: Path, auth_profile_id: str) -> dict:
+    """Exact nonsecret process-scoped recipe; per-run paths alone vary."""
+    return {
+        "auth": {"profiles": {auth_profile_id: {"provider": "openai", "mode": "oauth"}},
+                 "order": {"openai": [auth_profile_id]}},
+        "agents": {
+            "defaults": {
+                "model": {"primary": "openai/gpt-5.6-sol", "fallbacks": []},
+                "models": {"openai/gpt-5.6-sol": {"agentRuntime": {"id": "codex"}}},
+                "thinkingDefault": "medium", "fastModeDefault": False,
+                "workspace": str(root / "carrier"), "cwd": str(root / "carrier"),
+                "skipBootstrap": True, "skills": [], "timeoutSeconds": 300,
+            },
+            "entries": {"successor-pilot": {"agentDir": str(root / "agent"), "skills": []}},
+        },
+        "session": {"store": str(root / "sessions" / "sessions.json")},
+        "tools": {"allow": ["successor_action"], "codeMode": {"enabled": False},
+                  "web": {"search": {"enabled": False}, "fetch": {"enabled": False}}},
+        "plugins": {
+            "allow": ["openai", "codex", "tmf-successor-host"],
+            "load": {"paths": [str(_CODEX_ROOT), str(_DRIVER_ROOT.absolute())]},
+            "slots": {"memory": "none", "contextEngine": "legacy"},
+            "entries": {
+                "openai": {"enabled": True},
+                "codex": {"enabled": True, "config": {
+                    "codexDynamicToolsLoading": "direct", "sessionCatalog": {"enabled": False},
+                    "discovery": {"enabled": False}, "computerUse": {"enabled": False},
+                    "appServer": {"transport": "stdio", "homeScope": "agent",
+                                  "command": str(_CODEX_BINARY), "args": ["app-server", "--listen", "stdio://"],
+                                  "approvalPolicy": "never", "sandbox": "read-only"},
+                }},
+                "tmf-successor-host": {"enabled": True, "config": {
+                    "runtimeDirectory": str(root), "authProfileId": auth_profile_id}},
+            },
+        },
+    }
+
+
+def create_live_launch(runtime_directory: Path, *, auth_profile_id: str) -> dict:
+    """Author a private, nonsecret process-scoped config, never global host config.
+
+    The caller supplies an already-known opaque profile identifier, never a
+    credential. The normal host resolves its existing stored OAuth credentials.
+    No auth store, ambient config, API key, token, or native login is read here.
+    """
+    from .successor_codex_control import durable_directory
+    root = Path(runtime_directory).absolute()
+    if (type(auth_profile_id) is not str or not auth_profile_id.startswith("openai:")
+            or not re.fullmatch(r"[a-zA-Z0-9_:./@-]{1,256}", auth_profile_id)):
+        raise HostNotReadyError("existing_subscription_profile_identifier_required")
+    if root.exists() and any(root.iterdir()):
+        raise HostNotReadyError("new_runtime_directory_required")
+    durable_directory(root)
+    for directory in ("carrier", "agent", "sessions"):
+        durable_directory(root / directory)
+    config = _scoped_config(root, auth_profile_id)
+    config_path = root / "scoped-config.json"
+    descriptor = os.open(config_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "w") as stream:
+        json.dump(config, stream, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        stream.write("\n")
+        stream.flush()
+        os.fsync(stream.fileno())
+    descriptor = os.open(root, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+    node = shutil.which("node")
+    if not node:
+        raise HostNotReadyError("node_runtime_missing")
+    # The stock no-respawn launcher option preserves the inherited control FD.
+    # It affects process wrapping only, never permission/native hook policy.
+    return {"argv": [str(Path(node).resolve()), str(_OPENCLAW_ROOT / "openclaw.mjs"),
+                     "successor-host", "--run"],
+            "env": {"OPENCLAW_CONFIG_PATH": str(config_path), "OPENCLAW_NO_RESPAWN": "1",
+                    "NODE_DISABLE_COMPILE_CACHE": "1"},
+            "cwd": str(root / "carrier")}
+
+
+def _validate_scoped_launch_config(launch: dict) -> str:
+    # A caller-supplied report/config is never permission to load arbitrary code.
+    # Check the full recipe before launching even the no-inference qualifier.
+    config_path = Path(launch["env"]["OPENCLAW_CONFIG_PATH"])
+    with _root_directory(config_path.parent) as directory:
+        config = json.loads(_read_source(directory, config_path.name))
+    profile_id = config.get("plugins", {}).get("entries", {}).get("tmf-successor-host", {}).get("config", {}).get("authProfileId")
+    if (type(profile_id) is not str or not re.fullmatch(r"openai:[a-zA-Z0-9_:./@-]{1,256}", profile_id)
+            or config != _scoped_config(config_path.parent, profile_id)):
+        raise HostNotReadyError("scoped_host_configuration_drift")
+    return _auth_profile_reference(profile_id)
+
+
+def _qualify_launch(launch: dict) -> dict:
+    _validate_scoped_launch_config(launch)
+    argv = list(launch["argv"])
+    if argv[-2:] != ["successor-host", "--run"]:
+        raise HostNotReadyError("invalid_pinned_launch")
+    argv[-1] = "--qualify"
+    environment = os.environ.copy()
+    environment.update(launch["env"])
+    try:
+        result = subprocess.run(argv, cwd=launch["cwd"], env=environment, stdin=subprocess.DEVNULL,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60, check=False)
+    except (OSError, subprocess.TimeoutExpired):
+        raise HostNotReadyError("public_cli_qualification_failed") from None
+    # Error text is not echoed; it may have been authored by a host component.
+    if result.returncode != 0 or len(result.stdout) > 256_000 or len(result.stderr) > 256_000:
+        raise HostNotReadyError("public_cli_qualification_failed")
+    candidates = []
+    for line in result.stdout.splitlines():
+        try:
+            value = json.loads(line)
+        except (ValueError, UnicodeError):
+            continue
+        if type(value) is dict and value.get("schema") == "tmf.successor.public-host-qualification.v1":
+            candidates.append(value)
+    if len(candidates) != 1 or candidates[0].get("qualified") is not True or candidates[0].get("modelLaunches") != 0:
+        raise HostNotReadyError("public_cli_qualification_missing")
+    return {"result": candidates[0],
+            "stdout_sha256": hashlib.sha256(result.stdout).hexdigest(),
+            "stderr_sha256": hashlib.sha256(result.stderr).hexdigest(),
+            "exit_code": result.returncode}
+
+
+def qualify_live_host(runtime_directory: Path, *, auth_profile_id: str) -> dict:
+    """Exercise the public loader/API registration, explicitly without inference."""
+    inspection = inspect_host(_OPENCLAW_ROOT, _CODEX_ROOT)
+    if inspection["host_recognition"] != "observed_stock":
+        raise HostNotReadyError("stock_host_source_mismatch")
+    launch = create_live_launch(runtime_directory, auth_profile_id=auth_profile_id)
+    qualification = _qualify_launch(launch)
+    return {"schema": "tmf.successor.codex-live-host.v1", "verdict": "READY_FOR_INDEPENDENT_AUDIT",
+            "live_allowed": False, "source_inspection": inspection,
+            "driver_sha256": driver_inventory(), "public_source_sha256": public_source_inventory(),
+            "executables": executable_inventory(),
+            "launch": launch, "qualification": qualification,
+            "auth_profile_ref": _auth_profile_reference(auth_profile_id),
+            "provider_attestation": False, "model_calls": 0,
+            "readiness_scope": "public_cli_loader_capability_and_source_controls_not_live_result_or_audit"}
+
+
+def verify_live_materials(report: dict) -> None:
+    """Cheap per-arm source/binary/config verification; no process or inference."""
+    try:
+        if type(report) is not dict or report.get("schema") != "tmf.successor.codex-live-host.v1":
+            raise HostNotReadyError("live_host_unavailable: source inspection is not live admission authority")
+        inspection = inspect_host(_OPENCLAW_ROOT, _CODEX_ROOT)
+        if inspection != report["source_inspection"] or inspection["host_recognition"] != "observed_stock":
+            raise HostNotReadyError("stock_host_source_drift")
+        if (driver_inventory() != report["driver_sha256"] or
+                public_source_inventory() != report["public_source_sha256"] or
+                executable_inventory() != report["executables"]):
+            raise HostNotReadyError("live_host_driver_drift")
+        launch = report["launch"]
+        root = Path(launch["env"]["OPENCLAW_CONFIG_PATH"]).parent
+        if launch["argv"] != [str(Path(shutil.which("node")).resolve()), str(_OPENCLAW_ROOT / "openclaw.mjs"), "successor-host", "--run"]:
+            raise HostNotReadyError("live_host_launch_drift")
+        if launch["cwd"] != str(root / "carrier") or launch["env"] != {
+                "OPENCLAW_CONFIG_PATH": str(root / "scoped-config.json"),
+                "OPENCLAW_NO_RESPAWN": "1", "NODE_DISABLE_COMPILE_CACHE": "1"}:
+            raise HostNotReadyError("live_host_launch_drift")
+        profile_ref = _validate_scoped_launch_config(launch)
+        if profile_ref != report["auth_profile_ref"] or profile_ref != report["qualification"]["result"]["authProfileRef"]:
+            raise HostNotReadyError("live_host_auth_profile_drift")
+        with _root_directory(root) as directory:
+            config_hash = hashlib.sha256(_read_source(directory, "scoped-config.json")).hexdigest()
+        if config_hash != report["qualification"]["result"]["configSha256"]:
+            raise HostNotReadyError("live_host_configuration_drift")
+    except HostNotReadyError:
+        raise
+    except Exception:
+        raise HostNotReadyError("invalid_live_host_report") from None
+
+
+def require_live_host(report: dict) -> dict:
+    """Revalidate sources and public CLI; no caller READY boolean is authority."""
+    verify_live_materials(report)
+    actual = _qualify_launch(report["launch"])
+    if actual["result"] != report["qualification"]["result"]:
+        raise HostNotReadyError("live_host_qualification_drift")
+    return actual

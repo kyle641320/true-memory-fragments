@@ -20,7 +20,7 @@ from .m10_successor_protocol import ACTION_SCHEMAS, BudgetCaps, _json
 from .successor_codex_mediation import RuntimeViolation
 
 
-SCHEMA = "tmf-successor-codex-control.v2"
+SCHEMA = "tmf-successor-codex-control.v3"
 OPENCLAW_VERSION = "2026.9.2"
 MODEL = "openai/gpt-5.6-sol"
 NATIVE_MODEL = "gpt-5.6-sol"
@@ -60,8 +60,13 @@ def runtime_profile() -> dict:
                         "runtime_cwd": "empty_common_carrier_not_source_or_evaluator_directory",
                         "evaluator_and_other_runs_accessible": False},
         "budget": {"scientific_caps": caps,
-                   "max_observed_runtime_inferences_per_run": caps["max_turns"],
+                   "max_external_agent_turns_per_run": caps["max_turns"],
+                   "max_mediated_actions_per_run": caps["max_turns"],
                    "max_runtime_observable_output_bytes": caps["max_total_output_bytes"],
+                   "native_inference_pre_reservation_required": False,
+                   "native_inference_retry_count_cap": None,
+                   "native_inference_retry_scope": "common_runtime_policy_observable_telemetry_only",
+                   "scientific_input_accounting": "full_history_and_schemas_at_external_dispatch_and_each_action_no_duplicate_first_action_charge",
                    "provider_output_token_cap_verified": False,
                    "provider_output_token_cap": None,
                    "native_context_token_count_verified": False,
@@ -69,13 +74,13 @@ def runtime_profile() -> dict:
                    "native_timeout_scope": "controller_absolute_run_deadline_including_common_retries"},
         "native_state": "fresh_per_run_common_runtime_owned_history",
         "common_runtime_policy": "prompt_state_retry_usage_projection_allowed_and_recorded",
-        "identity_policy": "frozen_requested_configuration_before_each_inference_observed_drift_aborts_block",
+        "identity_policy": "frozen_requested_configuration_before_each_external_agent_turn_observed_drift_aborts_block",
         "failure_policy": "stop_block_preserve_all_six_admitted_ids_no_retry_resume_replacement",
-        "required_host_capabilities": ["pre_inference_frozen_request_configuration_gate",
+        "required_host_capabilities": ["external_agent_turn_frozen_request_configuration_gate",
                                        "all_observable_model_effort_configuration_runtime_events",
                                        "verified_no_native_or_external_tool_bypass",
                                        "ordered_runtime_events_and_synchronous_abort",
-                                       "all_inference_admission_and_absolute_deadline",
+                                       "external_agent_turn_action_byte_caps_and_absolute_deadline",
                                        "no_hidden_cross_run_instructions_or_state"],
         "pilot": {"blocks": 1, "arms": 6, "runs_per_arm": 1, "replacement_runs": 0},
         "provider_observability": {"pre_inference_actual_model_attestation": "not_observable",
@@ -84,7 +89,10 @@ def runtime_profile() -> dict:
                                    "missing_provider_attestation_blocks_admission": False,
                                    "immutable_deployment_revision": "unavailable",
                                    "tokenizer_revision": "unavailable",
-                                   "usage": "runtime_projection_not_platform_raw_usage"},
+                                   "native_inference_retry_pre_dispatch_control": "not_exposed_not_required",
+                                   "native_inference_retry_totals": "unknown_unless_reliably_reported",
+                                   "usage": "available_runtime_projection_not_platform_raw_usage",
+                                   "subscription_cost_usd": "unavailable_no_invented_conversion"},
     }
 
 
@@ -92,7 +100,7 @@ def expected_identity(profile: dict) -> dict:
     """Expected REQUESTED AND CONTROLLED configuration, never actual identity.
 
 The existing helper name is retained for callers; all potentially ambiguous
-model/effort fields explicitly identify a request in the v2 contract.
+model/effort fields explicitly identify a request in the execution contract.
 """
     return {"provider": profile["provider"], "request_model": profile["request_model"],
             "request_native_model": profile["native_model"], "request_effort": profile["reasoning_effort"],
@@ -244,11 +252,13 @@ class RuntimeGuard:
         self.emit, self.abort = emit, abort
         self.failure_reason = None
         self.abort_acknowledged = None
-        self.inferences = 0
+        self.agent_turns = 0
         self.output_bytes = 0
         self.request_verified = False
         self.phase = "idle"
-        self.deadline = time.monotonic() + profile["budget"]["scientific_caps"]["run_timeout_seconds"]
+        self.started_at = time.monotonic()
+        self.deadline = self.started_at + profile["budget"]["scientific_caps"]["run_timeout_seconds"]
+        self.telemetry_event_counts = {}
         self.events = []
 
     def halt(self, category: str):
@@ -280,7 +290,7 @@ class RuntimeGuard:
             self.halt("run_timeout")
         if self.phase == "completed":
             self.halt("event_after_runtime_completed")
-        if not self.request_verified or self.phase != "inference":
+        if not self.request_verified or self.phase != "agent_turn":
             self.halt("requested_configuration_missing")
 
     def _requested_matches(self, requested: dict) -> bool:
@@ -313,28 +323,43 @@ class RuntimeGuard:
                 self.halt({"model": "observed_model_mismatch", "effort": "effort_drift",
                            "runtime": "observed_runtime_mismatch"}.get(key, "observed_configuration_mismatch"))
 
-    def before_inference(self, requested: dict, observed: dict | None = None):
+    def before_agent_turn(self, requested: dict, observed: dict | None = None):
+        """Admit an externally dispatched Agent turn, never a native inference.
+
+        A turn may contain several native iterations, retries and tool actions.
+        Those consumption differences do not alter the common external limits.
+        """
         if self.failure_reason:
             raise RuntimeViolation(self.failure_reason)
         if time.monotonic() >= self.deadline:
             self.halt("run_timeout")
         if self.phase != "idle":
-            self.halt("invalid_inference_transition")
+            self.halt("invalid_agent_turn_transition")
         if not self._requested_matches(requested):
             self._record({"event": "request_configuration_rejected", "requested_and_controlled": requested})
             self.halt("requested_configuration_mismatch")
         observation = {} if observed is None else deepcopy(observed)
         if observation:
-            self._record({"event": "pre_inference_configuration_observed", "observed": observation})
+            self._record({"event": "pre_agent_turn_configuration_observed", "observed": observation})
         self._validate_observed(observation)
-        if self.inferences >= self.profile["budget"]["max_observed_runtime_inferences_per_run"]:
-            self.halt("inference_budget_exceeded")
-        self._record({"event": "inference_admitted", "requested_and_controlled": requested,
-                      "observed": observation, "index": self.inferences,
+        if self.agent_turns >= self.profile["budget"]["max_external_agent_turns_per_run"]:
+            self.halt("agent_turn_budget_exceeded")
+        self._record({"event": "agent_turn_admitted", "requested_and_controlled": requested,
+                      "observed": observation, "index": self.agent_turns,
                       "provider_actual_model_attested": False, "provider_effective_effort_attested": False})
-        self.inferences += 1
+        self.agent_turns += 1
         self.request_verified = True
-        self.phase = "inference"
+        self.phase = "agent_turn"
+
+    def before_inference(self, requested: dict, observed: dict | None = None):
+        """Legacy caller alias: admits an EXTERNAL Agent turn, not an inference."""
+        self.before_agent_turn(requested, observed)
+
+    def end_agent_turn(self):
+        """Revoke tool authority only at the externally controlled turn boundary."""
+        self.check()
+        self._record({"event": "agent_turn_completed", "index": self.agent_turns - 1})
+        self.phase, self.request_verified = "idle", False
 
     def tool(self, name: str):
         self.check()
@@ -352,7 +377,7 @@ class RuntimeGuard:
         if self.phase == "completed":
             self.halt("event_after_runtime_completed")
         kind = event["event"]
-        if kind in ("model/rerouted", "model_mismatch", "effort_drift", "configuration_drift",
+        if kind in ("model/rerouted", "model_rerouted", "model_mismatch", "effort_drift", "configuration_drift",
                     "native_tool", "tool_bypass", "workspace_escape", "runtime_failure",
                     "blocking_runtime_anomaly"):
             self.halt(kind.replace("/", "_"))
@@ -363,28 +388,43 @@ class RuntimeGuard:
                 self.halt("requested_configuration_mismatch")
             self._validate_observed(event.get("observed", {}))
             return
-        elif kind == "runtime_completed" and self.phase == "idle" and self.inferences > 0:
+        elif kind == "runtime_completed" and self.phase == "idle" and self.agent_turns > 0:
             self.phase = "completed"
             return
-        self.check()
+        elif kind in ("runtime_event", "retry_observed", "usage_observed",
+                      "iteration_observed", "inference_completed"):
+            # Raw observations may arrive between external turns. Their count
+            # is not a native-inference total and never consumes an admission.
+            if "actual" in event:
+                self.halt("unlabelled_actual_identity_evidence")
+            if "requested_and_controlled" in event and not self._requested_matches(event["requested_and_controlled"]):
+                self.halt("requested_configuration_mismatch")
+            self._validate_observed(event.get("observed", {}))
+            self.telemetry_event_counts[kind] = self.telemetry_event_counts.get(kind, 0) + 1
+            return
         if kind == "assistant_output":
             if type(event.get("text")) is not str:
                 self.halt("invalid_runtime_output")
             self.output_bytes += len(event["text"].encode("utf-8"))
             if self.output_bytes > self.profile["budget"]["max_runtime_observable_output_bytes"]:
                 self.halt("runtime_output_budget_exceeded")
-        elif kind == "inference_completed":
-            self.phase, self.request_verified = "idle", False
-        elif kind not in ("retry_observed", "usage_observed"):
+        else:
             self.halt("unknown_runtime_event")
 
     def snapshot(self) -> dict:
         return {"failure_reason": self.failure_reason, "abort_acknowledged": self.abort_acknowledged,
-                "inferences": self.inferences, "observable_output_bytes": self.output_bytes,
+                "externally_admitted_agent_turns": self.agent_turns,
+                "internal_inference_count": None,
+                "internal_retry_count": None,
+                "telemetry_event_counts_not_internal_totals": deepcopy(self.telemetry_event_counts),
+                "observable_output_bytes": self.output_bytes,
+                "elapsed_seconds": max(0.0, time.monotonic() - self.started_at),
                 "phase": self.phase,
                 "requested_and_controlled": deepcopy(self.expected),
                 "request_configuration_verified_at_control_boundary": self.request_verified and self.failure_reason is None,
                 "provider_actual_model_attested": False, "provider_effective_effort_attested": False,
                 "not_observable": {"pre_inference_provider_actual_model": None,
-                                   "pre_inference_provider_effective_effort": None},
+                                   "pre_inference_provider_effective_effort": None,
+                                   "per_native_inference_retry_pre_dispatch_control": None,
+                                   "subscription_cost_usd": None},
                 "events": deepcopy(self.events)}

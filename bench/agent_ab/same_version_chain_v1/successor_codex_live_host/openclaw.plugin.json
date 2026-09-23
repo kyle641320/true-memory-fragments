@@ -1,0 +1,20 @@
+{
+  "id": "tmf-successor-host",
+  "name": "TMF successor controlled Codex host",
+  "description": "One-run external-budget bridge to the ordinary host-owned Codex runtime.",
+  "cliCommands": [{
+    "name": "successor-host",
+    "description": "Qualify or execute the sealed successor control bridge",
+    "hasSubcommands": false
+  }],
+  "contracts": { "tools": ["successor_action"] },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "runtimeDirectory": {"type": "string"},
+      "authProfileId": {"type": "string"}
+    },
+    "required": ["runtimeDirectory", "authProfileId"]
+  }
+}
