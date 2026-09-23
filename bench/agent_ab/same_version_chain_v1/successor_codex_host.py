@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Iterator, NoReturn
 
 
-SCHEMA = "tmf.successor.codex-host-inspection.v1"
+SCHEMA = "tmf.successor.codex-host-inspection.v2"
 _MAX_SOURCE_BYTES = 4 * 1024 * 1024
 
 # Deliberately no recursive discovery or wildcard reads. These are observations
@@ -70,6 +70,10 @@ _ANCHORS = {
     "activation_after_start": ("codex", "dist/run-attempt-BzthFQSM.js", "const turnStart = await startCodexAttemptTurn(resources, turnRuntime, notifications, turnRequest);"),
     "reroute_projection": ("codex", "dist/native-subagent-monitor-B3bvQGcg.js", "handleModelRerouted(params) {"),
     "pre_aborted_request_rejected": ("codex", "dist/shared-client-CKhX2kFt.js", 'if (options.signal?.aborted) return Promise.reject(new CodexAppServerLocalRequestCancellationError(method, "aborted", false));'),
+    "diagnostic_unit_is_turn": ("codex", "dist/run-attempt-BzthFQSM.js", 'observationUnit: "turn",'),
+    "input_hook_at_outer_turn": ("codex", "dist/run-attempt-BzthFQSM.js", 'runAgentHarnessLlmInputHook({\n\t\t\tevent: buildLlmInputEvent(),'),
+    "internal_response_postreceipt": ("codex", "dist/run-attempt-BzthFQSM.js", 'case "rawResponse/completed":\n\t\t\t\tthis.usageProjection.record(params, this.params.hostCapabilities.reportOutputTokens);'),
+    "public_extension_tool_result_only": ("openclaw", "dist/runtime-api-D4nuJwsj.d.ts", 'type CodexAppServerExtensionRuntime = {\n  on: (event: "tool_result",'),
 }
 
 
@@ -238,7 +242,12 @@ def inspect_host(openclaw_root: Path, codex_root: Path) -> dict:
         "host_recognition": "observed_stock" if recognized else "unknown_or_incomplete",
         "versions": versions, "sources": sources, "source_errors": errors,
         "evidence": evidence, "missing_capabilities": missing,
+        "admission_standard": "requested_controls_observed_drift_stop_preserved_budgets",
+        "provider_attestation_required": False,
+        "not_observable": ["provider_attested_pre_inference_actual_model",
+                           "provider_attested_effective_reasoning_effort"],
         "accepted_observability_boundaries": [
+            "Requested Sol/medium are frozen controls, not proof of provider actual model/effective effort. Missing provider pre-inference attestation is accepted, not a live blocker.",
             "A reroute notification may arrive after some output was generated. The user requires immediate block stop on detection and retained ITT, not proof of zero pre-notification output.",
             "Common native prompt assembly, state management, retry and projected usage are permitted when conditions share them and limits remain enforceable.",
         ],
@@ -248,7 +257,7 @@ def inspect_host(openclaw_root: Path, codex_root: Path) -> dict:
             {"surface": "Dynamic tool hooks can mediate OpenClaw-owned tools", "evidence": ["dynamic_tool_hooks"]},
         ] if recognized else [],
         "not_verified": ["installed Codex binary runtime identity", "account model/effort availability",
-                         "provider pre-generation model enforcement", "exclusive seven-tool live mediation",
+                         "exclusive seven-tool live mediation",
                          "action/assistant-iteration budget enforcement", "complete source-read telemetry",
                          "project-document/context isolation"],
         "inspection_activity": {"agent_launches": 0, "model_generations": 0,
@@ -260,19 +269,17 @@ def inspect_host(openclaw_root: Path, codex_root: Path) -> dict:
 def _stock_gaps() -> list[dict]:
     return [
         {
-            "id": "pre_inference_actual_model_effort_admission",
-            "detail": "thread/start response.model is accepted into the private binding and used for turn/start. thread_ready omits model; turn_starting and ordinary llm_input report the requested model instead. turn_starting exposes resolved effort, but there is no public fail-closed combined actual-model/effort admission gate. Effort resolution may substitute another supported value.",
-            "evidence": ["thread_response_model", "actual_turn_model", "thread_ready_omits_model",
-                         "turn_starting_requested_model", "llm_input_requested_model", "effort_substitution",
-                         "codex_input_gate_absent", "prepare_hook_not_wired"],
+            "id": "frozen_per_inference_budget_boundary_unavailable",
+            "detail": "The frozen controller reserves scientific input and admits every inference/retry before dispatch. Stock public llm_input and model diagnostics cover an outer native turn, not every internal response. Internal completion notifications are post-receipt observations; notification-name progress is not an awaited pre-dispatch gate. Tool-result middleware cannot cover no-tool continuation or internal retry. Substituting turn/action counts would change the frozen budget contract. This is not a provider identity-attestation requirement.",
+            "evidence": ["diagnostic_unit_is_turn", "input_hook_at_outer_turn",
+                         "internal_response_postreceipt", "public_extension_tool_result_only",
+                         "llm_input_best_effort", "codex_input_gate_absent"],
         },
         {
-            "id": "predispatch_observer_cancellation_gate",
-            "detail": "runtime.events exposes subscriptions, not scopeCancellation. llm_input is best effort and observer exceptions are isolated. SDK abortAgentHarnessRun exists, but the Codex active handle is registered only after turn/start acceptance. A caller-owned upstream AbortSignal can cancel before submission, but the missing actual-model observation prevents it from closing the attestation gap.",
-            "evidence": ["runtime_events_api", "llm_input_type", "llm_input_best_effort",
-                         "observer_exceptions_isolated", "sdk_abort_export", "abort_requires_active_handle",
-                         "activation_after_start", "active_handle_registration", "upstream_abort_signal",
-                         "pre_aborted_request_rejected"],
+            "id": "qualified_live_driver_not_implemented",
+            "detail": "Public requested-model/effort controls, finite tool policy, runtime observation and upstream cancellation are useful supported surfaces. This source-only inspector has no executable driver binding them to the preserved budget, mediator and ITT state machine. A source report or changed admission label cannot certify that integration.",
+            "evidence": ["public_programmatic_run", "dynamic_tool_hooks", "upstream_abort_signal",
+                         "turn_starting_requested_model", "reroute_projection"],
         },
     ]
 
@@ -280,4 +287,4 @@ def _stock_gaps() -> list[dict]:
 def require_live_host(report: dict) -> NoReturn:
     """Reject even forged READY reports: there is no live adapter in this module."""
     del report
-    raise HostNotReadyError("live_host_unavailable: source inspection is not live admission authority")
+    raise HostNotReadyError("live_host_unavailable: source inspection is not live admission authority; frozen per-inference budget boundary has no qualified public driver")

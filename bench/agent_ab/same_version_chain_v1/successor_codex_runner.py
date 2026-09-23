@@ -1,8 +1,9 @@
 """Joint scientific/runtime sealing and offline qualification, never a live shim.
 
-The installed Codex host lacks the required pre-inference actual-model gate.
-Live admission therefore stops before a process, credential, or run is created.
-Offline peers test the controller without substituting fake evidence for it.
+Requested model/effort are controls, not provider-attested actual identity.
+The installed public host still cannot implement the frozen per-inference
+budget/admission boundary. Live admission stops before a run is created;
+offline peers never substitute for live integration evidence.
 """
 from __future__ import annotations
 
@@ -30,9 +31,9 @@ SCHEMA = "tmf-successor-codex-joint.v1"
 SCENARIOS = ("ok", "wrong_model", "wrong_effort", "missing_identity", "reroute", "effort_drift",
              "config_drift", "tool_bypass", "workspace_escape", "action_budget", "runtime_failure")
 EXPECTED_FAILURES = {
-    "wrong_model": "actual_native_configuration_mismatch",
-    "wrong_effort": "actual_native_configuration_mismatch",
-    "missing_identity": "actual_native_configuration_mismatch",
+    "wrong_model": "requested_configuration_mismatch",
+    "wrong_effort": "requested_configuration_mismatch",
+    "missing_identity": "requested_configuration_mismatch",
     "reroute": "model_rerouted", "effort_drift": "effort_drift",
     "config_drift": "configuration_drift", "tool_bypass": "tool_bypass",
     "workspace_escape": "invalid_action_schema",
@@ -60,7 +61,7 @@ def _content(scientific: dict, host_report: dict) -> dict:
             "control_implementation_sha256": inventory(), "host_qualification": deepcopy(host_report),
             "ledger_policy": ledger_policy(CODEX_OFFLINE_KIND),
             "scope": "execution_layer_only_scientific_materials_unchanged",
-            "live_admission": "requires_independently_qualified_host_seam_not_offline_receipts",
+            "live_admission": "requested_controls_observable_drift_stop_and_qualified_budget_mediation_not_provider_attestation",
             "live_execution_enabled": False, "model_calls": 0}
 
 
@@ -120,13 +121,13 @@ class OfflinePeer:
         return True
 
     def run(self, guard: RuntimeGuard, workspace: MediatedWorkspace):
-        actual = expected_identity(runtime_profile())
+        requested = expected_identity(runtime_profile())
         if self.scenario == "wrong_model":
-            actual["resolved_model"] = "other-model"
+            requested["request_native_model"] = "other-model"
         if self.scenario == "wrong_effort":
-            actual["effort"] = "high"
+            requested["request_effort"] = "high"
         if self.scenario == "missing_identity":
-            actual.pop("resolved_model")
+            requested.pop("request_native_model")
         actions = _fixed_actions()
         if self.scenario == "action_budget":
             actions = [{"action": "list"}] * (BudgetCaps().max_turns + 1)
@@ -134,7 +135,7 @@ class OfflinePeer:
             if self.aborted:
                 raise RuntimeViolation("peer_after_abort")
             workspace.prepare_inference()
-            guard.before_inference(actual)
+            guard.before_inference(requested)
             if index == 1:
                 events = {"reroute": "model/rerouted", "effort_drift": "effort_drift",
                           "config_drift": "configuration_drift", "runtime_failure": "runtime_failure"}

@@ -1,8 +1,8 @@
-"""Execution-only profile, sticky identity guard and bounded durable evidence.
+"""Frozen request controls, independent runtime observations and durable evidence.
 
-These checks are necessary, not sufficient, for live admission. A dictionary
-claiming an attestation is not host authority. The stock-host qualifier refuses
-live execution until a supported host seam can provide and enforce this data.
+Request equality is not provider attestation. Unavailable actual-model/effective-
+effort evidence is an accepted observability boundary, not fabricated evidence.
+Live qualification must still establish mediation, isolation, budgets and abort.
 """
 from __future__ import annotations
 
@@ -20,7 +20,8 @@ from .m10_successor_protocol import ACTION_SCHEMAS, BudgetCaps, _json
 from .successor_codex_mediation import RuntimeViolation
 
 
-SCHEMA = "tmf-successor-codex-control.v1"
+SCHEMA = "tmf-successor-codex-control.v2"
+OPENCLAW_VERSION = "2026.9.2"
 MODEL = "openai/gpt-5.6-sol"
 NATIVE_MODEL = "gpt-5.6-sol"
 EFFORT = "medium"
@@ -46,7 +47,7 @@ def runtime_profile() -> dict:
     return {
         "schema": SCHEMA, "experiment": "controlled_successor_on_openclaw_codex_agent_runtime",
         "provider": "openai", "request_model": MODEL, "native_model": NATIVE_MODEL,
-        "reasoning_effort": EFFORT, "runtime": RUNTIME,
+        "reasoning_effort": EFFORT, "runtime": RUNTIME, "openclaw_version": OPENCLAW_VERSION,
         "auth": "existing_host_owned_chatgpt_codex_subscription_no_credential_export",
         "platform_api_allowed": False, "model_fallback_allowed": False,
         "scientific_changes": False, "native_tool": native_tool(),
@@ -68,24 +69,36 @@ def runtime_profile() -> dict:
                    "native_timeout_scope": "controller_absolute_run_deadline_including_common_retries"},
         "native_state": "fresh_per_run_common_runtime_owned_history",
         "common_runtime_policy": "prompt_state_retry_usage_projection_allowed_and_recorded",
-        "identity_policy": "actual_resolved_model_effort_and_policy_before_each_inference_drift_aborts_block",
+        "identity_policy": "frozen_requested_configuration_before_each_inference_observed_drift_aborts_block",
         "failure_policy": "stop_block_preserve_all_six_admitted_ids_no_retry_resume_replacement",
-        "required_host_capabilities": ["pre_inference_resolved_native_model_effort_gate",
+        "required_host_capabilities": ["pre_inference_frozen_request_configuration_gate",
+                                       "all_observable_model_effort_configuration_runtime_events",
                                        "verified_no_native_or_external_tool_bypass",
                                        "ordered_runtime_events_and_synchronous_abort",
                                        "all_inference_admission_and_absolute_deadline",
                                        "no_hidden_cross_run_instructions_or_state"],
         "pilot": {"blocks": 1, "arms": 6, "runs_per_arm": 1, "replacement_runs": 0},
-        "provider_observability": {"immutable_deployment_revision": "unavailable",
+        "provider_observability": {"pre_inference_actual_model_attestation": "not_observable",
+                                   "pre_inference_effective_effort_attestation": "not_observable",
+                                   "requested_values_are_provider_attestation": False,
+                                   "missing_provider_attestation_blocks_admission": False,
+                                   "immutable_deployment_revision": "unavailable",
                                    "tokenizer_revision": "unavailable",
                                    "usage": "runtime_projection_not_platform_raw_usage"},
     }
 
 
 def expected_identity(profile: dict) -> dict:
+    """Expected REQUESTED AND CONTROLLED configuration, never actual identity.
+
+The existing helper name is retained for callers; all potentially ambiguous
+model/effort fields explicitly identify a request in the v2 contract.
+"""
     return {"provider": profile["provider"], "request_model": profile["request_model"],
-            "resolved_model": profile["native_model"], "effort": profile["reasoning_effort"],
-            "runtime": profile["runtime"], "tools_sha256": digest(profile["native_tool"]),
+            "request_native_model": profile["native_model"], "request_effort": profile["reasoning_effort"],
+            "runtime": profile["runtime"], "openclaw_version": profile["openclaw_version"],
+            "model_fallback_allowed": profile["model_fallback_allowed"],
+            "tools_sha256": digest(profile["native_tool"]),
             "permissions_sha256": digest(profile["permissions"]),
             "profile_sha256": digest(profile)}
 
@@ -233,14 +246,14 @@ class RuntimeGuard:
         self.abort_acknowledged = None
         self.inferences = 0
         self.output_bytes = 0
-        self.attested = False
+        self.request_verified = False
         self.phase = "idle"
         self.deadline = time.monotonic() + profile["budget"]["scientific_caps"]["run_timeout_seconds"]
         self.events = []
 
     def halt(self, category: str):
         if self.failure_reason is None:
-            self.failure_reason, self.attested = category, False
+            self.failure_reason, self.request_verified = category, False
             self.phase = "failed"
             try:
                 self.abort_acknowledged = self.abort(category) is True
@@ -267,24 +280,60 @@ class RuntimeGuard:
             self.halt("run_timeout")
         if self.phase == "completed":
             self.halt("event_after_runtime_completed")
-        if not self.attested or self.phase != "inference":
-            self.halt("actual_native_identity_missing")
+        if not self.request_verified or self.phase != "inference":
+            self.halt("requested_configuration_missing")
 
-    def before_inference(self, actual: dict):
+    def _requested_matches(self, requested: dict) -> bool:
+        return (type(requested) is dict and requested == self.expected
+                and all(type(requested[key]) is type(value) for key, value in self.expected.items()))
+
+    def _validate_observed(self, observed: dict):
+        """Compare only present, independently labelled runtime observations.
+
+        A matching runtime event still is not provider actual-model attestation.
+        Missing/null provider observations are intentionally admissible. Adapters
+        retain raw event material alongside this projection, never fill it from
+        the request, and identify its non-secret source when a value is present.
+        """
+        expected = {"model": (self.profile["native_model"], self.profile["request_model"]),
+                    "effort": (self.profile["reasoning_effort"],),
+                    **{key: (self.expected[key],) for key in (
+                        "provider", "runtime", "openclaw_version", "model_fallback_allowed",
+                        "tools_sha256", "permissions_sha256", "profile_sha256")}}
+        if type(observed) is not dict or set(observed) - {*expected, "source"}:
+            self.halt("invalid_runtime_observation")
+        if any(value is not None for key, value in observed.items() if key != "source"):
+            if type(observed.get("source")) is not str or not observed["source"].strip():
+                self.halt("runtime_observation_source_missing")
+        for key, accepted in expected.items():
+            value = observed.get(key)
+            if value is None:
+                continue
+            if not any(type(value) is type(candidate) and value == candidate for candidate in accepted):
+                self.halt({"model": "observed_model_mismatch", "effort": "effort_drift",
+                           "runtime": "observed_runtime_mismatch"}.get(key, "observed_configuration_mismatch"))
+
+    def before_inference(self, requested: dict, observed: dict | None = None):
         if self.failure_reason:
             raise RuntimeViolation(self.failure_reason)
         if time.monotonic() >= self.deadline:
             self.halt("run_timeout")
         if self.phase != "idle":
             self.halt("invalid_inference_transition")
-        if type(actual) is not dict or actual != self.expected:
-            self._record({"event": "identity_rejected", "actual": actual})
-            self.halt("actual_native_configuration_mismatch")
+        if not self._requested_matches(requested):
+            self._record({"event": "request_configuration_rejected", "requested_and_controlled": requested})
+            self.halt("requested_configuration_mismatch")
+        observation = {} if observed is None else deepcopy(observed)
+        if observation:
+            self._record({"event": "pre_inference_configuration_observed", "observed": observation})
+        self._validate_observed(observation)
         if self.inferences >= self.profile["budget"]["max_observed_runtime_inferences_per_run"]:
             self.halt("inference_budget_exceeded")
-        self._record({"event": "inference_admitted", "actual": actual, "index": self.inferences})
+        self._record({"event": "inference_admitted", "requested_and_controlled": requested,
+                      "observed": observation, "index": self.inferences,
+                      "provider_actual_model_attested": False, "provider_effective_effort_attested": False})
         self.inferences += 1
-        self.attested = True
+        self.request_verified = True
         self.phase = "inference"
 
     def tool(self, name: str):
@@ -293,31 +342,39 @@ class RuntimeGuard:
             self.halt("tool_bypass")
 
     def observe(self, event: dict):
-        if (type(event) is dict and event.get("event") == "runtime_completed"
-                and self.phase == "idle" and self.inferences > 0 and self.failure_reason is None):
-            if time.monotonic() >= self.deadline:
-                self.halt("run_timeout")
-            self._record(event)
-            self.phase = "completed"
-            return
-        self.check()
+        if self.failure_reason:
+            raise RuntimeViolation(self.failure_reason)
         if type(event) is not dict or type(event.get("event")) is not str:
             self.halt("invalid_runtime_event")
         self._record(event)
+        if time.monotonic() >= self.deadline:
+            self.halt("run_timeout")
+        if self.phase == "completed":
+            self.halt("event_after_runtime_completed")
         kind = event["event"]
-        if kind in ("model/rerouted", "effort_drift", "configuration_drift", "native_tool", "runtime_failure"):
+        if kind in ("model/rerouted", "model_mismatch", "effort_drift", "configuration_drift",
+                    "native_tool", "tool_bypass", "workspace_escape", "runtime_failure",
+                    "blocking_runtime_anomaly"):
             self.halt(kind.replace("/", "_"))
-        elif kind == "configuration_observed":
-            if event.get("actual") != self.expected:
-                self.halt("actual_native_configuration_mismatch")
-        elif kind == "assistant_output":
+        elif kind in ("configuration_observed", "model_observed", "effort_observed", "runtime_observed"):
+            if "actual" in event:
+                self.halt("unlabelled_actual_identity_evidence")
+            if "requested_and_controlled" in event and not self._requested_matches(event["requested_and_controlled"]):
+                self.halt("requested_configuration_mismatch")
+            self._validate_observed(event.get("observed", {}))
+            return
+        elif kind == "runtime_completed" and self.phase == "idle" and self.inferences > 0:
+            self.phase = "completed"
+            return
+        self.check()
+        if kind == "assistant_output":
             if type(event.get("text")) is not str:
                 self.halt("invalid_runtime_output")
             self.output_bytes += len(event["text"].encode("utf-8"))
             if self.output_bytes > self.profile["budget"]["max_runtime_observable_output_bytes"]:
                 self.halt("runtime_output_budget_exceeded")
         elif kind == "inference_completed":
-            self.phase, self.attested = "idle", False
+            self.phase, self.request_verified = "idle", False
         elif kind not in ("retry_observed", "usage_observed"):
             self.halt("unknown_runtime_event")
 
@@ -325,5 +382,9 @@ class RuntimeGuard:
         return {"failure_reason": self.failure_reason, "abort_acknowledged": self.abort_acknowledged,
                 "inferences": self.inferences, "observable_output_bytes": self.output_bytes,
                 "phase": self.phase,
-                "actual_identity_verified_at_control_boundary": self.attested and self.failure_reason is None,
+                "requested_and_controlled": deepcopy(self.expected),
+                "request_configuration_verified_at_control_boundary": self.request_verified and self.failure_reason is None,
+                "provider_actual_model_attested": False, "provider_effective_effort_attested": False,
+                "not_observable": {"pre_inference_provider_actual_model": None,
+                                   "pre_inference_provider_effective_effort": None},
                 "events": deepcopy(self.events)}

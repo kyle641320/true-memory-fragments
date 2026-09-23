@@ -37,25 +37,26 @@ class ControlTests(unittest.TestCase):
     def arm(self):
         self.guard.before_inference(expected_identity(self.profile))
 
-    def test_actual_identity_required_before_tools(self):
-        with self.assertRaisesRegex(RuntimeViolation, "actual_native_identity_missing"):
+    def test_frozen_request_admission_required_before_tools(self):
+        with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_missing"):
             self.guard.tool(control.TOOL_NAME)
         self.abort.assert_called_once()
 
-    def test_every_model_effort_runtime_policy_mismatch_is_sticky(self):
+    def test_every_requested_model_effort_runtime_policy_mismatch_is_sticky(self):
         for key in expected_identity(self.profile):
             with self.subTest(key=key):
                 guard = RuntimeGuard(self.profile, emit=lambda e: None, abort=self.abort)
-                actual = expected_identity(self.profile)
-                actual[key] = "different"
+                requested = expected_identity(self.profile)
+                requested[key] = "different"
                 with self.assertRaisesRegex(RuntimeViolation, "configuration_mismatch"):
-                    guard.before_inference(actual)
+                    guard.before_inference(requested)
                 self.assertEqual(0, guard.inferences)
                 with self.assertRaises(RuntimeViolation):
                     guard.before_inference(expected_identity(self.profile))
 
     def test_reroute_effort_config_failure_and_native_tool_abort(self):
-        for kind in ("model/rerouted", "effort_drift", "configuration_drift", "runtime_failure", "native_tool"):
+        for kind in ("model/rerouted", "model_mismatch", "effort_drift", "configuration_drift",
+                     "runtime_failure", "native_tool", "tool_bypass", "workspace_escape", "blocking_runtime_anomaly"):
             with self.subTest(kind=kind):
                 guard = RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
                 guard.before_inference(expected_identity(self.profile))
@@ -72,10 +73,90 @@ class ControlTests(unittest.TestCase):
 
     def test_effort_observation_not_requested_string_drives_rejection(self):
         self.arm()
-        actual = expected_identity(self.profile)
-        actual["effort"] = "high"
-        with self.assertRaises(RuntimeViolation):
-            self.guard.observe({"event": "configuration_observed", "actual": actual})
+        with self.assertRaisesRegex(RuntimeViolation, "effort_drift"):
+            self.guard.observe({"event": "configuration_observed",
+                                "observed": {"effort": "high", "source": "test_runtime_event"}})
+
+    def test_unavailable_provider_attestation_is_accepted_without_fabrication(self):
+        self.arm()
+        self.guard.tool(control.TOOL_NAME)
+        admitted = self.events[-1]
+        self.assertEqual("inference_admitted", admitted["event"])
+        self.assertEqual({}, admitted["observed"])
+        self.assertNotIn("actual", admitted)
+        self.assertEqual(expected_identity(self.profile), admitted["requested_and_controlled"])
+        self.assertIs(admitted["provider_actual_model_attested"], False)
+        self.assertIs(admitted["provider_effective_effort_attested"], False)
+        snapshot = self.guard.snapshot()
+        self.assertIs(snapshot["request_configuration_verified_at_control_boundary"], True)
+        self.assertIsNone(snapshot["not_observable"]["pre_inference_provider_actual_model"])
+        self.assertIsNone(snapshot["not_observable"]["pre_inference_provider_effective_effort"])
+        self.assertNotIn("actual_identity_verified_at_control_boundary", snapshot)
+
+    def test_matching_runtime_observation_never_becomes_provider_attestation(self):
+        observation = {"model": control.NATIVE_MODEL, "effort": control.EFFORT,
+                       "source": "test_thread_response_not_provider_attestation"}
+        self.guard.before_inference(expected_identity(self.profile), observation)
+        self.assertEqual(observation, self.events[-1]["observed"])
+        self.assertIs(self.guard.snapshot()["provider_actual_model_attested"], False)
+        self.assertIs(self.guard.snapshot()["provider_effective_effort_attested"], False)
+        self.guard.observe({"event": "model_observed",
+                            "observed": {"model": control.MODEL, "source": "test_runtime_event"}})
+
+    def test_present_pre_inference_observation_mismatch_rejects_before_admission(self):
+        for key, value, category in (("model", "other-model", "observed_model_mismatch"),
+                                     ("effort", "high", "effort_drift"),
+                                     ("runtime", "other-runtime", "observed_runtime_mismatch"),
+                                     ("openclaw_version", "2026.9.5", "observed_configuration_mismatch"),
+                                     ("model_fallback_allowed", True, "observed_configuration_mismatch")):
+            with self.subTest(key=key):
+                events = []
+                guard = RuntimeGuard(self.profile, emit=events.append, abort=self.abort)
+                observed = {key: value, "source": "test_runtime_event"}
+                with self.assertRaisesRegex(RuntimeViolation, category):
+                    guard.before_inference(expected_identity(self.profile), observed)
+                self.assertEqual(0, guard.inferences)
+                self.assertEqual(observed, events[0]["observed"])
+                self.assertFalse(any(e["event"] == "inference_admitted" for e in events))
+
+    def test_null_observation_is_not_mismatch_and_request_cannot_fill_actual(self):
+        self.guard.before_inference(expected_identity(self.profile), {"model": None, "effort": None})
+        self.assertEqual({"model": None, "effort": None}, self.events[-1]["observed"])
+        with self.assertRaisesRegex(RuntimeViolation, "unlabelled_actual_identity_evidence"):
+            self.guard.observe({"event": "configuration_observed", "actual": expected_identity(self.profile)})
+
+    def test_observed_value_requires_explicit_source_and_wrong_types_fail(self):
+        for observed, category in (({"model": control.NATIVE_MODEL}, "observation_source_missing"),
+                                   ({"model": control.NATIVE_MODEL, "source": " "}, "observation_source_missing"),
+                                   ({"source": "test", "model_fallback_allowed": 0}, "configuration_mismatch"),
+                                   ({"source": "test", "request_model": control.MODEL}, "invalid_runtime_observation")):
+            with self.subTest(observed=observed):
+                guard = RuntimeGuard(self.profile, emit=self.events.append, abort=self.abort)
+                with self.assertRaisesRegex(RuntimeViolation, category):
+                    guard.before_inference(expected_identity(self.profile), observed)
+                self.assertEqual(0, guard.inferences)
+
+    def test_drift_event_between_inferences_is_retained_and_stops_block(self):
+        self.arm()
+        self.guard.observe({"event": "inference_completed"})
+        event = {"event": "model_observed", "observed": {"model": "other-model", "source": "test_runtime_event"}}
+        with self.assertRaisesRegex(RuntimeViolation, "observed_model_mismatch"):
+            self.guard.observe(event)
+        self.assertIn(event, self.events)
+        self.assertIs(self.guard.abort_acknowledged, True)
+
+    def test_openclaw_version_and_disabled_fallback_are_frozen_controls(self):
+        requested = expected_identity(self.profile)
+        self.assertEqual("2026.9.2", requested["openclaw_version"])
+        self.assertIs(requested["model_fallback_allowed"], False)
+        self.assertEqual(control.MODEL, requested["request_model"])
+        self.assertEqual(control.NATIVE_MODEL, requested["request_native_model"])
+        self.assertEqual("medium", requested["request_effort"])
+        self.assertNotIn("resolved_model", requested)
+        self.assertNotIn("effort", requested)
+        requested["model_fallback_allowed"] = 0
+        with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_mismatch"):
+            self.guard.before_inference(requested)
 
     def test_inference_cap_includes_retries_if_admitted(self):
         for _ in range(BudgetCaps().max_turns):
@@ -118,7 +199,7 @@ class ControlTests(unittest.TestCase):
     def test_inference_completion_revokes_tool_authority(self):
         self.arm()
         self.guard.observe({"event": "inference_completed"})
-        with self.assertRaisesRegex(RuntimeViolation, "identity_missing"):
+        with self.assertRaisesRegex(RuntimeViolation, "requested_configuration_missing"):
             self.guard.tool(control.TOOL_NAME)
 
     def test_runtime_completion_is_terminal_and_nested_admission_is_rejected(self):
