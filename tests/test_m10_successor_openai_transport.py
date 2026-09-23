@@ -10,6 +10,7 @@ import hashlib
 import io
 import json
 import os
+import stat
 import tempfile
 import threading
 import time
@@ -286,6 +287,43 @@ class CountedBrokerTests(OfflineCase):
                                     expected_input_tokens=kwargs.get("expected_input_tokens", 123),
                                     deadline_monotonic=time.monotonic() + 5)
 
+    def test_new_evidence_directory_and_ancestors_are_durable_before_first_post(self):
+        raw = self.root / "new-raw"
+        real_sync, synced = os.fsync, []
+
+        def sync(fd):
+            info = os.fstat(fd)
+            synced.append((info.st_dev, info.st_ino))
+            real_sync(fd)
+
+        def before(url, body):
+            expected = [(p.stat().st_dev, p.stat().st_ino) for p in (raw, *raw.parents)]
+            self.assertEqual(expected, synced[:len(expected)])
+            self.assertTrue((raw / "count.request.json").is_file())
+            self.assertTrue((raw / "count.admission.json").is_file())
+
+        self.sender.before = before
+        with patch.object(transport.os, "fsync", side_effect=sync):
+            broker = transport.CountedBroker(self.sender, self.ledger, raw)
+            broker.count(self.prepared, operation_id="count", deadline_monotonic=time.monotonic() + 5)
+        self.assertEqual(1, len(self.sender.calls))
+
+    def test_evidence_ancestor_fsync_failure_cannot_dispatch(self):
+        real_sync = os.fsync
+        failed_inode = self.root.stat().st_ino
+
+        def sync(fd):
+            info = os.fstat(fd)
+            if stat.S_ISDIR(info.st_mode) and info.st_ino == failed_inode:
+                raise OSError("simulated evidence parent fsync failure")
+            real_sync(fd)
+
+        with patch.object(transport.os, "fsync", side_effect=sync):
+            with self.assertRaises(OSError):
+                transport.CountedBroker(self.sender, self.ledger, self.root / "new-raw")
+        self.assertEqual([], self.sender.calls)
+        self.assertEqual(0, self.ledger.snapshot()["count_requests"])
+
     def test_count_exact_frozen_bytes_admitted_before_post(self):
         def assert_admitted(url, body):
             state = self.ledger.snapshot()
@@ -448,7 +486,12 @@ class CodecBrokerIntegrationTests(OfflineCase):
                     value = {"object": "response.input_tokens", "input_tokens": 123}
                 else:
                     generation = json.loads(body)
-                    value = {key: value for key, value in generation.items() if key != "input"}
+                    value = {key: generation[key] for key in (
+                        "model", "reasoning", "text", "parallel_tool_calls", "tool_choice", "tools",
+                        "truncation", "background", "service_tier", "max_output_tokens")}
+                    value["prompt_cache_options"] = {
+                        "mode": "implicit", "ttl": "30m", "comparison_response_id": None,
+                    }
                     cap = generation["max_output_tokens"] == 64
                     value.update(id="fictional-response", object="response", created_at=1_790_000_000,
                                  status="incomplete" if cap else "completed",

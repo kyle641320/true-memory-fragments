@@ -28,7 +28,9 @@ def response(request=None, *, name="list", arguments=None):
         "incomplete_details": None,
         **{key: copy.deepcopy(generation[key]) for key in (
             "reasoning", "text", "parallel_tool_calls", "tool_choice", "tools",
-            "truncation", "background", "prompt_cache_options", "service_tier", "max_output_tokens")},
+            "truncation", "background", "service_tier", "max_output_tokens")},
+        # Official RESPONSE shape, not a copy of request-only prewarm.
+        "prompt_cache_options": {"mode": "implicit", "ttl": "30m"},
         "output": [
             {"type": "reasoning", "id": "rs_offline", "summary": [],
              "encrypted_content": "opaque-offline-fixture-not-real-provider-state"},
@@ -212,6 +214,30 @@ class OpenAIResponsesProfileTests(unittest.TestCase):
 
 
 class OpenAIResponsesInspectionTests(unittest.TestCase):
+    def test_official_cache_response_shape_does_not_require_request_only_prewarm(self):
+        for extra in ({}, {"comparison_response_id": None}):
+            body = response()
+            body["prompt_cache_options"] = {"mode": "implicit", "ttl": "30m", **extra}
+            observed = inspect(body)
+            self.assertTrue(observed["ok"], observed["errors"])
+            self.assertEqual(body, observed["response"])
+            self.assertNotIn("prewarm", observed["response"]["prompt_cache_options"])
+        self.assertIs(json.loads(prepared().generation_json)["prompt_cache_options"]["prewarm"], False)
+
+    def test_cache_response_drift_or_unknown_schema_fails_without_losing_usage(self):
+        for options in (None, {}, {"mode": "explicit", "ttl": "30m"},
+                        {"mode": "implicit", "ttl": "24h"},
+                        {"mode": "implicit", "ttl": "30m", "comparison_response_id": "hidden"},
+                        {"mode": "implicit", "ttl": "30m", "prewarm": False}):
+            with self.subTest(options=options):
+                body = response()
+                body["prompt_cache_options"] = options
+                observed = inspect(body)
+                self.assertFalse(observed["ok"])
+                self.assertIn("response_prompt_cache_options_mismatch", observed["errors"])
+                self.assertEqual(920, observed["usage"]["total_tokens"])
+                self.assertEqual(body, observed["response"])
+
     def test_native_function_actions_are_validated_and_usage_not_double_counted(self):
         actions = [
             ("list", {}), ("search", {"query": "dispatch"}),

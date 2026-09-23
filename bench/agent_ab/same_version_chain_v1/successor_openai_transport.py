@@ -472,6 +472,24 @@ class SinglePostTransport:
         return result
 
 
+def sync_directory_chain(path: Path):
+    """Persist each directory entry up to the filesystem root before dispatch.
+
+    Leaf/file fsync alone does not persist a newly created parent directory's
+    entry. Failure at any ancestor must propagate; no transport may follow it.
+    This is POSIX fsync ordering, not a claim to simulate physical power loss.
+    """
+    path = Path(path).absolute()
+    if path.resolve() != path:
+        raise JournalError("durable directory chain must not use symlinks")
+    for directory in (path, *path.parents):
+        fd = os.open(directory, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+
 def _write_new(path: Path, raw: bytes):
     fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
     try:
@@ -498,6 +516,7 @@ class CountedBroker:
         if (self.evidence_dir.resolve() != self.evidence_dir
                 or not stat.S_ISDIR(os.lstat(self.evidence_dir).st_mode)):
             raise JournalError("evidence directory must not use symlinks")
+        sync_directory_chain(self.evidence_dir)
         self._mutex = threading.RLock()
 
     def _receipt(self, operation_id, category, observation=None):

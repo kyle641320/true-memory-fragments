@@ -141,6 +141,13 @@ unknown fields. Validate types, ranges and total=input+output. Reasoning is
 already part of output; **never add it twice**. Known coherent aggregate usage
 is retained even when model identity or action validity fails.
 
+Token accounting and monetary completeness are separate. Frozen Astra/default
+rates may price an observation only when its returned model, service tier,
+processing mode, short-context bound and usage semantics establish that price
+basis. Wrong/unknown identities or semantics retain known token aggregates but
+mark monetary completeness false. A counterfactual frozen-rate valuation is
+explicitly labeled as such, never reported as established cost or an invoice.
+
 Absence of cache-write data is recorded as unknown, never fabricated as zero.
 If price accounting cannot be established under this profile, halt. Missing or
 contradictory aggregate usage has no invented settlement: preserve raw evidence
@@ -166,6 +173,10 @@ Caching is a runtime observation, not treatment. Every arm uses identical
 implicit mode, `prewarm=false`, TTL30m, and omits prompt_cache_key. No arm labels
 in cache controls, no reordered schedule to obtain discounts, no manual cache
 breakpoints. Cache behavior/latency may still vary naturally and is logged.
+The official response schema reports applied `mode` and `ttl`, optionally a
+null `comparison_response_id`; it does not echo request-only `prewarm`. Validate
+these schemas asymmetrically. Non-null comparison IDs or unknown response cache
+fields fail closed; no absent request-only field is invented in raw evidence.
 
 ## H. Seal and admission
 
@@ -192,6 +203,11 @@ no alternate journal/output directory. A host-supplied protected credential
 callback is consulted only after admission; the experiment module itself does
 not read environment/config credentials. Ordinary preparation/verification CLI
 commands expose no live flag. Fake tests replace the transport, not the guards.
+The latch file, its containing directory and every ancestor directory entry are
+fsynced before constructing the transport. The raw-evidence directory and its
+ancestor chain are also fsynced before any POST. Any failure stops dispatch.
+Fault-injection tests establish ordering/failure behavior, not a physical
+power-loss simulation or a guarantee beyond the host filesystem's fsync contract.
 
 Generic unit-test jobs without the frozen offline Guava JARs explicitly skip
 the two production-seal tests and real-javac mediation test, following the
@@ -221,6 +237,9 @@ Official prices checked 2026-09-23, standard nonregional short-context Astra:
 input$10/M, cached$1/M, cache-write$12.50/M, output$50/M. No cache discount is
 assumed. All input charged at the higher cache-write rate gives generation
 maximum **$0.7878** (30000×12.5/M +8256×50/M), not expected spend.
+This is a planned maximum conditional on the frozen provider contract being
+honored, not an established maximum bill for an unobserved or wrong-model/tier
+response. Such violations halt and keep monetary uncertainty explicit.
 
 **Count pricing unknown. Therefore an all-in USD maximum is unknown**, despite
 the hard twelve-request cap. This accepted uncertainty is not called free.

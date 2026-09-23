@@ -4,6 +4,8 @@ from __future__ import annotations
 import copy
 import dataclasses
 import json
+import os
+import stat
 import tempfile
 import unittest
 from pathlib import Path
@@ -59,6 +61,12 @@ class NativeFake:
                 result["output"][-1].update(name="final", arguments=codec.canonical({"answer": "done", "files": []}))
             elif self.defect == "wrong_model":
                 result["model"] = "unapproved"
+            elif self.defect == "wrong_tier":
+                result["service_tier"] = "priority"
+            elif self.defect == "unknown_usage":
+                result["usage"]["output_tokens_details"]["new_token_class"] = 1
+            elif self.defect == "bad_reasoning":
+                result["reasoning"] = "malformed"
         return transport.PostResult(200, {"x-request-id": "fixture-only"}, encoded(result))
 
 
@@ -140,6 +148,34 @@ class SequenceTests(unittest.TestCase):
         self.assertFalse(report["ok"])
         self.assertEqual(920, report["accounting"]["known_usage"]["total_tokens"])
         self.assertEqual(920, report["accounting"]["charged_usage"]["total_tokens"])
+        self.assertFalse(report["cost"]["generation_cost_complete"])
+        self.assertEqual(0, report["cost"]["priced_generation_responses"])
+        self.assertEqual("unknown", report["cost"]["all_in_cost"])
+
+    def test_invalid_price_basis_preserves_tokens_but_never_claims_complete_cost(self):
+        for defect in ("wrong_tier", "unknown_usage", "bad_reasoning"):
+            with self.subTest(defect=defect), tempfile.TemporaryDirectory() as directory:
+                original = self.root
+                self.root = Path(directory)
+                try:
+                    fake, report = self.run_sequence(defect)
+                finally:
+                    self.root = original
+                self.assertEqual(1, fake.generations)
+                self.assertFalse(report["ok"])
+                self.assertEqual(920, report["accounting"]["known_usage"]["total_tokens"])
+                cost = report["cost"]
+                self.assertFalse(cost["generation_cost_complete"])
+                self.assertEqual(0, cost["priced_generation_responses"])
+                self.assertEqual("0", cost["known_generation_at_frozen_rates"])
+                self.assertEqual("0.01245", cost["counterfactual_coherent_usage_at_frozen_rates_not_established_cost"])
+                self.assertTrue(cost["monetary_uncertainty"])
+
+    def test_unrelated_protocol_failure_does_not_discard_verifiable_rate_usage(self):
+        _, report = self.run_sequence("missing_state")
+        self.assertFalse(report["ok"])
+        self.assertTrue(report["cost"]["generation_cost_complete"])
+        self.assertEqual("0.01245", report["cost"]["known_generation_at_frozen_rates"])
 
     def test_cap_not_observed_ends_without_fourth_generation(self):
         fake, report = self.run_sequence("cap_not_observed")
@@ -192,6 +228,49 @@ class SequenceTests(unittest.TestCase):
             constructor.assert_not_called()
         credential.assert_not_called()
         self.assertFalse((self.root / "fixed-state").exists())
+
+    def test_first_live_admission_fsyncs_latch_and_all_ancestors_before_transport(self):
+        state = self.root / "new-parent" / "fixed-state" / flow.AUTHORIZATION_ID
+        synced = []
+        real_sync = os.fsync
+
+        def sync(fd):
+            info = os.fstat(fd)
+            synced.append((info.st_dev, info.st_ino))
+            real_sync(fd)
+
+        def construct(credential):
+            expected = [state / "admission.json", state, *state.parents]
+            keys = [(p.stat().st_dev, p.stat().st_ino) for p in expected]
+            self.assertEqual(keys, synced[:len(keys)])
+            return NativeFake()
+
+        with patch.object(flow, "LIVE_STATE_ROOT", state.parent), \
+             patch.object(flow, "verify_seal", return_value={"ok": True}), \
+             patch.object(flow.os, "fsync", side_effect=sync), \
+             patch.object(transport, "SinglePostTransport", side_effect=construct):
+            report = flow.run_authorized_conformance(small_seal(), self.audit(), credential_provider=Mock())
+        self.assertTrue(report["ok"])
+
+    def test_ancestor_fsync_failure_prevents_transport_and_credential_access(self):
+        real_sync = os.fsync
+        failed_inode = self.root.stat().st_ino
+        credential = Mock(side_effect=AssertionError("no real credential"))
+
+        def sync(fd):
+            info = os.fstat(fd)
+            if stat.S_ISDIR(info.st_mode) and info.st_ino == failed_inode:
+                raise OSError("simulated ancestor fsync failure")
+            real_sync(fd)
+
+        with patch.object(flow, "LIVE_STATE_ROOT", self.root / "new-parent" / "fixed-state"), \
+             patch.object(flow, "verify_seal", return_value={"ok": True}), \
+             patch.object(flow.os, "fsync", side_effect=sync), \
+             patch.object(transport, "SinglePostTransport") as constructor:
+            with self.assertRaises(OSError):
+                flow.run_authorized_conformance(small_seal(), self.audit(), credential_provider=credential)
+            constructor.assert_not_called()
+        credential.assert_not_called()
 
     def test_crash_leaves_lifetime_latch_and_no_auto_resume(self):
         with patch.object(flow, "LIVE_STATE_ROOT", self.root / "fixed-state"), \

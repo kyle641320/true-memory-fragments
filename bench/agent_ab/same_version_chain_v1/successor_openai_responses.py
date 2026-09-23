@@ -170,6 +170,11 @@ def profile() -> dict[str, Any]:
         "scientific_tool_choice": "required", "truncation": "disabled",
         "provider_hosted_tools": False, "prompt_cache_key": "omitted",
         "explicit_cache_breakpoints": False,
+        "response_cache_options": {
+            "required": {"mode": "implicit", "ttl": "30m"},
+            "optional_null": ["comparison_response_id"],
+            "request_only_not_echoed": ["prewarm"],
+        },
         "encrypted_reasoning": "require_and_replay_all_returned_items_unchanged",
         "history": {
             "scientific_history": "local_frozen_messages_and_function_results",
@@ -511,10 +516,19 @@ def inspect_response(raw: bytes, prepared: PreparedRequest, *, expected_input_to
             or stamp < 0):
         errors.append("invalid_response_timestamp")
     generation = json.loads(prepared.generation_json)
-    for field in ("parallel_tool_calls", "tool_choice", "tools", "text", "truncation", "background", "prompt_cache_options"):
+    for field in ("parallel_tool_calls", "tool_choice", "tools", "text", "truncation", "background"):
         # Canonical equality distinguishes False from integer 0 as well.
         if field not in response or canonical(response[field]) != canonical(generation[field]):
             errors.append("response_" + field + "_mismatch")
+    # The official response schema is not the request schema: prewarm is
+    # request-only. Validate observable applied options without inventing an
+    # echo for it, or silently dropping unknown response fields.
+    cache = response.get("prompt_cache_options")
+    if (type(cache) is not dict or set(cache) - {"mode", "ttl", "comparison_response_id"}
+            or cache.get("mode") != generation["prompt_cache_options"]["mode"]
+            or cache.get("ttl") != generation["prompt_cache_options"]["ttl"]
+            or cache.get("comparison_response_id") is not None):
+        errors.append("response_prompt_cache_options_mismatch")
     for field in ("store", "stream"):
         if field in response and response[field] is not False:
             errors.append("response_" + field + "_mismatch")

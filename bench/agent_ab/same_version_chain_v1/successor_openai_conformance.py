@@ -214,26 +214,56 @@ def cost_summary(report):
     if rejected is not None:
         observations.append(rejected)
     known = Decimal(0)
+    counterfactual = Decimal(0)
     priced = 0
+    unpriced = []
     for observation in observations:
         usage, details = observation.get("usage"), observation.get("usage_details")
         if not usage or not details:
+            unpriced.append("missing_usage_or_details")
             continue
         i, o = usage.get("input_tokens"), usage.get("output_tokens")
         c, w = details.get("cached_tokens"), details.get("cache_write_tokens")
         if any(type(n) is not int or n < 0 for n in (i, o, c, w)) or c + w > i:
+            unpriced.append("invalid_usage_or_details")
             continue
-        known += (Decimal(i - c - w) * 10 + Decimal(c) + Decimal(w) * Decimal("12.5")
-                  + Decimal(o) * 50) / 1_000_000
+        value = (Decimal(i - c - w) * 10 + Decimal(c) + Decimal(w) * Decimal("12.5")
+                 + Decimal(o) * 50) / 1_000_000
+        counterfactual += value
+        response = observation.get("response")
+        response = response if type(response) is dict else {}
+        reasons = []
+        if response.get("model") != profile()["request_model"]:
+            reasons.append("unverified_price_model")
+        if response.get("service_tier") != "default":
+            reasons.append("unverified_price_service_tier")
+        reasoning = response.get("reasoning")
+        if type(reasoning) is not dict or reasoning.get("mode") != "standard":
+            reasons.append("unverified_price_processing_mode")
+        if i > plan()["input_tokens_per_generation"]:
+            reasons.append("outside_frozen_price_context_range")
+        if any("usage" in error or "reasoning_tokens" in error or "cached_tokens" in error
+               or "cache_write_tokens" in error for error in observation.get("errors", [])):
+            reasons.append("unverified_usage_semantics")
+        if reasons:
+            unpriced.extend(reasons)
+            continue
+        known += value
         priced += 1
     calls = report["accounting"]["generation_requests"]
+    if len(observations) < calls:
+        unpriced.append("missing_generation_response")
+    complete = priced == calls and not unpriced
     return {"currency": "USD", "known_generation_at_frozen_rates": str(known),
+            "counterfactual_coherent_usage_at_frozen_rates_not_established_cost": str(counterfactual),
             "priced_generation_responses": priced, "generation_attempts": calls,
-            "generation_cost_complete": priced == calls,
+            "generation_cost_complete": complete,
+            "monetary_uncertainty": sorted(set(unpriced)),
             "count_attempts": report["accounting"]["count_requests"],
             "count_cost": "unknown" if report["accounting"]["count_requests"] else "0",
-            "all_in_cost": "unknown" if report["accounting"]["count_requests"] or priced != calls else str(known),
-            "not_invoice": True, "maximum_generation_exposure": "0.7878"}
+            "all_in_cost": "unknown" if report["accounting"]["count_requests"] or not complete else str(known),
+            "not_invoice": True,
+            "planned_generation_maximum_if_frozen_contract_honored": "0.7878"}
 
 
 def validate_audit_receipt(receipt, seal):
@@ -255,7 +285,9 @@ def run_authorized_conformance(seal, audit, *, credential_provider):
     operator must establish protected egress before supplying that callback.
     No caller-selectable budget/model/prompt/state/output path is accepted.
     """
-    from .successor_openai_transport import CountedBroker, OperationJournal, SinglePostTransport
+    from .successor_openai_transport import (
+        CountedBroker, OperationJournal, SinglePostTransport, sync_directory_chain,
+    )
 
     verify_seal(seal)
     validate_audit_receipt(audit, seal)
@@ -276,11 +308,9 @@ def run_authorized_conformance(seal, audit, *, credential_provider):
         out.write(canonical(admission).encode("utf-8"))
         out.flush()
         os.fsync(out.fileno())
-    parent_fd = os.open(state, os.O_RDONLY | os.O_DIRECTORY)
-    try:
-        os.fsync(parent_fd)
-    finally:
-        os.close(parent_fd)
+    # Persist the latch AND all newly created ancestor directory entries. No
+    # credential access, transport construction or POST can precede this chain.
+    sync_directory_chain(state)
     with OperationJournal(state / "operations.jsonl", authorization_id=AUTHORIZATION_ID,
                           seal_sha256=seal["seal_sha256"]) as journal:
         sender = SinglePostTransport(credential_provider)
